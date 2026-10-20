@@ -151,7 +151,9 @@ async function loadCase(disputeId) {
   let transactions = [];
   let txSource = 'PayPal Transaction Search API (sandbox, live)';
   try {
-    transactions = await transactionsApi.historyForPayer(base.client.email);
+    // Search by the real payer on the PayPal dispute, not the demo client's email.
+    const payer = dispute.disputed_transactions?.[0]?.buyer?.email || base.client.email;
+    transactions = await transactionsApi.historyForPayer(payer);
   } catch (err) {
     txSource = `Transaction Search failed (${err.message}); using seeded records`;
   }
