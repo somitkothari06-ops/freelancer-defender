@@ -52,6 +52,8 @@ const DOC_NAMES = { DISPUTE: 'PayPal dispute', 'PAYPAL-TXN': 'PayPal payments', 
 const docName = (id) => DOC_NAMES[id] || id.toLowerCase().replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
 // Contract anchors use the legal "§" sign; show "Section 6.1" instead.
 const anchorName = (a) => String(a).replace(/^§\s*/, 'Section ');
+// "Contract · Section 6.1", but just "Emails" (codes like E6 or L5 mean nothing to a reader).
+const sourceName = (c) => (/^§/.test(c.anchor) ? `${docName(c.doc_id)} · ${anchorName(c.anchor)}` : docName(c.doc_id));
 
 function timeLeft(due) {
   // No due date means PayPal isn't waiting on the freelancer right now (e.g. under review).
@@ -64,6 +66,16 @@ function timeLeft(due) {
   return t;
 }
 const pad = (n) => String(n).padStart(2, '0');
+// PayPal reason codes sometimes appear in the AI's wording; show the plain label instead.
+const plainCodes = (s) => String(s ?? '').replace(/\b[A-Z][A-Z_]{8,}\b/g, (code) => (REASONS[code] ? `"${REASONS[code]}"` : code));
+const say = (s) => esc(plainCodes(s));
+// Cut at a sentence end when there is one in reach, so cards don't stop mid-sentence.
+const clipSentence = (s, n) => {
+  if (!s || s.length <= n) return s || '';
+  const cut = s.slice(0, n);
+  const end = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('; '));
+  return end > n * 0.5 ? cut.slice(0, end + 1) : clip(s, n);
+};
 // The agent writes refund amounts freely ("$250", "1,250.00"); read the number.
 const refundOf = (strategy) => Math.max(0, parseFloat(String(strategy.refund_amount ?? '').replace(/[^0-9.]/g, '')) || 0);
 
@@ -107,6 +119,13 @@ function route() {
   }
   clearInterval(state.clockTimer);
   const page = m ? 'case' : location.hash.startsWith('#/disputes') ? 'queue' : 'home';
+  if (page !== 'home') state.decoderStop = true;
+  document.body.classList.toggle('on-home', page === 'home');
+  if (page !== 'queue' && state.scheduler) {
+    state.scheduler.destroy();
+    state.scheduler = null;
+    $('#now-marker')?.remove();
+  }
   for (const v of ['home', 'queue', 'case']) $(`#view-${v}`).classList.toggle('hidden', v !== page);
   $('#nav-disputes').classList.toggle('active', page !== 'home');
   if (page === 'case') openCase(decodeURIComponent(m[1]));
@@ -118,14 +137,88 @@ function openHome() {
   document.title = 'Freelancer Defender: keep the money you earned';
   window.scrollTo(0, 0);
   const params = new URLSearchParams(location.search);
-  const msg = { failed: "PayPal sign-in didn't go through. You can still try the demo without signing in.", unavailable: "PayPal sign-in isn't set up on this server. You can still try the demo." }[params.get('login')];
-  $('#login-banner').innerHTML = msg ? `<div class="banner warn">${esc(msg)}</div>` : '';
+  const msg = { failed: "PayPal sign-in didn't go through. Try the demo instead.", unavailable: "PayPal sign-in isn't set up here yet. Try the demo instead." }[params.get('login')];
+  $('#login-banner').innerHTML = msg ? `<div class="hx-banner">${esc(msg)}</div>` : '';
   const user = state.status?.user;
-  const btn = $('#home-login');
   if (user) {
-    btn.textContent = `Continue as ${user.name}`;
-    btn.href = '#/disputes';
+    $('#home-login').textContent = `Continue as ${user.name.split(' ')[0]}`;
+    $('#home-login').href = '#/disputes';
   }
+  $('.hx-down').onclick = (e) => {
+    e.preventDefault();
+    $('#hx-race').scrollIntoView({ behavior: 'smooth' });
+  };
+  startDecoder();
+  revealOnScroll();
+}
+
+// The front page's hero: what a client told their bank "decodes" into what they meant.
+const DECODE = [
+  ['“Not as described.”', 'They never got the print files.'],
+  ['“I didn’t authorize this.”', 'The person who hired you left.'],
+  ['“Low quality work.”', 'One article is missing. Just one.'],
+];
+const GLYPHS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789#%&*+=?';
+
+function scramble(el, to, ms) {
+  const from = el.textContent;
+  const len = Math.max(from.length, to.length);
+  // Each character settles at its own random moment, left-to-right on average.
+  const settle = [...Array(len)].map((_, i) => (i / len) * 0.6 + Math.random() * 0.4);
+  const t0 = performance.now();
+  return new Promise((done) => {
+    const frame = (now) => {
+      if (state.decoderStop) return done();
+      const p = Math.min(1, (now - t0) / ms);
+      let out = '';
+      for (let i = 0; i < len; i++) {
+        if (p >= settle[i]) out += to[i] ?? '';
+        else if (p > settle[i] - 0.35) out += to[i] === ' ' ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+        else out += from[i] ?? '';
+      }
+      el.textContent = out;
+      p < 1 ? requestAnimationFrame(frame) : (el.textContent = to, done());
+    };
+    requestAnimationFrame(frame);
+  });
+}
+
+async function startDecoder() {
+  state.decoderStop = true; // stop any earlier loop
+  await new Promise((r) => setTimeout(r, 30));
+  state.decoderStop = false;
+  const line = $('#hx-line');
+  const label = $('#hx-label');
+  const stage = $('.hx-stage');
+  const dots = [...$('#hx-dots').children];
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  let i = 0;
+  line.textContent = DECODE[0][0];
+  while (!state.decoderStop) {
+    const [said, meant] = DECODE[i];
+    dots.forEach((d, n) => d.classList.toggle('on', n === i));
+    await wait(1900);
+    if (state.decoderStop) break;
+    stage.classList.add('scanning');
+    label.textContent = 'What they actually meant';
+    stage.classList.add('meant');
+    if (calm) line.textContent = meant;
+    else await scramble(line, meant, 1000);
+    stage.classList.remove('scanning');
+    await wait(2800);
+    if (state.decoderStop) break;
+    i = (i + 1) % DECODE.length;
+    label.textContent = 'What they told the bank';
+    stage.classList.remove('meant');
+    if (calm) line.textContent = DECODE[i][0];
+    else await scramble(line, DECODE[i][0], 600);
+  }
+}
+
+function revealOnScroll() {
+  const io = new IntersectionObserver((entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: 0.35 });
+  document.querySelectorAll('.hx-race, .hx-proof').forEach((el) => io.observe(el));
 }
 
 function renderStatus() {
@@ -159,11 +252,12 @@ async function openQueue() {
   state.queue = data;
   const rows = data.cases;
 
-  const atRisk = rows.reduce((n, r) => n + r.amount, 0);
+  const open = rows.filter((r) => r.status !== 'RESOLVED');
+  const atRisk = open.reduce((n, r) => n + r.amount, 0);
   const next = rows.filter((r) => r.due).sort((a, b) => new Date(a.due) - new Date(b.due))[0];
   const ready = rows.filter((r) => r.has_replay).length;
   $('#queue-stats').innerHTML = `
-    <div class="stat navy"><span class="label">Earned money at risk</span><span class="value">${fmtMoney(atRisk)}</span><span class="sub">across ${rows.length} disputes</span></div>
+    <div class="stat navy"><span class="label">Earned money at risk</span><span class="value">${fmtMoney(atRisk)}</span><span class="sub">across ${open.length} open dispute${open.length === 1 ? '' : 's'}</span></div>
     <div class="stat red"><span class="label">Next deadline</span><span class="value">${next ? esc(timeLeft(next.due).short) : '—'}</span><span class="sub">${next ? esc(next.client.split(',').pop().trim()) : 'Nothing due'}</span></div>
     <div class="stat"><span class="label">Responses ready</span><span class="value">${ready} of ${rows.length}</span><span class="sub">worked out by the agent, waiting for you</span></div>`;
 
@@ -187,7 +281,7 @@ function renderTimeline(rows) {
     el.outerHTML = '<div id="timeline" class="tl-fallback">Timeline unavailable (the scheduler library did not load).</div>';
     return;
   }
-  const withDue = rows.filter((r) => r.due);
+  const withDue = rows.filter((r) => r.due).sort((a, b) => new Date(a.due) - new Date(b.due));
   // The view starts at midnight today and ends just after the last deadline, scaled to fit the
   // card. Each bar runs from when the dispute arrived (clipped to the view) to its deadline, so
   // bars start flush at the left edge; the black "Now" marker shows the current time.
@@ -221,7 +315,7 @@ function renderTimeline(rows) {
     barMargin: 8,
     readOnly: true,
     eventStyle: 'plain',
-    features: { timeRanges: false, eventTooltip: false, cellMenu: false, eventMenu: false, scheduleMenu: false },
+    features: { timeRanges: false, eventTooltip: false, scheduleTooltip: false, cellMenu: false, eventMenu: false, scheduleMenu: false },
     columns: [
       { text: 'Client', field: 'name', width: 170 },
       { text: 'Amount', field: 'amount', width: 100 },
@@ -346,6 +440,8 @@ function renderGrid(rows) {
 
   if (state.grid) {
     state.grid.setGridOption('rowData', rows);
+    // Row heights measured while the list was hidden are wrong; measure again now it's visible.
+    requestAnimationFrame(() => state.grid.resetRowHeights());
     state.grid.setGridOption('pinnedBottomRowData', total(shownRows()));
     return;
   }
@@ -360,6 +456,7 @@ function renderGrid(rows) {
     // The total follows the search box and column filters.
     onFilterChanged: () => state.grid.setGridOption('pinnedBottomRowData', total(shownRows())),
     onRowClicked: (e) => !e.node.rowPinned && (location.hash = `#/case/${encodeURIComponent(e.data.dispute_id)}`),
+    onCellKeyDown: (e) => e.event.key === 'Enter' && !e.node.rowPinned && (location.hash = `#/case/${encodeURIComponent(e.data.dispute_id)}`),
     overlayNoRowsTemplate: '<span class="muted">No open disputes. Every payment you earned is safe.</span>',
   });
   setInterval(() => state.grid?.refreshCells({ columns: ['due'], force: true }), 30000);
@@ -380,7 +477,10 @@ async function openCase(id) {
   try {
     c = await api(`/api/cases/${encodeURIComponent(id)}`);
   } catch (err) {
-    $('#case-head').innerHTML = `<div class="banner warn">${esc(err.message)}</div>`;
+    $('#locker-count').textContent = '';
+    $('#case-head').innerHTML = err.status === 404 || /\b404\b/.test(err.message) || err.status === 400
+      ? `<h1 style="margin:0 0 8px">We couldn't find that dispute</h1><p class="muted">It may have been closed, or the link is wrong.</p><a class="btn" style="align-self:flex-start" href="#/disputes">← All disputes</a>`
+      : `<div class="banner warn">${esc(err.message)}</div>`;
     return;
   }
   state.current = { id, ...c };
@@ -404,7 +504,7 @@ function renderHero(c) {
       ${c.live ? '<span class="tag green">Live from PayPal sandbox</span>' : '<span class="tag">Demo dispute</span>'}
     </div>
     <h1 class="amount num">${fmtMoney(Number(d.dispute_amount?.value || 0), d.dispute_amount?.currency_code)}</h1>
-    <p class="lede">${c.fresh ? 'You did the work. Add your contract, emails and delivery records, and we\'ll' : `${esc(first)}, you did the work. We'll`} go through your evidence and build your response with you, step by step.</p>
+    <p class="lede">${c.fresh ? 'Add your contract, emails and delivery records, and we\'ll' : `${esc(first)}, let's protect what you earned. We'll`} go through your evidence and build your response with you, step by step.</p>
     <span class="who">${esc(c.freelancer.business)} · ${esc(c.title)}</span>`;
 }
 
@@ -413,6 +513,17 @@ function renderClock(c) {
   const d = c.dispute;
   const tl = state.status?.timelines || { bankDecisionDays: 75, cardholderFilingDays: 180, sources: [] };
   const sources = `<div class="src">Sources: ${(tl.sources || []).map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(' · ')}</div>`;
+  if (d.status === 'RESOLVED') {
+    const outcome = d.dispute_outcome?.outcome_code;
+    const won = outcome === 'RESOLVED_SELLER_FAVOUR' || outcome === 'RESOLVED_SELLER_FAVOR';
+    const lost = outcome === 'RESOLVED_BUYER_FAVOUR' || outcome === 'RESOLVED_BUYER_FAVOR';
+    $('#clock').innerHTML = `
+      <span class="label">This dispute</span>
+      <div style="font-size:30px;font-weight:800">${won ? 'Closed: you kept the money' : lost ? 'Closed in the client\'s favour' : 'PayPal closed this dispute'}</div>
+      <div style="color:#bfdbfe;font-size:14px">Nothing is due. You can still look through the evidence and the agent's reasoning.</div>
+      ${sources}`;
+    return;
+  }
   if (!d.seller_response_due_date) {
     $('#clock').innerHTML = `
       <span class="label">Time left to respond</span>
@@ -462,7 +573,7 @@ function renderThree(c) {
   $('#three').innerHTML = `
     <div>
       <span class="kicker">1 · What the client told their bank</span>
-      <p class="big" id="said">"${esc(clip(stmt, 110))}"</p>
+      <p class="big" id="said">"${esc(clipSentence(stmt, 120))}"</p>
       <span class="note">Filed as "${esc(REASONS[c.dispute.reason] || c.dispute.reason)}"</span>
     </div>
     <div class="waiting" id="card-real">
@@ -567,9 +678,7 @@ function openAddEvidence() {
       toast(err.message);
     }
   };
-  $('#drawer').classList.add('open');
-  $('#scrim').classList.add('open');
-  $('#drawer').setAttribute('aria-hidden', 'false');
+  showDrawer();
   setTimeout(() => form.title.focus(), 200);
 }
 
@@ -593,12 +702,12 @@ function renderControls(c) {
 
   // Live sandbox disputes: buttons to move the dispute through PayPal's lifecycle while testing.
   if (c.live && state.status?.paypal.env === 'sandbox') {
-    const tools = h(`<div class="sandbox" style="width:100%"><b>Sandbox testing</b>
-        <span>${esc(c.dispute.dispute_life_cycle_stage)} · ${esc(c.dispute.status)}</span>
+    const tools = h(`<details class="sandbox" style="width:100%"><summary>Developer tools (PayPal sandbox)</summary>
+        <span>Stage ${esc(c.dispute.dispute_life_cycle_stage)} · status ${esc(c.dispute.status)}</span>
         <button class="btn" data-a="escalate">Escalate to claim</button>
         <button class="btn" data-a="require-evidence">Require seller evidence</button>
         <button class="btn" data-a="adjudicate" data-o="SELLER_FAVOR">Settle: freelancer wins</button>
-      </div>`);
+      </details>`);
     tools.querySelectorAll('[data-a]').forEach((b) => {
       b.onclick = async () => {
         try {
@@ -637,7 +746,7 @@ function renderTrailSkeleton() {
     ol.appendChild(
       h(`<li class="stage pending" data-stage="${key}">
           <span class="dot">${i + 1}</span>
-          <div class="title"><span>${esc(title)}</span><span class="sum"></span><span class="more">Details</span></div>
+          <div class="title" role="button" tabindex="0"><span>${esc(title)}</span><span class="sum"></span><span class="more">Details</span></div>
           <div class="stage-body"></div>
         </li>`)
     );
@@ -664,10 +773,17 @@ document.addEventListener('click', (e) => {
   const t = e.target.closest('.stage.done .title');
   if (t) t.parentElement.classList.toggle('collapsed');
 });
+document.addEventListener('keydown', (e) => {
+  const t = e.key === 'Enter' || e.key === ' ' ? e.target.closest?.('.stage.done .title') : null;
+  if (t) {
+    e.preventDefault();
+    t.parentElement.classList.toggle('collapsed');
+  }
+});
 
 function chip(c, kind = '') {
   const isPP = c.doc_id === 'DISPUTE' || c.doc_id.startsWith('PAYPAL');
-  const el = h(`<button class="chip ${isPP ? 'paypal' : ''} ${kind}">${esc(docName(c.doc_id))} · ${esc(anchorName(c.anchor))}</button>`);
+  const el = h(`<button class="chip ${isPP ? 'paypal' : ''} ${kind}">${esc(sourceName(c))}</button>`);
   el.onclick = () => openDrawer(c.doc_id, c.anchor, c.quote);
   return el;
 }
@@ -718,7 +834,7 @@ function startRun(mode) {
   on('finding', (p) => {
     found++;
     p.citations.forEach((c) => markDoc(c.doc_id, 'cited'));
-    const card = h(`<div class="finding"><div class="f-text">${esc(p.finding)}</div><div class="f-why">${esc(p.significance)}</div></div>`);
+    const card = h(`<div class="finding"><div class="f-text">${say(p.finding)}</div><div class="f-why">${say(p.significance)}</div></div>`);
     card.appendChild(chips(p.citations));
     stageBody('investigate').appendChild(card);
     stageSum('investigate', `${opened} documents opened, ${found} findings`);
@@ -757,7 +873,13 @@ function startRun(mode) {
 function addRawNotes(stage, text) {
   const body = stageBody(stage);
   if (!text || !body) return;
-  const box = h('<div class="raw"></div>');
+  // One toggle per step: later notes for the same step are added to the same box.
+  const existing = $('.raw.notes', body);
+  if (existing) {
+    existing.textContent += `\n\n${text}`;
+    return;
+  }
+  const box = h('<div class="raw notes"></div>');
   box.textContent = text;
   const btn = h("<button class=\"raw-toggle\">Show the AI's raw notes</button>");
   btn.onclick = () => box.classList.toggle('open');
@@ -795,16 +917,16 @@ function renderStageDone(stage, data, thinking) {
     real.className = 'real';
     real.innerHTML = `
       <span class="kicker">2 · What's actually going on</span>
-      <p class="big">${esc(data.real_complaint.summary)}</p>
+      <p class="big">${say(data.real_complaint.summary)}</p>
       <div class="meter"><span class="track"><i></i></span>${data.real_complaint.confidence}% sure</div>
-      <span class="note">What they need: ${esc(data.real_complaint.what_the_client_actually_needs)}</span>`;
+      <span class="note">What they need: ${say(data.real_complaint.what_the_client_actually_needs)}</span>`;
     requestAnimationFrame(() => ($('.meter i', real).style.width = `${data.real_complaint.confidence}%`));
 
     // Older recordings predate this field.
     if (data.client_concerns?.length) {
       const cs = h('<div class="panel"><h4>What your client is worried about, and the answer</h4></div>');
       data.client_concerns.forEach((x) => {
-        const row = h(`<div class="concern"><div><b>${esc(x.concern)}</b></div><div class="h-exp">${esc(x.answer)}</div></div>`);
+        const row = h(`<div class="concern"><div><b>${say(x.concern)}</b></div><div class="h-exp">${say(x.answer)}</div></div>`);
         row.appendChild(chips([...x.said_in, ...x.answered_by]));
         cs.appendChild(row);
       });
@@ -816,7 +938,7 @@ function renderStageDone(stage, data, thinking) {
     data.hypotheses.forEach((hy) => {
       const row = h(`
         <div class="hyp ${hy === top ? 'top' : ''}">
-          <div><div class="h-label">${esc(hy.label)}</div><div class="h-exp">${esc(hy.explanation)}</div></div>
+          <div><div class="h-label">${esc(hy.label)}</div><div class="h-exp">${say(hy.explanation)}</div></div>
           <div><div class="h-bar"><i></i></div><div class="h-pct">${hy.likelihood}%</div></div>
         </div>`);
       if (hy.supporting.length) row.firstElementChild.appendChild(chips(hy.supporting));
@@ -825,11 +947,11 @@ function renderStageDone(stage, data, thinking) {
       requestAnimationFrame(() => ($('.h-bar i', row).style.width = `${hy.likelihood}%`));
     });
     body.appendChild(hyps);
-    body.appendChild(h(`<div class="panel"><h4>Why they filed it as "${esc(REASONS[state.current.dispute.reason] || '')}"</h4><div>${esc(data.why_this_reason_code)}</div></div>`));
+    body.appendChild(h(`<div class="panel"><h4>Why they filed it as "${esc(REASONS[state.current.dispute.reason] || '')}"</h4><div>${say(data.why_this_reason_code)}</div></div>`));
     if (data.freelancer_weaknesses.length) {
       const w = h('<div class="panel"><h4>Where your side is weaker (good to know before you respond)</h4></div>');
       data.freelancer_weaknesses.forEach((x) => {
-        const row = h(`<div><div>${esc(x.issue)}</div></div>`);
+        const row = h(`<div><div>${say(x.issue)}</div></div>`);
         row.appendChild(chips(x.citations, 'against'));
         w.appendChild(row);
       });
@@ -845,13 +967,13 @@ function renderStageDone(stage, data, thinking) {
     plan.innerHTML = `
       <span class="kicker">3 · What we'll do about it</span>
       <p class="big">${esc(d.long)}</p>
-      ${data.resolution_action && data.resolution_action !== 'none' ? `<span class="note">${esc(clip(data.resolution_action, 160))}</span>` : ''}
+      ${data.resolution_action && data.resolution_action !== 'none' ? `<span class="note">${esc(clipSentence(data.resolution_action, 190))}</span>` : ''}
       ${refundOf(data) > 0 ? `<span class="tag amber" style="align-self:flex-start">Refund ${fmtMoney(refundOf(data), state.current.dispute.dispute_amount?.currency_code)}</span>` : ''}`;
-    body.appendChild(h(`<div class="panel"><h4>Why</h4><div>${esc(data.rationale)}</div></div>`));
+    body.appendChild(h(`<div class="panel"><h4>Why</h4><div>${say(data.rationale)}</div></div>`));
     const pp = h('<div class="panel"><h4>What the response has to prove</h4></div>');
     const ANS = { STATED_REASON: 'For the bank', REAL_COMPLAINT: 'For your client', BOTH: 'For both' };
     data.proof_plan.forEach((p) => {
-      const row = h(`<div class="plan-row"><span class="tag ${p.answers === 'REAL_COMPLAINT' ? 'blue' : p.answers === 'BOTH' ? 'green' : ''}">${esc(ANS[p.answers] || p.answers)}</span><div>${esc(p.point)}</div><span class="strength ${esc(p.strength)}">${esc(String(p.strength || '').toLowerCase())}</span></div>`);
+      const row = h(`<div class="plan-row"><span class="tag ${p.answers === 'REAL_COMPLAINT' ? 'blue' : p.answers === 'BOTH' ? 'green' : ''}">${esc(ANS[p.answers] || p.answers)}</span><div>${say(p.point)}</div><span class="strength ${esc(p.strength)}">${esc(String(p.strength || '').toLowerCase())}</span></div>`);
       row.children[1].appendChild(chips(p.evidence));
       pp.appendChild(row);
     });
@@ -1030,7 +1152,7 @@ function renderLedger(r, notes, key) {
         field: 'source',
         flex: 1.2,
         minWidth: 180,
-        cellRenderer: (p) => (p.value ? `<div class="cell-stack"><span class="main" style="font-size:14px">${esc(p.value)}</span><span class="sub">${esc(docName(p.data.doc_id))} · ${esc(anchorName(p.data.anchor))}</span></div>` : ''),
+        cellRenderer: (p) => (p.value ? `<div class="cell-stack"><span class="main" style="font-size:14px">${esc(p.value)}</span><span class="sub">${esc(sourceName(p.data))}</span></div>` : ''),
       },
       { headerName: 'From', field: 'origin', width: 130, cellRenderer: (p) => (p.value ? `<span class="tag ${p.value === 'PayPal' ? 'blue' : ''}">${esc(p.value)}</span>` : '') },
       { headerName: 'Exact quote', field: 'quote', flex: 2, minWidth: 220, cellStyle: { lineHeight: '1.45', paddingTop: '10px', paddingBottom: '10px', fontStyle: 'italic', color: '#475569' } },
@@ -1090,7 +1212,7 @@ function evidenceMatrix(r) {
         cellStyle: { lineHeight: '1.45', paddingTop: '10px', paddingBottom: '10px' },
         cellRenderer: (p) =>
           p.value
-            ? `<span style="font-size:14px">${esc(clip(p.value, 170))}</span>${p.data.more > 0 ? ` <span class="faint" style="font-size:12px">+${p.data.more} more</span>` : ''}`
+            ? `<span style="font-size:14px">${say(clipSentence(p.value, 170))}</span>${p.data.more > 0 ? ` <span class="faint" style="font-size:12px">+${p.data.more} more</span>` : ''}`
             : '<span class="faint">Nothing the response needed</span>',
       },
       {
@@ -1108,7 +1230,7 @@ function evidenceMatrix(r) {
         field: 'against',
         width: 120,
         valueFormatter: (p) => (p.value ? 'Yes' : 'No'),
-        cellRenderer: (p) => (p.value ? '<span class="tag amber">Watch out</span>' : '<span class="faint">No</span>'),
+        cellRenderer: (p) => (p.value ? '<span class="tag amber">Has a weak spot</span>' : '<span class="faint">No</span>'),
       },
     ],
     onRowClicked: (e) => openDrawer(e.data.doc_id),
@@ -1193,14 +1315,27 @@ async function openDrawer(docId, anchor, quote) {
     };
     body.appendChild(all);
   }
-  $('#drawer').classList.add('open');
-  $('#scrim').classList.add('open');
-  $('#drawer').setAttribute('aria-hidden', 'false');
+  showDrawer();
   if (target) setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
 }
 
+// The closed drawer is `inert`, so Tab can't reach it; opening it moves focus inside.
+function showDrawer() {
+  const d = $('#drawer');
+  d.inert = false;
+  d.classList.add('open');
+  $('#scrim').classList.add('open');
+  d.setAttribute('aria-hidden', 'false');
+  state.drawerReturn = document.activeElement;
+  $('#drawer-close').focus({ preventScroll: true });
+}
+
 function closeDrawer() {
-  $('#drawer').classList.remove('open');
+  const d = $('#drawer');
+  if (!d.classList.contains('open')) return;
+  d.classList.remove('open');
   $('#scrim').classList.remove('open');
-  $('#drawer').setAttribute('aria-hidden', 'true');
+  d.setAttribute('aria-hidden', 'true');
+  d.inert = true;
+  state.drawerReturn?.focus?.({ preventScroll: true });
 }

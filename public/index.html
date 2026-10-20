@@ -29,47 +29,39 @@
   </header>
 
   <!-- ===== Front page ===== -->
-  <main id="view-home" class="view home hidden">
-    <div id="login-banner"></div>
-    <section class="home-hero">
-      <div class="home-copy">
-        <span class="kicker">For freelancers paid through PayPal</span>
-        <h1>You did the work.<br />Keep the money.</h1>
-        <p class="home-lede">When a client's bank reverses a payment, Freelancer Defender reads your contract, emails and delivery records, finds what your client is <b>really</b> upset about, and builds a response the bank can check line by line.</p>
-        <div class="home-ctas">
-          <a class="btn paypal" href="/auth/paypal" id="home-login"><span class="pp-mark" aria-hidden="true">P</span>Log in with PayPal</a>
-          <a class="btn primary big" href="#/disputes">Try the demo →</a>
-        </div>
-        <p class="faint home-note">No sign-up needed for the demo. Logging in is only needed to act on your own real PayPal disputes.</p>
+  <main id="view-home" class="home hidden">
+    <section class="hx">
+      <div class="hx-glow" aria-hidden="true"></div>
+      <div id="login-banner"></div>
+      <div class="hx-stage" aria-live="polite">
+        <span class="hx-label" id="hx-label">What they told the bank</span>
+        <h1 class="hx-line" id="hx-line">&ldquo;Not as described.&rdquo;</h1>
+        <div class="hx-scan" aria-hidden="true"></div>
+        <div class="hx-dots" id="hx-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
       </div>
-      <div class="home-demo" aria-label="Example">
-        <div class="hd-card said">
-          <span class="kicker">What the client told their bank</span>
-          <p>"Not as described. What we received can't be used by our vendors."</p>
-        </div>
-        <div class="hd-arrow" aria-hidden="true">↓</div>
-        <div class="hd-card real">
-          <span class="kicker">What's actually going on</span>
-          <p>They never opened the second download link, the one with the print files and the copyright letter. It expired, so their sign maker is stuck.</p>
-        </div>
-        <div class="hd-arrow" aria-hidden="true">↓</div>
-        <div class="hd-card plan">
-          <span class="kicker">What we do about it</span>
-          <p>Answer the bank with proof, every sentence checked against your documents, and re-send the files so the client is happy.</p>
+      <div class="hx-foot">
+        <p class="hx-tag">We hear what they meant.<br /><span>Then we prove your side.</span></p>
+        <div class="hx-ctas">
+          <a class="hx-btn main" href="#/disputes">Try the demo <span aria-hidden="true">→</span></a>
+          <a class="hx-btn pp" href="/auth/paypal" id="home-login">Log in with PayPal</a>
         </div>
       </div>
+      <a class="hx-down" href="#hx-race" aria-label="Scroll down">↓</a>
     </section>
-    <section class="home-clock">
-      <div><b class="num">180</b><span>days your client has to file</span></div>
-      <div><b class="num">75</b><span>days their bank can take to decide</span></div>
-      <div class="you"><b class="num">~10</b><span>days you get to respond</span></div>
+
+    <section class="hx-race" id="hx-race">
+      <div class="race-row"><span class="race-who">Your client</span><div class="race-bar"><i style="--w:100%"></i></div><b class="num">180 days</b></div>
+      <div class="race-row"><span class="race-who">Their bank</span><div class="race-bar"><i style="--w:41.7%"></i></div><b class="num">75 days</b></div>
+      <div class="race-row you"><span class="race-who">You</span><div class="race-bar"><i style="--w:5.6%"></i></div><b class="num">10 days</b></div>
+      <p class="race-say">Not fair. <span>So we're fast.</span></p>
     </section>
-    <section class="home-steps">
-      <div><span class="step-n">1</span><h3>Pull the dispute from PayPal</h3><p>The reason code, the client's statement and the deadline, straight from the Disputes API.</p></div>
-      <div><span class="step-n">2</span><h3>Investigate your evidence</h3><p>The agent reads your records like a dispute specialist and shows its working as it goes.</p></div>
-      <div><span class="step-n">3</span><h3>Send a verified response</h3><p>Every claim quotes a document, checked word for word, then goes to PayPal with one click.</p></div>
+
+    <section class="hx-proof">
+      <p class="proof-line">&ldquo;The client approved the final design on June&nbsp;29.&rdquo;<button class="proof-chip" type="button" aria-describedby="proof-src">Emails</button></p>
+      <div class="proof-src" id="proof-src" role="tooltip"><span class="kicker">Email · Jun 29 · Daniel to Priya</span>&ldquo;This is it. <mark>Approved</mark>, let's make it official.&rdquo;</div>
+      <p class="race-say">Every sentence, <span>proven.</span></p>
+      <a class="hx-btn main" href="#/disputes">See it work <span aria-hidden="true">→</span></a>
     </section>
-    <footer class="home-foot">Built for the PayPal AI Hackathon 2026 · PayPal APIs · Groq · AG Grid · Bryntum · Render</footer>
   </main>
 
   <!-- ===== All disputes ===== -->
@@ -119,7 +111,7 @@
   </main>
 
   <!-- A source document, opened from any citation -->
-  <aside class="drawer" id="drawer" aria-hidden="true">
+  <aside class="drawer" id="drawer" aria-hidden="true" inert>
     <div class="drawer-head">
       <div>
         <div class="drawer-kicker" id="drawer-kicker"></div>
