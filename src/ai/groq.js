@@ -120,7 +120,11 @@ async function chatJSON({ messages, schema, name, maxTokens = 3000, reasoningEff
   for (let i = 0; i < 2; i++) {
     try {
       const { message, usage } = await chat(body, opts);
-      return { data: JSON.parse(message.content), usage, reasoning: message.reasoning || '' };
+      // An empty or incomplete answer (e.g. the model spent its budget reasoning) is treated
+      // like a cut-off answer: retry once with more room.
+      const data = salvage(message.content, schema);
+      if (!data) throw Object.assign(new Error(`Groq returned an empty or incomplete ${name} answer.`), { groq: { code: 'json_validate_failed' } });
+      return { data, usage, reasoning: message.reasoning || '' };
     } catch (err) {
       lastErr = err;
       // Groq sometimes rejects an answer that is actually fine. If the rejected text parses

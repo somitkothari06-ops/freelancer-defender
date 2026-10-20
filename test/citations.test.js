@@ -81,3 +81,16 @@ test('schema check used to salvage valid JSON that Groq rejected', () => {
   assert.equal(fitsSchema({ findings: [] }, findingsSchema), false);
   assert.equal(fitsSchema({ findings: [{ finding: 'x' }], summary: 's' }, findingsSchema), false);
 });
+
+test('a repaired reference is carried into the verified claim', () => {
+  const v = verifyClaims(locker, [{ text: 'x', citations: [{ doc_id: 'CONTRACT', anchor: '7.2', quote: 'Studio will re-issue the Final Asset Package' }] }]);
+  assert.equal(v.results[0].citations[0].ok, true);
+  assert.equal(v.results[0].citations[0].anchor, '§7.2');
+});
+
+test('"..." may not skip a negation or stitch single letters', () => {
+  const sec = locker.section('CONTRACT', '§8');
+  const words = sec.text.split(' ');
+  assert.equal(checkCitation(locker, { doc_id: 'CONTRACT', anchor: '§8', quote: 'f...e...e...s...a' }).ok, false);
+  if (/\bnot?\b|\bunless\b/.test(sec.text)) assert.ok(words.length > 3);
+});

@@ -7,6 +7,8 @@
 // with "..." as long as each piece appears, in order.
 const { normalize } = require('../evidence/locker');
 
+const NEGATION = /\b(not|never|no|none|nor|cannot|without)\b|n't\b/;
+
 function checkCitation(locker, c) {
   // Repair the reference's spelling if needed (never the quote).
   const ref = locker.resolve(c.doc_id, c.anchor);
@@ -26,10 +28,19 @@ function checkCitation(locker, c) {
     return { ok: false, problem: 'quote is missing or too short to verify' };
   }
 
+  // With "...", every piece must be a real phrase (2+ words), so "t...h...e" can't pass.
+  if (pieces.length > 1 && pieces.some((p) => p.split(' ').length < 2)) {
+    return { ok: false, problem: 'each part of a quote with "..." must be at least two words' };
+  }
+
   let from = 0;
-  for (const piece of pieces) {
+  for (const [i, piece] of pieces.entries()) {
     const at = source.indexOf(piece, from);
     if (at === -1) return { ok: false, problem: `quote not found in ${c.doc_id} ${c.anchor}: "${piece}"` };
+    // The words skipped by "..." must not flip the meaning ("has ... approved" over "has not approved").
+    if (i > 0 && NEGATION.test(source.slice(from, at))) {
+      return { ok: false, problem: `the "..." in the quote skips a negation in ${c.doc_id} ${c.anchor}` };
+    }
     from = at + piece.length;
   }
   return { ok: true };
@@ -41,7 +52,11 @@ function checkCitation(locker, c) {
  */
 function verifyClaims(locker, claims) {
   const results = claims.map((claim, i) => {
-    const checks = (claim.citations || []).map((c) => ({ ...c, ...checkCitation(locker, c) }));
+    // checkCitation repairs the reference on `c` in place, so spread `c` after it has run.
+    const checks = (claim.citations || []).map((c) => {
+      const r = checkCitation(locker, c);
+      return { ...c, ...r };
+    });
     const grounded = checks.length > 0 && checks.every((c) => c.ok);
     return { index: i, text: claim.text, citations: checks, grounded };
   });

@@ -1,6 +1,8 @@
 // Web server: serves the dashboard and a small JSON API.
 //
-//   GET  /api/status                      what's configured (PayPal, Groq), which replays exist
+//   GET  /api/status                      what's configured (PayPal, Groq), who is signed in
+//   GET  /auth/paypal                     "Log in with PayPal" (then /auth/paypal/callback)
+//   POST /auth/logout                     sign out
 //   GET  /api/cases                       the dispute queue (live sandbox disputes + seeded demo disputes)
 //   GET  /api/cases/:id                   one dispute with its evidence locker index
 //   GET  /api/cases/:id/run?mode=live     run the agent; streams the reasoning trail (Server-Sent Events)
@@ -20,9 +22,11 @@ const { buildLocker } = require('./src/evidence/locker');
 const { runDefender } = require('./src/agent/defender');
 const disputesApi = require('./src/paypal/disputes');
 const uploads = require('./src/evidence/uploads');
+const login = require('./src/paypal/login');
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
+app.set('trust proxy', true); // Render terminates TLS in front of the app
 app.use(express.static(path.join(__dirname, 'public')));
 
 const REPLAY_DIR = path.join(__dirname, 'data', 'replays');
@@ -33,6 +37,19 @@ const hasReplay = (id) => fs.existsSync(replayPath(id));
 const lastRun = new Map();
 // Only one live AI run at a time: Groq's free tier allows ~8k tokens/minute in total.
 let liveRunBusy = false;
+
+// Dispute ids are short letters/digits/dashes (PP-D-27140-HALDEN, PP-R-LFT-10193672). Reject
+// anything else before it can reach a PayPal URL (e.g. "../" sneaking into the path).
+app.param('id', (req, res, next, id) => (/^[A-Za-z0-9-]{1,64}$/.test(id) ? next() : res.status(400).json({ error: 'Invalid dispute id' })));
+
+// Actions that change a real PayPal dispute need a signed-in PayPal user (and, if
+// LIVE_ACTION_EMAILS is set, one of those emails). Demo disputes stay open to everyone.
+function canActLive(req) {
+  const user = login.currentUser(req);
+  const allowed = (process.env.LIVE_ACTION_EMAILS || '').split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
+  return Boolean(user) && (!allowed.length || allowed.includes(String(user.email).toLowerCase()));
+}
+const liveActionRefused = (res) => res.status(403).json({ error: 'Sign in with PayPal to act on a real PayPal dispute.', code: 'LOGIN_REQUIRED' });
 
 const wrap = (fn) => (req, res) => fn(req, res).catch((err) => {
   console.error(err);
@@ -45,8 +62,13 @@ app.get('/api/status', wrap(async (req, res) => {
     groq: { model: config.groq.model },
     timelines: config.timelines,
     liveRunBusy,
+    user: login.currentUser(req),
   });
 }));
+
+app.get('/auth/paypal', login.start);
+app.get('/auth/paypal/callback', login.callback);
+app.post('/auth/logout', login.logout);
 
 // The headline of a recorded run (real complaint + plan), for the dispute list.
 function replaySummary(id) {
@@ -139,7 +161,8 @@ app.get('/api/cases/:id/run', async (req, res) => {
         // Keep the original rhythm, compressed so a replay takes about a minute.
         await new Promise((r) => setTimeout(r, Math.min(1400, Math.max(250, (ev.t - prev) / 6))));
         prev = ev.t;
-        if (ev.type === 'result') lastRun.set(id, ev.payload);
+        // Marked as a replay so it can't be submitted to a real PayPal dispute.
+        if (ev.type === 'result') lastRun.set(id, { ...ev.payload, _replay: true });
         send(ev.type, ev.payload);
       }
     } else {
@@ -149,8 +172,11 @@ app.get('/api/cases/:id/run', async (req, res) => {
         send('mode', { mode: 'live' });
         const c = await cases.loadCase(id);
         const locker = buildLocker(c.scenario, { transactions: c.transactions, transactionsSource: c.sources.transactions });
+        // If the viewer leaves, stop at the next step instead of spending the AI quota on
+        // a run nobody will see (and holding the one-run-at-a-time lock).
         const result = await runDefender({ scenario: c.scenario, locker, sources: c.sources }, (type, payload) => {
-          if (!closed) send(type, payload);
+          if (closed) throw Object.assign(new Error('Run cancelled: the page was closed.'), { code: 'CANCELLED' });
+          send(type, payload);
         });
         lastRun.set(id, result);
       } finally {
@@ -159,8 +185,9 @@ app.get('/api/cases/:id/run', async (req, res) => {
     }
     send('end', {});
   } catch (err) {
-    console.error(err);
-    send('fatal', { message: err.message, code: err.code });
+    if (err.code === 'CANCELLED') console.log(`${id}: ${err.message}`);
+    else console.error(err);
+    if (!closed) send('fatal', { message: err.message, code: err.code });
   } finally {
     clearInterval(keepAlive);
     res.end();
@@ -185,11 +212,13 @@ app.post('/api/cases/:id/submit', wrap(async (req, res) => {
   const wanted = new Set(req.body.actions || run.package.actions.map((a) => a.kind));
   const c = await cases.loadCase(id);
   const results = [];
+  if (c.live && !canActLive(req)) return liveActionRefused(res);
+  if (c.live && run._replay) return res.status(409).json({ error: 'This is a recorded run. Run the agent live before sending anything to a real PayPal dispute.' });
 
   // PayPal lists the actions allowed right now as HATEOAS links on the dispute (they change
   // with the dispute's stage), so check those before calling anything.
   const current = c.live ? await disputesApi.getDispute(id) : null;
-  const allowed = c.live ? new Set(current.links.map((l) => l.rel)) : null;
+  const allowed = c.live ? new Set((current.links || []).map((l) => l.rel)) : null;
   // Evidence types PayPal has asked the seller for (e.g. OTHER, PROOF_OF_REFUND).
   const requested = (current?.evidences || []).filter((e) => e.source === 'REQUESTED_FROM_SELLER').map((e) => e.evidence_type);
 
@@ -254,6 +283,7 @@ app.post('/api/cases/:id/link', wrap(async (req, res) => {
 
 app.post('/api/cases/:id/sandbox/:action', wrap(async (req, res) => {
   if (config.paypal.env !== 'sandbox') return res.status(400).json({ error: 'Sandbox only' });
+  if (!canActLive(req)) return liveActionRefused(res);
   // Note: escalate is a normal Disputes API call; require-evidence and adjudicate exist only in sandbox.
   const { id, action } = req.params;
   let r;

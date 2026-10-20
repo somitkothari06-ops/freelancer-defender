@@ -9,7 +9,7 @@ const playbookFor = require('./playbook');
 
 function buildPackage({ scenario, locker, draft, strategy }) {
   const { dispute, freelancer, client } = scenario;
-  const currency = dispute.dispute_amount.currency_code;
+  const currency = dispute.dispute_amount?.currency_code || 'USD';
 
   // Number every distinct citation so the letter can use footnotes [1], [2]...
   const footnotes = [];
@@ -94,7 +94,10 @@ function buildPackage({ scenario, locker, draft, strategy }) {
     });
   }
 
-  const refund = Number(strategy.refund_amount || 0);
+  // The model writes amounts freely ("$250", "1,250.00"); read the number and never offer
+  // more than the disputed amount.
+  const disputed = Number(dispute.dispute_amount?.value) || Infinity;
+  const refund = Math.min(parseMoney(strategy.refund_amount), disputed);
   if (strategy.decision === 'PARTIAL_REFUND_AND_CONTEST' && refund > 0) {
     actions.push({
       kind: 'make_offer',
@@ -150,6 +153,11 @@ function buildPackage({ scenario, locker, draft, strategy }) {
     // The raw PDF bytes stay on the server (base64) so the submit step can attach them.
     _files: files.map((f) => ({ ...f, bytes: f.bytes.toString('base64') })),
   };
+}
+
+function parseMoney(x) {
+  const n = parseFloat(String(x ?? '').replace(/[^0-9.]/g, ''));
+  return Number.isFinite(n) && n > 0 ? n : 0;
 }
 
 module.exports = { buildPackage };

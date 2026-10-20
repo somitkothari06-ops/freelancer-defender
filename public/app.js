@@ -14,8 +14,13 @@ const h = (html) => {
   t.innerHTML = html.trim();
   return t.content.firstElementChild;
 };
-const fmtMoney = (n, cur = 'USD') =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency: cur, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
+const fmtMoney = (n, cur = 'USD') => {
+  try {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: cur || 'USD', maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
+  } catch {
+    return `${n} ${cur}`; // unknown currency code
+  }
+};
 const api = async (url, opts) => {
   const res = await fetch(url, opts);
   const data = await res.json().catch(() => ({}));
@@ -58,6 +63,8 @@ function timeLeft(due) {
   return t;
 }
 const pad = (n) => String(n).padStart(2, '0');
+// The agent writes refund amounts freely ("$250", "1,250.00"); read the number.
+const refundOf = (strategy) => Math.max(0, parseFloat(String(strategy.refund_amount ?? '').replace(/[^0-9.]/g, '')) || 0);
 
 function toast(msg) {
   const t = $('#toast');
@@ -226,7 +233,8 @@ function renderGrid(rows) {
       field: 'due',
       width: 145,
       sort: 'asc',
-      comparator: (a, b) => (a ? new Date(a) : Infinity) - (b ? new Date(b) : Infinity),
+      // Disputes with no deadline sort last (and compare equal to each other).
+      comparator: (a, b) => (a ? +new Date(a) : Number.MAX_SAFE_INTEGER) - (b ? +new Date(b) : Number.MAX_SAFE_INTEGER),
       cellRenderer: (p) => {
         if (p.node.rowPinned) return '';
         const t = timeLeft(p.value);
@@ -368,7 +376,7 @@ function renderHero(c) {
       <span class="tag">${esc(c.client.company)}</span>
       ${c.live ? '<span class="tag green">Live from PayPal sandbox</span>' : '<span class="tag">Demo dispute</span>'}
     </div>
-    <h1 class="amount num">${fmtMoney(Number(d.dispute_amount.value), d.dispute_amount.currency_code)}</h1>
+    <h1 class="amount num">${fmtMoney(Number(d.dispute_amount?.value || 0), d.dispute_amount?.currency_code)}</h1>
     <p class="lede">${c.fresh ? 'You did the work. Add your contract, emails and delivery records, and we\'ll' : `${esc(first)}, you did the work. We'll`} go through your evidence and build your response with you, step by step.</p>
     <span class="who">${esc(c.freelancer.business)} · ${esc(c.title)}</span>`;
 }
@@ -382,7 +390,7 @@ function renderClock(c) {
     $('#clock').innerHTML = `
       <span class="label">Time left to respond</span>
       <div style="font-size:30px;font-weight:800">No deadline right now</div>
-      <div style="color:#bfdbfe;font-size:14px">PayPal is reviewing this dispute (${esc(d.status.toLowerCase().replace(/_/g, ' '))}). We'll show the clock as soon as they need something from you.</div>
+      <div style="color:#bfdbfe;font-size:14px">PayPal is reviewing this dispute (${esc(String(d.status || 'in review').toLowerCase().replace(/_/g, ' '))}). We'll show the clock as soon as they need something from you.</div>
       ${sources}`;
     return;
   }
@@ -462,8 +470,12 @@ function renderLocker(c) {
       rm.onclick = async (e) => {
         e.stopPropagation();
         if (!confirm(`Remove "${d.title}" from your evidence?`)) return;
-        await api(`/api/cases/${encodeURIComponent(c.id || state.current.id)}/evidence/${encodeURIComponent(d.doc_id)}`, { method: 'DELETE' });
-        reloadEvidence();
+        try {
+          await api(`/api/cases/${encodeURIComponent(c.id || state.current.id)}/evidence/${encodeURIComponent(d.doc_id)}`, { method: 'DELETE' });
+          reloadEvidence();
+        } catch (err) {
+          toast(err.message);
+        }
       };
     }
     box.appendChild(b);
@@ -807,12 +819,12 @@ function renderStageDone(stage, data, thinking) {
       <span class="kicker">3 · What we'll do about it</span>
       <p class="big">${esc(d.long)}</p>
       ${data.resolution_action && data.resolution_action !== 'none' ? `<span class="note">${esc(clip(data.resolution_action, 160))}</span>` : ''}
-      ${Number(data.refund_amount) > 0 ? `<span class="tag amber" style="align-self:flex-start">Refund ${fmtMoney(Number(data.refund_amount))}</span>` : ''}`;
+      ${refundOf(data) > 0 ? `<span class="tag amber" style="align-self:flex-start">Refund ${fmtMoney(refundOf(data), state.current.dispute.dispute_amount?.currency_code)}</span>` : ''}`;
     body.appendChild(h(`<div class="panel"><h4>Why</h4><div>${esc(data.rationale)}</div></div>`));
     const pp = h('<div class="panel"><h4>What the response has to prove</h4></div>');
     const ANS = { STATED_REASON: 'For the bank', REAL_COMPLAINT: 'For your client', BOTH: 'For both' };
     data.proof_plan.forEach((p) => {
-      const row = h(`<div class="plan-row"><span class="tag ${p.answers === 'REAL_COMPLAINT' ? 'blue' : p.answers === 'BOTH' ? 'green' : ''}">${ANS[p.answers] || p.answers}</span><div>${esc(p.point)}</div><span class="strength ${p.strength}">${p.strength.toLowerCase()}</span></div>`);
+      const row = h(`<div class="plan-row"><span class="tag ${p.answers === 'REAL_COMPLAINT' ? 'blue' : p.answers === 'BOTH' ? 'green' : ''}">${esc(ANS[p.answers] || p.answers)}</span><div>${esc(p.point)}</div><span class="strength ${esc(p.strength)}">${esc(String(p.strength || '').toLowerCase())}</span></div>`);
       row.children[1].appendChild(chips(p.evidence));
       pp.appendChild(row);
     });
