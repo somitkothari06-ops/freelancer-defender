@@ -1,0 +1,174 @@
+{
+  "id": "halden-brand",
+  "title": "Brand identity for a coffee roaster",
+  "hero": true,
+  "freelancer": {
+    "name": "Priya Raman",
+    "business": "Priya Raman Design",
+    "email": "hello@priyaraman.design",
+    "craft": "Brand identity designer"
+  },
+  "client": {
+    "name": "Daniel Okafor",
+    "company": "Halden Coffee Roasters",
+    "email": "daniel@haldencoffee.com"
+  },
+  "demo": {
+    "received_hours_ago": 6,
+    "response_window_hours": 48
+  },
+  "dispute": {
+    "dispute_id": "PP-D-27140-HALDEN",
+    "create_time": "__DYNAMIC__",
+    "update_time": "__DYNAMIC__",
+    "reason": "MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED",
+    "external_reason_code": "13.3",
+    "status": "WAITING_FOR_SELLER_RESPONSE",
+    "dispute_life_cycle_stage": "CHARGEBACK",
+    "dispute_channel": "EXTERNAL",
+    "dispute_amount": { "currency_code": "USD", "value": "2400.00" },
+    "seller_response_due_date": "__DYNAMIC__",
+    "disputed_transactions": [
+      {
+        "seller_transaction_id": "7HL40291KX5523310",
+        "create_time": "2026-07-01T16:42:10Z",
+        "transaction_status": "COMPLETED",
+        "gross_amount": { "currency_code": "USD", "value": "2400.00" },
+        "invoice_number": "INV-2026-0042",
+        "buyer": { "name": "Daniel Okafor" },
+        "seller": { "name": "Priya Raman Design", "email": "hello@priyaraman.design" }
+      }
+    ],
+    "messages": [
+      {
+        "posted_by": "BUYER",
+        "time_posted": "__DYNAMIC__",
+        "content": "Cardholder statement forwarded by issuing bank: The design work delivered was not what was agreed in the contract. We were promised a complete, professional brand package. What we received cannot be used by our vendors and is not fit for purpose for our business. We are requesting a full refund of $2,400."
+      }
+    ]
+  },
+  "paypal_transactions": [
+    {
+      "transaction_info": {
+        "transaction_id": "7HL40291KX5523310",
+        "transaction_event_code": "T0007",
+        "transaction_initiation_date": "2026-07-01T16:42:10Z",
+        "transaction_amount": { "currency_code": "USD", "value": "2400.00" },
+        "fee_amount": { "currency_code": "USD", "value": "-84.29" },
+        "transaction_status": "S",
+        "invoice_id": "INV-2026-0042",
+        "transaction_subject": "Halden Coffee Roasters - Brand Identity Package"
+      },
+      "payer_info": {
+        "email_address": "daniel@haldencoffee.com",
+        "payer_name": { "alternate_full_name": "Daniel Okafor" },
+        "country_code": "US"
+      },
+      "cart_info": {
+        "item_details": [
+          { "item_name": "Brand identity design (logo suite, palette, typography)", "item_quantity": "1", "item_amount": { "currency_code": "USD", "value": "1900.00" } },
+          { "item_name": "Final Asset Package (vector source files, print brand guide, copyright assignment)", "item_quantity": "1", "item_amount": { "currency_code": "USD", "value": "500.00" } }
+        ]
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "CONTRACT",
+      "title": "Brand Identity Services Agreement (signed by both parties)",
+      "kind": "contract",
+      "date": "2026-05-18",
+      "source": "Signed PDF, freelancer's files",
+      "summary": "Scope, deliverables, revisions, acceptance, IP transfer, delivery and refund terms.",
+      "sections": [
+        { "anchor": "§1", "heading": "Parties", "text": "This Agreement is between Priya Raman Design (\"Studio\") and Halden Coffee Roasters LLC, represented by owner Daniel Okafor (\"Client\"). Signed electronically by both parties on May 18, 2026." },
+        { "anchor": "§2", "heading": "Scope", "text": "Studio will design a brand identity for Client's coffee roastery and retail cafes, including a primary logo, a secondary mark, a color palette and a typography system." },
+        { "anchor": "§3.1", "heading": "Concepts", "text": "Studio will present three initial logo concepts. Client selects one concept for refinement." },
+        { "anchor": "§3.2", "heading": "Final Asset Package", "text": "On completion Studio delivers a Final Asset Package containing: (a) a Web & Social pack of PNG and JPG files; (b) master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise; (c) a print-ready PDF brand guide; and (d) a signed Assignment of Copyright letter." },
+        { "anchor": "§4", "heading": "Revisions", "text": "The fee includes two rounds of revisions on the selected concept. Additional rounds are billed at $95/hour." },
+        { "anchor": "§5.1", "heading": "Acceptance", "text": "Client's written approval of the final design (email is sufficient) constitutes acceptance of the design work." },
+        { "anchor": "§6.1", "heading": "Intellectual property", "text": "Copyright in the final selected designs transfers from Studio to Client upon Studio's receipt of full payment. Until full payment is received and retained, all rights remain with Studio." },
+        { "anchor": "§6.2", "heading": "Assignment letter", "text": "The transfer in §6.1 is documented by a signed Assignment of Copyright letter, included in the Final Asset Package described in §3.2(d)." },
+        { "anchor": "§7.1", "heading": "Delivery method", "text": "The Final Asset Package is delivered by secure download link sent to Client's email. Download links remain active for 30 days." },
+        { "anchor": "§7.2", "heading": "Re-issue", "text": "For 12 months after delivery, Studio will re-issue the Final Asset Package on request at no charge, within 2 business days of the request." },
+        { "anchor": "§8", "heading": "Fees and refunds", "text": "Total fee: $2,400, invoiced on approval of the final design. Fees are non-refundable after written approval of the final design, except where Studio fails to deliver the Final Asset Package." }
+      ]
+    },
+    {
+      "id": "EMAILS",
+      "title": "Email thread: Priya <-> Daniel",
+      "kind": "correspondence",
+      "date": "2026-06-03 to 2026-07-01",
+      "source": "Freelancer's Gmail export",
+      "summary": "Concept presentation, two revision rounds, written approval, invoice and delivery emails.",
+      "sections": [
+        { "anchor": "E1", "heading": "Jun 3 - Priya to Daniel: Concepts", "text": "Hi Daniel, attached are the three concepts we discussed: (A) Roasted Bean mark, (B) Halden wordmark with steam line, (C) Badge seal. Let me know which direction feels most like Halden." },
+        { "anchor": "E2", "heading": "Jun 4 - Daniel to Priya", "text": "A, no question. The bean is perfect. Can we try it in a warmer brown and make the bean a little bigger relative to the text?" },
+        { "anchor": "E3", "heading": "Jun 19 - Priya to Daniel: Revision round 2", "text": "Here's round two: warmer roast brown (#5B3A29), bean scaled up 15%, and the cream secondary color for cups and bags. This is our last included revision round." },
+        { "anchor": "E4", "heading": "Jun 29 - Daniel to Priya: Approval", "text": "This is it. Honestly better than I imagined. Approved, let's make it official. Send over the invoice and the final files!" },
+        { "anchor": "E5", "heading": "Jun 29 - Priya to Daniel: Invoice", "text": "Thank you Daniel! PayPal invoice INV-2026-0042 for $2,400 is on its way. As soon as it's paid I'll send your Final Asset Package." },
+        { "anchor": "E6", "heading": "Jul 1 - Priya to Daniel: Final Asset Package", "text": "Payment received, thank you! Your Final Asset Package is ready as two downloads: (1) Halden_Web_Social_Pack.zip for your website, Instagram and menus, and (2) Halden_Master_Vectors_and_Copyright.zip with the AI/SVG/EPS master files for printers, sign makers and merch, the print brand guide, and your signed Assignment of Copyright. Please download both. Links stay active for 30 days." },
+        { "anchor": "E7", "heading": "Jul 1 - Daniel to Priya", "text": "Got it, downloading now. Can't wait to put this on the cups. Thanks Priya!" }
+      ]
+    },
+    {
+      "id": "DELIVERY-LOG",
+      "title": "File transfer access log (secure download service)",
+      "kind": "system_log",
+      "date": "2026-07-01 to 2026-07-31",
+      "source": "Export from freelancer's file-transfer service",
+      "summary": "Per-file download events for the two Final Asset Package links.",
+      "sections": [
+        { "anchor": "L1", "heading": "Transfer created", "text": "2026-07-01 16:58 UTC - Transfer #TR-88213 created by hello@priyaraman.design. Recipient: daniel@haldencoffee.com. Files: Halden_Web_Social_Pack.zip (48 MB), Halden_Master_Vectors_and_Copyright.zip (212 MB). Expiry: 2026-07-31." },
+        { "anchor": "L2", "heading": "Email delivered", "text": "2026-07-01 16:58 UTC - Notification email delivered to daniel@haldencoffee.com. Opened 2026-07-01 17:05 UTC." },
+        { "anchor": "L3", "heading": "Download", "text": "2026-07-01 17:06 UTC - Halden_Web_Social_Pack.zip downloaded by recipient (IP region: Portland, OR)." },
+        { "anchor": "L4", "heading": "Download", "text": "2026-07-09 14:21 UTC - Halden_Web_Social_Pack.zip downloaded by recipient (IP region: Portland, OR)." },
+        { "anchor": "L5", "heading": "No activity", "text": "Halden_Master_Vectors_and_Copyright.zip - 0 downloads during the life of the transfer." },
+        { "anchor": "L6", "heading": "Transfer expired", "text": "2026-07-31 00:00 UTC - Transfer #TR-88213 expired. Files no longer downloadable from this link." }
+      ]
+    },
+    {
+      "id": "SOCIAL",
+      "title": "Halden Coffee Roasters public Instagram posts (screenshots)",
+      "kind": "public_record",
+      "date": "2026-08-14 to 2026-10-02",
+      "source": "Screenshots captured by freelancer, with post URLs",
+      "summary": "Client's own public posts after delivery.",
+      "sections": [
+        { "anchor": "S1", "heading": "Aug 14 post by @haldencoffee", "text": "Photo of takeaway cups and coffee bags printed with the Roasted Bean logo. Caption: \"New look. Same beans. Huge thanks to @priyaraman.design for bringing Halden to life.\" 412 likes." },
+        { "anchor": "S2", "heading": "Oct 2 post by @haldencoffee", "text": "Photo of an empty storefront with paper over the windows. Caption: \"Halden #2 on Elm St is almost here! Opening Oct 15... still waiting on our sign though.\"" }
+      ]
+    },
+    {
+      "id": "CONTACT-FORM",
+      "title": "Website contact form: submissions and settings",
+      "kind": "system_log",
+      "date": "2026-08-03 to 2026-09-22",
+      "source": "Export from freelancer's website builder",
+      "summary": "Messages submitted through priyaraman.design/contact and the form's notification settings.",
+      "sections": [
+        { "anchor": "F0", "heading": "Form settings change (Aug 3)", "text": "Notification recipient changed from hello@priyaraman.design to studio@priyaraman.design during a website migration. Mailbox studio@priyaraman.design has no forwarding and has not been logged into since Aug 3." },
+        { "anchor": "F1", "heading": "Submission (Sep 22, 09:14)", "text": "From: Daniel Okafor (Halden Coffee). \"Hi Priya, the sign company doing our Elm St storefront says the logo files we have are only good for screens. They need the 'real' logo to cut the sign and they can't do anything with what we sent them. Opening is Oct 15. Also, my landlord said that unless I have paperwork, the designer might still own the logo?? Please call me, this is urgent.\" Status: unread." }
+      ]
+    },
+    {
+      "id": "PAYPAL-INVOICE",
+      "title": "PayPal invoice INV-2026-0042",
+      "kind": "paypal_record",
+      "date": "2026-06-29",
+      "source": "PayPal Invoicing",
+      "summary": "The invoice the client paid, with line items and terms.",
+      "sections": [
+        { "anchor": "I1", "heading": "Line items", "text": "1x Brand identity design (logo suite, palette, typography) - $1,900.00. 1x Final Asset Package (vector source files, print brand guide, copyright assignment) - $500.00. Total $2,400.00." },
+        { "anchor": "I2", "heading": "Terms", "text": "Payment due on receipt. Work approved by Client in writing on June 29, 2026 per Agreement §5.1. Final Asset Package delivered by download link upon payment." },
+        { "anchor": "I3", "heading": "Status", "text": "Paid in full by daniel@haldencoffee.com on July 1, 2026 via PayPal (card)." }
+      ]
+    }
+  ],
+  "answer_key": {
+    "note": "Used only by scripts/eval.js to score the agent. Never sent to the model.",
+    "real_complaint": "The client cannot get print or sign quality vector files and is worried they do not legally own the logo. The vector ZIP containing the master files and the copyright assignment was never downloaded and the link expired. The client is not unhappy with the design itself.",
+    "must_find": ["DELIVERY-LOG L5", "CONTACT-FORM F1", "CONTRACT §7.2", "CONTRACT §6.1"],
+    "best_strategy": "CONTEST_AND_RESOLVE"
+  }
+}

@@ -1,0 +1,24 @@
+# Render Blueprint: Render reads this file to create the web service.
+# In the Render dashboard: New + -> Blueprint -> pick this GitHub repo.
+# Render will ask for the values marked "sync: false" (your secret keys) during setup.
+services:
+  - type: web
+    name: freelancer-defender
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/status
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_ENV
+        value: sandbox

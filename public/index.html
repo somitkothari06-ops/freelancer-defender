@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Freelancer Defender</title>
+  <meta name="description" content="An AI agent that defends freelancers when a client's bank reverses a payment they already earned." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" />
+  <!-- AG Grid (community edition) powers the dispute queue -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-grid.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-theme-quartz.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7z' fill='%23f59e0b'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7z" fill="var(--accent)"/><path d="m11 16 3.5 3.5L21 13" stroke="#09090b" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Freelancer Defender</span>
+    </a>
+    <nav class="crumbs" id="crumbs"></nav>
+    <div class="status" id="status"></div>
+  </header>
+
+  <!-- ===== Queue view ===== -->
+  <main id="view-queue" class="view">
+    <section class="hero-strip">
+      <div>
+        <h1>Disputes waiting on you</h1>
+        <p class="muted">Every row is money you already earned. The clock on the left is how long you have to defend it.</p>
+      </div>
+      <div class="stat-row" id="queue-stats"></div>
+    </section>
+    <div id="paypal-banner"></div>
+    <div id="grid" class="ag-theme-quartz-dark grid"></div>
+  </main>
+
+  <!-- ===== Case view ===== -->
+  <main id="view-case" class="view hidden">
+    <section class="case-head" id="case-head"></section>
+    <section class="clock" id="clock"></section>
+
+    <div class="case-body">
+      <aside class="left">
+        <div class="panel">
+          <div class="panel-title">What the client filed</div>
+          <div id="statement"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Evidence locker <span class="muted" id="locker-count"></span></div>
+          <ul class="locker" id="locker"></ul>
+        </div>
+      </aside>
+
+      <section class="trail-wrap">
+        <div class="trail-controls" id="controls"></div>
+        <div id="mode-banner"></div>
+        <ol class="trail" id="trail"></ol>
+      </section>
+    </div>
+  </main>
+
+  <!-- Evidence drawer: opens when you click a citation -->
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div>
+        <div class="drawer-kicker" id="drawer-kicker"></div>
+        <div class="drawer-title" id="drawer-title"></div>
+      </div>
+      <button class="icon-btn" id="drawer-close" aria-label="Close">✕</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/dist/ag-grid-community.min.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
