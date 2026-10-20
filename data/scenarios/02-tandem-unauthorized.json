@@ -1,0 +1,152 @@
+{
+  "id": "tandem-unauthorized",
+  "title": "Milestone 3 of a React app for a health startup",
+  "hero": false,
+  "freelancer": {
+    "name": "Marcus Lee",
+    "business": "Marcus Lee Dev",
+    "email": "marcus@marcuslee.dev",
+    "craft": "Freelance React developer"
+  },
+  "client": {
+    "name": "Ben Carter",
+    "company": "Tandem Health Inc.",
+    "email": "billing@tandemhealth.io"
+  },
+  "demo": {
+    "received_hours_ago": 150,
+    "response_window_hours": 240
+  },
+  "dispute": {
+    "dispute_id": "PP-D-27155-TANDEM",
+    "create_time": "__DYNAMIC__",
+    "update_time": "__DYNAMIC__",
+    "reason": "UNAUTHORISED",
+    "external_reason_code": "10.4",
+    "status": "WAITING_FOR_SELLER_RESPONSE",
+    "dispute_life_cycle_stage": "CHARGEBACK",
+    "dispute_channel": "EXTERNAL",
+    "dispute_amount": { "currency_code": "USD", "value": "4500.00" },
+    "seller_response_due_date": "__DYNAMIC__",
+    "disputed_transactions": [
+      {
+        "seller_transaction_id": "3TD99817MM2041125",
+        "create_time": "2026-08-28T19:03:44Z",
+        "transaction_status": "COMPLETED",
+        "gross_amount": { "currency_code": "USD", "value": "4500.00" },
+        "invoice_number": "MLD-0019",
+        "buyer": { "name": "Tandem Health Inc." },
+        "seller": { "name": "Marcus Lee Dev", "email": "marcus@marcuslee.dev" }
+      }
+    ],
+    "messages": [
+      {
+        "posted_by": "BUYER",
+        "time_posted": "__DYNAMIC__",
+        "content": "Cardholder statement forwarded by issuing bank (filed by Ben Carter, CEO): This charge was not authorized by Tandem Health. We have no agreement with this vendor and do not recognize this transaction. Please reverse it."
+      }
+    ]
+  },
+  "paypal_transactions": [
+    {
+      "transaction_info": {
+        "transaction_id": "8KA11204PL7730012",
+        "transaction_event_code": "T0007",
+        "transaction_initiation_date": "2026-06-30T17:12:01Z",
+        "transaction_amount": { "currency_code": "USD", "value": "3000.00" },
+        "transaction_status": "S",
+        "invoice_id": "MLD-0011",
+        "transaction_subject": "Tandem Health - Milestone 1: auth + onboarding flow"
+      },
+      "payer_info": { "email_address": "billing@tandemhealth.io", "payer_name": { "alternate_full_name": "Tandem Health Inc." }, "country_code": "US" }
+    },
+    {
+      "transaction_info": {
+        "transaction_id": "5QW80033JD9921874",
+        "transaction_event_code": "T0007",
+        "transaction_initiation_date": "2026-07-29T15:40:27Z",
+        "transaction_amount": { "currency_code": "USD", "value": "3000.00" },
+        "transaction_status": "S",
+        "invoice_id": "MLD-0015",
+        "transaction_subject": "Tandem Health - Milestone 2: appointment booking"
+      },
+      "payer_info": { "email_address": "billing@tandemhealth.io", "payer_name": { "alternate_full_name": "Tandem Health Inc." }, "country_code": "US" }
+    },
+    {
+      "transaction_info": {
+        "transaction_id": "3TD99817MM2041125",
+        "transaction_event_code": "T0007",
+        "transaction_initiation_date": "2026-08-28T19:03:44Z",
+        "transaction_amount": { "currency_code": "USD", "value": "4500.00" },
+        "transaction_status": "S",
+        "invoice_id": "MLD-0019",
+        "transaction_subject": "Tandem Health - Milestone 3: clinician dashboard"
+      },
+      "payer_info": { "email_address": "billing@tandemhealth.io", "payer_name": { "alternate_full_name": "Tandem Health Inc." }, "country_code": "US" }
+    }
+  ],
+  "documents": [
+    {
+      "id": "MSA",
+      "title": "Master Services Agreement + Statement of Work",
+      "kind": "contract",
+      "date": "2026-06-08",
+      "source": "DocuSign envelope, completed",
+      "summary": "Three-milestone engagement, signatory and authority, payment terms.",
+      "sections": [
+        { "anchor": "§1", "heading": "Parties and signatory", "text": "Agreement between Marcus Lee Dev (\"Developer\") and Tandem Health Inc., a Delaware corporation (\"Company\"). Signed for Company by Aisha Verma, Co-founder & CTO, on June 8, 2026, via DocuSign (envelope 4F2A-77C1)." },
+        { "anchor": "§2", "heading": "Authority", "text": "The individual signing for Company represents that they are authorized to bind Company to this Agreement." },
+        { "anchor": "§3", "heading": "Milestones", "text": "M1 auth + onboarding flow ($3,000); M2 appointment booking ($3,000); M3 clinician dashboard ($4,500). Each milestone is invoiced via PayPal when its pull request is merged into Company's main branch." },
+        { "anchor": "§4", "heading": "Payment method", "text": "Company pays invoices from its PayPal business account billing@tandemhealth.io." },
+        { "anchor": "§5", "heading": "Ownership", "text": "All code delivered becomes Company property upon payment of the related milestone invoice." }
+      ]
+    },
+    {
+      "id": "SLACK",
+      "title": "Shared Slack channel #tandem-marcus (export)",
+      "kind": "correspondence",
+      "date": "2026-06-09 to 2026-09-02",
+      "source": "Slack Connect export",
+      "summary": "Day-to-day project messages between Marcus and Tandem staff.",
+      "sections": [
+        { "anchor": "K1", "heading": "Jun 9 - Aisha Verma", "text": "Welcome Marcus! Ben (our CEO) and I are both in here. Repo access is set up under the tandemhealth GitHub org." },
+        { "anchor": "K2", "heading": "Jul 29 - Aisha Verma", "text": "M2 looks great, booking flow is live for the pilot clinics. Paying the invoice now." },
+        { "anchor": "K3", "heading": "Aug 22 - Aisha Verma", "text": "Heads up: Friday is my last day at Tandem, I'm moving on. Ben will be your point of contact from now on. @ben I've forwarded you the DocuSign for Marcus's contract and the M3 scope." },
+        { "anchor": "K4", "heading": "Aug 22 - Ben Carter", "text": "Thanks Aisha, we'll miss you. Marcus, just ship M3 and send me anything you need." },
+        { "anchor": "K5", "heading": "Aug 28 - Marcus Lee", "text": "M3 PR #212 is up: clinician dashboard with filters and CSV export. Invoice MLD-0019 will go out on merge, same as before." },
+        { "anchor": "K6", "heading": "Sep 2 - Ben Carter", "text": "Clinicians are using the new dashboard every day. Nice work." }
+      ]
+    },
+    {
+      "id": "GITHUB",
+      "title": "GitHub audit log: tandemhealth/tandem-app",
+      "kind": "system_log",
+      "date": "2026-06-30 to 2026-09-30",
+      "source": "GitHub organization audit log export",
+      "summary": "Pull request merges and deployments.",
+      "sections": [
+        { "anchor": "G1", "heading": "PR #118 merged", "text": "2026-06-30 16:55 UTC - PR #118 \"M1: auth + onboarding\" by marcuslee-dev merged into main by averma." },
+        { "anchor": "G2", "heading": "PR #164 merged", "text": "2026-07-29 15:31 UTC - PR #164 \"M2: appointment booking\" by marcuslee-dev merged into main by averma." },
+        { "anchor": "G3", "heading": "PR #212 merged", "text": "2026-08-28 18:47 UTC - PR #212 \"M3: clinician dashboard\" by marcuslee-dev merged into main by bcarter (Ben Carter, org owner)." },
+        { "anchor": "G4", "heading": "Production deploys", "text": "Code from PR #212 has been included in 23 production deployments of tandem-app between Aug 28 and Sep 30, 2026." }
+      ]
+    },
+    {
+      "id": "LINKEDIN",
+      "title": "Public LinkedIn profile update (screenshot)",
+      "kind": "public_record",
+      "date": "2026-08-25",
+      "source": "Screenshot captured by freelancer",
+      "summary": "Former CTO's public job change.",
+      "sections": [
+        { "anchor": "N1", "heading": "Aisha Verma - profile", "text": "Aisha Verma - Engineering Lead at Northwind Bio (started Aug 2026). Previously Co-founder & CTO, Tandem Health (2024 - Aug 2026)." }
+      ]
+    }
+  ],
+  "answer_key": {
+    "note": "Used only by scripts/eval.js to score the agent. Never sent to the model.",
+    "real_complaint": "This is not fraud. The co-founder who hired Marcus left. The CEO who filed the dispute does not recognize the vendor or remember the contract, even though he merged the M3 pull request himself and his clinicians use the code.",
+    "must_find": ["GITHUB G3", "SLACK K3", "MSA §1", "PAYPAL-TXN 8KA11204PL7730012"],
+    "best_strategy": "CONTEST_AND_RESOLVE"
+  }
+}

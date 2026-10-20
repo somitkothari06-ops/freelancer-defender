@@ -1,0 +1,137 @@
+{
+  "id": "patel-website",
+  "title": "Website build for a family dental practice",
+  "hero": false,
+  "freelancer": {
+    "name": "Sofia Alvarez",
+    "business": "Alvarez Web Studio",
+    "email": "sofia@alvarezweb.studio",
+    "craft": "Freelance web developer"
+  },
+  "client": {
+    "name": "Greg Patel",
+    "company": "Patel Family Dental",
+    "email": "greg@patelfamilydental.com"
+  },
+  "demo": {
+    "received_hours_ago": 90,
+    "response_window_hours": 240
+  },
+  "dispute": {
+    "dispute_id": "PP-D-27162-PATEL",
+    "create_time": "__DYNAMIC__",
+    "update_time": "__DYNAMIC__",
+    "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+    "external_reason_code": "13.1",
+    "status": "WAITING_FOR_SELLER_RESPONSE",
+    "dispute_life_cycle_stage": "CHARGEBACK",
+    "dispute_channel": "EXTERNAL",
+    "dispute_amount": { "currency_code": "USD", "value": "1800.00" },
+    "seller_response_due_date": "__DYNAMIC__",
+    "disputed_transactions": [
+      {
+        "seller_transaction_id": "9PF20448RT6610093",
+        "create_time": "2026-06-16T21:10:05Z",
+        "transaction_status": "COMPLETED",
+        "gross_amount": { "currency_code": "USD", "value": "1800.00" },
+        "invoice_number": "AWS-2026-031",
+        "buyer": { "name": "Greg Patel" },
+        "seller": { "name": "Alvarez Web Studio", "email": "sofia@alvarezweb.studio" }
+      }
+    ],
+    "messages": [
+      {
+        "posted_by": "BUYER",
+        "time_posted": "__DYNAMIC__",
+        "content": "Cardholder statement forwarded by issuing bank: We paid $1,800 for a website for our dental practice. We do not have a working website. Patients searching for us get an error page. The service was never properly provided."
+      }
+    ]
+  },
+  "paypal_transactions": [
+    {
+      "transaction_info": {
+        "transaction_id": "9PF20448RT6610093",
+        "transaction_event_code": "T0007",
+        "transaction_initiation_date": "2026-06-16T21:10:05Z",
+        "transaction_amount": { "currency_code": "USD", "value": "1800.00" },
+        "transaction_status": "S",
+        "invoice_id": "AWS-2026-031",
+        "transaction_subject": "Patel Family Dental - 6-page website, design + build + launch"
+      },
+      "payer_info": { "email_address": "greg@patelfamilydental.com", "payer_name": { "alternate_full_name": "Greg Patel" }, "country_code": "US" }
+    }
+  ],
+  "documents": [
+    {
+      "id": "PROPOSAL",
+      "title": "Website proposal + terms (accepted)",
+      "kind": "contract",
+      "date": "2026-05-02",
+      "source": "Accepted proposal PDF",
+      "summary": "Scope, hosting responsibility, handover and support terms.",
+      "sections": [
+        { "anchor": "P1", "heading": "Scope", "text": "Design and build a 6-page website (Home, Services, Team, Insurance, New Patients, Contact) with online appointment request form, and launch it on Client's hosting account. Fee: $1,800." },
+        { "anchor": "P2", "heading": "Hosting and domain", "text": "Hosting and the domain patelfamilydental.com are purchased by and registered to Client, billed to Client's own card. Client is responsible for keeping hosting and domain renewals current. Developer does not control Client's billing." },
+        { "anchor": "P3", "heading": "Handover", "text": "At launch Developer provides a handover document with all logins. Client owns all accounts." },
+        { "anchor": "P4", "heading": "Support", "text": "30 days of post-launch support for bugs is included. After that, help is billed at $80/hour." }
+      ]
+    },
+    {
+      "id": "EMAILS",
+      "title": "Email thread: Sofia <-> Greg",
+      "kind": "correspondence",
+      "date": "2026-06-12 to 2026-06-16",
+      "source": "Freelancer's email export",
+      "summary": "Launch, client acceptance, invoice.",
+      "sections": [
+        { "anchor": "E1", "heading": "Jun 12 - Sofia to Greg: We're live", "text": "Greg, patelfamilydental.com is live! Attached is your handover doc with the logins for your hosting account (HostPeak), the website editor and your domain. Everything is in your name." },
+        { "anchor": "E2", "heading": "Jun 13 - Greg to Sofia", "text": "Looks fantastic. Our front desk already got two appointment requests through the form this morning. Thank you!" },
+        { "anchor": "E3", "heading": "Jun 16 - Sofia to Greg", "text": "So glad to hear it! Invoice AWS-2026-031 sent via PayPal. Your 30 days of support run until July 12." }
+      ]
+    },
+    {
+      "id": "HANDOVER",
+      "title": "Handover document (sent Jun 12)",
+      "kind": "deliverable",
+      "date": "2026-06-12",
+      "source": "PDF attached to launch email",
+      "summary": "Account ownership details for hosting, domain and editor.",
+      "sections": [
+        { "anchor": "H1", "heading": "Hosting", "text": "HostPeak account owner: Greg Patel, greg@patelfamilydental.com. Plan: Business, renews monthly. Payment method on file: Visa ending 4417 (Client's card)." },
+        { "anchor": "H2", "heading": "Domain", "text": "patelfamilydental.com registered to Greg Patel, auto-renew ON, expires May 2027." },
+        { "anchor": "H3", "heading": "If the site ever goes down", "text": "First check that the HostPeak payment method is current; suspended hosting shows an \"Account Suspended\" page. Updating the card restores the site within minutes." }
+      ]
+    },
+    {
+      "id": "UPTIME",
+      "title": "Uptime monitor history: patelfamilydental.com",
+      "kind": "system_log",
+      "date": "2026-06-12 to 2026-10-19",
+      "source": "Freelancer's uptime monitoring service",
+      "summary": "Availability checks and status changes for the site.",
+      "sections": [
+        { "anchor": "U1", "heading": "Up", "text": "2026-06-12 18:02 UTC - Site UP (HTTP 200). Continuously up for 112 days." },
+        { "anchor": "U2", "heading": "Status change", "text": "2026-10-02 04:00 UTC - Site DOWN. Response HTTP 503 with page title \"Account Suspended - HostPeak\". Body text: \"This account has been suspended due to a billing issue. If you are the account owner, please log in to update your payment method.\"" },
+        { "anchor": "U3", "heading": "Still down", "text": "2026-10-19 12:00 UTC - Site still returning \"Account Suspended - HostPeak\"." }
+      ]
+    },
+    {
+      "id": "REVIEWS",
+      "title": "Google reviews for Patel Family Dental (screenshots)",
+      "kind": "public_record",
+      "date": "2026-07 to 2026-09",
+      "source": "Screenshots captured by freelancer",
+      "summary": "Patient reviews that mention the website.",
+      "sections": [
+        { "anchor": "R1", "heading": "Jul 21 review", "text": "\"Booked my cleaning through their new website in two minutes. Super easy.\" - 5 stars" },
+        { "anchor": "R2", "heading": "Oct 9 review", "text": "\"Their website seems to be down? Had to call to book.\" - 4 stars. Owner reply from Greg Patel: \"Sorry about that! Our web person seems to have taken the site down, we're sorting it out.\"" }
+      ]
+    }
+  ],
+  "answer_key": {
+    "note": "Used only by scripts/eval.js to score the agent. Never sent to the model.",
+    "real_complaint": "The client's own hosting lapsed because the card on file failed, so the site was suspended. The client believes the freelancer took it down or never really delivered it. The website was delivered, accepted and worked for 112 days.",
+    "must_find": ["UPTIME U2", "HANDOVER H1", "PROPOSAL P2", "REVIEWS R2"],
+    "best_strategy": "CONTEST_AND_RESOLVE"
+  }
+}

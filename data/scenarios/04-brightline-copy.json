@@ -1,0 +1,128 @@
+{
+  "id": "brightline-copy",
+  "title": "Blog articles + email sequence for a fitness studio",
+  "hero": false,
+  "freelancer": {
+    "name": "Jordan Kim",
+    "business": "Jordan Kim Copy",
+    "email": "jordan@jordankimcopy.com",
+    "craft": "Freelance copywriter"
+  },
+  "client": {
+    "name": "Nadia Rossi",
+    "company": "Brightline Fitness",
+    "email": "nadia@brightlinefit.com"
+  },
+  "demo": {
+    "received_hours_ago": 226,
+    "response_window_hours": 240
+  },
+  "dispute": {
+    "dispute_id": "PP-D-27170-BRIGHT",
+    "create_time": "__DYNAMIC__",
+    "update_time": "__DYNAMIC__",
+    "reason": "MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED",
+    "external_reason_code": "13.3",
+    "status": "WAITING_FOR_SELLER_RESPONSE",
+    "dispute_life_cycle_stage": "CHARGEBACK",
+    "dispute_channel": "EXTERNAL",
+    "dispute_amount": { "currency_code": "USD", "value": "1500.00" },
+    "seller_response_due_date": "__DYNAMIC__",
+    "disputed_transactions": [
+      {
+        "seller_transaction_id": "1JK70382WA4410757",
+        "create_time": "2026-08-05T13:22:51Z",
+        "transaction_status": "COMPLETED",
+        "gross_amount": { "currency_code": "USD", "value": "1500.00" },
+        "invoice_number": "JKC-088",
+        "buyer": { "name": "Nadia Rossi" },
+        "seller": { "name": "Jordan Kim Copy", "email": "jordan@jordankimcopy.com" }
+      }
+    ],
+    "messages": [
+      {
+        "posted_by": "BUYER",
+        "time_posted": "__DYNAMIC__",
+        "content": "Cardholder statement forwarded by issuing bank: The content we paid for was incomplete and low quality. The writer stopped responding. We want our money back."
+      }
+    ]
+  },
+  "paypal_transactions": [
+    {
+      "transaction_info": {
+        "transaction_id": "1JK70382WA4410757",
+        "transaction_event_code": "T0007",
+        "transaction_initiation_date": "2026-08-05T13:22:51Z",
+        "transaction_amount": { "currency_code": "USD", "value": "1500.00" },
+        "transaction_status": "S",
+        "invoice_id": "JKC-088",
+        "transaction_subject": "Brightline Fitness - 5 blog articles + 1 welcome email sequence (paid upfront)"
+      },
+      "payer_info": { "email_address": "nadia@brightlinefit.com", "payer_name": { "alternate_full_name": "Nadia Rossi" }, "country_code": "US" }
+    }
+  ],
+  "documents": [
+    {
+      "id": "AGREEMENT",
+      "title": "Content agreement (email acceptance)",
+      "kind": "contract",
+      "date": "2026-08-04",
+      "source": "Email-accepted agreement",
+      "summary": "Deliverables, pricing per piece, schedule.",
+      "sections": [
+        { "anchor": "A1", "heading": "Deliverables", "text": "Five SEO blog articles of 1,200-1,500 words each, and one 4-email welcome sequence." },
+        { "anchor": "A2", "heading": "Pricing", "text": "$250 per article (5 x $250 = $1,250) and $250 for the email sequence. Total $1,500, paid upfront." },
+        { "anchor": "A3", "heading": "Schedule", "text": "One article per week starting Aug 12, email sequence by Aug 30. Last article due Sep 9." },
+        { "anchor": "A4", "heading": "Revisions", "text": "One round of revisions per piece, requested within 7 days of delivery." }
+      ]
+    },
+    {
+      "id": "DELIVERIES",
+      "title": "Delivery log (shared Google Drive folder)",
+      "kind": "system_log",
+      "date": "2026-08-12 to 2026-10-10",
+      "source": "Google Drive activity export",
+      "summary": "What was delivered and when.",
+      "sections": [
+        { "anchor": "D1", "heading": "Article 1", "text": "2026-08-12 - \"7 Mistakes New Lifters Make\" (1,380 words) uploaded. Marked approved by nadia@brightlinefit.com on Aug 13." },
+        { "anchor": "D2", "heading": "Article 2", "text": "2026-08-19 - \"Recovery Days Are Training Days\" (1,450 words) uploaded. Approved Aug 19." },
+        { "anchor": "D3", "heading": "Article 3", "text": "2026-08-26 - \"How to Pick a Gym You'll Actually Go To\" (1,290 words) uploaded. One revision requested Aug 27, revised version approved Aug 29." },
+        { "anchor": "D4", "heading": "Email sequence", "text": "2026-08-30 - \"Welcome to Brightline\" 4-email sequence uploaded. Approved Sep 1." },
+        { "anchor": "D5", "heading": "Article 4", "text": "2026-09-02 - \"Strength Training After 40\" (1,410 words) uploaded. Approved Sep 3." },
+        { "anchor": "D6", "heading": "Article 5", "text": "No file uploaded for Article 5 as of 2026-10-10." }
+      ]
+    },
+    {
+      "id": "EMAILS",
+      "title": "Email thread: Jordan <-> Nadia",
+      "kind": "correspondence",
+      "date": "2026-08-19 to 2026-09-24",
+      "source": "Freelancer's email export",
+      "summary": "Feedback on pieces and follow-ups about the last article.",
+      "sections": [
+        { "anchor": "E1", "heading": "Aug 19 - Nadia to Jordan", "text": "The recovery article is the best thing on our blog. Our members are sharing it." },
+        { "anchor": "E2", "heading": "Sep 8 - Jordan to Nadia", "text": "Quick heads up, I'm under the weather this week. Article 5 will be with you by Friday the 12th." },
+        { "anchor": "E3", "heading": "Sep 16 - Nadia to Jordan", "text": "Hi Jordan, checking in on the last article? We had it on our content calendar for this week." },
+        { "anchor": "E4", "heading": "Sep 24 - Nadia to Jordan", "text": "Jordan, it's been two weeks with no reply. Please let me know if you're still able to finish this." }
+      ]
+    },
+    {
+      "id": "BLOG",
+      "title": "brightlinefit.com/blog (public pages, captured Oct 10)",
+      "kind": "public_record",
+      "date": "2026-10-10",
+      "source": "Page captures by freelancer",
+      "summary": "Which delivered pieces the client published.",
+      "sections": [
+        { "anchor": "B1", "heading": "Published articles", "text": "Published on brightlinefit.com/blog: \"7 Mistakes New Lifters Make\" (Aug 15), \"Recovery Days Are Training Days\" (Aug 22), \"How to Pick a Gym You'll Actually Go To\" (Aug 31), \"Strength Training After 40\" (Sep 5). The text matches the delivered files." },
+        { "anchor": "B2", "heading": "Email signup", "text": "The site's newsletter signup sends the \"Welcome to Brightline\" sequence. Captured Oct 10." }
+      ]
+    }
+  ],
+  "answer_key": {
+    "note": "Used only by scripts/eval.js to score the agent. Never sent to the model.",
+    "real_complaint": "Article 5 was never delivered and the freelancer went silent. The client feels ghosted. The 'low quality' claim is not supported: the client approved and published the other four articles and the email sequence.",
+    "must_find": ["DELIVERIES D6", "EMAILS E4", "BLOG B1", "AGREEMENT A2"],
+    "best_strategy": "PARTIAL_REFUND_AND_CONTEST"
+  }
+}
