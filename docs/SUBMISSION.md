@@ -21,6 +21,8 @@ A freelancer finishes the work, the client approves it, the client pays. Months 
 
 Dispute tools exist, but they're built for online shops with order databases. Nobody builds them for the person who did the work. And they all make the same mistake: they answer the reason the client *filed*, which is often not what is actually wrong.
 
+It happens to real people. A writer was paid $125 for five articles; the client thanked her, published them, then charged the payment back, and she paid a $20 fee on top ([The Write Life](https://thewritelife.com/chargebacks/)). A developer was asked to refund $12,500 on an "unauthorized" claim, when the client had simply used a card that wasn't his ([Hacker News](https://news.ycombinator.com/item?id=29862860)). Friendly fraud makes up about 44% of the chargebacks merchants absorb, and they recover only about 11% on average ([Chargebacks911 2026 report](https://www.accountsrecovery.net/2026/09/01/friendly-fraud-accounts-for-44-of-chargebacks-chargebacks911-report-finds/)). And 70% of US freelancers get paid through PayPal ([PayPal](https://newsroom.paypal-corp.com/PayPal-Releases-Global-Freelancer-Insights)). More in [docs/RESEARCH.md](RESEARCH.md).
+
 ## What it does
 
 The Freelancer Defender pulls a dispute from PayPal, reads the freelancer's evidence, and works out three things, shown as three cards:
@@ -33,7 +35,7 @@ Then it writes the response to the bank and a friendly message to the client. **
 
 The agent is honest. It lists the freelancer's own weak points, and in one demo case it recommends a partial refund because part of the work really wasn't delivered.
 
-Freelancers can add their own evidence to any dispute (paste or upload a contract, an email thread, a delivery log), and it becomes citable immediately.
+Freelancers can add their own evidence to any dispute (paste or upload a contract, an email thread, a delivery log), and it becomes citable immediately. Anyone can also **try their own case**: type in what the client told their bank, add the paperwork, and watch the agent work on a story it has never seen.
 
 ## How we built it
 

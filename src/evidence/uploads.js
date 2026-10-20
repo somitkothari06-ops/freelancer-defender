@@ -38,7 +38,10 @@ function save(disputeId, docs) {
 
 // "Client contract (signed)" -> "CLIENT-CONTRACT-SIGNED", unique among existing ids.
 function makeId(title, taken) {
-  const base = title.toUpperCase().replace(/[^A-Z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24).replace(/-$/, '') || 'DOC';
+  // Trim long titles at a whole word: "VIDEO-PRODUCTION", not "VIDEO-PRODUCTION-AGREEME".
+  const full = title.toUpperCase().replace(/[^A-Z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const cut = full.length <= 24 ? full : full.slice(0, 25).replace(/-[^-]*$/, '') || full.slice(0, 24);
+  const base = cut || 'DOC';
   let id = base;
   for (let n = 2; taken.has(id); n++) id = `${base}-${n}`;
   return id;
