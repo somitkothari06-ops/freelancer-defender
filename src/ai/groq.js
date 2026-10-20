@@ -74,6 +74,12 @@ async function chat(body, { onWait } = {}) {
     }
 
     const data = await res.json();
+    // gpt-oss occasionally produces a tool call Groq can't parse; simply asking again fixes it.
+    const flaky = ['output_parse_failed', 'tool_use_failed'].includes(data?.error?.code);
+    if (flaky && attempt < 3) {
+      onWait?.(500, 'model output glitch, retrying');
+      continue;
+    }
     if (!res.ok) {
       const err = new Error(`Groq ${res.status}: ${data?.error?.message || JSON.stringify(data)}`);
       err.status = res.status;
