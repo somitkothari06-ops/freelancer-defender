@@ -152,20 +152,24 @@ function renderTimeline(rows) {
     return;
   }
   const withDue = rows.filter((r) => r.due);
-  // Each bar runs from now to the deadline, so its length is the time left. The view starts a
-  // little before now and ends just after the last deadline, scaled to fit the card.
+  // The view starts at midnight today and ends just after the last deadline, scaled to fit the
+  // card. Each bar runs from when the dispute arrived (clipped to the view) to its deadline, so
+  // bars start flush at the left edge; the black "Now" marker shows the current time.
   const now = Date.now();
-  const start = new Date(now - 864e5 / 3);
+  const start = new Date(now);
+  start.setHours(0, 0, 0, 0);
   const resources = withDue.map((r) => ({ id: r.dispute_id, name: r.client.split(',').pop().trim(), amount: fmtMoney(r.amount) }));
   const events = withDue.map((r) => {
     const t = timeLeft(r.due);
     return {
       id: r.dispute_id,
       resourceId: r.dispute_id,
-      startDate: new Date(now),
+      startDate: new Date(Math.max(+new Date(r.created), +start)),
       endDate: new Date(r.due),
-      name: `${t.short} left`,
-      eventColor: t.hrs < 48 ? 'red' : r.has_replay ? 'blue' : 'gray',
+      // Short label under a day so it fits inside the (short) bar.
+      name: `${t.days ? t.short : `${t.hrs}h`} left`,
+      // Calm navy tints; urgency is a red dot and red text only (styles.css, .tl-*).
+      cls: [r.has_replay ? 'tl-ready' : 'tl-todo', t.hrs < 48 ? 'tl-urgent' : ''].join(' ').trim(),
     };
   });
   const end = new Date(Math.max(Date.now() + 4 * 864e5, ...events.map((e) => +e.endDate)) + 864e5);
@@ -180,8 +184,8 @@ function renderTimeline(rows) {
     rowHeight: 52,
     barMargin: 8,
     readOnly: true,
-    eventStyle: 'rounded',
-    features: { timeRanges: { showCurrentTimeLine: { name: 'Now' } }, eventTooltip: false, cellMenu: false, eventMenu: false, scheduleMenu: false },
+    eventStyle: 'plain',
+    features: { timeRanges: false, eventTooltip: false, cellMenu: false, eventMenu: false, scheduleMenu: false },
     columns: [
       { text: 'Client', field: 'name', width: 170 },
       { text: 'Amount', field: 'amount', width: 100 },
@@ -190,7 +194,29 @@ function renderTimeline(rows) {
     events,
     listeners: { eventClick: ({ eventRecord }) => (location.hash = `#/case/${encodeURIComponent(eventRecord.id)}`) },
   });
+  placeNowMarker();
 }
+
+// "Now" marker under the timeline, pointing up at the current time.
+function placeNowMarker() {
+  const sch = state.scheduler;
+  const box = $('#timeline');
+  if (!sch || !box) return;
+  let m = $('#now-marker');
+  if (!m) {
+    m = h('<div id="now-marker" class="now-marker" aria-hidden="true"></div>');
+    box.after(m);
+  }
+  const axis = sch.timeAxisSubGrid?.element;
+  const x = sch.getCoordinateFromDate(new Date());
+  if (!axis || x == null || x < 0) return m.classList.add('hidden');
+  const left = axis.getBoundingClientRect().left - box.parentElement.getBoundingClientRect().left + x;
+  m.classList.remove('hidden');
+  m.style.left = `${left}px`;
+  m.textContent = `▲ Now · ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+}
+window.addEventListener('resize', () => requestAnimationFrame(placeNowMarker));
+setInterval(placeNowMarker, 60000);
 
 // The dispute list (AG Grid).
 function renderGrid(rows) {

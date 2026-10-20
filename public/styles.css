@@ -352,17 +352,19 @@ pre.req { width: 100%; margin: 6px 0 0; padding: 12px; border-radius: 10px; back
 .grid .ag-row-pinned { background: var(--tint, #f5f7fb); font-weight: 700; }
 @media (max-width: 640px) { .search { min-width: 0; width: 100%; } }
 
-/* Timeline "Now" marker: no line through the rows, just a bold black pill in the header
-   with a small arrow pointing at where the bars start. */
-#timeline .b-time-ranges-body-canvas .b-sch-current-time { display: none !important; }
-#timeline .b-time-ranges-header-canvas .b-sch-current-time { border: 0 !important; background: none !important; width: 0 !important; overflow: visible !important; z-index: 5; }
-#timeline .b-time-ranges-header-canvas .b-sch-current-time label {
-  display: block !important; position: absolute; top: -24px; left: 0; transform: translateX(-50%);
-  background: #000 !important; color: #fff !important; font-size: 11px; font-weight: 800; letter-spacing: .02em;
-  line-height: 1; padding: 4px 9px; border-radius: 999px; white-space: nowrap; margin: 0;
-}
-#timeline .b-time-ranges-header-canvas .b-sch-current-time::after {
-  content: ''; position: absolute; left: -5px; top: -6px; width: 0; height: 0;
-  border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #000;
-}
-#timeline .b-sch-timeaxiscolumn, #timeline .b-time-ranges-header-canvas { overflow: visible !important; }
+/* Deadline bars: black with white text; urgent ones (due within 2 days) get a white dot.
+   Disputes not worked out yet are outlined instead of filled. */
+#timeline .b-sch-event { border-radius: 999px !important; background: #111 !important; }
+#timeline .b-sch-event.tl-todo { background: #fff !important; box-shadow: inset 0 0 0 1.5px #111; }
+#timeline .b-sch-event-content { color: #fff !important; font-weight: 700; padding-left: 6px; }
+#timeline .tl-todo .b-sch-event-content { color: #111 !important; }
+#timeline .tl-urgent .b-sch-event-content::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #fff; margin-right: 7px; flex: none; }
+#timeline .tl-todo.tl-urgent .b-sch-event-content::before { background: #111; }
+.tl-legend .chip-dot { width: 22px; height: 12px; border-radius: 999px; background: #111; position: relative; }
+.tl-legend .chip-dot::after { content: ''; position: absolute; left: 5px; top: 3px; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+.tl-legend .chip { width: 22px; height: 12px; border-radius: 999px; background: #111; }
+.tl-legend .chip.hollow { background: #fff; box-shadow: inset 0 0 0 1.5px #111; }
+/* The "Now" marker sits under the timeline, pointing up at the current time */
+.card:has(#timeline) { position: relative; }
+.now-marker { position: absolute; transform: translateX(-50%); margin-top: 8px; background: #111; color: #fff; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 999px; white-space: nowrap; pointer-events: none; }
+.card:has(#timeline) { padding-bottom: 44px; }
