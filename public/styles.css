@@ -315,20 +315,13 @@ pre.req { width: 100%; margin: 6px 0 0; padding: 12px; border-radius: 10px; back
 .concern { padding: 8px 0; border-top: 1px solid var(--line, #e5e7eb); }
 .concern:first-of-type { border-top: 0; }
 
-/* Timeline "Now" marker: a thin navy line with a small label, not a big orange block */
-#timeline .b-sch-current-time { border-left: 2px solid var(--navy, #0b1b3f) !important; background: none !important; }
-#timeline .b-sch-timerange.b-sch-current-time label,
-#timeline .b-timeaxis-header .b-sch-current-time { background: var(--navy, #0b1b3f) !important; color: #fff !important; font-size: 11px; font-weight: 700; border-radius: 4px; padding: 1px 6px; }
-
 /* Label/value list for structured records (e.g. PayPal payments) */
 .fields { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 6px 0 0; font-size: 15px; }
 .fields dt { color: var(--faint); font-weight: 600; }
 .fields dd { margin: 0; color: var(--ink, #0b1b3f); overflow-wrap: anywhere; }
-#timeline .b-timeaxis-header .b-sch-current-time, #timeline .b-sch-current-time label { display: none !important; }
 .tl-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--faint); }
 .tl-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .tl-legend i { width: 14px; height: 10px; border-radius: 3px; display: inline-block; }
-.tl-legend i.ln { width: 2px; height: 14px; border-radius: 0; background: var(--navy); }
 /* Short bars: let the "time left" label run past the end of the bar instead of being cut off */
 #timeline .b-sch-event, #timeline .b-sch-event-wrap, #timeline .b-sch-event-content { overflow: visible !important; }
 #timeline .b-sch-event-content { white-space: nowrap; }
@@ -358,3 +351,18 @@ pre.req { width: 100%; margin: 6px 0 0; padding: 12px; border-radius: 10px; back
 .search:focus { outline: 3px solid #93c5fd; outline-offset: 0; border-color: var(--blue); }
 .grid .ag-row-pinned { background: var(--tint, #f5f7fb); font-weight: 700; }
 @media (max-width: 640px) { .search { min-width: 0; width: 100%; } }
+
+/* Timeline "Now" marker: no line through the rows, just a bold black pill in the header
+   with a small arrow pointing at where the bars start. */
+#timeline .b-time-ranges-body-canvas .b-sch-current-time { display: none !important; }
+#timeline .b-time-ranges-header-canvas .b-sch-current-time { border: 0 !important; background: none !important; width: 0 !important; overflow: visible !important; z-index: 5; }
+#timeline .b-time-ranges-header-canvas .b-sch-current-time label {
+  display: block !important; position: absolute; top: -24px; left: 0; transform: translateX(-50%);
+  background: #000 !important; color: #fff !important; font-size: 11px; font-weight: 800; letter-spacing: .02em;
+  line-height: 1; padding: 4px 9px; border-radius: 999px; white-space: nowrap; margin: 0;
+}
+#timeline .b-time-ranges-header-canvas .b-sch-current-time::after {
+  content: ''; position: absolute; left: -5px; top: -6px; width: 0; height: 0;
+  border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #000;
+}
+#timeline .b-sch-timeaxiscolumn, #timeline .b-time-ranges-header-canvas { overflow: visible !important; }

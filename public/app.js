@@ -198,7 +198,7 @@ function renderGrid(rows) {
     {
       headerName: 'Time left',
       field: 'due',
-      width: 125,
+      width: 145,
       sort: 'asc',
       comparator: (a, b) => (a ? new Date(a) : Infinity) - (b ? new Date(b) : Infinity),
       cellRenderer: (p) => {
@@ -1032,7 +1032,7 @@ function evidenceMatrix(r) {
         headerName: 'Cited',
         headerTooltip: 'How many times your response quotes this document',
         field: 'used',
-        width: 105,
+        width: 120,
         sort: 'desc',
         type: 'numericColumn',
         cellRenderer: (p) => (p.value ? `<span class="count">${p.value}×</span>` : '<span class="faint">—</span>'),
@@ -1041,7 +1041,7 @@ function evidenceMatrix(r) {
         headerName: 'Risk',
         headerTooltip: 'Does this document also show a weak point on your side?',
         field: 'against',
-        width: 125,
+        width: 120,
         valueFormatter: (p) => (p.value ? 'Yes' : 'No'),
         cellRenderer: (p) => (p.value ? '<span class="tag amber">Watch out</span>' : '<span class="faint">No</span>'),
       },
