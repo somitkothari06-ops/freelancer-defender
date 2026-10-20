@@ -39,6 +39,8 @@ const DECISIONS = {
 };
 
 function timeLeft(due) {
+  // No due date means PayPal isn't waiting on the freelancer right now (e.g. under review).
+  if (!due) return { ms: Infinity, hrs: Infinity, text: 'Not waiting on you', short: 'No deadline' };
   const ms = new Date(due) - Date.now();
   if (ms <= 0) return { ms: 0, text: 'Expired' };
   const hrs = Math.floor(ms / 3.6e6);
@@ -114,7 +116,7 @@ async function openQueue() {
 
   // Headline numbers.
   const atRisk = rows.reduce((n, r) => n + r.amount, 0);
-  const soonest = rows.map((r) => timeLeft(r.due)).sort((a, b) => a.ms - b.ms)[0];
+  const soonest = rows.map((r) => timeLeft(r.due)).filter((t) => Number.isFinite(t.ms)).sort((a, b) => a.ms - b.ms)[0];
   $('#queue-stats').innerHTML = `
     <div class="stat"><div class="label">Earned money at risk</div><div class="value">${fmtMoney(atRisk)}</div></div>
     <div class="stat"><div class="label">Open disputes</div><div class="value">${rows.length}</div></div>
@@ -134,11 +136,11 @@ async function openQueue() {
       field: 'due',
       width: 150,
       sort: 'asc',
-      comparator: (a, b) => new Date(a) - new Date(b),
+      comparator: (a, b) => (a ? new Date(a) : Infinity) - (b ? new Date(b) : Infinity),
       cellRenderer: (p) => {
         const t = timeLeft(p.value);
         const windowMs = new Date(p.value) - new Date(p.data.created);
-        const pct = Math.max(0, Math.min(100, (t.ms / windowMs) * 100));
+        const pct = Number.isFinite(t.ms) ? Math.max(0, Math.min(100, (t.ms / windowMs) * 100)) : 0;
         return `<div class="timeleft ${t.hrs < 12 ? 'urgent' : ''}"><span>${esc(t.short || t.text)}</span><span class="bar"><i style="width:${pct}%"></i></span></div>`;
       },
     },
@@ -283,6 +285,10 @@ function renderCaseHead(c) {
 function renderClock(c) {
   const d = c.dispute;
   const tl = state.status?.timelines || { bankDecisionDays: 90, cardholderFilingDays: 120 };
+  if (!d.seller_response_due_date) {
+    $('#clock').innerHTML = `<div class="countdown"><div class="label">Your time to respond</div><div class="digits" style="color:var(--muted)">No deadline</div><div class="sub">PayPal status: ${esc(d.status)} (${esc(d.dispute_life_cycle_stage)})</div></div><div></div>`;
+    return;
+  }
   const windowH = (new Date(d.seller_response_due_date) - new Date(d.create_time)) / 3.6e6;
   const longest = tl.cardholderFilingDays * 24;
   const pctYou = (windowH / longest) * 100;
@@ -310,7 +316,9 @@ function renderClock(c) {
 
 function renderStatement(c) {
   const d = c.dispute;
-  const msg = (d.messages || []).map((m) => m.content).join('\n\n');
+  // Real PayPal disputes keep the complaint in each item's notes; follow-ups are messages.
+  const itemNotes = (d.disputed_transactions || []).flatMap((t) => (t.items || []).map((i) => i.notes).filter(Boolean));
+  const msg = [...new Set([...itemNotes, ...(d.messages || []).filter((m) => m.posted_by === 'BUYER').map((m) => m.content)])].join('\n\n');
   $('#statement').innerHTML = `
     <div class="reason-line">
       <span class="badge accent">${esc(REASONS[d.reason] || d.reason)}</span>
@@ -356,6 +364,31 @@ function renderControls(c) {
     <span class="faint" style="font-size:12px">Live runs call ${esc(state.status?.groq.model || 'the model')}; on Groq's free tier they take a few minutes.</span>`;
   $('#run-live').onclick = () => startRun('live');
   $('#run-replay').onclick = () => startRun('replay');
+
+  // Live sandbox disputes: buttons to move the dispute through PayPal's lifecycle while testing.
+  if (c.live && state.status?.paypal.env === 'sandbox') {
+    const tools = h(`<div class="toolrow" style="width:100%"><span class="verb">sandbox</span>
+        <span class="faint">${esc(c.dispute.dispute_life_cycle_stage)} · ${esc(c.dispute.status)}</span>
+        <button class="btn" data-a="escalate">Escalate to claim</button>
+        <button class="btn" data-a="require-evidence">Require seller evidence</button>
+        <button class="btn" data-a="adjudicate" data-o="SELLER_FAVOR">Settle: freelancer wins</button>
+      </div>`);
+    tools.querySelectorAll('[data-a]').forEach((b) => {
+      b.onclick = async () => {
+        try {
+          await api(`/api/cases/${encodeURIComponent(c.dispute.dispute_id)}/sandbox/${b.dataset.a}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ outcome: b.dataset.o }),
+          });
+          toast(`${b.textContent}: done. PayPal can take a minute to update.`);
+        } catch (err) {
+          toast(`${b.textContent}: ${err.data?.paypal?.details?.[0]?.issue || err.message}`);
+        }
+      };
+    });
+    ctl.appendChild(tools);
+  }
 }
 
 // ---------- the reasoning trail -------------------------------------------------
@@ -685,7 +718,9 @@ async function doSubmit(btn, actionsCard) {
     for (const r of res.results) {
       const row = $(`.action[data-kind="${CSS.escape(r.kind)}"]`, actionsCard);
       if (!row) continue;
-      $('.a-state', row).innerHTML = r.ok
+      $('.a-state', row).innerHTML = r.skipped
+        ? `<span class="faint">${esc(r.error)}</span>`
+        : r.ok
         ? `<span class="result-ok">✓ ${r.simulated ? 'simulated' : `sent${r.debug_id ? ` · debug ${esc(r.debug_id)}` : ''}`}</span>`
         : `<span class="result-bad">✗ ${esc(r.error)}</span>`;
       if (r.request) row.appendChild(h(`<pre class="req">${esc(JSON.stringify(r.request, null, 2))}${r.response ? `\n\n// PayPal response\n${esc(JSON.stringify(r.response, null, 2))}` : ''}${r.paypal ? `\n\n// PayPal error\n${esc(JSON.stringify(r.paypal, null, 2))}` : ''}</pre>`));

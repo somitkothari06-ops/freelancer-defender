@@ -8,7 +8,7 @@
 //   GET  /api/cases/:id/files/:name       download a generated PDF (response letter, evidence appendix)
 //   POST /api/cases/:id/submit            send the response to PayPal (real for live disputes, simulated for seeded)
 //   POST /api/cases/:id/link              link a live sandbox dispute to an evidence locker
-//   POST /api/cases/:id/sandbox/:action   sandbox-only lifecycle helpers (require-evidence, adjudicate)
+//   POST /api/cases/:id/sandbox/:action   lifecycle helpers for testing: escalate, require-evidence, adjudicate
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -152,6 +152,10 @@ app.post('/api/cases/:id/submit', wrap(async (req, res) => {
   const c = await cases.loadCase(id);
   const results = [];
 
+  // PayPal lists the actions allowed right now as HATEOAS links on the dispute (they change
+  // with the dispute's stage), so check those before calling anything.
+  const allowed = c.live ? new Set((await disputesApi.getDispute(id)).links.map((l) => l.rel)) : null;
+
   for (const action of run.package.actions.filter((a) => wanted.has(a.kind))) {
     if (action.kind === 'email') {
       results.push({ kind: action.kind, ok: true, simulated: true, note: 'Email is sent by the freelancer from their own inbox; the text is ready to copy.' });
@@ -160,6 +164,15 @@ app.post('/api/cases/:id/submit', wrap(async (req, res) => {
     if (!c.live) {
       // Seeded dispute: it doesn't exist in PayPal, so show exactly what would be sent.
       results.push({ kind: action.kind, ok: true, simulated: true, request: preview(action) });
+      continue;
+    }
+    if (!allowed.has(action.kind)) {
+      results.push({
+        kind: action.kind,
+        ok: false,
+        skipped: true,
+        error: `Not available at this stage (${c.scenario.dispute.dispute_life_cycle_stage}). PayPal currently allows: ${[...allowed].filter((r) => r !== 'self').join(', ')}.`,
+      });
       continue;
     }
     try {
@@ -196,9 +209,11 @@ app.post('/api/cases/:id/link', wrap(async (req, res) => {
 
 app.post('/api/cases/:id/sandbox/:action', wrap(async (req, res) => {
   if (config.paypal.env !== 'sandbox') return res.status(400).json({ error: 'Sandbox only' });
+  // Note: escalate is a normal Disputes API call; require-evidence and adjudicate exist only in sandbox.
   const { id, action } = req.params;
   let r;
-  if (action === 'require-evidence') r = await disputesApi.requireEvidence(id);
+  if (action === 'escalate') r = await disputesApi.escalate(id, 'Escalating so PayPal can review the evidence.');
+  else if (action === 'require-evidence') r = await disputesApi.requireEvidence(id);
   else if (action === 'adjudicate') r = await disputesApi.adjudicate(id, req.body.outcome === 'BUYER_FAVOR' ? 'BUYER_FAVOR' : 'SELLER_FAVOR');
   else return res.status(404).json({ error: 'Unknown action' });
   res.json({ ok: true, response: r.data, debug_id: r.debugId });

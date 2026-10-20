@@ -59,11 +59,21 @@ function summary(dispute, extra) {
   };
 }
 
-// Guess which scenario a live sandbox dispute belongs to, from the invoice number
-// created by scripts/paypal-seed.js (e.g. "INV-2026-0042-k3x9" -> scenario with "INV-2026-0042").
+// Guess which scenario a live sandbox dispute belongs to. scripts/paypal-seed.js creates the
+// sandbox invoice with the scenario's exact line items and amount, and PayPal copies the item
+// names into the dispute, so we match on those. (PayPal puts its own invoice ID in
+// invoice_number, not ours, so that can't be used.)
 function autoLink(dispute) {
-  const inv = dispute.disputed_transactions?.[0]?.invoice_number || '';
-  return scenarios.find((s) => inv && inv.startsWith(s.dispute.disputed_transactions[0].invoice_number))?.id || null;
+  const tx = dispute.disputed_transactions?.[0] || {};
+  const itemNames = new Set((tx.items || []).map((i) => i.item_name));
+  const amount = Number(dispute.dispute_amount?.value || tx.gross_amount?.value || 0);
+  const match = scenarios.find((s) => {
+    const row = s.paypal_transactions.find((t) => t.transaction_info.invoice_id === s.dispute.disputed_transactions[0].invoice_number);
+    const names = (row?.cart_info?.item_details || []).map((i) => i.item_name);
+    const sameAmount = Number(s.dispute.dispute_amount.value) === amount;
+    return sameAmount && (names.length === 0 || names.some((n) => itemNames.has(n)));
+  });
+  return match?.id || null;
 }
 
 async function listLive() {
@@ -136,7 +146,7 @@ async function loadCase(disputeId) {
     err.code = 'NEEDS_LINK';
     throw err;
   }
-  const scenario = { ...base, dispute: { ...dispute, messages: dispute.messages?.length ? dispute.messages : base.dispute.messages } };
+  const scenario = { ...base, dispute };
 
   let transactions = [];
   let txSource = 'PayPal Transaction Search API (sandbox, live)';

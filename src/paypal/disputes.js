@@ -33,6 +33,9 @@ const sendMessage = (id, message) => request('POST', `${base}/${id}/send-message
 // Offer a (partial) refund to resolve the dispute.
 const makeOffer = (id, body) => request('POST', `${base}/${id}/make-offer`, { json: body });
 
+// Escalate an INQUIRY to a claim, so PayPal reviews it (and evidence can be submitted).
+const escalate = (id, note) => request('POST', `${base}/${id}/escalate`, { json: { note } });
+
 // Concede: closes the dispute in the client's favour and refunds them.
 const acceptClaim = (id, body) => request('POST', `${base}/${id}/accept-claim`, { json: body });
 
@@ -53,6 +56,7 @@ module.exports = {
   sendMessage,
   makeOffer,
   acceptClaim,
+  escalate,
   requireEvidence,
   adjudicate,
 };

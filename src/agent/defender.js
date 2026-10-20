@@ -14,6 +14,7 @@ const P = require('./prompts');
 const playbookFor = require('./playbook');
 const { verifyClaims } = require('./citations');
 const { buildPackage } = require('./package');
+const { statementParts } = require('../evidence/locker');
 
 const MAX_INVESTIGATION_TURNS = 8;
 
@@ -63,7 +64,7 @@ async function runDefender({ scenario, locker, sources }, emit) {
 
   // ---- 1. Intake --------------------------------------------------------------
   emit('stage', { stage: 'intake', status: 'start' });
-  const statement = (dispute.messages || []).map((m) => m.content).join('\n');
+  const statement = statementParts(dispute).map((p) => p.text).join('\n');
   emit('stage', {
     stage: 'intake',
     status: 'done',

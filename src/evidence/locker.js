@@ -23,6 +23,21 @@ function money(m) {
   return m ? `$${Number(m.value).toLocaleString('en-US', { minimumFractionDigits: 2 })} ${m.currency_code}` : '';
 }
 
+// Everything the client wrote when filing. In real PayPal disputes the main complaint is in
+// the per-item notes (disputed_transactions[].items[].notes); follow-ups are in messages[].
+function statementParts(dispute) {
+  const parts = [];
+  for (const tx of dispute.disputed_transactions || []) {
+    for (const item of tx.items || []) {
+      if (item.notes) parts.push({ anchor: `ITEM${parts.length + 1}`, heading: `Client's complaint about "${item.item_name}"`, text: item.notes });
+    }
+  }
+  (dispute.messages || []).forEach((m, i) => {
+    parts.push({ anchor: `MSG${i + 1}`, heading: `Message from ${String(m.posted_by).toLowerCase()}`, text: m.content });
+  });
+  return parts;
+}
+
 // Turn the PayPal dispute object into a citable document.
 function disputeDocument(dispute) {
   const tx = dispute.disputed_transactions?.[0] || {};
@@ -41,13 +56,7 @@ function disputeDocument(dispute) {
         `for ${money(tx.gross_amount)}, invoice ${tx.invoice_number || 'n/a'}, buyer ${tx.buyer?.name || 'unknown'}.`,
     },
   ];
-  (dispute.messages || []).forEach((m, i) => {
-    sections.push({
-      anchor: `MSG${i + 1}`,
-      heading: `Message from ${m.posted_by.toLowerCase()}`,
-      text: m.content,
-    });
-  });
+  sections.push(...statementParts(dispute));
   return {
     id: 'DISPUTE',
     title: `PayPal dispute ${dispute.dispute_id}`,
@@ -182,4 +191,4 @@ function buildLocker(scenario, { transactions, transactionsSource }) {
   ]);
 }
 
-module.exports = { buildLocker, normalize, REASON_LABELS, money };
+module.exports = { buildLocker, normalize, statementParts, REASON_LABELS, money };
