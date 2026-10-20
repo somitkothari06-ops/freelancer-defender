@@ -28,9 +28,9 @@ One end-to-end flow:
 |---|---|
 | AI reasoning (Groq, `openai/gpt-oss-120b`) | **Real.** Live calls. Model id checked Oct 20, 2026: still listed and active on Groq. |
 | Citation verification | **Real**, deterministic code (`src/agent/citations.js`), unit-tested (`npm test`). |
-| PayPal Disputes API client (list, get, provide-evidence, make-offer, send-message, accept-claim, sandbox require-evidence/adjudicate) | **Partly verified.** OAuth + list disputes work against the sandbox. Evidence submission is written to PayPal's published spec but needs a real sandbox dispute to test (see Open items). |
-| PayPal Transaction Search | Written to spec. The sandbox app currently gets 403 until the Transaction Search feature is enabled (see Open items). |
-| PayPal Invoicing (`npm run paypal:seed`) | **Verified**: creates real sandbox invoices so a sandbox buyer can pay and then dispute them. |
+| PayPal Disputes API client | **Verified against the sandbox on Oct 20, end to end on a real dispute (`PP-R-LFT-10193672`):** list + get dispute ✓, `send-message` ✓ (inquiry stage), buyer escalation → CHARGEBACK / WAITING_FOR_SELLER_RESPONSE ✓, `provide-evidence` with our JSON + 2 generated PDFs ✓ (accepted, dispute moved to UNDER_REVIEW). `make-offer`, `accept-claim` and `adjudicate` are written to spec, not yet exercised. |
+| PayPal Transaction Search | **Verified** (after enabling the feature on the app). New sandbox payments can take hours to appear; until then live cases fall back to seeded history, labelled as such. |
+| PayPal Invoicing (`npm run paypal:seed`) | **Verified**: created a real sandbox invoice that the US sandbox buyer paid ($2,400). |
 | The 4 disputes in the queue | **Mocked**: seeded JSON in PayPal's API format. Labelled "Demo data" in the UI. |
 | Evidence lockers (contracts, emails, logs, screenshots) | **Mocked**, and always will be. This is the freelancer's own paperwork, which PayPal doesn't hold. In a real product the freelancer uploads it or connects Gmail/Drive. |
 | Submission for seeded disputes | **Simulated**, labelled as such, showing the exact HTTP request. |
@@ -66,10 +66,13 @@ The other three:
 
 ## Open items for you
 
-1. **PayPal sandbox: credentials verified Oct 20.** OAuth, the Disputes API (list) and the Invoicing API (create/delete a draft) all work. Still to do:
-   - **Transaction Search returns 403.** Enable it: developer.paypal.com → Apps & Credentials → Sandbox → your app → Features → tick **Transaction Search** → Save. Until then the app uses the seeded payment history and labels it that way.
-   - **No real sandbox dispute exists yet.** Creating one needs the sandbox *buyer* to pay an invoice and file a dispute (see "How a real sandbox dispute gets created" above). Then `provide-evidence`, `send-message` and `make-offer` can be verified for real.
-   - Put the credentials in `.env` locally and in Render's Environment tab. Rotate the secret before the repo is public, because it was shared in chat.
+1. **PayPal sandbox is working.** See the table above for what's verified. Things to know:
+   - **Your sandbox accounts are in India.** Indian PayPal accounts can't pay each other, so we created a **US** Personal buyer (`sb-646sv…@personal.example.com`) to pay the Indian business account.
+   - **Real PayPal lifecycle (what we learned):** a buyer-filed dispute starts as an **INQUIRY** (20-day seller window). Only `send_message` / `make_offer` / `accept_claim` / `escalate` are allowed then. **Evidence can only be submitted after escalation to a claim** (CHARGEBACK stage). The app reads PayPal's allowed actions (HATEOAS links) at submit time and explains anything it skips.
+   - **The deadline is real data:** the inquiry window was 20 days, not 48 hours. While PayPal is reviewing, there's no seller deadline at all (the dashboard shows "No deadline").
+   - **The invoice shows "Test Store"** as the seller name. That's the sandbox business account's default; rename it in that account's profile for a nicer demo.
+   - **Rotate the client secret** before the repo goes public (it was shared in chat). Put credentials in `.env` locally and in Render's Environment tab.
+   - **Making another live dispute:** `npm run paypal:seed -- <scenario>` sends the invoice. Then, as the buyer at sandbox.paypal.com: pay → Resolution Center → Report a Problem → "not as described". Claude did this with a headless browser in about 10 minutes, so ask in a session if you want it done again.
 2. **Groq free tier = slow live runs, and only ~4 per day.** It's capped at 8,000 tokens/minute **and 200,000 tokens/day** for gpt-oss-120b. One full run uses ~45–50k tokens, so it takes ~5–7 minutes (mostly pausing), and the daily cap allows about 4 runs. A judge clicking "Run live" after the quota is used gets a clear "daily limit reached, use replay" message. Options:
    - Upgrade the Groq account to the Developer tier (pay-as-you-go). At gpt-oss-120b prices a full run costs roughly 1–2 cents, and it would finish in under a minute. Recommended before recording the demo video.
    - Or demo with replays (real recorded runs, labelled as replays).

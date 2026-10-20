@@ -154,7 +154,10 @@ app.post('/api/cases/:id/submit', wrap(async (req, res) => {
 
   // PayPal lists the actions allowed right now as HATEOAS links on the dispute (they change
   // with the dispute's stage), so check those before calling anything.
-  const allowed = c.live ? new Set((await disputesApi.getDispute(id)).links.map((l) => l.rel)) : null;
+  const current = c.live ? await disputesApi.getDispute(id) : null;
+  const allowed = c.live ? new Set(current.links.map((l) => l.rel)) : null;
+  // Evidence types PayPal has asked the seller for (e.g. OTHER, PROOF_OF_REFUND).
+  const requested = (current?.evidences || []).filter((e) => e.source === 'REQUESTED_FROM_SELLER').map((e) => e.evidence_type);
 
   for (const action of run.package.actions.filter((a) => wanted.has(a.kind))) {
     if (action.kind === 'email') {
@@ -177,7 +180,15 @@ app.post('/api/cases/:id/submit', wrap(async (req, res) => {
     }
     try {
       let r;
-      if (action.kind === 'provide_evidence') r = await disputesApi.provideEvidence(id, action.input, run.package._files);
+      if (action.kind === 'provide_evidence') {
+        // Use the agent's evidence type if PayPal asked for it; otherwise fall back to OTHER when requested.
+        const input = structuredClone(action.input);
+        for (const ev of input.evidences) {
+          if (requested.length && !requested.includes(ev.evidence_type) && requested.includes('OTHER')) ev.evidence_type = 'OTHER';
+        }
+        action.input = input; // so the request preview shows what was actually sent
+        r = await disputesApi.provideEvidence(id, input, run.package._files);
+      }
       if (action.kind === 'send_message') r = await disputesApi.sendMessage(id, action.body.message);
       if (action.kind === 'make_offer') r = await disputesApi.makeOffer(id, action.body);
       if (action.kind === 'accept_claim') r = await disputesApi.acceptClaim(id, action.body);
