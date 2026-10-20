@@ -14,8 +14,8 @@
     "email": "greg@patelfamilydental.com"
   },
   "demo": {
-    "received_hours_ago": 14,
-    "response_window_hours": 48
+    "received_hours_ago": 90,
+    "response_window_hours": 240
   },
   "dispute": {
     "dispute_id": "PP-D-27162-PATEL",

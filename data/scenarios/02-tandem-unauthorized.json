@@ -14,8 +14,8 @@
     "email": "billing@tandemhealth.io"
   },
   "demo": {
-    "received_hours_ago": 31,
-    "response_window_hours": 48
+    "received_hours_ago": 150,
+    "response_window_hours": 240
   },
   "dispute": {
     "dispute_id": "PP-D-27155-TANDEM",

@@ -14,8 +14,8 @@
     "email": "daniel@haldencoffee.com"
   },
   "demo": {
-    "received_hours_ago": 6,
-    "response_window_hours": 48
+    "received_hours_ago": 200,
+    "response_window_hours": 240
   },
   "dispute": {
     "dispute_id": "PP-D-27140-HALDEN",

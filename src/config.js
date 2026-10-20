@@ -17,11 +17,20 @@ const config = {
     env: process.env.PAYPAL_ENV || 'sandbox',
   },
 
-  // Timelines shown in the dashboard's "asymmetry" clock.
-  // TODO(team): confirm these numbers and cite a source before the pitch (see NOTES.md).
+  // Timelines shown in the dashboard's "asymmetry" clock, with sources (checked Oct 20, 2026).
   timelines: {
-    bankDecisionDays: 90,     // how long the issuing bank can take to decide
-    cardholderFilingDays: 120, // how long the client has to file after paying
+    // "Customers can initiate a chargeback within 180 days of the transaction date."
+    // https://www.paypal.com/us/cshelp/article/what-is-a-chargeback-and-why-did-i-get-one-help607
+    cardholderFilingDays: 180,
+    // "...it may take your buyer's card company up to 75 days to resolve a chargeback" (same page)
+    bankDecisionDays: 75,
+    // Seller's window to answer a chargeback notice. PayPal help text quoted as "you'll have 10 days
+    // to answer it"; live disputes use PayPal's real seller_response_due_date instead.
+    sellerResponseDays: 10,
+    sources: [
+      { label: 'PayPal Help: What is a chargeback?', url: 'https://www.paypal.com/us/cshelp/article/what-is-a-chargeback-and-why-did-i-get-one-help607' },
+      { label: 'PayPal Help: Evidence for chargebacks', url: 'https://www.paypal.com/us/cshelp/article/evidence-to-provide-for-chargebacks-a-guide-for-sellers-help1103' },
+    ],
   },
 };
 

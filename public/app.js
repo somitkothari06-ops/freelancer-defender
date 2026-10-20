@@ -47,7 +47,14 @@ function timeLeft(due) {
   const min = Math.floor((ms % 3.6e6) / 6e4);
   const sec = Math.floor((ms % 6e4) / 1000);
   const pad = (n) => String(n).padStart(2, '0');
-  return { ms, hrs, text: `${pad(hrs)}:${pad(min)}:${pad(sec)}`, short: `${hrs}h ${pad(min)}m` };
+  const days = Math.floor(hrs / 24);
+  const h24 = hrs % 24;
+  return {
+    ms,
+    hrs,
+    text: days ? `${days}d ${pad(h24)}:${pad(min)}:${pad(sec)}` : `${pad(hrs)}:${pad(min)}:${pad(sec)}`,
+    short: days ? `${days}d ${h24}h` : `${hrs}h ${pad(min)}m`,
+  };
 }
 
 function toast(msg) {
@@ -141,7 +148,7 @@ async function openQueue() {
         const t = timeLeft(p.value);
         const windowMs = new Date(p.value) - new Date(p.data.created);
         const pct = Number.isFinite(t.ms) ? Math.max(0, Math.min(100, (t.ms / windowMs) * 100)) : 0;
-        return `<div class="timeleft ${t.hrs < 12 ? 'urgent' : ''}"><span>${esc(t.short || t.text)}</span><span class="bar"><i style="width:${pct}%"></i></span></div>`;
+        return `<div class="timeleft ${t.hrs < 48 ? 'urgent' : ''}"><span>${esc(t.short || t.text)}</span><span class="bar"><i style="width:${pct}%"></i></span></div>`;
       },
     },
     {
@@ -284,13 +291,14 @@ function renderCaseHead(c) {
 // The asymmetry clock: everyone else's timeline vs. the freelancer's.
 function renderClock(c) {
   const d = c.dispute;
-  const tl = state.status?.timelines || { bankDecisionDays: 90, cardholderFilingDays: 120 };
+  const tl = state.status?.timelines || { bankDecisionDays: 75, cardholderFilingDays: 180 };
   if (!d.seller_response_due_date) {
     $('#clock').innerHTML = `<div class="countdown"><div class="label">Your time to respond</div><div class="digits" style="color:var(--muted)">No deadline</div><div class="sub">PayPal status: ${esc(d.status)} (${esc(d.dispute_life_cycle_stage)})</div></div><div></div>`;
     return;
   }
   const windowH = (new Date(d.seller_response_due_date) - new Date(d.create_time)) / 3.6e6;
   const longest = tl.cardholderFilingDays * 24;
+  const windowLabel = windowH >= 48 ? `${Math.round(windowH / 24)} days` : `${Math.round(windowH)} hours`;
   const pctYou = (windowH / longest) * 100;
   const paid = d.disputed_transactions?.[0]?.create_time;
   const daysSincePaid = paid ? Math.round((new Date(d.create_time) - new Date(paid)) / 8.64e7) : null;
@@ -302,9 +310,10 @@ function renderClock(c) {
       <div class="sub">due ${esc(new Date(d.seller_response_due_date).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }))}</div>
     </div>
     <div class="tracks">
-      <div class="track client"><div class="name"><b>Client</b> could file for up to ${tl.cardholderFilingDays} days${daysSincePaid ? ` <span class="faint">(filed on day ${daysSincePaid})</span>` : ''}</div><div class="rail"><div class="fill" style="width:100%"></div></div></div>
-      <div class="track bank"><div class="name"><b>Their bank</b> can take up to ${tl.bankDecisionDays} days to decide</div><div class="rail"><div class="fill" style="width:${(tl.bankDecisionDays / tl.cardholderFilingDays) * 100}%"></div></div></div>
-      <div class="track you"><div class="name"><b>You</b> get ${Math.round(windowH)} hours</div><div class="rail"><div class="fill" style="width:${pctYou}%"></div><span class="callout" style="left:calc(${pctYou}% + 10px)">← that's this. ${Math.round(windowH)} hours.</span></div></div>
+      <div class="track client"><div class="name"><b>Your client</b> can file up to ${tl.cardholderFilingDays} days after paying${daysSincePaid ? ` <span class="faint">(filed on day ${daysSincePaid})</span>` : ''}</div><div class="rail"><div class="fill" style="width:100%"></div></div></div>
+      <div class="track bank"><div class="name"><b>Their card company</b> can take up to ${tl.bankDecisionDays} days to decide</div><div class="rail"><div class="fill" style="width:${(tl.bankDecisionDays / tl.cardholderFilingDays) * 100}%"></div></div></div>
+      <div class="track you"><div class="name"><b>You</b> get ${windowLabel}</div><div class="rail"><div class="fill" style="width:${pctYou}%"></div><span class="callout" style="left:calc(${pctYou}% + 10px)">← that's you. ${windowLabel}.</span></div></div>
+      <div class="faint" style="font-size:11px">Sources: ${(tl.sources || []).map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(' · ')}${c.live ? ' · your deadline comes from PayPal\'s <span class="mono">seller_response_due_date</span>' : ''}</div>
     </div>`;
   const tick = () => {
     const el = $('#digits');

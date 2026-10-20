@@ -6,7 +6,7 @@ Built for the PayPal AI Hackathon 2026.
 
 ## The problem
 
-A freelancer finishes approved work and gets paid. Months later the client's bank reverses the charge. The client had months to file. The bank has months to decide. The freelancer gets **hours** to respond, with evidence scattered across email, contracts and file-sharing logs.
+A freelancer finishes approved work and gets paid. Months later the client's bank reverses the charge. The client could file up to **180 days** after paying, and their card company can take up to **75 days** to decide. The freelancer gets about **10 days** to respond ([PayPal Help](https://www.paypal.com/us/cshelp/article/what-is-a-chargeback-and-why-did-i-get-one-help607)), with months-old evidence scattered across email, contracts and file-sharing logs.
 
 Dispute-defense tools exist (Chargeflow, Justt), but they're built for merchants with order databases. Nobody builds them for the person who did the work.
 
