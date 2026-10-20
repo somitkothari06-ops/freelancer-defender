@@ -68,6 +68,18 @@ async function chat(body, { onWait } = {}) {
     if (res.status === 429 || res.status >= 500) {
       const retryAfter = Number(res.headers.get('retry-after'));
       const wait = retryAfter ? retryAfter * 1000 : Math.min(30000, 2000 * 2 ** attempt);
+      // A long wait means the daily token quota is used up: fail fast with a clear message
+      // instead of leaving the dashboard hanging for many minutes.
+      if (wait > 90_000) {
+        const body = await res.json().catch(() => ({}));
+        const err = new Error(
+          `Groq's free-tier daily token limit is used up (${body?.error?.message?.match(/Limit \d+/)?.[0] || 'tokens per day'}). ` +
+            `Live runs resume in about ${Math.ceil(wait / 60000)} min. Use "Replay a recorded run" meanwhile.`
+        );
+        err.status = 429;
+        err.code = 'DAILY_LIMIT';
+        throw err;
+      }
       onWait?.(wait, res.status === 429 ? 'rate limit' : 'Groq server error');
       await sleep(wait);
       continue;
