@@ -214,7 +214,11 @@ async function runDefender({ scenario, locker, sources }, emit) {
 
   // ---- 4. Diagnose ------------------------------------------------------------
   emit('stage', { stage: 'diagnose', status: 'start' });
-  const disputeRefs = locker.read('DISPUTE').sections.map((s) => ({ doc_id: 'DISPUTE', anchor: s.anchor }));
+  // The dispute itself and the full agreement are always in view for the later stages:
+  // which terms apply is the whole argument, so it can't depend on what got cited earlier.
+  const disputeRefs = [...locker.docs.values()]
+    .filter((d) => d.id === 'DISPUTE' || d.kind === 'contract')
+    .flatMap((d) => d.sections.map((s) => ({ doc_id: d.id, anchor: s.anchor })));
   const findingRefs = findings.flatMap((f) => f.citations);
   const diagRes = await groq.chatJSON(
     {
