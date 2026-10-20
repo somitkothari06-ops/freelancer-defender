@@ -45,9 +45,22 @@ app.get('/api/status', wrap(async (req, res) => {
   });
 }));
 
+// The headline of a recorded run (real complaint + plan), for the dispute list.
+function replaySummary(id) {
+  const rid = hasReplay(id) ? id : null;
+  if (!rid) return {};
+  try {
+    const { events } = JSON.parse(fs.readFileSync(replayPath(rid), 'utf8'));
+    const r = events.find((e) => e.type === 'result')?.payload;
+    return r ? { real_summary: r.diagnosis.real_complaint.summary, decision: r.strategy.decision, refund: r.strategy.refund_amount } : {};
+  } catch {
+    return {};
+  }
+}
+
 app.get('/api/cases', wrap(async (req, res) => {
   const data = await cases.listCases();
-  data.cases.forEach((c) => (c.has_replay = hasReplay(c.dispute_id)));
+  data.cases.forEach((c) => Object.assign(c, { has_replay: hasReplay(c.dispute_id) }, replaySummary(c.dispute_id)));
   data.scenarios = cases.scenarios.map((s) => ({ id: s.id, title: s.title, freelancer: s.freelancer.name }));
   res.json(data);
 }));

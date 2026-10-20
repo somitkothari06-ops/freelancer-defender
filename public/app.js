@@ -1,7 +1,8 @@
 // Freelancer Defender dashboard.
 // Plain JavaScript, no build step. Two views:
-//   #/            the dispute queue (AG Grid)
-//   #/case/<id>   one dispute: deadline clock, evidence locker, and the live reasoning trail
+//   #/            all disputes: deadline timeline (Bryntum) + dispute list (AG Grid)
+//   #/case/<id>   one dispute: live countdown, the three-card summary, the agent's live
+//                 reasoning, the evidence, and the response to send through PayPal
 'use strict';
 
 // ---------- helpers -------------------------------------------------------------
@@ -13,49 +14,48 @@ const h = (html) => {
   t.innerHTML = html.trim();
   return t.content.firstElementChild;
 };
-const fmtMoney = (n, cur = 'USD') => new Intl.NumberFormat('en-US', { style: 'currency', currency: cur }).format(n);
-const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '');
+const fmtMoney = (n, cur = 'USD') =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: cur, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
 const api = async (url, opts) => {
   const res = await fetch(url, opts);
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw Object.assign(new Error(data.error || res.statusText), { data, status: res.status });
   return data;
 };
+const clip = (s, n) => (s && s.length > n ? `${s.slice(0, n).replace(/\s+\S*$/, '')}…` : s || '');
 
 const REASONS = {
-  MERCHANDISE_OR_SERVICE_NOT_RECEIVED: 'Service not received',
+  MERCHANDISE_OR_SERVICE_NOT_RECEIVED: 'Not received',
   MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED: 'Not as described',
   UNAUTHORISED: 'Unauthorized',
   CREDIT_NOT_PROCESSED: 'Credit not processed',
-  DUPLICATE_TRANSACTION: 'Duplicate',
+  DUPLICATE_TRANSACTION: 'Duplicate charge',
   INCORRECT_AMOUNT: 'Incorrect amount',
   OTHER: 'Other',
 };
+// The agent's decision, in the words a freelancer would use.
 const DECISIONS = {
-  CONTEST: 'Contest on the evidence',
-  CONTEST_AND_RESOLVE: 'Contest the reversal + fix the real problem',
-  PARTIAL_REFUND_AND_CONTEST: 'Refund what is owed, contest the rest',
-  ACCEPT_AND_REFUND: 'Accept: the client is right',
+  CONTEST: { short: 'Fight it', long: 'Fight the reversal with your evidence.' },
+  CONTEST_AND_RESOLVE: { short: 'Fight + fix', long: 'Fight the reversal, and fix what is really bothering your client.' },
+  PARTIAL_REFUND_AND_CONTEST: { short: 'Refund part', long: 'Refund the part you genuinely owe, and fight for the rest.' },
+  ACCEPT_AND_REFUND: { short: 'Refund', long: 'Your client has a point here. Refund and move on.' },
 };
+
+// Friendly names for documents, so citations read "Contract · §7.2" not "CONTRACT · §7.2".
+const DOC_NAMES = { DISPUTE: 'PayPal dispute', 'PAYPAL-TXN': 'PayPal payments', 'PAYPAL-INVOICE': 'PayPal invoice', MSA: 'Contract', GITHUB: 'GitHub log' };
+const docName = (id) => DOC_NAMES[id] || id.toLowerCase().replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
 
 function timeLeft(due) {
   // No due date means PayPal isn't waiting on the freelancer right now (e.g. under review).
-  if (!due) return { ms: Infinity, hrs: Infinity, text: 'Not waiting on you', short: 'No deadline' };
-  const ms = new Date(due) - Date.now();
-  if (ms <= 0) return { ms: 0, text: 'Expired' };
+  if (!due) return { ms: Infinity, hrs: Infinity, days: 0, h: 0, m: 0, s: 0, short: 'No deadline' };
+  const ms = Math.max(0, new Date(due) - Date.now());
   const hrs = Math.floor(ms / 3.6e6);
-  const min = Math.floor((ms % 3.6e6) / 6e4);
-  const sec = Math.floor((ms % 6e4) / 1000);
-  const pad = (n) => String(n).padStart(2, '0');
   const days = Math.floor(hrs / 24);
-  const h24 = hrs % 24;
-  return {
-    ms,
-    hrs,
-    text: days ? `${days}d ${pad(h24)}:${pad(min)}:${pad(sec)}` : `${pad(hrs)}:${pad(min)}:${pad(sec)}`,
-    short: days ? `${days}d ${h24}h` : `${hrs}h ${pad(min)}m`,
-  };
+  const t = { ms, hrs, days, h: hrs % 24, m: Math.floor((ms % 3.6e6) / 6e4), s: Math.floor((ms % 6e4) / 1000) };
+  t.short = ms === 0 ? 'Expired' : days ? `${days}d ${t.h}h` : `${hrs}h ${t.m}m`;
+  return t;
 }
+const pad = (n) => String(n).padStart(2, '0');
 
 function toast(msg) {
   const t = $('#toast');
@@ -71,7 +71,8 @@ const state = {
   status: null,
   queue: null,
   grid: null,
-  current: null, // the case being viewed
+  scheduler: null,
+  current: null, // the dispute being viewed
   stream: null, // active EventSource
   clockTimer: null,
 };
@@ -103,130 +104,185 @@ function renderStatus() {
   const s = state.status;
   if (!s) return;
   $('#status').innerHTML = `
-    <span class="pill ${s.paypal.enabled ? 'on' : 'warn'}"><span class="dot"></span>PayPal ${s.paypal.enabled ? esc(s.paypal.env) : 'not connected'}</span>
-    <span class="pill on"><span class="dot"></span>${esc(s.groq.model)} on Groq</span>`;
+    <span class="pill ${s.paypal.enabled ? 'on' : ''}">${s.paypal.enabled ? `PayPal ${esc(s.paypal.env)} connected` : 'PayPal not connected'}</span>
+    <span class="avatar" aria-hidden="true">FD</span>`;
 }
 
 // ================================================================================
-// Queue view
+// All disputes
 // ================================================================================
 
 async function openQueue() {
   $('#view-case').classList.add('hidden');
   $('#view-queue').classList.remove('hidden');
-  $('#crumbs').innerHTML = 'Dispute queue';
   document.title = 'Freelancer Defender';
 
   const data = await api('/api/cases');
   state.queue = data;
   const rows = data.cases;
 
-  // Headline numbers.
   const atRisk = rows.reduce((n, r) => n + r.amount, 0);
-  const soonest = rows.map((r) => timeLeft(r.due)).filter((t) => Number.isFinite(t.ms)).sort((a, b) => a.ms - b.ms)[0];
+  const next = rows.filter((r) => r.due).sort((a, b) => new Date(a.due) - new Date(b.due))[0];
+  const ready = rows.filter((r) => r.has_replay).length;
   $('#queue-stats').innerHTML = `
-    <div class="stat"><div class="label">Earned money at risk</div><div class="value">${fmtMoney(atRisk)}</div></div>
-    <div class="stat"><div class="label">Open disputes</div><div class="value">${rows.length}</div></div>
-    <div class="stat danger"><div class="label">Next deadline in</div><div class="value">${soonest ? esc(soonest.short) : '—'}</div></div>`;
+    <div class="stat navy"><span class="label">Earned money at risk</span><span class="value">${fmtMoney(atRisk)}</span><span class="sub">across ${rows.length} disputes</span></div>
+    <div class="stat red"><span class="label">Next deadline</span><span class="value">${next ? esc(timeLeft(next.due).short) : '—'}</span><span class="sub">${next ? esc(next.client.split(',').pop().trim()) : 'Nothing due'}</span></div>
+    <div class="stat"><span class="label">Responses ready</span><span class="value">${ready} of ${rows.length}</span><span class="sub">worked out by the agent, waiting for you</span></div>`;
 
-  // PayPal connection banner.
   const pp = data.paypal;
   $('#paypal-banner').innerHTML = pp.error
-    ? `<div class="banner warn"><strong>PayPal sandbox error:</strong> ${esc(pp.error)}</div>`
+    ? `<div class="banner warn"><b>PayPal sandbox error:</b> ${esc(pp.error)}</div>`
     : pp.enabled
       ? ''
-      : `<div class="banner"><strong>Demo mode.</strong> PayPal credentials aren't configured, so the queue shows seeded disputes (in PayPal's exact API format) and submissions are simulated. Add sandbox credentials to pull real disputes from PayPal's Resolution Center.</div>`;
+      : '<div class="banner"><b>Demo mode.</b> PayPal isn\'t connected, so you\'re seeing demo disputes and sending is simulated.</div>';
 
+  renderTimeline(rows);
+  renderGrid(rows);
+}
+
+// Deadline timeline (Bryntum Scheduler): one row per dispute, a bar from when it was
+// filed to when your response is due. Falls back to nothing if the library didn't load.
+function renderTimeline(rows) {
+  const el = $('#timeline');
+  const Scheduler = window.bryntum?.scheduler?.Scheduler;
+  if (!Scheduler) {
+    el.outerHTML = '<div id="timeline" class="tl-fallback">Timeline unavailable (the scheduler library did not load).</div>';
+    return;
+  }
+  const withDue = rows.filter((r) => r.due);
+  const resources = withDue.map((r) => ({ id: r.dispute_id, name: r.client.split(',').pop().trim(), amount: fmtMoney(r.amount) }));
+  const events = withDue.map((r) => {
+    const t = timeLeft(r.due);
+    return {
+      id: r.dispute_id,
+      resourceId: r.dispute_id,
+      startDate: new Date(r.created),
+      endDate: new Date(r.due),
+      name: `${t.short} left · ${r.has_replay ? 'response ready' : 'not analyzed yet'}`,
+      eventColor: t.hrs < 48 ? 'red' : r.has_replay ? 'blue' : 'gray',
+    };
+  });
+  // Show from yesterday until just after the last deadline, scaled to fit the card.
+  const start = new Date(Date.now() - 864e5);
+  const end = new Date(Math.max(Date.now() + 4 * 864e5, ...events.map((e) => +e.endDate)) + 864e5);
+  if (state.scheduler) state.scheduler.destroy();
+  el.innerHTML = '';
+  state.scheduler = new Scheduler({
+    appendTo: el,
+    startDate: start,
+    endDate: end,
+    viewPreset: 'dayAndWeek',
+    forceFit: true,
+    rowHeight: 52,
+    barMargin: 8,
+    readOnly: true,
+    eventStyle: 'rounded',
+    features: { timeRanges: { showCurrentTimeLine: true }, eventTooltip: false, cellMenu: false, eventMenu: false, scheduleMenu: false },
+    columns: [
+      { text: 'Client', field: 'name', width: 170 },
+      { text: 'Amount', field: 'amount', width: 100 },
+    ],
+    resources,
+    events,
+    listeners: { eventClick: ({ eventRecord }) => (location.hash = `#/case/${encodeURIComponent(eventRecord.id)}`) },
+  });
+}
+
+// The dispute list (AG Grid).
+function renderGrid(rows) {
   const columnDefs = [
     {
       headerName: 'Time left',
       field: 'due',
-      width: 150,
+      width: 140,
       sort: 'asc',
       comparator: (a, b) => (a ? new Date(a) : Infinity) - (b ? new Date(b) : Infinity),
       cellRenderer: (p) => {
         const t = timeLeft(p.value);
-        const windowMs = new Date(p.value) - new Date(p.data.created);
-        const pct = Number.isFinite(t.ms) ? Math.max(0, Math.min(100, (t.ms / windowMs) * 100)) : 0;
-        return `<div class="timeleft ${t.hrs < 48 ? 'urgent' : ''}"><span>${esc(t.short || t.text)}</span><span class="bar"><i style="width:${pct}%"></i></span></div>`;
+        return `<span class="tleft ${t.hrs < 48 ? 'urgent' : ''}">${esc(t.short)}</span>`;
       },
     },
     {
       headerName: 'Client',
       field: 'client',
       flex: 1.2,
-      minWidth: 200,
-      cellRenderer: (p) => `<div class="cell-stack"><span>${esc(p.value)}</span><span class="sub">${esc(p.data.title)}</span></div>`,
+      minWidth: 220,
+      cellRenderer: (p) =>
+        `<div class="cell-stack"><span class="main">${esc(p.value.split(',').pop().trim())}</span><span class="sub">${esc(p.data.freelancer)} · ${esc(p.data.title)}</span></div>`,
     },
     {
-      headerName: 'Freelancer',
-      field: 'freelancer',
-      width: 150,
-    },
-    {
-      headerName: 'Filed reason',
+      headerName: 'What they filed',
       field: 'reason',
-      width: 170,
+      width: 175,
       valueFormatter: (p) => REASONS[p.value] || p.value,
-      cellRenderer: (p) => `<span class="badge">${esc(REASONS[p.value] || p.value)}</span>`,
+      cellRenderer: (p) => `<span class="tag">${esc(REASONS[p.value] || p.value)}</span>`,
+    },
+    {
+      headerName: "What's actually going on",
+      field: 'real_summary',
+      flex: 1.6,
+      minWidth: 240,
+      wrapText: true,
+      autoHeight: true,
+      cellStyle: { lineHeight: '1.4', paddingTop: '10px', paddingBottom: '10px' },
+      cellRenderer: (p) => (p.value ? `<span style="font-size:14px">${esc(clip(p.value, 120))}</span>` : '<span class="faint">Not analyzed yet</span>'),
     },
     {
       headerName: 'Amount',
       field: 'amount',
-      width: 120,
+      width: 110,
       type: 'rightAligned',
-      valueFormatter: (p) => fmtMoney(p.value, p.data.currency),
-      cellStyle: { fontVariantNumeric: 'tabular-nums', fontWeight: 600, justifyContent: 'flex-end' },
+      cellRenderer: (p) => `<span class="amt">${fmtMoney(p.value, p.data.currency)}</span>`,
+      cellStyle: { justifyContent: 'flex-end' },
     },
     {
-      headerName: 'Paid on',
-      field: 'paid_on',
+      headerName: 'Plan',
+      field: 'decision',
       width: 130,
-      valueFormatter: (p) => fmtDate(p.value),
-    },
-    {
-      headerName: 'Stage',
-      field: 'stage',
-      width: 130,
-      cellRenderer: (p) => `<span class="faint">${esc(p.value === 'CHARGEBACK' ? 'Chargeback' : p.value)}</span>`,
+      valueFormatter: (p) => DECISIONS[p.value]?.short || 'Analyze',
+      cellRenderer: (p) => {
+        const d = DECISIONS[p.value];
+        if (!d) return '<span class="tag">Analyze</span>';
+        const cls = p.value === 'PARTIAL_REFUND_AND_CONTEST' || p.value === 'ACCEPT_AND_REFUND' ? 'amber' : 'blue';
+        return `<span class="tag ${cls}">${esc(d.short)}</span>`;
+      },
     },
     {
       headerName: 'Source',
       field: 'source',
       width: 120,
-      cellRenderer: (p) =>
-        p.value === 'live' ? '<span class="badge live">PayPal live</span>' : '<span class="badge demo">Demo data</span>',
+      cellRenderer: (p) => (p.value === 'live' ? '<span class="tag green">PayPal live</span>' : '<span class="tag">Demo</span>'),
     },
   ];
 
-  if (state.grid) state.grid.setGridOption('rowData', rows);
-  else {
-    state.grid = agGrid.createGrid($('#grid'), {
-      columnDefs,
-      rowData: rows,
-      defaultColDef: { sortable: true, resizable: true, filter: true, suppressHeaderMenuButton: true },
-      rowHeight: 60,
-      domLayout: 'autoHeight',
-      animateRows: true,
-      onRowClicked: (e) => (location.hash = `#/case/${encodeURIComponent(e.data.dispute_id)}`),
-      overlayNoRowsTemplate: '<span class="muted">No open disputes. Every payment you earned is safe.</span>',
-    });
-    // Keep the "time left" column ticking.
-    setInterval(() => state.grid?.refreshCells({ columns: ['due'], force: true }), 30000);
+  if (state.grid) {
+    state.grid.setGridOption('rowData', rows);
+    return;
   }
+  state.grid = agGrid.createGrid($('#grid'), {
+    columnDefs,
+    rowData: rows,
+    defaultColDef: { sortable: true, resizable: true, filter: true, suppressHeaderMenuButton: true },
+    rowHeight: 64,
+    domLayout: 'autoHeight',
+    animateRows: true,
+    onRowClicked: (e) => (location.hash = `#/case/${encodeURIComponent(e.data.dispute_id)}`),
+    overlayNoRowsTemplate: '<span class="muted">No open disputes. Every payment you earned is safe.</span>',
+  });
+  setInterval(() => state.grid?.refreshCells({ columns: ['due'], force: true }), 30000);
 }
 
 // ================================================================================
-// Case view
+// One dispute
 // ================================================================================
 
 async function openCase(id) {
   $('#view-queue').classList.add('hidden');
   $('#view-case').classList.remove('hidden');
+  $('#result').classList.add('hidden');
+  $('#result').innerHTML = '';
   window.scrollTo(0, 0);
-  $('#trail').innerHTML = '';
-  $('#mode-banner').innerHTML = '';
-  $('#controls').innerHTML = '';
+  ['#trail', '#mode-banner', '#controls', '#three', '#case-head', '#clock', '#locker'].forEach((s) => ($(s).innerHTML = ''));
 
   let c;
   try {
@@ -236,13 +292,12 @@ async function openCase(id) {
     $('#case-head').innerHTML = `<div class="banner warn">${esc(err.message)}</div>`;
     return;
   }
-  state.current = { id, ...c, docTitles: Object.fromEntries(c.documents.map((d) => [d.doc_id, d.title])) };
-  document.title = `${c.client.company} - Freelancer Defender`;
-  $('#crumbs').innerHTML = `<a href="#/">Dispute queue</a> &nbsp;/&nbsp; ${esc(c.dispute.dispute_id)}`;
+  state.current = { id, ...c };
+  document.title = `${c.client.company} · Freelancer Defender`;
 
-  renderCaseHead(c);
+  renderHero(c);
   renderClock(c);
-  renderStatement(c);
+  renderThree(c);
   renderLocker(c);
   renderControls(c);
   renderTrailSkeleton();
@@ -250,12 +305,10 @@ async function openCase(id) {
 
 async function renderLinkPicker(id) {
   const data = state.queue || (await api('/api/cases'));
-  $('#case-head').innerHTML = '';
-  $('#clock').innerHTML = '';
   $('#controls').innerHTML = `
-    <div class="card" style="max-width:640px">
-      <h4>Link this live PayPal dispute to an evidence locker</h4>
-      <p class="muted">PayPal holds the dispute and the payment records. The contract, emails and delivery logs live with the freelancer. Pick the locker that belongs to this job.</p>
+    <div class="card" style="max-width:680px">
+      <h2>Which job is this dispute about?</h2>
+      <p class="muted">PayPal has the dispute and the payment. Your contract, emails and delivery records live with you. Pick the job this belongs to.</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         ${data.scenarios.map((s) => `<button class="btn" data-sc="${esc(s.id)}">${esc(s.freelancer)}: ${esc(s.title)}</button>`).join('')}
       </div>
@@ -272,112 +325,123 @@ async function renderLinkPicker(id) {
   });
 }
 
-function renderCaseHead(c) {
+function renderHero(c) {
   const d = c.dispute;
+  const first = c.freelancer.name.split(' ')[0];
   $('#case-head').innerHTML = `
-    <div>
-      <h1>${esc(c.client.company)} vs. ${esc(c.freelancer.business)}</h1>
-      <div class="meta">
-        <span class="badge">${esc(REASONS[d.reason] || d.reason)}</span>
-        <span class="badge">${esc(d.dispute_channel === 'EXTERNAL' ? 'Bank chargeback' : 'PayPal dispute')}</span>
-        ${c.live ? '<span class="badge live">Live from PayPal sandbox</span>' : '<span class="badge demo">Demo data in PayPal API format</span>'}
-        <span>${esc(c.freelancer.name)}, ${esc(c.freelancer.craft)}</span>
-        <span class="faint mono">${esc(d.dispute_id)}</span>
-      </div>
+    <div class="tags">
+      <span class="tag red">${d.dispute_channel === 'EXTERNAL' ? 'Bank chargeback' : 'PayPal dispute'}</span>
+      <span class="tag">${esc(c.client.company)}</span>
+      ${c.live ? '<span class="tag green">Live from PayPal sandbox</span>' : '<span class="tag">Demo dispute</span>'}
     </div>
-    <div class="amount">${fmtMoney(Number(d.dispute_amount.value), d.dispute_amount.currency_code)}<span class="sub">already earned, now reversed</span></div>`;
+    <h1 class="amount num">${fmtMoney(Number(d.dispute_amount.value), d.dispute_amount.currency_code)}</h1>
+    <p class="lede">${esc(first)}, you did the work. We'll go through your evidence and build your response with you, step by step.</p>
+    <span class="who">${esc(c.freelancer.business)} · ${esc(c.title)}</span>`;
 }
 
-// The asymmetry clock: everyone else's timeline vs. the freelancer's.
+// The live countdown and the "who gets how long" comparison.
 function renderClock(c) {
   const d = c.dispute;
-  const tl = state.status?.timelines || { bankDecisionDays: 75, cardholderFilingDays: 180 };
+  const tl = state.status?.timelines || { bankDecisionDays: 75, cardholderFilingDays: 180, sources: [] };
+  const sources = `<div class="src">Sources: ${(tl.sources || []).map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(' · ')}</div>`;
   if (!d.seller_response_due_date) {
-    $('#clock').innerHTML = `<div class="countdown"><div class="label">Your time to respond</div><div class="digits" style="color:var(--muted)">No deadline</div><div class="sub">PayPal status: ${esc(d.status)} (${esc(d.dispute_life_cycle_stage)})</div></div><div></div>`;
+    $('#clock').innerHTML = `
+      <span class="label">Time left to respond</span>
+      <div style="font-size:30px;font-weight:800">No deadline right now</div>
+      <div style="color:#bfdbfe;font-size:14px">PayPal is reviewing this dispute (${esc(d.status.toLowerCase().replace(/_/g, ' '))}). We'll show the clock as soon as they need something from you.</div>
+      ${sources}`;
     return;
   }
-  const windowH = (new Date(d.seller_response_due_date) - new Date(d.create_time)) / 3.6e6;
-  const longest = tl.cardholderFilingDays * 24;
-  const windowLabel = windowH >= 48 ? `${Math.round(windowH / 24)} days` : `${Math.round(windowH)} hours`;
-  const pctYou = (windowH / longest) * 100;
-  const paid = d.disputed_transactions?.[0]?.create_time;
-  const daysSincePaid = paid ? Math.round((new Date(d.create_time) - new Date(paid)) / 8.64e7) : null;
-
+  const windowDays = Math.round((new Date(d.seller_response_due_date) - new Date(d.create_time)) / 864e5);
   $('#clock').innerHTML = `
-    <div class="countdown">
-      <div class="label">Your time to respond</div>
-      <div class="digits" id="digits">--:--:--</div>
-      <div class="sub">due ${esc(new Date(d.seller_response_due_date).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }))}</div>
+    <span class="label">Time left to respond</span>
+    <div class="boxes">
+      <div class="box"><b id="c-d">0</b><span>days</span></div>
+      <div class="box"><b id="c-h">00</b><span>hours</span></div>
+      <div class="box"><b id="c-m">00</b><span>min</span></div>
+      <div class="box"><b id="c-s">00</b><span>sec</span></div>
     </div>
-    <div class="tracks">
-      <div class="track client"><div class="name"><b>Your client</b> can file up to ${tl.cardholderFilingDays} days after paying${daysSincePaid ? ` <span class="faint">(filed on day ${daysSincePaid})</span>` : ''}</div><div class="rail"><div class="fill" style="width:100%"></div></div></div>
-      <div class="track bank"><div class="name"><b>Their card company</b> can take up to ${tl.bankDecisionDays} days to decide</div><div class="rail"><div class="fill" style="width:${(tl.bankDecisionDays / tl.cardholderFilingDays) * 100}%"></div></div></div>
-      <div class="track you"><div class="name"><b>You</b> get ${windowLabel}</div><div class="rail"><div class="fill" style="width:${pctYou}%"></div><span class="callout" style="left:calc(${pctYou}% + 10px)">← that's you. ${windowLabel}.</span></div></div>
-      <div class="faint" style="font-size:11px">Sources: ${(tl.sources || []).map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(' · ')}${c.live ? ' · your deadline comes from PayPal\'s <span class="mono">seller_response_due_date</span>' : ''}</div>
-    </div>`;
+    <div class="lines">
+      <div class="line"><div class="row"><span>Your client could dispute for</span><b>${tl.cardholderFilingDays} days</b></div><div class="bar"><i style="width:100%"></i></div></div>
+      <div class="line"><div class="row"><span>Their bank can take up to</span><b>${tl.bankDecisionDays} days</b></div><div class="bar"><i style="width:${(tl.bankDecisionDays / tl.cardholderFilingDays) * 100}%"></i></div></div>
+      <div class="line you"><div class="row"><span>You have left</span><b id="c-left"></b></div><div class="bar"><i id="c-bar"></i></div></div>
+    </div>
+    ${sources}`;
   const tick = () => {
-    const el = $('#digits');
-    if (el) el.textContent = timeLeft(d.seller_response_due_date).text;
+    const t = timeLeft(d.seller_response_due_date);
+    if (!$('#c-d')) return;
+    $('#c-d').textContent = t.days;
+    $('#c-h').textContent = pad(t.h);
+    $('#c-m').textContent = pad(t.m);
+    $('#c-s').textContent = pad(t.s);
+    $('#c-left').textContent = `${t.days}d ${t.h}h of ${windowDays} days`;
+    $('#c-bar').style.width = `${(t.ms / (tl.cardholderFilingDays * 864e5)) * 100}%`;
   };
   tick();
   state.clockTimer = setInterval(tick, 1000);
 }
 
-function renderStatement(c) {
-  const d = c.dispute;
-  // Real PayPal disputes keep the complaint in each item's notes; follow-ups are messages.
-  const itemNotes = (d.disputed_transactions || []).flatMap((t) => (t.items || []).map((i) => i.notes).filter(Boolean));
-  const msg = [...new Set([...itemNotes, ...(d.messages || []).filter((m) => m.posted_by === 'BUYER').map((m) => m.content)])].join('\n\n');
-  $('#statement').innerHTML = `
-    <div class="reason-line">
-      <span class="badge accent">${esc(REASONS[d.reason] || d.reason)}</span>
-      ${d.external_reason_code ? `<span class="badge">Network code ${esc(d.external_reason_code)}</span>` : ''}
+// What the client wrote, from the PayPal dispute.
+function clientStatement(d) {
+  const notes = (d.disputed_transactions || []).flatMap((t) => (t.items || []).map((i) => i.notes).filter(Boolean));
+  const msgs = (d.messages || []).filter((m) => m.posted_by === 'BUYER').map((m) => m.content);
+  return [...new Set([...notes, ...msgs])].join(' ').replace(/^Cardholder statement forwarded by issuing bank[^:]*:\s*/, '');
+}
+
+function renderThree(c) {
+  const stmt = clientStatement(c.dispute);
+  $('#three').innerHTML = `
+    <div>
+      <span class="kicker">1 · What the client told their bank</span>
+      <p class="big" id="said">"${esc(clip(stmt, 110))}"</p>
+      <span class="note">Filed as "${esc(REASONS[c.dispute.reason] || c.dispute.reason)}"</span>
     </div>
-    <blockquote class="quote" id="statement-quote">${esc(msg)}</blockquote>
-    <div class="faint" style="font-size:12px;margin-top:8px">Source: ${esc(c.sources.dispute)}</div>`;
+    <div class="waiting" id="card-real">
+      <span class="kicker">2 · What's actually going on</span>
+      <p class="big">We haven't looked yet. Run the agent and it will read your evidence to find out.</p>
+    </div>
+    <div class="waiting" id="card-plan">
+      <span class="kicker">3 · What we'll do about it</span>
+      <p class="big">A plan appears here once we know what's really wrong.</p>
+    </div>`;
 }
 
 function renderLocker(c) {
   $('#locker-count').textContent = `${c.documents.length} documents`;
-  const ul = $('#locker');
-  ul.innerHTML = '';
+  const box = $('#locker');
   for (const d of c.documents) {
-    const li = h(`
-      <li data-doc="${esc(d.doc_id)}" title="${esc(d.summary)}">
+    const b = h(`
+      <button class="doc" data-doc="${esc(d.doc_id)}" title="${esc(d.summary)}">
         <span class="ld"></span>
-        <span>
-          <div class="lt">${esc(d.title)}</div>
-          <div class="ls">${d.kind === 'paypal_record' ? '<span class="src-tag">PayPal API</span> · ' : ''}${esc(d.source)}</div>
-        </span>
-        <span class="lc" data-count>${d.sections}</span>
-      </li>`);
-    li.onclick = () => openDrawer(d.doc_id);
-    ul.appendChild(li);
+        <span><div class="lt">${esc(d.title)}</div><div class="ls">${d.kind === 'paypal_record' ? '<span class="src-paypal">From PayPal</span> · ' : ''}${esc(d.source)}</div></span>
+      </button>`);
+    b.onclick = () => openDrawer(d.doc_id);
+    box.appendChild(b);
   }
 }
 
 function markDoc(docId, cls) {
-  const li = $(`#locker li[data-doc="${CSS.escape(docId)}"]`);
-  if (!li) return;
-  li.classList.add(cls);
-  li.classList.remove('pulse');
-  void li.offsetWidth; // restart the animation
-  li.classList.add('pulse');
+  const el = $(`#locker [data-doc="${CSS.escape(docId)}"]`);
+  if (!el) return;
+  el.classList.add(cls);
+  el.classList.remove('pulse');
+  void el.offsetWidth; // restart the animation
+  el.classList.add('pulse');
 }
 
 function renderControls(c) {
   const ctl = $('#controls');
   ctl.innerHTML = `
-    <button class="btn primary" id="run-live">Run the defender (live AI)</button>
-    <button class="btn" id="run-replay" ${c.has_replay ? '' : 'disabled title="No recorded run yet"'}>Replay a recorded run</button>
-    <span class="faint" style="font-size:12px">Live runs call ${esc(state.status?.groq.model || 'the model')}; on Groq's free tier they take a few minutes.</span>`;
+    <button class="btn primary" id="run-live">Find out what's really going on</button>
+    <button class="btn" id="run-replay" ${c.has_replay ? '' : 'disabled title="No recorded run yet"'}>Watch a recorded run</button>
+    <span class="hint">The agent reads your contract, emails and logs. A live run takes a few minutes; the recording plays in about one.</span>`;
   $('#run-live').onclick = () => startRun('live');
   $('#run-replay').onclick = () => startRun('replay');
 
   // Live sandbox disputes: buttons to move the dispute through PayPal's lifecycle while testing.
   if (c.live && state.status?.paypal.env === 'sandbox') {
-    const tools = h(`<div class="toolrow" style="width:100%"><span class="verb">sandbox</span>
-        <span class="faint">${esc(c.dispute.dispute_life_cycle_stage)} · ${esc(c.dispute.status)}</span>
+    const tools = h(`<div class="sandbox" style="width:100%"><b>Sandbox testing</b>
+        <span>${esc(c.dispute.dispute_life_cycle_stage)} · ${esc(c.dispute.status)}</span>
         <button class="btn" data-a="escalate">Escalate to claim</button>
         <button class="btn" data-a="require-evidence">Require seller evidence</button>
         <button class="btn" data-a="adjudicate" data-o="SELLER_FAVOR">Settle: freelancer wins</button>
@@ -400,46 +464,57 @@ function renderControls(c) {
   }
 }
 
-// ---------- the reasoning trail -------------------------------------------------
+// ---------- the agent's steps ----------------------------------------------------
 
 const STAGES = [
-  ['intake', 'Pull the dispute from PayPal', 'Disputes API + Transaction Search API'],
-  ['read', 'Read the complaint', 'what they literally say vs. what is vague'],
-  ['investigate', 'Investigate the evidence', 'the agent opens documents and records findings'],
-  ['diagnose', 'Find the real complaint', 'competing hypotheses, weighed against evidence'],
-  ['strategy', 'Choose a strategy', 'answer the bank and fix the real problem'],
-  ['draft', 'Draft the response', 'every claim must cite an exact source'],
-  ['verify', 'Verify every citation', 'deterministic check, no AI'],
-  ['package', 'Send through PayPal', 'provide-evidence / make-offer / send-message'],
+  ['intake', 'Pull the dispute from PayPal'],
+  ['read', 'Read what your client said'],
+  ['investigate', 'Go through your evidence'],
+  ['diagnose', "Work out what's really wrong"],
+  ['strategy', 'Choose a plan'],
+  ['draft', 'Write your response'],
+  ['verify', 'Check every quote against its source'],
+  ['package', 'Get it ready to send through PayPal'],
 ];
 
 function renderTrailSkeleton() {
   const ol = $('#trail');
   ol.innerHTML = '';
-  for (const [key, title, sub] of STAGES) {
+  STAGES.forEach(([key, title], i) => {
     ol.appendChild(
       h(`<li class="stage pending" data-stage="${key}">
-          <span class="node"></span>
-          <div class="stage-head"><span class="stage-title">${esc(title)}</span><span class="stage-sub">${esc(sub)}</span></div>
+          <span class="dot">${i + 1}</span>
+          <div class="title"><span>${esc(title)}</span><span class="sum"></span><span class="more">Details</span></div>
           <div class="stage-body"></div>
         </li>`)
     );
-  }
+  });
+  $('#trail-note').textContent = '';
 }
 
 const stageEl = (key) => $(`#trail [data-stage="${key}"]`);
 const stageBody = (key) => $('.stage-body', stageEl(key));
+const stageSum = (key, text) => ($('.sum', stageEl(key)).textContent = text);
 function setStage(key, status) {
   const el = stageEl(key);
   if (!el) return;
   el.classList.remove('pending', 'running', 'done');
   el.classList.add(status === 'start' ? 'running' : 'done');
+  if (key === 'package' && status !== 'start') el.classList.add('final');
   if (status === 'start') el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  // A finished step folds down to its one-line summary; "Details" opens it again.
+  if (status !== 'start' && key !== 'package') setTimeout(() => el.classList.add('collapsed'), 1500);
 }
 
+// Clicking a step's title opens or folds its details.
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('.stage.done .title');
+  if (t) t.parentElement.classList.toggle('collapsed');
+});
+
 function chip(c, kind = '') {
-  const isPP = c.doc_id === 'DISPUTE' || c.doc_id === 'PAYPAL-TXN';
-  const el = h(`<button class="chip ${isPP ? 'paypal' : ''} ${kind}" title="${esc(state.current?.docTitles[c.doc_id] || c.doc_id)}">${esc(c.doc_id)} · ${esc(c.anchor)}</button>`);
+  const isPP = c.doc_id === 'DISPUTE' || c.doc_id.startsWith('PAYPAL');
+  const el = h(`<button class="chip ${isPP ? 'paypal' : ''} ${kind}">${esc(docName(c.doc_id))} · ${esc(c.anchor)}</button>`);
   el.onclick = () => openDrawer(c.doc_id, c.anchor, c.quote);
   return el;
 }
@@ -452,62 +527,66 @@ function chips(list, kind) {
 function startRun(mode) {
   if (state.stream) state.stream.close();
   renderTrailSkeleton();
-  $('#locker').querySelectorAll('li').forEach((li) => li.classList.remove('opened', 'cited'));
+  renderThree(state.current);
+  $('#result').classList.add('hidden');
+  $('#result').innerHTML = '';
+  $('#locker').querySelectorAll('.doc').forEach((d) => d.classList.remove('opened', 'cited'));
   $('#run-live').disabled = true;
   $('#run-replay').disabled = true;
   let currentStage = 'intake';
+  let opened = 0;
+  let found = 0;
 
   const es = new EventSource(`/api/cases/${encodeURIComponent(state.current.id)}/run?mode=${mode}`);
   state.stream = es;
   const on = (type, fn) => es.addEventListener(type, (e) => fn(JSON.parse(e.data)));
 
   on('mode', (p) => {
-    $('#mode-banner').innerHTML =
-      p.mode === 'replay'
-        ? `<div class="banner">Replaying a recorded <strong>live</strong> run from ${esc(new Date(p.recorded_at).toLocaleString())}, sped up. Same model output, nothing staged.</div>`
-        : `<div class="banner">Live run: <strong>${esc(state.status?.groq.model)}</strong> is reasoning right now.</div>`;
+    $('#trail-note').textContent =
+      p.mode === 'replay' ? `Recording of a real run from ${new Date(p.recorded_at).toLocaleDateString()}, sped up` : 'Running live';
   });
-
   on('stage', (p) => {
     currentStage = p.stage;
     setStage(p.stage, p.status);
     if (p.status === 'done') renderStageDone(p.stage, p.data || {}, p.thinking);
   });
-  on('thinking', (p) => addThinking(p.stage, p.text));
+  on('thinking', (p) => addRawNotes(p.stage, p.text));
   on('tool', (p) => {
     const body = stageBody('investigate');
     if (p.name === 'read_document') {
+      opened++;
       markDoc(p.doc_id, 'opened');
-      body.appendChild(h(`<div class="toolrow"><span class="verb">open</span><span class="obj">${esc(p.title)}</span><span class="hits">${p.sections.length} sections · ${esc(p.source)}</span></div>`));
+      body.appendChild(h(`<div class="step-line">Opened <b>${esc(p.title)}</b></div>`));
     } else if (p.name === 'search_evidence') {
-      body.appendChild(h(`<div class="toolrow"><span class="verb">search</span><span class="obj">"${esc(p.query)}"</span><span class="hits">${p.hits.length} matches</span></div>`));
+      body.appendChild(h(`<div class="step-line">Searched for <b>"${esc(p.query)}"</b>, ${p.hits.length} matches</div>`));
     }
+    stageSum('investigate', `${opened} documents opened, ${found} findings`);
   });
   on('finding', (p) => {
+    found++;
     p.citations.forEach((c) => markDoc(c.doc_id, 'cited'));
-    const card = h(`<div class="card finding"><div class="f-text">${esc(p.finding)}</div><div class="f-why">${esc(p.significance)}</div></div>`);
+    const card = h(`<div class="finding"><div class="f-text">${esc(p.finding)}</div><div class="f-why">${esc(p.significance)}</div></div>`);
     card.appendChild(chips(p.citations));
     stageBody('investigate').appendChild(card);
+    stageSum('investigate', `${opened} documents opened, ${found} findings`);
   });
   on('pacing', (p) => {
-    const body = stageBody(currentStage);
-    const el = h(`<div class="pacing"><span class="spin"></span>Pausing ${Math.round(p.ms / 1000)}s for the ${esc(p.reason)}</div>`);
-    body.appendChild(el);
+    const el = h(`<div class="pacing"><span class="spin"></span>Waiting ${Math.round(p.ms / 1000)}s for the AI service (free-tier limit)</div>`);
+    stageBody(currentStage).appendChild(el);
     setTimeout(() => el.remove(), p.ms);
   });
   on('verify_issue', (p) => {
-    const body = stageBody('verify');
-    const card = h(`<div class="card"><h4>${p.failed.length} claim(s) failed the citation check, sending back to the model to repair</h4></div>`);
-    const list = h('<div class="thinking"></div>');
-    p.failed.forEach((f) => list.appendChild(h(`<div>✗ "${esc(f.text)}"\n   ${esc(f.problems.join('; ') || 'no citation')}</div>`)));
-    const toggle = h('<button class="think-toggle">▸ show which claims and why</button>');
+    const card = h(`<div class="panel"><h4>${p.failed.length} sentence(s) didn't match their source exactly, so the agent is fixing them</h4></div>`);
+    const list = h('<div class="raw"></div>');
+    list.textContent = p.failed.map((f) => `✗ "${f.text}"\n   ${f.problems.join('; ') || 'no source given'}`).join('\n');
+    const toggle = h('<button class="raw-toggle">Show which ones</button>');
     toggle.onclick = () => list.classList.toggle('open');
     card.append(toggle, list);
-    body.appendChild(card);
+    stageBody('verify').appendChild(card);
   });
   on('result', (r) => renderResult(r));
   on('fatal', (p) => {
-    stageBody(currentStage).appendChild(h(`<div class="banner warn"><strong>Stopped:</strong> ${esc(p.message)}</div>`));
+    stageBody(currentStage).appendChild(h(`<div class="banner warn"><b>Stopped:</b> ${esc(p.message)}</div>`));
     finish();
   });
   on('end', finish);
@@ -521,91 +600,72 @@ function startRun(mode) {
   }
 }
 
-function addThinking(stage, text) {
-  if (!text) return;
+// The model's raw scratchpad, tucked away behind a toggle.
+function addRawNotes(stage, text) {
   const body = stageBody(stage);
-  if (!body) return;
-  const btn = h('<button class="think-toggle">▸ model scratchpad</button>');
-  const box = h(`<div class="thinking">${esc(text)}</div>`);
-  btn.onclick = () => {
-    box.classList.toggle('open');
-    btn.textContent = `${box.classList.contains('open') ? '▾' : '▸'} model scratchpad`;
-  };
-  body.appendChild(btn);
-  body.appendChild(box);
+  if (!text || !body) return;
+  const box = h('<div class="raw"></div>');
+  box.textContent = text;
+  const btn = h("<button class=\"raw-toggle\">Show the AI's raw notes</button>");
+  btn.onclick = () => box.classList.toggle('open');
+  body.append(btn, box);
 }
 
 function renderStageDone(stage, data, thinking) {
   const body = stageBody(stage);
+
   if (stage === 'intake') {
-    body.appendChild(
-      h(`<div class="card"><div class="kv">
-          <span class="k">Dispute</span><span>${esc(data.sources.dispute)}</span>
-          <span class="k">Payment history</span><span>${esc(data.sources.transactions)}</span>
-          <span class="k">Evidence locker</span><span>${data.documents.length} documents, ${data.documents.reduce((n, d) => n + d.sections, 0)} citable sections</span>
-        </div></div>`)
-    );
+    stageSum('intake', `${data.documents.length} documents, ${data.documents.reduce((n, d) => n + d.sections, 0)} quotable sections`);
   }
 
   if (stage === 'read') {
-    const card = h(`<div class="card"><h4>Stated complaint</h4><div>${esc(data.stated_complaint)}</div></div>`);
-    body.appendChild(card);
-    const v = h('<div class="card"><h4>Vague phrases: where the real complaint may be hiding</h4><div class="vague"></div></div>');
+    stageSum('read', `${data.vague_phrases.length} vague phrases to check`);
+    const v = h('<div class="panel"><h4>Vague phrases: where the real problem may be hiding</h4><div class="vague"></div></div>');
     data.vague_phrases.forEach((p) => {
       $('.vague', v).appendChild(h(`<span class="ph">"${esc(p.phrase)}"</span>`));
-      $('.vague', v).appendChild(h(`<span class="mean">${p.could_mean.map(esc).join(' · ')}</span>`));
+      $('.vague', v).appendChild(h(`<span class="mean">could mean: ${p.could_mean.map(esc).join(' · ')}</span>`));
     });
     body.appendChild(v);
-    body.appendChild(h(`<div class="card"><h4>Questions the investigation must answer</h4><ul class="qlist">${data.open_questions.map((q) => `<li>${esc(q)}</li>`).join('')}</ul></div>`));
+    body.appendChild(h(`<div class="panel"><h4>Questions to answer from the evidence</h4><ul class="qlist">${data.open_questions.map((q) => `<li>${esc(q)}</li>`).join('')}</ul></div>`));
     highlightStatement(data.vague_phrases.map((p) => p.phrase));
   }
 
   if (stage === 'investigate') {
-    body.appendChild(h(`<div class="card"><h4>Investigation summary</h4><div class="muted">${esc(data.summary)}</div><div class="faint" style="font-size:12px;margin-top:4px">${data.findings} findings · opened ${data.opened.length} documents</div></div>`));
+    stageSum('investigate', `${data.opened.length} documents opened, ${data.findings} findings`);
+    if (data.summary) body.appendChild(h(`<div class="panel"><h4>In short</h4><div>${esc(data.summary)}</div></div>`));
   }
 
   if (stage === 'diagnose') {
-    const top = data.hypotheses[0];
-    const stated = $('[data-stage="read"] .card div')?.textContent || '';
-    const reveal = h(`
-      <div class="reveal">
-        <div class="side stated">
-          <div class="kicker">What they filed</div>
-          <div class="big">${esc(REASONS[state.current.dispute.reason] || state.current.dispute.reason)}</div>
-          <div class="needs">${esc(stated)}</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="side real">
-          <div class="kicker">What's really wrong</div>
-          <div class="big">${esc(data.real_complaint.summary)}</div>
-          <div class="needs"><b>What they actually need:</b> ${esc(data.real_complaint.what_the_client_actually_needs)}</div>
-          <div class="conf"><span>Confidence</span><span class="meter"><i style="width:0"></i></span><span class="mono">${data.real_complaint.confidence}%</span></div>
-        </div>
-      </div>`);
-    body.appendChild(reveal);
-    requestAnimationFrame(() => ($('.meter i', reveal).style.width = `${data.real_complaint.confidence}%`));
+    stageSum('diagnose', `${data.real_complaint.confidence}% sure`);
+    // Fill card 2 at the top of the page.
+    const real = $('#card-real');
+    real.className = 'real';
+    real.innerHTML = `
+      <span class="kicker">2 · What's actually going on</span>
+      <p class="big">${esc(data.real_complaint.summary)}</p>
+      <div class="meter"><span class="track"><i></i></span>${data.real_complaint.confidence}% sure</div>
+      <span class="note">What they need: ${esc(data.real_complaint.what_the_client_actually_needs)}</span>`;
+    requestAnimationFrame(() => ($('.meter i', real).style.width = `${data.real_complaint.confidence}%`));
 
-    const hyps = h('<div class="card"><h4>Hypotheses the agent weighed</h4></div>');
+    const top = data.hypotheses[0];
+    const hyps = h('<div class="panel"><h4>Theories the agent weighed</h4></div>');
     data.hypotheses.forEach((hy) => {
       const row = h(`
         <div class="hyp ${hy === top ? 'top' : ''}">
           <div><div class="h-label">${esc(hy.label)}</div><div class="h-exp">${esc(hy.explanation)}</div></div>
-          <div><div class="h-bar"><i style="width:0"></i></div><div class="h-pct">${hy.likelihood}%</div></div>
+          <div><div class="h-bar"><i></i></div><div class="h-pct">${hy.likelihood}%</div></div>
         </div>`);
-      const left = row.firstElementChild;
-      if (hy.supporting.length) left.appendChild(chips(hy.supporting));
-      if (hy.contradicting.length) left.appendChild(chips(hy.contradicting, 'against'));
+      if (hy.supporting.length) row.firstElementChild.appendChild(chips(hy.supporting));
+      if (hy.contradicting.length) row.firstElementChild.appendChild(chips(hy.contradicting, 'against'));
       hyps.appendChild(row);
       requestAnimationFrame(() => ($('.h-bar i', row).style.width = `${hy.likelihood}%`));
     });
     body.appendChild(hyps);
-
-    body.appendChild(h(`<div class="card"><h4>Why they filed it as "${esc(REASONS[state.current.dispute.reason] || '')}"</h4><div class="muted">${esc(data.why_this_reason_code)}</div></div>`));
-
+    body.appendChild(h(`<div class="panel"><h4>Why they filed it as "${esc(REASONS[state.current.dispute.reason] || '')}"</h4><div>${esc(data.why_this_reason_code)}</div></div>`));
     if (data.freelancer_weaknesses.length) {
-      const w = h('<div class="card"><h4>Honest weak points on the freelancer\'s side</h4></div>');
+      const w = h('<div class="panel"><h4>Where your side is weaker (good to know before you respond)</h4></div>');
       data.freelancer_weaknesses.forEach((x) => {
-        const row = h(`<div style="margin-bottom:8px"><div class="f-why" style="color:var(--text)">${esc(x.issue)}</div></div>`);
+        const row = h(`<div><div>${esc(x.issue)}</div></div>`);
         row.appendChild(chips(x.citations, 'against'));
         w.appendChild(row);
       });
@@ -614,42 +674,45 @@ function renderStageDone(stage, data, thinking) {
   }
 
   if (stage === 'strategy') {
-    const card = h(`
-      <div class="card">
-        <div class="decision"><span class="badge accent">${esc(data.decision.replace(/_/g, ' '))}</span><span class="dlabel">${esc(DECISIONS[data.decision] || '')}</span></div>
-        <div class="muted" style="margin-top:8px">${esc(data.rationale)}</div>
-        ${data.resolution_action && data.resolution_action !== 'none' ? `<div style="margin-top:8px"><b>Do now:</b> ${esc(data.resolution_action)}</div>` : ''}
-        ${Number(data.refund_amount) > 0 ? `<div style="margin-top:4px"><b>Refund:</b> ${fmtMoney(Number(data.refund_amount))}</div>` : ''}
-      </div>`);
-    body.appendChild(card);
-    const plan = h('<div class="card"><h4>Proof plan</h4><table class="plan"><tbody></tbody></table></div>');
+    const d = DECISIONS[data.decision] || { short: data.decision, long: '' };
+    stageSum('strategy', d.short);
+    const plan = $('#card-plan');
+    plan.className = '';
+    plan.innerHTML = `
+      <span class="kicker">3 · What we'll do about it</span>
+      <p class="big">${esc(d.long)}</p>
+      ${data.resolution_action && data.resolution_action !== 'none' ? `<span class="note">${esc(clip(data.resolution_action, 160))}</span>` : ''}
+      ${Number(data.refund_amount) > 0 ? `<span class="tag amber" style="align-self:flex-start">Refund ${fmtMoney(Number(data.refund_amount))}</span>` : ''}`;
+    body.appendChild(h(`<div class="panel"><h4>Why</h4><div>${esc(data.rationale)}</div></div>`));
+    const pp = h('<div class="panel"><h4>What the response has to prove</h4></div>');
+    const ANS = { STATED_REASON: 'For the bank', REAL_COMPLAINT: 'For your client', BOTH: 'For both' };
     data.proof_plan.forEach((p) => {
-      const tr = h(`<tr><td><span class="ans ${p.answers}">${esc(p.answers.replace('_', ' '))}</span></td><td>${esc(p.point)}<div class="cites"></div></td><td><span class="strength ${p.strength}">${p.strength}</span></td></tr>`);
-      $('.cites', tr).appendChild(chips(p.evidence));
-      $('tbody', plan).appendChild(tr);
+      const row = h(`<div class="plan-row"><span class="tag ${p.answers === 'REAL_COMPLAINT' ? 'blue' : p.answers === 'BOTH' ? 'green' : ''}">${ANS[p.answers] || p.answers}</span><div>${esc(p.point)}</div><span class="strength ${p.strength}">${p.strength.toLowerCase()}</span></div>`);
+      row.children[1].appendChild(chips(p.evidence));
+      pp.appendChild(row);
     });
-    body.appendChild(plan);
+    body.appendChild(pp);
   }
 
-  if (stage === 'draft') {
-    body.appendChild(h(`<div class="toolrow"><span class="verb">drafted</span><span class="obj">${esc(data.response_title)}</span><span class="hits">${data.claims} claims, checking citations…</span></div>`));
-  }
+  if (stage === 'draft') stageSum('draft', `${data.claims} statements, each with its source`);
 
   if (stage === 'verify') {
+    stageSum('verify', `${data.grounded} of ${data.total} match word for word`);
     body.appendChild(
-      h(`<div class="card"><div class="verify-line">
+      h(`<div class="panel" style="flex-direction:row;align-items:center;gap:14px;flex-wrap:wrap">
           <span class="verify-big">${data.grounded}/${data.total}</span>
-          <span>claims grounded · <b>${data.citations}</b> citations matched word-for-word against their source${data.repaired ? ` · ${data.repaired} repaired` : ''}${data.removed.length ? ` · <span style="color:var(--danger)">${data.removed.length} removed</span>` : ''}</span>
-        </div></div>`)
+          <span>statements verified. Every quote was checked against the exact document it cites (by plain code, not AI)${data.repaired ? `; ${data.repaired} fixed along the way` : ''}${data.removed.length ? `; <b style="color:var(--danger)">${data.removed.length} removed</b> because no source supported them` : ''}.</span>
+        </div>`)
     );
   }
 
-  if (thinking) addThinking(stage, thinking);
+  if (thinking) addRawNotes(stage, thinking);
 }
 
-// Underline the vague phrases inside the client's statement.
+// Highlight the vague phrases inside the client's statement (card 1).
 function highlightStatement(phrases) {
-  const q = $('#statement-quote');
+  const q = $('#said');
+  if (!q) return;
   let html = esc(q.textContent);
   for (const p of phrases) {
     const safe = esc(p).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -658,60 +721,131 @@ function highlightStatement(phrases) {
   q.innerHTML = html;
 }
 
-// ---------- evidence ledger (AG Grid) -------------------------------------------------
-// One row per citation in the response: which claim, which source, the exact quote, and
-// whether the deterministic checker verified it. Sort/filter it to audit the response,
-// e.g. "show me every claim that rests on PayPal records". Click a row to open the source.
+// ---------- the response ------------------------------------------------------------
+
+function renderResult(r) {
+  const pkg = r.package;
+  const c = state.current;
+  c.result = r;
+  stageSum('package', 'Ready');
+  setStage('package', 'done');
+
+  const key = (x) => `${x.doc_id} ${x.anchor}`;
+  const notes = pkg.footnotes;
+  const out = $('#result');
+  out.classList.remove('hidden');
+  out.innerHTML = '';
+
+  const top = h('<div class="result"></div>');
+
+  // The letter to the bank, with numbered sources.
+  const letter = h(`<div class="card letter">
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
+        <span class="kicker">Your response to the bank</span>
+        <span class="tag green">${r.draft.claims.length} of ${r.draft.claims.length + (r.removed || []).length} statements verified</span>
+      </div>
+      <h3>${esc(r.draft.response_title)}</h3>
+      <div class="lmeta">From ${esc(c.freelancer.name)}. Every sentence links to the document it comes from.</div>
+    </div>`);
+  r.draft.claims.forEach((cl) => {
+    const p = h(`<p>${esc(cl.text)}</p>`);
+    const seen = new Set();
+    cl.citations.forEach((x) => {
+      const n = notes.findIndex((f) => key(f) === key(x)) + 1;
+      if (seen.has(n)) return;
+      seen.add(n);
+      const b = h(`<button class="fn" title="${esc(docName(x.doc_id) + ' ' + x.anchor)}">${esc(docName(x.doc_id))}</button>`);
+      b.onclick = () => openDrawer(x.doc_id, x.anchor, x.quote);
+      p.appendChild(b);
+    });
+    letter.appendChild(p);
+  });
+  (r.removed || []).forEach((cl) => letter.appendChild(h(`<p class="removed" title="Removed: no source supported it">${esc(cl.text)}</p>`)));
+  letter.appendChild(
+    h(`<div class="files"><a href="/api/cases/${encodeURIComponent(c.id)}/files/response-letter.pdf" target="_blank">Download letter (PDF)</a><a href="/api/cases/${encodeURIComponent(c.id)}/files/evidence-appendix.pdf" target="_blank">Download evidence appendix (PDF)</a></div>`)
+  );
+  top.appendChild(letter);
+
+  // Right column: the message to the client + what gets sent to PayPal.
+  const side = h('<div style="display:flex;flex-direction:column;gap:12px"></div>');
+  side.appendChild(h(`<div class="card"><span class="kicker">Message to ${esc(c.client.name)}</span><div class="msg" style="margin-top:8px">${esc(pkg.clientMessage)}</div></div>`));
+  const actions = h('<div class="card"><span class="kicker">What gets sent</span></div>');
+  pkg.actions.forEach((a) => {
+    actions.appendChild(
+      h(`<div class="action" data-kind="${esc(a.kind)}">
+          <div><div class="a-label">${esc(a.label)}</div><div class="a-note">${a.kind === 'email' ? esc(a.note) : 'Through the PayPal Disputes API'}</div></div>
+          <div class="a-state a-note">${a.kind === 'email' ? 'You send this one' : 'Ready'}</div>
+        </div>`)
+    );
+  });
+  side.appendChild(actions);
+  top.appendChild(side);
+  out.appendChild(top);
+  out.appendChild(renderLedger(r, notes, key));
+
+  // The big send bar.
+  const cta = h(`<div class="cta">
+      <div><div class="t">Your response is ready to send.</div><div class="s">${c.live ? 'This sends it to PayPal (sandbox).' : "This is a demo dispute, so sending shows exactly what would go to PayPal."}</div></div>
+      <div class="btns">
+        <button class="btn ghost-dark" id="to-top">Review the steps</button>
+        <button class="btn white" id="send">Send response →</button>
+      </div>
+    </div>`);
+  out.appendChild(cta);
+  $('#to-top', cta).onclick = () => $('#trail').scrollIntoView({ behavior: 'smooth' });
+  $('#send', cta).onclick = () => doSubmit($('#send', cta), actions);
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Evidence ledger (AG Grid): one row per source behind the response, to audit it at a glance.
 function renderLedger(r, notes, key) {
   const docs = Object.fromEntries(state.current.documents.map((d) => [d.doc_id, d]));
   const rows = [];
   r.draft.claims.forEach((cl, i) =>
-    cl.citations.forEach((c) =>
+    cl.citations.forEach((x) =>
       rows.push({
         claim: i + 1,
         text: cl.text,
-        note: notes.findIndex((f) => key(f) === key(c)) + 1,
-        doc_id: c.doc_id,
-        source: docs[c.doc_id]?.title || c.doc_id,
-        origin: docs[c.doc_id]?.kind === 'paypal_record' ? 'PayPal API' : 'Freelancer records',
-        anchor: c.anchor,
-        quote: c.quote,
+        doc_id: x.doc_id,
+        source: docs[x.doc_id]?.title || x.doc_id,
+        origin: docs[x.doc_id]?.kind === 'paypal_record' ? 'PayPal' : 'Your records',
+        anchor: x.anchor,
+        quote: clip(x.quote, 220),
         verified: true,
       })
     )
   );
-  (r.removed || []).forEach((cl) =>
-    rows.push({ claim: '—', text: cl.text, note: '', doc_id: '', source: '', origin: '', anchor: '', quote: (cl.problems || []).join('; '), verified: false })
-  );
+  (r.removed || []).forEach((cl) => rows.push({ claim: '—', text: cl.text, doc_id: '', source: '', origin: '', anchor: '', quote: '', verified: false }));
 
-  const wrapEl = h(`<div class="card"><h4>Evidence ledger: ${rows.filter((x) => x.verified).length} citations, each checked word for word</h4><div class="ledger ag-theme-quartz-dark grid"></div></div>`);
-  agGrid.createGrid($('.ledger', wrapEl), {
+  const n = rows.filter((x) => x.verified).length;
+  const wrapEl = h(`<div class="card"><div class="card-head" style="margin-bottom:0"><h2>Every source behind your response</h2><button class="btn" id="ledger-toggle">Show all ${n} sources</button></div><div class="ledger ag-theme-quartz grid hidden" style="margin-top:14px"></div></div>`);
+  const grid = $('.ledger', wrapEl);
+  $('#ledger-toggle', wrapEl).onclick = (e) => {
+    grid.classList.toggle('hidden');
+    e.target.textContent = grid.classList.contains('hidden') ? `Show all ${n} sources` : 'Hide sources';
+  };
+  agGrid.createGrid(grid, {
     rowData: rows,
     domLayout: 'autoHeight',
     defaultColDef: { sortable: true, resizable: true, filter: true, suppressHeaderMenuButton: true, wrapText: true, autoHeight: true },
     columnDefs: [
-      { headerName: 'Claim', field: 'claim', width: 84 },
-      { headerName: 'Statement', field: 'text', flex: 2, minWidth: 220, cellStyle: { lineHeight: '1.45', padding: '8px 12px' } },
+      { headerName: '#', field: 'claim', width: 70 },
+      { headerName: 'Statement', field: 'text', flex: 2, minWidth: 220, cellStyle: { lineHeight: '1.45', paddingTop: '10px', paddingBottom: '10px' } },
       {
         headerName: 'Source',
         field: 'source',
         flex: 1.2,
         minWidth: 180,
-        cellRenderer: (p) => (p.value ? `<div class="cell-stack"><span>${esc(p.value)}</span><span class="sub mono">${esc(p.data.doc_id)} · ${esc(p.data.anchor)}</span></div>` : ''),
+        cellRenderer: (p) => (p.value ? `<div class="cell-stack"><span class="main" style="font-size:14px">${esc(p.value)}</span><span class="sub">${esc(docName(p.data.doc_id))} · ${esc(p.data.anchor)}</span></div>` : ''),
       },
-      {
-        headerName: 'Origin',
-        field: 'origin',
-        width: 160,
-        cellRenderer: (p) => (p.value ? `<span class="badge ${p.value === 'PayPal API' ? 'demo' : ''}">${esc(p.value)}</span>` : ''),
-      },
-      { headerName: 'Exact quote', field: 'quote', flex: 2, minWidth: 220, cellStyle: { lineHeight: '1.45', padding: '8px 12px', fontStyle: 'italic', color: 'var(--muted)' } },
+      { headerName: 'From', field: 'origin', width: 130, cellRenderer: (p) => (p.value ? `<span class="tag ${p.value === 'PayPal' ? 'blue' : ''}">${esc(p.value)}</span>` : '') },
+      { headerName: 'Exact quote', field: 'quote', flex: 2, minWidth: 220, cellStyle: { lineHeight: '1.45', paddingTop: '10px', paddingBottom: '10px', fontStyle: 'italic', color: '#475569' } },
       {
         headerName: 'Check',
         field: 'verified',
-        width: 110,
+        width: 120,
         valueFormatter: (p) => (p.value ? 'verified' : 'removed'),
-        cellRenderer: (p) => (p.value ? '<span class="result-ok">✓ verified</span>' : '<span class="result-bad">✗ removed</span>'),
+        cellRenderer: (p) => (p.value ? '<span class="ok">✓ Verified</span>' : '<span class="bad">✗ Removed</span>'),
       },
     ],
     onRowClicked: (e) => e.data.doc_id && openDrawer(e.data.doc_id, e.data.anchor, e.data.quote),
@@ -719,67 +853,9 @@ function renderLedger(r, notes, key) {
   return wrapEl;
 }
 
-// ---------- the final response + submission ----------------------------------------
-
-function renderResult(r) {
-  const pkg = r.package;
-  const body = stageBody('package');
-  state.current.result = r;
-
-  // Footnote numbers, in the same order the server used for the PDF.
-  const key = (c) => `${c.doc_id} ${c.anchor}`;
-  const notes = pkg.footnotes;
-
-  const letter = h(`<div class="letter"><h3>${esc(r.draft.response_title)}</h3><div class="lmeta">${esc(state.current.freelancer.name)} · ${esc(state.current.dispute.dispute_id)} · every sentence below is backed by a cited source</div></div>`);
-  r.draft.claims.forEach((cl) => {
-    const p = h(`<p class="ok">${esc(cl.text)} </p>`);
-    const seen = new Set();
-    cl.citations.forEach((c) => {
-      const n = notes.findIndex((f) => key(f) === key(c)) + 1;
-      if (seen.has(n)) return;
-      seen.add(n);
-      const sup = h(`<sup title="${esc(c.doc_id + ' ' + c.anchor)}">[${n}]</sup>`);
-      sup.onclick = () => openDrawer(c.doc_id, c.anchor, c.quote);
-      p.appendChild(sup);
-    });
-    letter.appendChild(p);
-  });
-  (r.removed || []).forEach((cl) => letter.appendChild(h(`<p class="removed" title="Removed: could not be grounded in a source">${esc(cl.text)}</p>`)));
-  body.appendChild(letter);
-  body.appendChild(renderLedger(r, notes, key));
-
-  const files = h(`<div class="toolrow"><span class="verb">files</span>
-      <a class="obj" href="/api/cases/${encodeURIComponent(state.current.id)}/files/response-letter.pdf" target="_blank">response-letter.pdf</a>
-      <a class="obj" href="/api/cases/${encodeURIComponent(state.current.id)}/files/evidence-appendix.pdf" target="_blank">evidence-appendix.pdf</a>
-    </div>`);
-  body.appendChild(files);
-
-  body.appendChild(h(`<div class="card"><h4>Message to ${esc(state.current.client.name)}: fixes the real problem</h4><div class="msg">${esc(pkg.clientMessage)}</div></div>`));
-
-  const actions = h(`<div class="card"><h4>PayPal actions</h4></div>`);
-  pkg.actions.forEach((a) => {
-    actions.appendChild(
-      h(`<div class="action" data-kind="${esc(a.kind)}">
-          <div><div class="a-label">${esc(a.label)}</div><div class="a-path">${a.path ? `${esc(a.method)} ${esc(a.path)}` : esc(a.note || '')}</div></div>
-          <div class="a-state faint" style="font-size:12px">${a.kind === 'email' ? 'copy & send yourself' : 'ready'}</div>
-        </div>`)
-    );
-  });
-  const live = state.current.live;
-  const submit = h(`<div style="display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap">
-      <button class="btn primary">${live ? 'Submit to PayPal sandbox' : 'Submit (simulated: demo dispute)'}</button>
-      <span class="faint" style="font-size:12px">${live ? 'Real API calls to the PayPal sandbox.' : 'Demo disputes do not exist inside PayPal, so this shows the exact request that would be sent.'}</span>
-    </div>`);
-  submit.firstElementChild.onclick = () => doSubmit(submit.firstElementChild, actions);
-  actions.appendChild(submit);
-  body.appendChild(actions);
-  setStage('package', 'done');
-  stageEl('package').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
 async function doSubmit(btn, actionsCard) {
   btn.disabled = true;
-  btn.textContent = 'Submitting…';
+  btn.textContent = 'Sending…';
   try {
     const res = await api(`/api/cases/${encodeURIComponent(state.current.id)}/submit`, {
       method: 'POST',
@@ -790,27 +866,36 @@ async function doSubmit(btn, actionsCard) {
       const row = $(`.action[data-kind="${CSS.escape(r.kind)}"]`, actionsCard);
       if (!row) continue;
       $('.a-state', row).innerHTML = r.skipped
-        ? `<span class="faint">${esc(r.error)}</span>`
+        ? `<span class="a-note">${esc(r.error)}</span>`
         : r.ok
-        ? `<span class="result-ok">✓ ${r.simulated ? 'simulated' : `sent${r.debug_id ? ` · debug ${esc(r.debug_id)}` : ''}`}</span>`
-        : `<span class="result-bad">✗ ${esc(r.error)}</span>`;
-      if (r.request) row.appendChild(h(`<pre class="req">${esc(JSON.stringify(r.request, null, 2))}${r.response ? `\n\n// PayPal response\n${esc(JSON.stringify(r.response, null, 2))}` : ''}${r.paypal ? `\n\n// PayPal error\n${esc(JSON.stringify(r.paypal, null, 2))}` : ''}</pre>`));
+          ? `<span class="ok">✓ ${r.simulated ? 'Simulated' : 'Sent to PayPal'}</span>`
+          : `<span class="bad">✗ ${esc(r.error)}</span>`;
+      if (r.request) {
+        const pre = h('<pre class="req hidden"></pre>');
+        pre.textContent =
+          JSON.stringify(r.request, null, 2) +
+          (r.response ? `\n\n// PayPal response\n${JSON.stringify(r.response, null, 2)}` : '') +
+          (r.paypal ? `\n\n// PayPal error\n${JSON.stringify(r.paypal, null, 2)}` : '');
+        const t = h('<button class="raw-toggle" style="width:100%">Show the exact API request</button>');
+        t.onclick = () => pre.classList.toggle('hidden');
+        row.append(t, pre);
+      }
     }
-    btn.textContent = res.live ? 'Submitted to PayPal' : 'Simulated';
-    toast(res.live ? 'Response submitted to the PayPal sandbox.' : 'Simulated: request shown for each action.');
+    btn.textContent = res.live ? 'Sent to PayPal ✓' : 'Simulated ✓';
+    toast(res.live ? 'Your response was sent to the PayPal sandbox.' : 'Simulated: the exact requests are shown under "What gets sent".');
   } catch (err) {
     btn.disabled = false;
-    btn.textContent = 'Retry submit';
+    btn.textContent = 'Try again';
     toast(err.message);
   }
 }
 
-// ---------- evidence drawer ----------------------------------------------------------
+// ---------- source document drawer ---------------------------------------------------
 
 async function openDrawer(docId, anchor, quote) {
   const doc = await api(`/api/cases/${encodeURIComponent(state.current.id)}/documents/${encodeURIComponent(docId)}`).catch(() => null);
   if (!doc) return;
-  $('#drawer-kicker').textContent = `${doc.doc_id} · ${doc.source}`;
+  $('#drawer-kicker').textContent = doc.source;
   $('#drawer-title').textContent = doc.title;
   const body = $('#drawer-body');
   body.innerHTML = '';
@@ -823,7 +908,7 @@ async function openDrawer(docId, anchor, quote) {
         text = text.replace(new RegExp(safe, 'i'), (m) => `<mark>${m}</mark>`);
       }
     }
-    const el = h(`<div class="sec ${s.anchor === anchor ? 'hl' : ''}"><div class="sa">${esc(s.anchor)}</div><div class="sh">${esc(s.heading)}</div><div class="st">${text}</div></div>`);
+    const el = h(`<div class="sec ${s.anchor === anchor ? 'hl' : ''}"><div class="sh">${esc(s.anchor)} · ${esc(s.heading)}</div><div class="st">${text}</div></div>`);
     if (s.anchor === anchor) target = el;
     body.appendChild(el);
   }

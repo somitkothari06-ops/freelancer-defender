@@ -6,62 +6,75 @@
   <title>Freelancer Defender</title>
   <meta name="description" content="An AI agent that defends freelancers when a client's bank reverses a payment they already earned." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" />
-  <!-- AG Grid (community edition) powers the dispute queue -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" />
+  <!-- AG Grid (community) for the dispute list and the evidence ledger -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-grid.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-theme-quartz.css" />
+  <!-- Bryntum Scheduler (trial) for the deadline timeline -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@bryntum/scheduler-trial@7.3.7/scheduler.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@bryntum/scheduler-trial@7.3.7/svalbard-light.css" />
   <link rel="stylesheet" href="/styles.css" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7z' fill='%23f59e0b'/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cpath d='M13 2 3 6v7c0 6 4.3 10 10 11 5.7-1 10-5 10-11V6z' fill='%231D4ED8'/%3E%3C/svg%3E" />
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#/">
-      <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7z" fill="var(--accent)"/><path d="m11 16 3.5 3.5L21 13" stroke="#09090b" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span>Freelancer Defender</span>
-    </a>
-    <nav class="crumbs" id="crumbs"></nav>
-    <div class="status" id="status"></div>
+    <div class="topbar-left">
+      <a class="brand" href="#/">
+        <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 2 3 6v7c0 6 4.3 10 10 11 5.7-1 10-5 10-11V6z" fill="#1D4ED8"></path><path d="m8.5 13 3 3 6-6.5" stroke="#FFFFFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        Freelancer Defender
+      </a>
+      <nav class="nav"><a href="#/" class="active">Disputes</a></nav>
+    </div>
+    <div class="topbar-right" id="status"></div>
   </header>
 
-  <!-- ===== Queue view ===== -->
+  <!-- ===== All disputes ===== -->
   <main id="view-queue" class="view">
-    <section class="hero-strip">
+    <section class="q-head">
       <div>
-        <h1>Disputes waiting on you</h1>
-        <p class="muted">Every row is money you already earned. The clock on the left is how long you have to defend it.</p>
+        <h1>Payments we're protecting</h1>
+        <p>Every one of these is money you already earned. We'll help you keep it.</p>
       </div>
-      <div class="stat-row" id="queue-stats"></div>
     </section>
+    <section class="stats" id="queue-stats"></section>
     <div id="paypal-banner"></div>
-    <div id="grid" class="ag-theme-quartz-dark grid"></div>
+    <section class="card">
+      <div class="card-head"><h2>Response deadlines</h2><span class="faint" style="font-size:13px">Each bar is the time you have to respond. Click one to open it.</span></div>
+      <div id="timeline"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>All disputes</h2><span class="faint" style="font-size:13px">Sort or filter any column</span></div>
+      <div id="grid" class="ag-theme-quartz grid"></div>
+    </section>
   </main>
 
-  <!-- ===== Case view ===== -->
+  <!-- ===== One dispute ===== -->
   <main id="view-case" class="view hidden">
-    <section class="case-head" id="case-head"></section>
-    <section class="clock" id="clock"></section>
+    <section class="hero">
+      <div class="hero-main" id="case-head"></div>
+      <div class="clock" id="clock"></div>
+    </section>
 
-    <div class="case-body">
-      <aside class="left">
-        <div class="panel">
-          <div class="panel-title">What the client filed</div>
-          <div id="statement"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-title">Evidence locker <span class="muted" id="locker-count"></span></div>
-          <ul class="locker" id="locker"></ul>
-        </div>
-      </aside>
+    <section class="three" id="three"></section>
 
-      <section class="trail-wrap">
-        <div class="trail-controls" id="controls"></div>
-        <div id="mode-banner"></div>
+    <section class="runbar" id="controls"></section>
+    <div id="mode-banner"></div>
+
+    <section class="work">
+      <div class="card">
+        <div class="card-head"><h2>How the agent works it out</h2><span class="faint" style="font-size:13px" id="trail-note"></span></div>
         <ol class="trail" id="trail"></ol>
-      </section>
-    </div>
+      </div>
+      <aside class="card evidence">
+        <div class="card-head" style="margin-bottom:6px"><h2>Your evidence</h2><span class="faint" style="font-size:13px" id="locker-count"></span></div>
+        <div id="locker"></div>
+      </aside>
+    </section>
+
+    <section id="result" class="hidden"></section>
   </main>
 
-  <!-- Evidence drawer: opens when you click a citation -->
+  <!-- A source document, opened from any citation -->
   <aside class="drawer" id="drawer" aria-hidden="true">
     <div class="drawer-head">
       <div>
@@ -73,10 +86,10 @@
     <div class="drawer-body" id="drawer-body"></div>
   </aside>
   <div class="scrim" id="scrim"></div>
-
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/dist/ag-grid-community.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@bryntum/scheduler-trial@7.3.7/scheduler.umd.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>
