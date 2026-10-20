@@ -198,10 +198,11 @@ function renderGrid(rows) {
     {
       headerName: 'Time left',
       field: 'due',
-      width: 140,
+      width: 125,
       sort: 'asc',
       comparator: (a, b) => (a ? new Date(a) : Infinity) - (b ? new Date(b) : Infinity),
       cellRenderer: (p) => {
+        if (p.node.rowPinned) return '';
         const t = timeLeft(p.value);
         return `<span class="tleft ${t.hrs < 48 ? 'urgent' : ''}">${esc(t.short)}</span>`;
       },
@@ -209,27 +210,32 @@ function renderGrid(rows) {
     {
       headerName: 'Client',
       field: 'client',
+      getQuickFilterText: (p) => `${p.value} ${p.data.freelancer} ${p.data.title}`,
       flex: 1.2,
-      minWidth: 220,
+      minWidth: 190,
       cellRenderer: (p) =>
-        `<div class="cell-stack"><span class="main">${esc(p.value.split(',').pop().trim())}</span><span class="sub">${esc(p.data.freelancer)} · ${esc(p.data.title)}</span></div>`,
+        p.node.rowPinned
+          ? `<span class="main"><b>${esc(p.value)}</b></span>`
+          : `<div class="cell-stack"><span class="main">${esc(p.value.split(',').pop().trim())}</span><span class="sub">${esc(p.data.freelancer)} · ${esc(p.data.title)}</span></div>`,
     },
     {
       headerName: 'What they filed',
       field: 'reason',
-      width: 175,
+      width: 165,
       valueFormatter: (p) => REASONS[p.value] || p.value,
-      cellRenderer: (p) => `<span class="tag">${esc(REASONS[p.value] || p.value)}</span>`,
+      getQuickFilterText: (p) => REASONS[p.value] || p.value,
+      cellRenderer: (p) => (p.node.rowPinned ? '' : `<span class="tag">${esc(REASONS[p.value] || p.value)}</span>`),
     },
     {
       headerName: "What's actually going on",
       field: 'real_summary',
       flex: 1.6,
-      minWidth: 240,
+      minWidth: 220,
       wrapText: true,
       autoHeight: true,
       cellStyle: { lineHeight: '1.4', paddingTop: '10px', paddingBottom: '10px' },
-      cellRenderer: (p) => (p.value ? `<span style="font-size:14px">${esc(clip(p.value, 120))}</span>` : '<span class="faint">Not analyzed yet</span>'),
+      cellRenderer: (p) =>
+        p.node.rowPinned ? `<span class="faint">${esc(p.value)}</span>` : p.value ? `<span style="font-size:14px">${esc(clip(p.value, 120))}</span>` : '<span class="faint">Not analyzed yet</span>',
     },
     {
       headerName: 'Amount',
@@ -242,9 +248,11 @@ function renderGrid(rows) {
     {
       headerName: 'Plan',
       field: 'decision',
-      width: 130,
+      width: 120,
       valueFormatter: (p) => DECISIONS[p.value]?.short || 'Analyze',
+      getQuickFilterText: (p) => DECISIONS[p.value]?.short || 'Analyze',
       cellRenderer: (p) => {
+        if (p.node.rowPinned) return '';
         const d = DECISIONS[p.value];
         if (!d) return '<span class="tag">Analyze</span>';
         const cls = p.value === 'PARTIAL_REFUND_AND_CONTEST' || p.value === 'ACCEPT_AND_REFUND' ? 'amber' : 'blue';
@@ -254,13 +262,28 @@ function renderGrid(rows) {
     {
       headerName: 'Source',
       field: 'source',
-      width: 120,
-      cellRenderer: (p) => (p.value === 'live' ? '<span class="tag green">PayPal live</span>' : '<span class="tag">Demo</span>'),
+      width: 125,
+      getQuickFilterText: (p) => (p.value === 'live' ? 'PayPal live' : 'Demo'),
+      cellRenderer: (p) => (p.node.rowPinned ? '' : p.value === 'live' ? '<span class="tag green">PayPal live</span>' : '<span class="tag">Demo</span>'),
     },
   ];
 
+  // A total row pinned under the table: what's at stake across every dispute shown.
+  const total = (shown) => [{
+    client: `Total · ${shown.length} dispute${shown.length === 1 ? '' : 's'}`,
+    amount: shown.reduce((a, r) => a + r.amount, 0),
+    currency: shown[0]?.currency || 'USD',
+    real_summary: `${shown.filter((r) => r.real_summary).length} worked out, ${shown.filter((r) => !r.real_summary).length} still to do`,
+  }];
+  const shownRows = () => {
+    const out = [];
+    state.grid?.forEachNodeAfterFilter((n) => out.push(n.data));
+    return out;
+  };
+
   if (state.grid) {
     state.grid.setGridOption('rowData', rows);
+    state.grid.setGridOption('pinnedBottomRowData', total(shownRows()));
     return;
   }
   state.grid = agGrid.createGrid($('#grid'), {
@@ -270,10 +293,14 @@ function renderGrid(rows) {
     rowHeight: 64,
     domLayout: 'autoHeight',
     animateRows: true,
-    onRowClicked: (e) => (location.hash = `#/case/${encodeURIComponent(e.data.dispute_id)}`),
+    pinnedBottomRowData: total(rows),
+    // The total follows the search box and column filters.
+    onFilterChanged: () => state.grid.setGridOption('pinnedBottomRowData', total(shownRows())),
+    onRowClicked: (e) => !e.node.rowPinned && (location.hash = `#/case/${encodeURIComponent(e.data.dispute_id)}`),
     overlayNoRowsTemplate: '<span class="muted">No open disputes. Every payment you earned is safe.</span>',
   });
   setInterval(() => state.grid?.refreshCells({ columns: ['due'], force: true }), 30000);
+  $('#grid-search').oninput = (e) => state.grid.setGridOption('quickFilterText', e.target.value);
 }
 
 // ================================================================================
@@ -902,12 +929,30 @@ function renderLedger(r, notes, key) {
   (r.removed || []).forEach((cl) => rows.push({ claim: '—', text: cl.text, doc_id: '', source: '', origin: '', anchor: '', quote: '', verified: false }));
 
   const n = rows.filter((x) => x.verified).length;
-  const wrapEl = h(`<div class="card"><div class="card-head" style="margin-bottom:0"><h2>Every source behind your response</h2><button class="btn" id="ledger-toggle">Show all ${n} sources</button></div><div class="ledger ag-theme-quartz grid hidden" style="margin-top:14px"></div></div>`);
-  const grid = $('.ledger', wrapEl);
+  const wrapEl = h(`<div class="card">
+      <div class="card-head" style="margin-bottom:0"><h2>Your evidence, checked</h2><button class="btn" id="ledger-toggle">Show details</button></div>
+      <div class="ev-body hidden">
+        <div class="tabs" role="tablist">
+          <button class="tab on" role="tab" data-tab="docs">What each document proves</button>
+          <button class="tab" role="tab" data-tab="quotes">Every quote checked (${n})</button>
+        </div>
+        <div class="matrix ag-theme-quartz grid" data-pane="docs"></div>
+        <div class="ledger ag-theme-quartz grid hidden" data-pane="quotes"></div>
+      </div>
+    </div>`);
+  const evBody = $('.ev-body', wrapEl);
   $('#ledger-toggle', wrapEl).onclick = (e) => {
-    grid.classList.toggle('hidden');
-    e.target.textContent = grid.classList.contains('hidden') ? `Show all ${n} sources` : 'Hide sources';
+    evBody.classList.toggle('hidden');
+    e.target.textContent = evBody.classList.contains('hidden') ? 'Show details' : 'Hide details';
   };
+  wrapEl.querySelectorAll('.tab').forEach((t) => {
+    t.onclick = () => {
+      wrapEl.querySelectorAll('.tab').forEach((x) => x.classList.toggle('on', x === t));
+      wrapEl.querySelectorAll('[data-pane]').forEach((p) => p.classList.toggle('hidden', p.dataset.pane !== t.dataset.tab));
+    };
+  });
+  agGrid.createGrid($('.matrix', wrapEl), evidenceMatrix(r));
+  const grid = $('.ledger', wrapEl);
   agGrid.createGrid(grid, {
     rowData: rows,
     domLayout: 'autoHeight',
@@ -935,6 +980,74 @@ function renderLedger(r, notes, key) {
     onRowClicked: (e) => e.data.doc_id && openDrawer(e.data.doc_id, e.data.anchor, e.data.quote),
   });
   return wrapEl;
+}
+
+// One row per document: what the investigation found in it, how often the response leans on
+// it, and whether it cuts against the freelancer. Sort by "Used in response" to see the backbone.
+function evidenceMatrix(r) {
+  const count = (refs) => refs.reduce((m, x) => m.set(x.doc_id, (m.get(x.doc_id) || 0) + 1), new Map());
+  const used = count(r.draft.claims.flatMap((c) => c.citations));
+  const against = count(r.diagnosis.freelancer_weaknesses.flatMap((w) => w.citations));
+  const rows = state.current.documents.map((d) => {
+    const found = r.findings.filter((f) => f.citations.some((c) => c.doc_id === d.doc_id)).map((f) => f.finding);
+    return {
+      doc_id: d.doc_id,
+      title: d.title,
+      origin: d.kind === 'paypal_record' ? 'PayPal' : d.added ? 'Added by you' : 'Your records',
+      proves: found[0] || '',
+      more: found.length - 1,
+      used: used.get(d.doc_id) || 0,
+      against: against.get(d.doc_id) || 0,
+    };
+  });
+  return {
+    rowData: rows,
+    domLayout: 'autoHeight',
+    defaultColDef: { sortable: true, resizable: true, filter: true, suppressHeaderMenuButton: true },
+    columnDefs: [
+      {
+        headerName: 'Document',
+        field: 'title',
+        flex: 1.3,
+        minWidth: 200,
+        wrapText: true,
+        autoHeight: true,
+        cellStyle: { lineHeight: '1.4', paddingTop: '10px', paddingBottom: '10px' },
+        cellRenderer: (p) => `<div class="cell-stack"><span class="main" style="font-size:14px">${esc(p.value)}</span><span class="sub">${esc(p.data.origin)}</span></div>`,
+      },
+      {
+        headerName: 'What it shows',
+        field: 'proves',
+        flex: 2.2,
+        minWidth: 260,
+        wrapText: true,
+        autoHeight: true,
+        cellStyle: { lineHeight: '1.45', paddingTop: '10px', paddingBottom: '10px' },
+        cellRenderer: (p) =>
+          p.value
+            ? `<span style="font-size:14px">${esc(clip(p.value, 170))}</span>${p.data.more > 0 ? ` <span class="faint" style="font-size:12px">+${p.data.more} more</span>` : ''}`
+            : '<span class="faint">Nothing the response needed</span>',
+      },
+      {
+        headerName: 'Cited',
+        headerTooltip: 'How many times your response quotes this document',
+        field: 'used',
+        width: 105,
+        sort: 'desc',
+        type: 'numericColumn',
+        cellRenderer: (p) => (p.value ? `<span class="count">${p.value}×</span>` : '<span class="faint">—</span>'),
+      },
+      {
+        headerName: 'Risk',
+        headerTooltip: 'Does this document also show a weak point on your side?',
+        field: 'against',
+        width: 125,
+        valueFormatter: (p) => (p.value ? 'Yes' : 'No'),
+        cellRenderer: (p) => (p.value ? '<span class="tag amber">Watch out</span>' : '<span class="faint">No</span>'),
+      },
+    ],
+    onRowClicked: (e) => openDrawer(e.data.doc_id),
+  };
 }
 
 async function doSubmit(btn, actionsCard) {
