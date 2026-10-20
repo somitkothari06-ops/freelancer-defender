@@ -649,6 +649,67 @@ function highlightStatement(phrases) {
   q.innerHTML = html;
 }
 
+// ---------- evidence ledger (AG Grid) -------------------------------------------------
+// One row per citation in the response: which claim, which source, the exact quote, and
+// whether the deterministic checker verified it. Sort/filter it to audit the response,
+// e.g. "show me every claim that rests on PayPal records". Click a row to open the source.
+function renderLedger(r, notes, key) {
+  const docs = Object.fromEntries(state.current.documents.map((d) => [d.doc_id, d]));
+  const rows = [];
+  r.draft.claims.forEach((cl, i) =>
+    cl.citations.forEach((c) =>
+      rows.push({
+        claim: i + 1,
+        text: cl.text,
+        note: notes.findIndex((f) => key(f) === key(c)) + 1,
+        doc_id: c.doc_id,
+        source: docs[c.doc_id]?.title || c.doc_id,
+        origin: docs[c.doc_id]?.kind === 'paypal_record' ? 'PayPal API' : 'Freelancer records',
+        anchor: c.anchor,
+        quote: c.quote,
+        verified: true,
+      })
+    )
+  );
+  (r.removed || []).forEach((cl) =>
+    rows.push({ claim: '—', text: cl.text, note: '', doc_id: '', source: '', origin: '', anchor: '', quote: (cl.problems || []).join('; '), verified: false })
+  );
+
+  const wrapEl = h(`<div class="card"><h4>Evidence ledger: ${rows.filter((x) => x.verified).length} citations, each checked word for word</h4><div class="ledger ag-theme-quartz-dark grid"></div></div>`);
+  agGrid.createGrid($('.ledger', wrapEl), {
+    rowData: rows,
+    domLayout: 'autoHeight',
+    defaultColDef: { sortable: true, resizable: true, filter: true, suppressHeaderMenuButton: true, wrapText: true, autoHeight: true },
+    columnDefs: [
+      { headerName: 'Claim', field: 'claim', width: 84 },
+      { headerName: 'Statement', field: 'text', flex: 2, minWidth: 220, cellStyle: { lineHeight: '1.45', padding: '8px 12px' } },
+      {
+        headerName: 'Source',
+        field: 'source',
+        flex: 1.2,
+        minWidth: 180,
+        cellRenderer: (p) => (p.value ? `<div class="cell-stack"><span>${esc(p.value)}</span><span class="sub mono">${esc(p.data.doc_id)} · ${esc(p.data.anchor)}</span></div>` : ''),
+      },
+      {
+        headerName: 'Origin',
+        field: 'origin',
+        width: 160,
+        cellRenderer: (p) => (p.value ? `<span class="badge ${p.value === 'PayPal API' ? 'demo' : ''}">${esc(p.value)}</span>` : ''),
+      },
+      { headerName: 'Exact quote', field: 'quote', flex: 2, minWidth: 220, cellStyle: { lineHeight: '1.45', padding: '8px 12px', fontStyle: 'italic', color: 'var(--muted)' } },
+      {
+        headerName: 'Check',
+        field: 'verified',
+        width: 110,
+        valueFormatter: (p) => (p.value ? 'verified' : 'removed'),
+        cellRenderer: (p) => (p.value ? '<span class="result-ok">✓ verified</span>' : '<span class="result-bad">✗ removed</span>'),
+      },
+    ],
+    onRowClicked: (e) => e.data.doc_id && openDrawer(e.data.doc_id, e.data.anchor, e.data.quote),
+  });
+  return wrapEl;
+}
+
 // ---------- the final response + submission ----------------------------------------
 
 function renderResult(r) {
@@ -676,6 +737,7 @@ function renderResult(r) {
   });
   (r.removed || []).forEach((cl) => letter.appendChild(h(`<p class="removed" title="Removed: could not be grounded in a source">${esc(cl.text)}</p>`)));
   body.appendChild(letter);
+  body.appendChild(renderLedger(r, notes, key));
 
   const files = h(`<div class="toolrow"><span class="verb">files</span>
       <a class="obj" href="/api/cases/${encodeURIComponent(state.current.id)}/files/response-letter.pdf" target="_blank">response-letter.pdf</a>

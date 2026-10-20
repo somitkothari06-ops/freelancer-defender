@@ -61,7 +61,9 @@ PayPal records appear in the evidence locker as citable documents, just like the
 - **Node.js + Express**, no build step, no framework. Small enough to read end to end.
 - **Groq** running **`openai/gpt-oss-120b`**: tool calling for the investigation loop, strict JSON-schema outputs for every other stage.
 - **PayPal REST APIs (sandbox)**: listed above.
-- **AG Grid** (community) for the dispute queue: sort by deadline, filter by reason, live countdown cells.
+- **AG Grid** (community), in two places where the data really is tabular:
+  - the **dispute queue**: sort by deadline, filter by reason/source, live countdown cells;
+  - the **evidence ledger**: one row per citation in the final response (claim, source document, section, exact quote, PayPal-or-freelancer origin, verification result). Judges or the freelancer can filter it to audit exactly what the response rests on; clicking a row opens the source with the quote highlighted.
 - **Render** for hosting (`render.yaml` blueprint).
 
 ## Run it locally
