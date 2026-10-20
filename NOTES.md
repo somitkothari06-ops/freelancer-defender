@@ -87,3 +87,21 @@ The other three:
 - **Why the verifier is plain code:** an AI checking an AI's citations is not a guarantee. Substring matching is.
 - **Why AG Grid:** the queue is a real data table (sort by deadline, filter by reason, live countdown cells), which is what AG Grid is for. We didn't use it anywhere it doesn't fit.
 - **No database:** runs are kept in memory and replays are files. Restarting the server clears in-memory runs. That's fine for a demo.
+
+## Hackathon rules (read from the official Devpost page, Oct 20)
+
+- **Deadline: Nov 12, 2026, 12:00 pm Pacific.** Judging runs **Dec 1–15**, so the hosted demo (and its API keys) must keep working until then.
+- **Required:**
+  - a public repo with an open-source license visible in the repo's About section (`LICENSE` is MIT; check that GitHub shows it in About);
+  - a working demo (a hosted URL, or run instructions);
+  - a list of the AI tools used and how;
+  - a **demo video under 3 minutes**, public on YouTube, with no copyrighted music.
+- **A project can win at most one sponsor prize.** AG Grid pays $5,000/$2,000/$1,000 cash; Render pays $1,000 in credits. **Aim for AG Grid.** The queue and the evidence ledger are both AG Grid, so show them in the video. Render still hosts the app.
+- **Relevant honorable mentions:** Best Use of PayPal + AI, Most Impactful, Best Demo Delivery, Best Use of Agentic Commerce.
+- **Judges may use "automated AI-driven analysis"**, so a clear README and code comments help.
+
+## Current recorded runs (replays)
+
+- `data/replays/PP-D-27140-HALDEN.json` is a real run, but **not the one to demo**. It treats "never downloaded" as "not delivered" and offers a $600 refund. The prompt fixes for that (the full contract is now always in view; a delivered-vs-received rule) are pushed but **not re-tested yet**, because Groq's daily quota ran out.
+- The other 3 disputes have no recording yet.
+- **Next step:** once a Groq key with quota is active in the environment, run `node scripts/run-one.js <dispute_id> --save` for each dispute, then `npm run eval`.
