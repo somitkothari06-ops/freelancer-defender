@@ -384,3 +384,19 @@ details.sandbox[open] > summary { width: 100%; }
 
 .pp-btn { gap: 7px; }
 .pp-btn .pp-logo { width: 16px; height: 16px; flex: none; }
+
+/* "Aha" moment: the real-complaint card pops, rings gold once, and its words arrive in order */
+.three .real.reveal { animation: aha-pop .7s cubic-bezier(.2,.9,.3,1.3), aha-ring 1.6s ease-out .2s; }
+.three .real.reveal .w { display: inline-block; opacity: 0; transform: translateY(6px); animation: aha-word .35s ease-out forwards; animation-delay: calc(.25s + var(--i) * 45ms); }
+@keyframes aha-pop { 0% { transform: scale(.96); } 60% { transform: scale(1.02); } 100% { transform: none; } }
+@keyframes aha-ring { 0% { box-shadow: 0 0 0 0 rgba(255,196,57,.9); } 100% { box-shadow: 0 0 0 22px rgba(255,196,57,0); } }
+@keyframes aha-word { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .three .real.reveal, .three .real.reveal .w { animation: none; opacity: 1; transform: none; } }
+
+/* First-visit tour */
+#tour { position: fixed; inset: 0; z-index: 80; }
+.tour-spot { position: fixed; border-radius: 18px; box-shadow: 0 0 0 9999px rgba(5,13,34,.62); transition: all .35s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+.tour-tip { position: fixed; width: min(340px, calc(100vw - 32px)); background: #fff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 24px 60px rgba(5,13,34,.35); transition: top .35s, left .35s; }
+.tour-tip h4 { margin: 6px 0 6px; font-size: 18px; color: var(--navy); }
+.tour-tip p { margin: 0 0 14px; color: var(--muted); line-height: 1.45; }
+.tour-btns { display: flex; justify-content: space-between; align-items: center; }

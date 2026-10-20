@@ -404,6 +404,59 @@ async function openCase(id) {
   renderLocker(c);
   renderControls(c);
   renderTrailSkeleton();
+  maybeTour();
+}
+
+// ---------- first-visit tour -------------------------------------------------------
+// Four short tips the first time someone opens a dispute. Remembered per browser.
+const TOUR = [
+  ['#clock', 'Your deadline', 'It counts down live. This is how long you have to answer.'],
+  ['#three > div:first-child', 'What they told the bank', "The client's complaint, straight from PayPal."],
+  ['#controls', 'Let the agent work', 'It reads your contract, emails and logs. The recording plays in about a minute.'],
+  ['#card-real', "What's actually going on", 'The real problem shows up here, with proof from your own records.'],
+];
+function maybeTour() {
+  try {
+    if (localStorage.getItem('fd-tour-done')) return;
+  } catch {
+    return; // no storage (private mode): skip the tour rather than show it every time
+  }
+  setTimeout(() => runTour(0), 600);
+}
+function endTour() {
+  try { localStorage.setItem('fd-tour-done', '1'); } catch { /* ignore */ }
+  $('#tour')?.remove();
+  window.removeEventListener('resize', state.tourPlace);
+}
+function runTour(i) {
+  const [sel, title, text] = TOUR[i];
+  const target = $(sel);
+  if (!target) return endTour();
+  let box = $('#tour');
+  if (!box) {
+    box = h('<div id="tour" role="dialog" aria-live="polite"><div class="tour-spot"></div><div class="tour-tip"></div></div>');
+    document.body.appendChild(box);
+  }
+  target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  const tip = $('.tour-tip', box);
+  tip.innerHTML = `<span class="kicker">${i + 1} of ${TOUR.length}</span><h4>${esc(title)}</h4><p>${esc(text)}</p>
+    <div class="tour-btns"><button class="linkbtn" id="tour-skip">Skip</button><button class="btn primary" id="tour-next">${i === TOUR.length - 1 ? 'Got it' : 'Next'}</button></div>`;
+  $('#tour-skip').onclick = endTour;
+  $('#tour-next').onclick = () => (i === TOUR.length - 1 ? endTour() : runTour(i + 1));
+  $('#tour-next').focus({ preventScroll: true });
+  const place = () => {
+    const r = target.getBoundingClientRect();
+    const spot = $('.tour-spot', box);
+    Object.assign(spot.style, { top: `${r.top - 8}px`, left: `${r.left - 8}px`, width: `${r.width + 16}px`, height: `${r.height + 16}px` });
+    const below = r.bottom + 220 < innerHeight;
+    tip.style.top = `${below ? r.bottom + 18 : Math.max(16, r.top - tip.offsetHeight - 18)}px`;
+    tip.style.left = `${Math.min(Math.max(16, r.left), innerWidth - tip.offsetWidth - 16)}px`;
+  };
+  window.removeEventListener('resize', state.tourPlace);
+  state.tourPlace = place;
+  window.addEventListener('resize', place);
+  setTimeout(place, 350); // after the smooth scroll settles
+  place();
 }
 
 function renderHero(c) {
@@ -826,10 +879,12 @@ function renderStageDone(stage, data, thinking) {
     stageSum('diagnose', `${data.real_complaint.confidence}% sure`);
     // Fill card 2 at the top of the page.
     const real = $('#card-real');
-    real.className = 'real';
+    // The "aha" moment: the card pops, rings gold once, and the finding appears word by word.
+    real.className = 'real reveal';
+    const words = say(data.real_complaint.summary).split(' ').map((w, i) => `<span class="w" style="--i:${i}">${w}</span>`).join(' ');
     real.innerHTML = `
       <span class="kicker">2 · What's actually going on</span>
-      <p class="big">${say(data.real_complaint.summary)}</p>
+      <p class="big">${words}</p>
       <div class="meter"><span class="track"><i></i></span>${data.real_complaint.confidence}% sure</div>
       <span class="note">What they need: ${say(data.real_complaint.what_the_client_actually_needs)}</span>`;
     requestAnimationFrame(() => ($('.meter i', real).style.width = `${data.real_complaint.confidence}%`));
