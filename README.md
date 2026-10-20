@@ -2,7 +2,9 @@
 
 **An AI agent that fights on a freelancer's side when a client's bank reverses a payment they already earned.**
 
-Built for the PayPal AI Hackathon 2026. **Live: https://freelancer-defender.onrender.com**
+Built for the PayPal AI Hackathon 2026. **Live: https://freelancer-defender.onrender.com** (landing page) · **https://freelancer-defender.onrender.com/app** (the app)
+
+**Start here:** [NOTES.md](NOTES.md) (what's built, what's real vs. demo, to-do list) · [docs/SUBMISSION.md](docs/SUBMISSION.md) (Devpost text) · [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) (video script) · [docs/RESEARCH.md](docs/RESEARCH.md) (real freelancer stories and numbers)
 
 ## The problem
 
@@ -61,6 +63,10 @@ PayPal records appear in the evidence locker as citable documents, just like the
 PayPal holds the dispute and the payment; the proof that the work was agreed and delivered lives with the freelancer. On any dispute, **+ Add evidence** takes a pasted or uploaded text document (contract, email thread, delivery log, chat export). It is split into quotable sections automatically: numbered contract clauses become `§3.2`-style sections, logs become one section per line, everything else one per paragraph. The agent then investigates and cites it exactly like the demo evidence, and the verifier checks every quote against it.
 
 A live PayPal dispute with no evidence yet opens as a fresh case built only from PayPal's records, with a prompt to add documents. Nothing in the agent is specific to the demo disputes; they exist so the demo works without a real freelancer's paperwork.
+
+## Try your own case
+
+On the dispute list, **+ Try your own case** lets anyone type in a dispute: the client, the work, the amount, the filed reason and the client's own words. It becomes an unlisted case (remembered by that browser) in PayPal's dispute format; add the paperwork with + Add evidence and the agent runs live on it. **Fill in an example** creates a fresh video-editor dispute with its contract and emails, so it can be tried in two clicks. Typed-in cases are never sent to PayPal.
 
 ## Stack
 
