@@ -56,6 +56,12 @@ PayPal is the money flow, not a logo:
 
 PayPal records appear in the evidence locker as citable documents, just like the contract and emails.
 
+## Bring your own evidence
+
+PayPal holds the dispute and the payment; the proof that the work was agreed and delivered lives with the freelancer. On any dispute, **+ Add evidence** takes a pasted or uploaded text document (contract, email thread, delivery log, chat export). It is split into quotable sections automatically: numbered contract clauses become `§3.2`-style sections, logs become one section per line, everything else one per paragraph. The agent then investigates and cites it exactly like the demo evidence, and the verifier checks every quote against it.
+
+A live PayPal dispute with no evidence yet opens as a fresh case built only from PayPal's records, with a prompt to add documents. Nothing in the agent is specific to the demo disputes; they exist so the demo works without a real freelancer's paperwork.
+
 ## Stack
 
 - **Node.js + Express**, no build step, no framework. Small enough to read end to end.
@@ -64,7 +70,8 @@ PayPal records appear in the evidence locker as citable documents, just like the
 - **AG Grid** (community), in two places where the data really is tabular:
   - the **dispute queue**: sort by deadline, filter by reason/source, live countdown cells;
   - the **evidence ledger**: one row per citation in the final response (claim, source document, section, exact quote, PayPal-or-freelancer origin, verification result). Judges or the freelancer can filter it to audit exactly what the response rests on; clicking a row opens the source with the quote highlighted.
-- **Render** for hosting (`render.yaml` blueprint).
+- **Bryntum Scheduler** (trial) for the response-deadline timeline: one bar per dispute from now to its deadline, coloured by urgency.
+- **Render** for hosting (`render.yaml` blueprint). Live at https://freelancer-defender.onrender.com
 
 ## Run it locally
 
@@ -89,7 +96,7 @@ npm run eval                          # score recorded runs against each scenari
 ## Deploy (Render)
 
 1. Render dashboard → **New +** → **Blueprint** → pick this repo. Render reads `render.yaml`.
-2. When asked, paste `GROQ_API_KEY`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`.
+2. When asked, paste `GROQ_API_KEY`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`. Optionally set `FREELANCER_NAME` / `FREELANCER_BUSINESS` / `FREELANCER_EMAIL` (used for live disputes not linked to a demo scenario).
 3. Deploy. The health check is `/api/status`.
 
 ## Code map
@@ -102,9 +109,10 @@ src/agent/playbook.js     what each PayPal reason code makes the freelancer prov
 src/agent/citations.js    deterministic exact-quote citation checker
 src/agent/package.js      turns the verified draft into PayPal API calls + PDFs
 src/evidence/locker.js    evidence documents split into citable sections, search
+src/evidence/uploads.js   evidence the freelancer adds: splitting into sections + storage
 src/paypal/*.js           PayPal OAuth, Disputes API, Transaction Search
 src/ai/groq.js            Groq client with rate-limit pacing
-src/cases.js              live sandbox disputes + seeded demo disputes
+src/cases.js              live sandbox disputes (linked or fresh) + seeded demo disputes
 data/scenarios/*.json     4 demo disputes with their evidence lockers
 data/replays/*.json       recordings of real agent runs
 public/                   the dashboard (plain HTML/CSS/JS)

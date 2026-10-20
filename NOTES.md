@@ -2,6 +2,14 @@
 
 Status as of Oct 20, 2026. Written for the two of us; judges should read the README.
 
+## Your to-do before submitting (deadline Nov 12, 2026, 12:00 pm Pacific)
+
+1. **Record the demo video** (under 3 min, YouTube, no copyrighted music). Script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
+2. **Fill in Devpost** from [docs/SUBMISSION.md](docs/SUBMISSION.md); enter AG Grid as the sponsor prize.
+3. **Make the GitHub repo public** and check the MIT license shows in the repo's About box.
+4. **Rotate secrets that were shared in chat:** create a new PayPal sandbox secret (developer.paypal.com → your app → Secret key, then update it in Render → Environment), delete the Render API key used for setup (Render → Account settings → API Keys), and optionally regenerate the Groq key (then update it in Render too).
+5. **Optional:** add a card in Render Billing and switch the service to Starter so it never sleeps during judging (Dec 1–15). The $50 credit covers it.
+
 ## What's built
 
 One end-to-end flow:
@@ -9,6 +17,8 @@ One end-to-end flow:
 1. **A dispute comes in.** The dashboard queue (AG Grid) lists disputes sorted by time left. Each one comes from either:
    - the **PayPal sandbox** (real, via the Disputes API), or
    - one of 4 **seeded demo disputes** in `data/scenarios/`. These use the exact JSON shape PayPal's API returns but don't exist inside PayPal.
+
+   A live dispute is linked to a demo scenario's evidence automatically when its items and amount match (that's how our sandbox test dispute works). Any other live dispute opens as a **fresh case** with only PayPal's records, and the freelancer adds their own documents with **+ Add evidence**.
 2. **The agent reasons through it, visibly.** Each stage streams to the browser as it happens:
    | Stage | What happens | AI? |
    |---|---|---|
@@ -32,7 +42,7 @@ One end-to-end flow:
 | PayPal Transaction Search | **Verified** (after enabling the feature on the app). New sandbox payments can take hours to appear; until then live cases fall back to seeded history, labelled as such. |
 | PayPal Invoicing (`npm run paypal:seed`) | **Verified**: created a real sandbox invoice that the US sandbox buyer paid ($2,400). |
 | The 4 disputes in the queue | **Mocked**: seeded JSON in PayPal's API format. Labelled "Demo data" in the UI. |
-| Evidence lockers (contracts, emails, logs, screenshots) | **Mocked**, and always will be. This is the freelancer's own paperwork, which PayPal doesn't hold. In a real product the freelancer uploads it or connects Gmail/Drive. |
+| Evidence lockers (contracts, emails, logs, screenshots) | Demo disputes: **mocked** (the freelancer's own paperwork, which PayPal doesn't hold). **Real for any dispute via + Add evidence**: paste or upload text and it's split into citable sections (`src/evidence/uploads.js`). Stored in `data/uploads/`, which Render's free plan wipes on each deploy or restart. PDFs must be pasted as text for now; Gmail/Drive import would be the next step. |
 | Submission for seeded disputes | **Simulated**, labelled as such, showing the exact HTTP request. |
 | Replays (`data/replays/*.json`) | Recordings of **real live runs**, played back faster. Labelled "Replaying a recorded live run" in the UI. For demos and when Groq is rate-limited. |
 
