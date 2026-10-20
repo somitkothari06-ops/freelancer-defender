@@ -23,13 +23,57 @@
         <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 2 3 6v7c0 6 4.3 10 10 11 5.7-1 10-5 10-11V6z" fill="#1D4ED8"></path><path d="m8.5 13 3 3 6-6.5" stroke="#FFFFFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
         Freelancer Defender
       </a>
-      <nav class="nav"><a href="#/" class="active">Disputes</a></nav>
+      <nav class="nav"><a href="#/disputes" id="nav-disputes">Disputes</a></nav>
     </div>
     <div class="topbar-right" id="status"></div>
   </header>
 
+  <!-- ===== Front page ===== -->
+  <main id="view-home" class="view home hidden">
+    <div id="login-banner"></div>
+    <section class="home-hero">
+      <div class="home-copy">
+        <span class="kicker">For freelancers paid through PayPal</span>
+        <h1>You did the work.<br />Keep the money.</h1>
+        <p class="home-lede">When a client's bank reverses a payment, Freelancer Defender reads your contract, emails and delivery records, finds what your client is <b>really</b> upset about, and builds a response the bank can check line by line.</p>
+        <div class="home-ctas">
+          <a class="btn paypal" href="/auth/paypal" id="home-login"><span class="pp-mark" aria-hidden="true">P</span>Log in with PayPal</a>
+          <a class="btn primary big" href="#/disputes">Try the demo →</a>
+        </div>
+        <p class="faint home-note">No sign-up needed for the demo. Logging in is only needed to act on your own real PayPal disputes.</p>
+      </div>
+      <div class="home-demo" aria-label="Example">
+        <div class="hd-card said">
+          <span class="kicker">What the client told their bank</span>
+          <p>"Not as described. What we received can't be used by our vendors."</p>
+        </div>
+        <div class="hd-arrow" aria-hidden="true">↓</div>
+        <div class="hd-card real">
+          <span class="kicker">What's actually going on</span>
+          <p>They never opened the second download link, the one with the print files and the copyright letter. It expired, so their sign maker is stuck.</p>
+        </div>
+        <div class="hd-arrow" aria-hidden="true">↓</div>
+        <div class="hd-card plan">
+          <span class="kicker">What we do about it</span>
+          <p>Answer the bank with proof, every sentence checked against your documents, and re-send the files so the client is happy.</p>
+        </div>
+      </div>
+    </section>
+    <section class="home-clock">
+      <div><b class="num">180</b><span>days your client has to file</span></div>
+      <div><b class="num">75</b><span>days their bank can take to decide</span></div>
+      <div class="you"><b class="num">~10</b><span>days you get to respond</span></div>
+    </section>
+    <section class="home-steps">
+      <div><span class="step-n">1</span><h3>Pull the dispute from PayPal</h3><p>The reason code, the client's statement and the deadline, straight from the Disputes API.</p></div>
+      <div><span class="step-n">2</span><h3>Investigate your evidence</h3><p>The agent reads your records like a dispute specialist and shows its working as it goes.</p></div>
+      <div><span class="step-n">3</span><h3>Send a verified response</h3><p>Every claim quotes a document, checked word for word, then goes to PayPal with one click.</p></div>
+    </section>
+    <footer class="home-foot">Built for the PayPal AI Hackathon 2026 · PayPal APIs · Groq · AG Grid · Bryntum · Render</footer>
+  </main>
+
   <!-- ===== All disputes ===== -->
-  <main id="view-queue" class="view">
+  <main id="view-queue" class="view hidden">
     <section class="q-head">
       <div>
         <h1>Payments we're protecting</h1>

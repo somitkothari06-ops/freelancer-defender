@@ -1,6 +1,7 @@
 // Freelancer Defender dashboard.
 // Plain JavaScript, no build step. Two views:
-//   #/            all disputes: deadline timeline (Bryntum) + dispute list (AG Grid)
+//   #/            front page: what it does, "Log in with PayPal" or "Try the demo"
+//   #/disputes    all disputes: deadline timeline (Bryntum) + dispute list (AG Grid)
 //   #/case/<id>   one dispute: live countdown, the three-card summary, the agent's live
 //                 reasoning, the evidence, and the response to send through PayPal
 'use strict';
@@ -105,16 +106,46 @@ function route() {
     state.stream = null;
   }
   clearInterval(state.clockTimer);
-  if (m) openCase(decodeURIComponent(m[1]));
-  else openQueue();
+  const page = m ? 'case' : location.hash.startsWith('#/disputes') ? 'queue' : 'home';
+  for (const v of ['home', 'queue', 'case']) $(`#view-${v}`).classList.toggle('hidden', v !== page);
+  $('#nav-disputes').classList.toggle('active', page !== 'home');
+  if (page === 'case') openCase(decodeURIComponent(m[1]));
+  else if (page === 'queue') openQueue();
+  else openHome();
+}
+
+function openHome() {
+  document.title = 'Freelancer Defender: keep the money you earned';
+  window.scrollTo(0, 0);
+  const params = new URLSearchParams(location.search);
+  const msg = { failed: "PayPal sign-in didn't go through. You can still try the demo without signing in.", unavailable: "PayPal sign-in isn't set up on this server. You can still try the demo." }[params.get('login')];
+  $('#login-banner').innerHTML = msg ? `<div class="banner warn">${esc(msg)}</div>` : '';
+  const user = state.status?.user;
+  const btn = $('#home-login');
+  if (user) {
+    btn.textContent = `Continue as ${user.name}`;
+    btn.href = '#/disputes';
+  }
 }
 
 function renderStatus() {
   const s = state.status;
   if (!s) return;
+  const initials = (n) => n.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
   $('#status').innerHTML = `
     <span class="pill ${s.paypal.enabled ? 'on' : ''}">${s.paypal.enabled ? `PayPal ${esc(s.paypal.env)} connected` : 'PayPal not connected'}</span>
-    <span class="avatar" aria-hidden="true">FD</span>`;
+    ${s.user
+      ? `<span class="who-signed" title="${esc(s.user.email)}"><span class="avatar">${esc(initials(s.user.name))}</span><span class="who-name">${esc(s.user.name)}</span></span><button class="linkbtn" id="logout">Sign out</button>`
+      : '<a class="btn small" href="/auth/paypal">Log in with PayPal</a>'}`;
+  const out = $('#logout');
+  if (out) {
+    out.onclick = async () => {
+      await api('/auth/logout', { method: 'POST' }).catch(() => {});
+      state.status.user = null;
+      renderStatus();
+      toast('Signed out.');
+    };
+  }
 }
 
 // ================================================================================
@@ -122,8 +153,6 @@ function renderStatus() {
 // ================================================================================
 
 async function openQueue() {
-  $('#view-case').classList.add('hidden');
-  $('#view-queue').classList.remove('hidden');
   document.title = 'Freelancer Defender';
 
   const data = await api('/api/cases');
@@ -342,8 +371,6 @@ function renderGrid(rows) {
 // ================================================================================
 
 async function openCase(id) {
-  $('#view-queue').classList.add('hidden');
-  $('#view-case').classList.remove('hidden');
   $('#result').classList.add('hidden');
   $('#result').innerHTML = '';
   window.scrollTo(0, 0);
