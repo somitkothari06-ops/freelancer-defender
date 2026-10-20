@@ -226,7 +226,7 @@ async function runDefender({ scenario, locker, sources }, emit) {
       name: 'diagnosis',
       schema: P.diagnoseSchema,
       messages: [sys, { role: 'user', content: P.diagnosePrompt({ read, findings, citedText: sectionText([...disputeRefs, ...findingRefs]) }) }],
-      maxTokens: 4500,
+      maxTokens: 5500,
       reasoningEffort: 'medium',
     },
     opts
@@ -237,13 +237,15 @@ async function runDefender({ scenario, locker, sources }, emit) {
     .map((h) => ({ ...h, supporting: realRefs(h.supporting), contradicting: realRefs(h.contradicting) }))
     .sort((a, b) => b.likelihood - a.likelihood);
   diagnosis.freelancer_weaknesses = diagnosis.freelancer_weaknesses.map((w) => ({ ...w, citations: realRefs(w.citations) }));
+  diagnosis.client_concerns = diagnosis.client_concerns.map((c) => ({ ...c, said_in: realRefs(c.said_in), answered_by: realRefs(c.answered_by) }));
   emit('stage', { stage: 'diagnose', status: 'done', data: diagnosis, thinking: clip(diagRes.reasoning, 800) });
 
   // ---- 5. Strategy ------------------------------------------------------------
   emit('stage', { stage: 'strategy', status: 'start' });
   const diagRefs = diagnosis.hypotheses.flatMap((h) => [...h.supporting, ...h.contradicting]);
   const weakRefs = diagnosis.freelancer_weaknesses.flatMap((w) => w.citations);
-  const allRefs = [...disputeRefs, ...findingRefs, ...diagRefs, ...weakRefs];
+  const concernRefs = diagnosis.client_concerns.flatMap((c) => [...c.said_in, ...c.answered_by]);
+  const allRefs = [...disputeRefs, ...findingRefs, ...diagRefs, ...weakRefs, ...concernRefs];
   const citable = sectionText(allRefs);
   const stratRes = await groq.chatJSON(
     {

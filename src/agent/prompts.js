@@ -13,7 +13,9 @@ Your job is not to fill in a template. Your job is to understand the dispute the
 4. Be honest about the freelancer's own weaknesses. If the freelancer made a mistake, say so. A response that hides a weakness the client already knows about loses credibility. Sometimes the right move is a partial refund.
 5. A chargeback or refund reverses the payment itself. Check which contract terms depend on payment (ownership, licenses, delivery, refunds) and what the reversal would trigger. Sometimes the client would lose something they clearly want.
 6. "Delivered" (made available as agreed) and "received or used" are different facts. Don't concede non-delivery when the record shows delivery; work out why the client didn't receive or use it, and what the agreement says should happen next.
-7. Never invent facts. Every factual statement must come from a specific document section in the evidence locker, cited by doc_id and anchor.`;
+7. People change. Note who on the client's side hired, approved, paid and filed. If the person who filed is not the one who hired or approved the work, find out why (they left, handed over, a new owner took charge). That is often the real story.
+8. Clients often voice more than one worry, and not always in the dispute itself (emails, forms, chat). Each worry needs its own answer from the agreement or the records.
+9. Never invent facts. Every factual statement must come from a specific document section in the evidence locker, cited by doc_id and anchor.`;
 
 // ---- Stage: read the complaint ------------------------------------------------
 
@@ -195,7 +197,7 @@ const findingsSchema = {
 };
 
 const consolidatePrompt = `Stop investigating. Write up ALL important findings from everything you have read, one distinct fact per finding (6-10 findings), including ones you already recorded.
-Cover: what was agreed, what was delivered and what the client actually received or used, anything the client did or said after payment, anything unanswered or missed, and anything that favors the client.
+Cover: what was agreed, what was delivered and what the client actually received or used, anything the client did or said after payment (every worry they voiced, wherever they voiced it), who on the client's side hired, approved, paid and filed and any change in those people, anything unanswered or missed, and anything that favors the client.
 Each finding cites the exact doc_id and anchor it comes from. Then give a two-sentence summary of what is really going on.`;
 
 // ---- Stage: diagnose -----------------------------------------------------------
@@ -210,8 +212,23 @@ const citationRef = {
 const diagnoseSchema = {
   type: 'object',
   additionalProperties: false,
-  required: ['hypotheses', 'real_complaint', 'why_this_reason_code', 'freelancer_weaknesses'],
+  required: ['client_concerns', 'hypotheses', 'real_complaint', 'why_this_reason_code', 'freelancer_weaknesses'],
   properties: {
+    client_concerns: {
+      type: 'array',
+      description: 'Every separate worry the client voiced in their own words, anywhere in the evidence, and what answers it.',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['concern', 'said_in', 'answered_by', 'answer'],
+        properties: {
+          concern: { type: 'string', description: 'The worry in plain words.' },
+          said_in: { type: 'array', items: citationRef },
+          answered_by: { type: 'array', description: 'The agreement term or record that answers it.', items: citationRef },
+          answer: { type: 'string', description: 'What that term or record means for this worry, including what a reversed payment would change.' },
+        },
+      },
+    },
     hypotheses: {
       type: 'array',
       description: 'Competing explanations of what is really behind the dispute, including the literal one.',
@@ -265,7 +282,7 @@ ${findings.map((f, i) => `${i + 1}. ${f.finding} (why it matters: ${f.significan
 Exact text of every cited section:
 ${citedText}
 
-Give 2-4 competing hypotheses (including the literal reading of the complaint), weigh them against the evidence, then state the real complaint. Cite only doc_id/anchor pairs that appear above.`;
+First list every separate worry the client voiced in their own words (in the dispute, emails, forms or chat), and for each find the agreement term or record that answers it; read the full agreement above, not just the cited parts. Then give 2-4 competing hypotheses (including the literal reading of the complaint), weigh them against the evidence, and state the real complaint so that it accounts for every worry and for any change in who is involved on the client's side. Cite only doc_id/anchor pairs that appear above.`;
 }
 
 // ---- Stage: strategy -----------------------------------------------------------
@@ -309,6 +326,11 @@ const strategySchema = {
   },
 };
 
+const concernLines = (diagnosis) =>
+  (diagnosis.client_concerns || [])
+    .map((c) => `- ${c.concern} -> ${c.answer} [${c.answered_by.map((r) => `${r.doc_id} ${r.anchor}`).join(', ')}]`)
+    .join('\n') || '- none recorded';
+
 function strategyPrompt({ dispute, read, diagnosis, playbook }) {
   return `Decide the strategy.
 
@@ -319,6 +341,8 @@ ${playbook.reviewerTests.map((t) => `- ${t}`).join('\n')}
 Stated complaint: ${read.stated_complaint}
 Real complaint (${diagnosis.real_complaint.confidence}% confidence): ${diagnosis.real_complaint.summary}
 What the client actually needs: ${diagnosis.real_complaint.what_the_client_actually_needs}
+Client's worries and what answers them:
+${concernLines(diagnosis)}
 Freelancer weaknesses: ${diagnosis.freelancer_weaknesses.map((w) => w.issue).join(' | ') || 'none found'}
 
 The reviewer only judges the filed reason, so the proof plan must answer every reviewer test. But disputes end fastest when the client's real problem is fixed, so also plan for the real complaint. If part of the money is genuinely owed back, say so.
@@ -382,6 +406,8 @@ Proof plan:
 ${strategy.proof_plan.map((p, i) => `${i + 1}. [${p.answers}] ${p.point}`).join('\n')}
 
 Real complaint: ${diagnosis.real_complaint.summary}
+Client's worries and what answers them (the client message should settle each one):
+${concernLines(diagnosis)}
 
 Write two things:
 A) "claims": the formal response to the reviewer, written by ${freelancer.name}. 6-10 claims in a logical order. Factual, calm, specific: dates, amounts, document names. If the strategy includes a refund or a fix, state it. Acknowledge a real weakness rather than hiding it. Every claim needs at least one citation, and every quote must be copied word-for-word from the section text below.

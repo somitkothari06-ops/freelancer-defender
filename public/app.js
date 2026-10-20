@@ -647,6 +647,17 @@ function renderStageDone(stage, data, thinking) {
       <span class="note">What they need: ${esc(data.real_complaint.what_the_client_actually_needs)}</span>`;
     requestAnimationFrame(() => ($('.meter i', real).style.width = `${data.real_complaint.confidence}%`));
 
+    // Older recordings predate this field.
+    if (data.client_concerns?.length) {
+      const cs = h('<div class="panel"><h4>What your client is worried about, and the answer</h4></div>');
+      data.client_concerns.forEach((x) => {
+        const row = h(`<div class="concern"><div><b>${esc(x.concern)}</b></div><div class="h-exp">${esc(x.answer)}</div></div>`);
+        row.appendChild(chips([...x.said_in, ...x.answered_by]));
+        cs.appendChild(row);
+      });
+      body.appendChild(cs);
+    }
+
     const top = data.hypotheses[0];
     const hyps = h('<div class="panel"><h4>Theories the agent weighed</h4></div>');
     data.hypotheses.forEach((hy) => {
