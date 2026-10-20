@@ -14,7 +14,7 @@
 
 **Say:** "When a client asks their bank to take back a payment, the bank only hears the complaint: 'not as described'. What the client actually meant is usually somewhere else: in an email, a download log, a Slack message. And the freelancer has ten days to prove it, while the client had a hundred and eighty. This is the Freelancer Defender: an AI agent that reads between the lines and fights for the person who did the work."
 
-### 0:20–0:35 · AG Grid and Bryntum (same page)
+### 0:20–0:35 · AG Grid and Bryntum (dispute list)
 **Show:** sort the "All disputes" table by Time left, then point at the "What's actually going on" column.
 
 **Say:** "Every dispute comes from PayPal's Disputes API. The table is AG Grid: sort by deadline, and see at a glance what each client filed versus what's actually going on. The timeline is Bryntum: each bar is the time left to respond."
