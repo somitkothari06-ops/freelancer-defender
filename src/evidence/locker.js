@@ -146,7 +146,7 @@ class Locker {
       source: d.source,
       summary: d.summary,
       sections: d.sections.length,
-      added: Boolean(d.added),
+      ...(d.added ? { added: true } : {}),
     }));
   }
 
