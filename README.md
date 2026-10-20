@@ -2,7 +2,7 @@
 
 **An AI agent that fights on a freelancer's side when a client's bank reverses a payment they already earned.**
 
-Built for the PayPal AI Hackathon 2026.
+Built for the PayPal AI Hackathon 2026. **Live: https://freelancer-defender.onrender.com**
 
 ## The problem
 
