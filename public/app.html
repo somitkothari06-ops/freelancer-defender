@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Freelancer Defender</title>
+  <meta name="description" content="An AI agent that defends freelancers when a client's bank reverses a payment they already earned." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" />
+  <!-- AG Grid (community) for the dispute list and the evidence ledger -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-grid.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-theme-quartz.css" />
+  <!-- Bryntum Scheduler (trial) for the deadline timeline -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@bryntum/scheduler-trial@7.3.7/scheduler.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@bryntum/scheduler-trial@7.3.7/svalbard-light.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cpath d='M13 2 3 6v7c0 6 4.3 10 10 11 5.7-1 10-5 10-11V6z' fill='%231D4ED8'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <a class="brand" href="/">
+        <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 2 3 6v7c0 6 4.3 10 10 11 5.7-1 10-5 10-11V6z" fill="#1D4ED8"></path><path d="m8.5 13 3 3 6-6.5" stroke="#FFFFFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        Freelancer Defender
+      </a>
+      <nav class="nav"><a href="#/disputes" id="nav-disputes">Disputes</a></nav>
+    </div>
+    <div class="topbar-right" id="status"></div>
+  </header>
+
+  <!-- ===== All disputes ===== -->
+  <main id="view-queue" class="view hidden">
+    <section class="q-head">
+      <div>
+        <h1>Payments we're protecting</h1>
+        <p>Every one of these is money you already earned. We'll help you keep it.</p>
+      </div>
+    </section>
+    <section class="stats" id="queue-stats"></section>
+    <div id="paypal-banner"></div>
+    <section class="card">
+      <div class="card-head"><h2>Response deadlines</h2><div class="tl-legend"><span><i class="chip-dot"></i>Due within 2 days</span><span><i class="chip"></i>Response ready</span><span><i class="chip hollow"></i>Not worked out yet</span></div></div>
+      <div id="timeline"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>All disputes</h2><input id="grid-search" class="search" type="search" placeholder="Search clients, complaints, plans…" aria-label="Search disputes" /></div>
+      <div id="grid" class="ag-theme-quartz grid"></div>
+    </section>
+  </main>
+
+  <!-- ===== One dispute ===== -->
+  <main id="view-case" class="view hidden">
+    <section class="hero">
+      <div class="hero-main" id="case-head"></div>
+      <div class="clock" id="clock"></div>
+    </section>
+
+    <section class="three" id="three"></section>
+
+    <section class="runbar" id="controls"></section>
+    <div id="mode-banner"></div>
+
+    <section class="work">
+      <div class="card">
+        <div class="card-head"><h2>How the agent works it out</h2><span class="faint" style="font-size:13px" id="trail-note"></span></div>
+        <ol class="trail" id="trail"></ol>
+      </div>
+      <aside class="card evidence">
+        <div class="card-head" style="margin-bottom:6px"><h2>Your evidence</h2><span class="faint" style="font-size:13px" id="locker-count"></span></div>
+        <div id="locker"></div>
+      </aside>
+    </section>
+
+    <section id="result" class="hidden"></section>
+  </main>
+
+  <!-- A source document, opened from any citation -->
+  <aside class="drawer" id="drawer" aria-hidden="true" inert>
+    <div class="drawer-head">
+      <div>
+        <div class="drawer-kicker" id="drawer-kicker"></div>
+        <div class="drawer-title" id="drawer-title"></div>
+      </div>
+      <button class="icon-btn" id="drawer-close" aria-label="Close">✕</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/dist/ag-grid-community.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@bryntum/scheduler-trial@7.3.7/scheduler.umd.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

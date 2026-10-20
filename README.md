@@ -115,7 +115,8 @@ src/ai/groq.js            Groq client with rate-limit pacing
 src/cases.js              live sandbox disputes (linked or fresh) + seeded demo disputes
 data/scenarios/*.json     4 demo disputes with their evidence lockers
 data/replays/*.json       recordings of real agent runs
-public/                   the dashboard (plain HTML/CSS/JS)
+public/index.html         the landing page (/)
+public/app.html, app.js   the dashboard (/app): dispute list, case pages; plain HTML/CSS/JS
 ```
 
 See [NOTES.md](NOTES.md) for what's real vs. mocked and open items.

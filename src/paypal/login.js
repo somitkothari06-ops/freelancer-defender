@@ -54,7 +54,7 @@ function callbackUrl(req) {
 }
 
 function start(req, res) {
-  if (!config.paypal.enabled) return res.redirect('/?login=unavailable#/');
+  if (!config.paypal.enabled) return res.redirect('/?login=unavailable');
   const state = crypto.randomBytes(16).toString('hex');
   setCookie(res, STATE_COOKIE, state, 600, req);
   const url = new URL(`${AUTH_HOST}/signin/authorize`);
@@ -73,7 +73,7 @@ async function callback(req, res) {
   const { code, state, error } = req.query;
   const expected = cookies(req)[STATE_COOKIE];
   setCookie(res, STATE_COOKIE, '', 0, req);
-  if (error || !code || !state || state !== expected) return res.redirect('/?login=failed#/');
+  if (error || !code || !state || state !== expected) return res.redirect('/?login=failed');
   try {
     const basic = Buffer.from(`${config.paypal.clientId}:${config.paypal.clientSecret}`).toString('base64');
     const tokenRes = await fetch(`${config.paypal.baseUrl}/v1/oauth2/token`, {
@@ -93,10 +93,10 @@ async function callback(req, res) {
     const email = (info.emails || []).find((e) => e.primary)?.value || info.emails?.[0]?.value || info.email || '';
     const user = { name: info.name || [info.given_name, info.family_name].filter(Boolean).join(' ') || email || 'PayPal user', email, payer_id: info.payer_id || '' };
     setCookie(res, COOKIE, encodeSession(user), WEEK, req);
-    res.redirect('/#/disputes');
+    res.redirect('/app#/disputes');
   } catch (err) {
     console.error('Log in with PayPal failed:', err.message);
-    res.redirect('/?login=failed#/');
+    res.redirect('/?login=failed');
   }
 }
 

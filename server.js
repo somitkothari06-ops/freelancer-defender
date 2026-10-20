@@ -27,7 +27,7 @@ const login = require('./src/paypal/login');
 const app = express();
 app.use(express.json({ limit: '1mb' }));
 app.set('trust proxy', true); // Render terminates TLS in front of the app
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] })); // / is the landing page, /app the app
 
 const REPLAY_DIR = path.join(__dirname, 'data', 'replays');
 const replayPath = (id) => path.join(REPLAY_DIR, `${id.replace(/[^\w-]/g, '')}.json`);

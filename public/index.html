@@ -1,132 +1,269 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Freelancer Defender</title>
-  <meta name="description" content="An AI agent that defends freelancers when a client's bank reverses a payment they already earned." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" />
-  <!-- AG Grid (community) for the dispute list and the evidence ledger -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-grid.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-theme-quartz.css" />
-  <!-- Bryntum Scheduler (trial) for the deadline timeline -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@bryntum/scheduler-trial@7.3.7/scheduler.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@bryntum/scheduler-trial@7.3.7/svalbard-light.css" />
-  <link rel="stylesheet" href="/styles.css" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cpath d='M13 2 3 6v7c0 6 4.3 10 10 11 5.7-1 10-5 10-11V6z' fill='%231D4ED8'/%3E%3C/svg%3E" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Freelancer Defender · Keep the money you earned</title>
+<meta name="description" content="When a client asks their bank to take back a payment for work you did, Freelancer Defender finds what they really meant and proves your side." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" />
+<style>
+  :root { --navy: #0b1b3f; --ink: #0b1b3f; --white: #fbfaf7; --mute: #6b7896; --line: #d9dde6; --blue: #1d4ed8; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--white); color: var(--ink); font-family: 'Plus Jakarta Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .display { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-spacing: -.04em; }
+  .k { font-size: 13px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+
+  nav { position: fixed; inset: 0 0 auto; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: 20px clamp(20px, 5vw, 64px); pointer-events: none; }
+  nav > * { pointer-events: auto; }
+  .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 15px; color: var(--navy); background: #fff; padding: 9px 14px; border-radius: 999px; text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+  .nav-cta { font-weight: 800; font-size: 14px; color: var(--navy); background: #fff; padding: 10px 16px; border-radius: 999px; text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+
+  /* ===== 1 · Drag between what they said and what they meant ===== */
+  .split { position: relative; height: 100svh; min-height: 620px; overflow: hidden; cursor: ew-resize; touch-action: pan-y; }
+  .split, .split * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  .setup { position: absolute; z-index: 6; top: 84px; left: 50%; transform: translateX(-50%); width: max-content; max-width: 90vw; text-align: center; font-size: clamp(16px, 1.4vw, 19px); font-weight: 700; color: var(--navy); background: #fff; padding: 10px 18px; border-radius: 999px; box-shadow: 0 6px 24px rgba(11,27,63,.12); }
+  .layer { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 clamp(24px, 6vw, 96px); }
+  .layer h1 { margin: 18px 0 0; font-size: clamp(40px, 6.4vw, 112px); line-height: .96; max-width: min(11ch, 40vw); text-wrap: balance; }
+  .layer .k, .layer .who { max-width: 40vw; }
+  .layer .who { margin-top: 34px; font-size: clamp(15px, 1.25vw, 18px); font-weight: 600; max-width: 32ch; line-height: 1.4; }
+  .meant { background: var(--navy); color: #fff; }
+  .layer > .k { font-size: clamp(14px, 1.1vw, 17px); letter-spacing: .12em; display: inline-block; padding: 7px 12px; border-radius: 6px; }
+  .meant .k { color: var(--navy); background: #fff; align-self: flex-start; }
+  /* A hand-drawn-feeling wavy underline (an SVG wave repeated along the word). */
+  .meant h1 { line-height: 1.04; }
+  .meant h1 mark { color: #fff; white-space: nowrap; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='16' viewBox='0 0 40 16'%3E%3Cpath d='M0 8 Q10 1.5 20 8 T40 8' fill='none' stroke='%23ffc439' stroke-width='5.5' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x 0 98% / .46em .18em; }
+  .who .lbl { display: block; font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 6px; }
+  .meant .who .lbl { color: #ffc439; }
+  .said .who .lbl { color: var(--navy); }
+  .meant .who { color: #dbe3f3; }
+  .said .who { color: #4a5675; }
+  .said { background: var(--white); color: var(--navy); clip-path: inset(0 0 0 var(--x, 100%)); align-items: flex-end; text-align: right; }
+  .said .k { color: #fff; background: var(--navy); }
+  /* The handle stays fully on screen even when the divider is parked at an edge. */
+  .handle { position: absolute; z-index: 5; top: 0; bottom: 0; left: clamp(50px, var(--x, 100%), calc(100% - 50px)); width: 2px; background: var(--blue); }
+  .knob { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 72px; height: 72px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; box-shadow: 0 12px 30px rgba(29,78,216,.4); transition: transform .15s; }
+  .dragging .knob { transform: translate(-50%, -50%) scale(1.08); }
+  .knob svg { width: 30px; height: 30px; }
+  /* A centred story bar: three examples, the active one filling up as auto mode plays it. */
+  .bottom { position: absolute; z-index: 6; left: 50%; bottom: 28px; transform: translateX(-50%); }
+  .cases { display: flex; gap: 2px; padding: 6px; border-radius: 16px; background: rgba(11,27,63,.92); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.14); box-shadow: 0 14px 40px rgba(11,27,63,.3); }
+  .cases button { position: relative; border: 0; font: inherit; font-weight: 700; font-size: 14px; padding: 12px 18px 14px; border-radius: 11px; background: transparent; color: rgba(255,255,255,.6); cursor: pointer; white-space: nowrap; transition: color .2s, background .2s; }
+  .cases button:hover { color: #fff; }
+  .cases button.on { color: #fff; background: rgba(255,255,255,.1); }
+  .cases button i { position: absolute; left: 18px; right: 18px; bottom: 7px; height: 2px; border-radius: 2px; background: rgba(255,255,255,.15); overflow: hidden; }
+  .cases button i::after { content: ''; position: absolute; inset: 0; width: calc(var(--p, 0) * 100%); background: #ffc439; }
+  .cases button:not(.on) i::after { width: 0; }
+  .cases button:focus-visible, .split:focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; }
+  .hint { position: absolute; top: calc(50% + 50px); left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 13px; font-weight: 800; color: var(--navy); background: #fff; padding: 8px 12px; border-radius: 999px; box-shadow: 0 6px 20px rgba(11,27,63,.2); transition: opacity .4s; pointer-events: none; }
+  .layer h1, .layer .who { transition: opacity .25s; }
+  .swapping .layer h1, .swapping .layer .who { opacity: 0; }
+
+  /* ===== 2 · The time gap, in one sentence ===== */
+  .gap { padding: 16vh clamp(24px, 6vw, 96px) 12vh; }
+  .gap p { margin: 0; font-size: clamp(22px, 2.4vw, 34px); font-weight: 700; line-height: 1.1; color: var(--mute); }
+  .gap p > span { display: flex; flex-wrap: wrap; align-items: baseline; gap: .1em .35em; margin-bottom: .45em; }
+  .gap b { color: var(--navy); font-family: 'Space Grotesk'; letter-spacing: -.05em; line-height: .8; }
+  .gap .d180 { font-size: clamp(110px, 17vw, 260px); }
+  .gap .d75 { font-size: clamp(56px, 8vw, 120px); }
+  .gap .d10 { font-size: clamp(22px, 2.4vw, 34px); background: var(--navy); color: #fff; padding: .12em .3em; border-radius: 6px; letter-spacing: -.02em; }
+  .gap .you { color: var(--navy); }
+  .gap small { display: block; margin-top: 28px; color: var(--mute); font-size: 14px; }
+  .gap small a { color: var(--mute); }
+
+  /* ===== 3 · How it works, with a real example of proof ===== */
+  .how { padding: 6vh clamp(24px, 6vw, 96px) 14vh; display: grid; grid-template-columns: 1fr 1.1fr; gap: 6vw; align-items: center; }
+  .how h2 { font-size: clamp(40px, 5vw, 76px); line-height: .98; margin: 0 0 36px; }
+  .steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 44px 1fr; gap: 14px; padding: 18px 0; border-top: 1px solid var(--line); font-size: 18px; line-height: 1.4; }
+  .steps li::before { content: counter(s); font-family: 'Space Grotesk'; font-weight: 700; font-size: 18px; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--navy); display: grid; place-items: center; }
+  .steps b { display: block; font-size: 19px; }
+  .steps span { color: var(--mute); font-size: 16px; }
+  .example { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 28px; box-shadow: 0 30px 60px -30px rgba(11,27,63,.35); }
+  .example .k { color: var(--mute); }
+  .example .claim { font-size: clamp(20px, 1.8vw, 26px); font-weight: 700; line-height: 1.3; margin: 12px 0 18px; }
+  .example .claim u { text-decoration: none; padding-bottom: .12em; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='10' viewBox='0 0 24 10'%3E%3Cpath d='M0 5 Q6 1 12 5 T24 5' fill='none' stroke='%23f2b20f' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x 0 100% / 20px 8px; }
+  .src { display: flex; gap: 12px; align-items: flex-start; background: #f4f6fb; border-radius: 14px; padding: 16px 18px; }
+  .src .tag { flex: none; font-size: 12px; font-weight: 800; color: #fff; background: var(--navy); padding: 5px 9px; border-radius: 6px; }
+  .src p { margin: 0; font-size: 16px; line-height: 1.45; }
+  .src mark { background: #ffe7a3; padding: 0 2px; border-radius: 3px; }
+  .check { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 14px; font-weight: 700; color: #047857; }
+
+  /* ===== 4 · Close ===== */
+  .end { background: var(--navy); color: #fff; padding: 14vh clamp(24px, 6vw, 96px) 10vh; }
+  .end h2 { font-size: clamp(48px, 7vw, 116px); line-height: .95; margin: 0; max-width: 12ch; }
+  .end h2 em { font-style: normal; text-decoration: underline; text-decoration-thickness: .06em; text-underline-offset: .12em; }
+  .end .row { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; }
+  .cta { display: inline-flex; align-items: center; gap: 10px; padding: 17px 26px; border-radius: 999px; font-weight: 800; font-size: 16px; text-decoration: none; transition: transform .2s; }
+  .cta:hover { transform: translateY(-2px); }
+  .cta.light { background: #fff; color: var(--navy); }
+  .cta.pp { background: #ffc439; color: #003087; }
+  .pp-logo { width: 20px; height: 20px; flex: none; }
+  .login-msg { position: absolute; z-index: 7; top: 136px; left: 50%; transform: translateX(-50%); background: #ffc439; color: #003087; font-weight: 700; font-size: 14px; padding: 10px 16px; border-radius: 999px; box-shadow: 0 6px 24px rgba(11,27,63,.2); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  footer { margin-top: 12vh; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.15); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 14px; color: #a9b6d3; }
+
+  .rise { opacity: 0; transform: translateY(24px); transition: opacity .8s, transform .8s cubic-bezier(.2,.8,.2,1); }
+  .in .rise { opacity: 1; transform: none; }
+  @media (max-width: 860px) { .how { grid-template-columns: 1fr; } .setup { top: 76px; } }
+  @media (prefers-reduced-motion: reduce) { *, .rise { transition: none !important; } .rise { opacity: 1; transform: none; } }
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-left">
-      <a class="brand" href="#/">
-        <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 2 3 6v7c0 6 4.3 10 10 11 5.7-1 10-5 10-11V6z" fill="#1D4ED8"></path><path d="m8.5 13 3 3 6-6.5" stroke="#FFFFFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-        Freelancer Defender
-      </a>
-      <nav class="nav"><a href="#/disputes" id="nav-disputes">Disputes</a></nav>
+<nav>
+  <a class="brand" href="/"><svg width="22" height="22" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 2 3 6v7c0 6 4.3 10 10 11 5.7-1 10-5 10-11V6z" fill="currentColor"/></svg>Freelancer Defender</a>
+  <a class="nav-cta" href="/app#/disputes">Try the demo →</a>
+</nav>
+
+<section class="split" id="split" tabindex="0" aria-label="Drag left and right to compare what the client told their bank with what they actually meant">
+  <div class="setup">Your client asked their bank to take back a payment.</div>
+  <div class="layer meant">
+    <span class="k">What they actually meant</span>
+    <h1 class="display" id="meant">“I never got the <mark>print files</mark>.”</h1>
+    <div class="who"><span class="lbl">How we know</span><span id="why">Their download log shows they never opened the link with the print files.</span></div>
+  </div>
+  <div class="layer said">
+    <span class="k">What they told the bank</span>
+    <h1 class="display" id="said">“Not as described.”</h1>
+    <div class="who"><span class="lbl">The client</span><span id="who">A coffee shop that paid Priya $2,400 for a logo.</span></div>
+  </div>
+  <div class="handle"><span class="hint" id="hint">Drag me</span><div class="knob"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6 3 12l6 6M15 6l6 6-6 6"/></svg></div></div>
+  <div class="bottom">
+    <div class="cases" id="cases" role="tablist" aria-label="Examples">
+      <button class="on" role="tab">Logo designer<i></i></button><button role="tab">App developer<i></i></button><button role="tab">Blog writer<i></i></button>
     </div>
-    <div class="topbar-right" id="status"></div>
-  </header>
+  </div>
+</section>
 
-  <!-- ===== Front page ===== -->
-  <main id="view-home" class="home hidden">
-    <section class="hx" data-bg="a">
-      <div class="hx-glow" aria-hidden="true"></div>
-      <div id="login-banner"></div>
-      <div class="hx-stage" aria-live="polite">
-        <div class="hx-top"><span class="hx-label" id="hx-label">What the client told their bank</span><span class="hx-who" id="hx-who">A designer's client · $2,400</span></div>
-        <h1 class="hx-line" id="hx-line">&ldquo;Not as described.&rdquo;</h1>
-        <div class="hx-scan" aria-hidden="true"></div>
-        <div class="hx-dots" id="hx-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
-      </div>
-      <div class="hx-foot">
-        <p class="hx-tag">We hear what they meant.<br /><span>Then we prove your side.</span></p>
-        <div class="hx-ctas">
-          <a class="hx-btn main" href="#/disputes">Try the demo <span aria-hidden="true">→</span></a>
-          <a class="hx-btn pp" href="/auth/paypal" id="home-login">Log in with PayPal</a>
-        </div>
-      </div>
-      <a class="hx-down" href="#hx-race" aria-label="Scroll down">↓</a>
-    </section>
+<section class="gap" id="gap">
+  <p class="rise"><span>Your client gets <b class="d180">180</b> days to complain.</span><span>Their bank gets <b class="d75">75</b> to decide.</span><span class="you">You get <b class="d10">10</b> to answer.</span></p>
+  <small class="rise">Card disputes, per <a href="https://www.paypal.com/us/cshelp/article/what-is-a-chargeback-and-why-did-i-get-one-help607" target="_blank" rel="noopener">PayPal's help center</a>.</small>
+</section>
 
-    <section class="hx-race" id="hx-race" data-bars="1">
-      <span class="race-k">How long everyone gets</span>
-      <div class="race-row"><div class="race-bar"><i style="--w:100%"><span>Your client, to file</span></i></div><b class="num" data-to="180">0</b><em>days</em></div>
-      <div class="race-row"><div class="race-bar"><i style="--w:41.7%"><span>Their bank, to decide</span></i></div><b class="num" data-to="75">0</b><em>days</em></div>
-      <div class="race-row you"><div class="race-bar"><i style="--w:5.6%"></i><span class="you-tag">You, to respond</span></div><b class="num" data-to="10">0</b><em>days</em></div>
-      <p class="race-say">Not fair. <span>So we're fast.</span></p>
-    </section>
+<section class="how" id="how">
+  <div class="rise">
+    <h2 class="display">Ten days is enough. With us.</h2>
+    <ol class="steps">
+      <li><div><b>We pull the dispute from PayPal</b><span>The complaint, the amount and your deadline.</span></div></li>
+      <li><div><b>We read your paperwork</b><span>Contract, emails, delivery logs. We find what went wrong.</span></div></li>
+      <li><div><b>You send a reply that's proven</b><span>Every sentence quotes your own records, checked word for word.</span></div></li>
+    </ol>
+  </div>
+  <div class="example rise">
+    <span class="k">A line from Priya's reply</span>
+    <p class="claim">“The client <u>approved the final design</u> on June 29.”</p>
+    <div class="src"><span class="tag">Email</span><p>Jun 29, from the client: “This is it. <mark>Approved</mark>, let's make it official.”</p></div>
+    <div class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>Quote found in the source, word for word</div>
+  </div>
+</section>
 
-    <section class="hx-proof">
-      <p class="proof-line">&ldquo;The client approved the final design on June&nbsp;29.&rdquo;<button class="proof-chip" type="button" aria-describedby="proof-src">Emails</button></p>
-      <div class="proof-src" id="proof-src" role="tooltip"><span class="kicker">Email · Jun 29 · Daniel to Priya</span>&ldquo;This is it. <mark>Approved</mark>, let's make it official.&rdquo;</div>
-      <p class="race-say">Every sentence, <span>proven.</span></p>
-      <a class="hx-btn main" href="#/disputes">See it work <span aria-hidden="true">→</span></a>
-    </section>
-  </main>
+<section class="end">
+  <div class="row">
+    <h2 class="display">You did the work. <em>Keep the money.</em></h2>
+    <div class="ctas"><a class="cta light" href="/app#/disputes">Try the demo →</a><a class="cta pp" href="/auth/paypal"><svg class="pp-logo" viewBox="0 0 24 24" aria-hidden="true"><path fill="#003087" d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106z"/><path fill="#009cde" d="M21.222 6.917a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg>Log in with PayPal</a></div>
+  </div>
+  <footer><span>Built for the PayPal AI Hackathon 2026</span><span>Runs on PayPal's Disputes, Transaction Search and Invoicing APIs</span></footer>
+</section>
 
-  <!-- ===== All disputes ===== -->
-  <main id="view-queue" class="view hidden">
-    <section class="q-head">
-      <div>
-        <h1>Payments we're protecting</h1>
-        <p>Every one of these is money you already earned. We'll help you keep it.</p>
-      </div>
-    </section>
-    <section class="stats" id="queue-stats"></section>
-    <div id="paypal-banner"></div>
-    <section class="card">
-      <div class="card-head"><h2>Response deadlines</h2><div class="tl-legend"><span><i class="chip-dot"></i>Due within 2 days</span><span><i class="chip"></i>Response ready</span><span><i class="chip hollow"></i>Not worked out yet</span></div></div>
-      <div id="timeline"></div>
-    </section>
-    <section class="card">
-      <div class="card-head"><h2>All disputes</h2><input id="grid-search" class="search" type="search" placeholder="Search clients, complaints, plans…" aria-label="Search disputes" /></div>
-      <div id="grid" class="ag-theme-quartz grid"></div>
-    </section>
-  </main>
+<script>
+// The three examples: what the client told their bank, what they meant, who it is, and where we found it.
+const CASES = [
+  { said: '“Not as described.”', meant: '“I never got the <mark>print files</mark>.”', who: 'A coffee shop that paid Priya $2,400 for a logo.', why: 'Their download log shows they never opened the link with the print files.' },
+  { said: '“I didn’t authorize this.”', meant: '“I didn’t know my <mark>co-founder</mark> hired you.”', who: 'A health startup that paid Marcus $4,500 for an app.', why: 'Slack shows the co-founder who hired Marcus had left the company.' },
+  { said: '“Low quality work.”', meant: '“<mark>One article</mark> never arrived.”', who: 'A gym that paid Jordan $1,500 for five blog posts.', why: 'The delivery folder shows four of the five posts were delivered and published.' },
+];
+const $ = (id) => document.getElementById(id);
+const split = $('split');
+const tabs = [...document.querySelectorAll('#cases button')];
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let x = 100;
+const set = (pct) => { x = Math.max(0, Math.min(100, pct)); split.style.setProperty('--x', `${x}%`); };
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const ease = (p) => 1 - (1 - p) ** 3;
 
-  <!-- ===== One dispute ===== -->
-  <main id="view-case" class="view hidden">
-    <section class="hero">
-      <div class="hero-main" id="case-head"></div>
-      <div class="clock" id="clock"></div>
-    </section>
+// Show one example: fade the words out, swap them, fade back in.
+let current = 0;
+async function show(i) {
+  current = i;
+  tabs.forEach((t, n) => { t.classList.toggle('on', n === i); t.setAttribute('aria-selected', n === i); });
+  split.classList.add('swapping');
+  await wait(250);
+  const c = CASES[i];
+  $('said').textContent = c.said;
+  $('meant').innerHTML = c.meant;
+  $('who').textContent = c.who;
+  $('why').textContent = c.why;
+  split.classList.remove('swapping');
+}
 
-    <section class="three" id="three"></section>
+// Move the divider smoothly; resolves false if auto mode was interrupted.
+function glide(to, ms, run) {
+  const from = x, t0 = performance.now();
+  return new Promise((done) => (function f(now) {
+    if (run !== autoRun) return done(false);
+    const p = Math.min(1, (now - t0) / ms);
+    set(from + (to - from) * ease(p));
+    p < 1 ? requestAnimationFrame(f) : done(true);
+  })(t0));
+}
 
-    <section class="runbar" id="controls"></section>
-    <div id="mode-banner"></div>
+// Auto mode: when nobody is touching the page, play each example in turn. The complaint
+// shows first, then the divider sweeps across to reveal what the client really meant.
+// The active tab's gold line fills up while it plays.
+const DWELL = 7600;
+let autoRun = 0, idleTimer = null;
+async function auto() {
+  const run = ++autoRun;
+  for (let i = current; run === autoRun; i = (i + 1) % CASES.length) {
+    await show(i);
+    const t0 = performance.now();
+    const tick = () => { if (run !== autoRun) return; const p = Math.min(1, (performance.now() - t0) / DWELL); tabs[i].style.setProperty('--p', p); if (p < 1) requestAnimationFrame(tick); };
+    tick();
+    if (!(await glide(0, 700, run))) return;         // the complaint, as the bank sees it
+    await wait(1500); if (run !== autoRun) return;
+    if (!(await glide(52, 1500, run))) return;       // ...and what they really meant
+    await wait(DWELL - 3700); if (run !== autoRun) return;
+    tabs[i].style.setProperty('--p', 0);
+  }
+}
+function pause() {
+  autoRun++; // stops the running loop
+  tabs.forEach((t) => t.style.setProperty('--p', 0));
+  clearTimeout(idleTimer);
+  if (!calm) idleTimer = setTimeout(auto, 9000); // resume after a quiet spell
+}
 
-    <section class="work">
-      <div class="card">
-        <div class="card-head"><h2>How the agent works it out</h2><span class="faint" style="font-size:13px" id="trail-note"></span></div>
-        <ol class="trail" id="trail"></ol>
-      </div>
-      <aside class="card evidence">
-        <div class="card-head" style="margin-bottom:6px"><h2>Your evidence</h2><span class="faint" style="font-size:13px" id="locker-count"></span></div>
-        <div id="locker"></div>
-      </aside>
-    </section>
+let dragging = false;
+const fromEvent = (e) => { const r = split.getBoundingClientRect(); set(((e.clientX - r.left) / r.width) * 100); };
+split.addEventListener('pointerdown', (e) => {
+  if (e.target.closest('.cases')) return;
+  e.preventDefault(); // no text selection, no image drag
+  dragging = true;
+  split.classList.add('dragging');
+  split.setPointerCapture(e.pointerId);
+  $('hint').style.opacity = 0;
+  pause();
+  fromEvent(e);
+});
+split.addEventListener('pointermove', (e) => dragging && fromEvent(e));
+const stop = () => { dragging = false; split.classList.remove('dragging'); };
+split.addEventListener('pointerup', stop);
+split.addEventListener('pointercancel', stop);
+split.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); pause(); set(x + (e.key === 'ArrowLeft' ? -5 : 5)); }
+});
+tabs.forEach((b, i) => b.addEventListener('click', () => { pause(); show(i); }));
 
-    <section id="result" class="hidden"></section>
-  </main>
+if (calm) set(52);
+else setTimeout(auto, 500);
 
-  <!-- A source document, opened from any citation -->
-  <aside class="drawer" id="drawer" aria-hidden="true" inert>
-    <div class="drawer-head">
-      <div>
-        <div class="drawer-kicker" id="drawer-kicker"></div>
-        <div class="drawer-title" id="drawer-title"></div>
-      </div>
-      <button class="icon-btn" id="drawer-close" aria-label="Close">✕</button>
-    </div>
-    <div class="drawer-body" id="drawer-body"></div>
-  </aside>
-  <div class="scrim" id="scrim"></div>
-  <div class="toast" id="toast" role="status"></div>
+// Back from a PayPal sign-in that didn't work: say so, and point at the demo.
+const loginMsg = { failed: "PayPal sign-in didn't go through. You can still try the demo.", unavailable: "PayPal sign-in isn't set up here yet. You can still try the demo." }[new URLSearchParams(location.search).get('login')];
+if (loginMsg) split.insertAdjacentHTML('beforeend', `<div class="login-msg" role="status">${loginMsg}</div>`);
 
-  <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/dist/ag-grid-community.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@bryntum/scheduler-trial@7.3.7/scheduler.umd.js"></script>
-  <script src="/app.js"></script>
+const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: .2 });
+['gap', 'how'].forEach((id) => io.observe($(id)));
+</script>
 </body>
 </html>

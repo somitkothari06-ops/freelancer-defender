@@ -9,10 +9,10 @@
 
 ---
 
-### 0:00–0:20 · The problem (dispute list page)
-**Show:** the dispute list. Hover over the "Earned money at risk" card, then the deadline timeline.
+### 0:00–0:20 · The problem (landing page)
+**Show:** the landing page. Let auto mode play one example: "Not as described." sweeps open to "I never got the print files." Then drag the divider yourself once. Scroll to the 180 / 75 / 10 line, then click **Try the demo**.
 
-**Say:** "Freelancers do the work, get paid, and then the client's bank reverses the payment. The client had 180 days to file, and their bank can take 75 days to decide. The freelancer gets about 10. This is the Freelancer Defender: an AI agent that fights for the person who did the work."
+**Say:** "When a client asks their bank to take back a payment, the bank only hears the complaint: 'not as described'. What the client actually meant is usually somewhere else: in an email, a download log, a Slack message. And the freelancer has ten days to prove it, while the client had a hundred and eighty. This is the Freelancer Defender: an AI agent that reads between the lines and fights for the person who did the work."
 
 ### 0:20–0:35 · AG Grid and Bryntum (same page)
 **Show:** sort the "All disputes" table by Time left, then point at the "What's actually going on" column.

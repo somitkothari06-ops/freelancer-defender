@@ -1,6 +1,6 @@
 // Freelancer Defender dashboard.
 // Plain JavaScript, no build step. Two views:
-//   #/            front page: what it does, "Log in with PayPal" or "Try the demo"
+// (The landing page is public/index.html; this is the app at /app.)
 //   #/disputes    all disputes: deadline timeline (Bryntum) + dispute list (AG Grid)
 //   #/case/<id>   one dispute: live countdown, the three-card summary, the agent's live
 //                 reasoning, the evidence, and the response to send through PayPal
@@ -87,6 +87,9 @@ function toast(msg) {
   toast.timer = setTimeout(() => t.classList.remove('show'), 3500);
 }
 
+// PayPal's monogram, for "Log in with PayPal".
+const PAYPAL_LOGO = '<svg class="pp-logo" viewBox="0 0 24 24" aria-hidden="true"><path fill="#003087" d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106z"/><path fill="#009cde" d="M21.222 6.917a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg>';
+
 // ---------- app state -------------------------------------------------------------
 
 const state = {
@@ -118,132 +121,16 @@ function route() {
     state.stream = null;
   }
   clearInterval(state.clockTimer);
-  const page = m ? 'case' : location.hash.startsWith('#/disputes') ? 'queue' : 'home';
-  if (page !== 'home') state.decoderStop = true;
-  document.body.classList.toggle('on-home', page === 'home');
+  const page = m ? 'case' : 'queue';
   if (page !== 'queue' && state.scheduler) {
     state.scheduler.destroy();
     state.scheduler = null;
     $('#now-marker')?.remove();
   }
-  for (const v of ['home', 'queue', 'case']) $(`#view-${v}`).classList.toggle('hidden', v !== page);
-  $('#nav-disputes').classList.toggle('active', page !== 'home');
+  for (const v of ['queue', 'case']) $(`#view-${v}`).classList.toggle('hidden', v !== page);
+  $('#nav-disputes').classList.add('active');
   if (page === 'case') openCase(decodeURIComponent(m[1]));
-  else if (page === 'queue') openQueue();
-  else openHome();
-}
-
-function openHome() {
-  document.title = 'Freelancer Defender: keep the money you earned';
-  window.scrollTo(0, 0);
-  const params = new URLSearchParams(location.search);
-  const msg = { failed: "PayPal sign-in didn't go through. Try the demo instead.", unavailable: "PayPal sign-in isn't set up here yet. Try the demo instead." }[params.get('login')];
-  $('#login-banner').innerHTML = msg ? `<div class="hx-banner">${esc(msg)}</div>` : '';
-  const user = state.status?.user;
-  if (user) {
-    $('#home-login').textContent = `Continue as ${user.name.split(' ')[0]}`;
-    $('#home-login').href = '#/disputes';
-  }
-  $('.hx-down').onclick = (e) => {
-    e.preventDefault();
-    $('#hx-race').scrollIntoView({ behavior: 'smooth' });
-  };
-  // The spotlight background follows the pointer.
-  const hx = $('.hx');
-  hx.onpointermove = (e) => {
-    const r = hx.getBoundingClientRect();
-    hx.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
-    hx.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
-  };
-  startDecoder();
-  revealOnScroll();
-}
-
-// The front page's hero: what a client told their bank "decodes" into what they meant.
-const DECODE = [
-  { said: '“Not as described.”', meant: '“I never got the print files.”', who: "A designer's client · $2,400" },
-  { said: '“I didn’t authorize this.”', meant: '“I didn’t know my co-founder hired you.”', who: "A developer's client · $4,500" },
-  { said: '“Low quality work.”', meant: '“One article never arrived.”', who: "A writer's client · $1,500" },
-];
-const GLYPHS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789#%&*+=?';
-
-function scramble(el, to, ms) {
-  const from = el.textContent;
-  const len = Math.max(from.length, to.length);
-  // Each character settles at its own random moment, left-to-right on average.
-  const settle = [...Array(len)].map((_, i) => (i / len) * 0.6 + Math.random() * 0.4);
-  const t0 = performance.now();
-  return new Promise((done) => {
-    const frame = (now) => {
-      if (state.decoderStop) return done();
-      const p = Math.min(1, (now - t0) / ms);
-      let out = '';
-      for (let i = 0; i < len; i++) {
-        if (p >= settle[i]) out += to[i] ?? '';
-        else if (p > settle[i] - 0.35) out += to[i] === ' ' ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
-        else out += from[i] ?? '';
-      }
-      el.textContent = out;
-      p < 1 ? requestAnimationFrame(frame) : (el.textContent = to, done());
-    };
-    requestAnimationFrame(frame);
-  });
-}
-
-async function startDecoder() {
-  state.decoderStop = true; // stop any earlier loop
-  await new Promise((r) => setTimeout(r, 30));
-  state.decoderStop = false;
-  const line = $('#hx-line');
-  const label = $('#hx-label');
-  const who = $('#hx-who');
-  const stage = $('.hx-stage');
-  const dots = [...$('#hx-dots').children];
-  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  let i = 0;
-  while (!state.decoderStop) {
-    const { said, meant, who: whoText } = DECODE[i];
-    // A new case fades in: who it is, and what they told their bank.
-    stage.classList.remove('meant');
-    label.textContent = 'What the client told their bank';
-    who.textContent = whoText;
-    line.textContent = said;
-    dots.forEach((d, n) => d.classList.toggle('on', n === i));
-    stage.classList.remove('fade');
-    await wait(2200);
-    if (state.decoderStop) break;
-    // Then it decodes into what they actually meant.
-    stage.classList.add('scanning', 'meant');
-    label.textContent = 'What they actually meant';
-    if (calm) line.textContent = meant;
-    else await scramble(line, meant, 1100);
-    stage.classList.remove('scanning');
-    await wait(3000);
-    if (state.decoderStop) break;
-    stage.classList.add('fade');
-    await wait(450);
-    i = (i + 1) % DECODE.length;
-  }
-}
-
-function revealOnScroll() {
-  const io = new IntersectionObserver((entries) => entries.forEach((e) => {
-    if (!e.isIntersecting || e.target.classList.contains('in')) return;
-    e.target.classList.add('in');
-    // Count the day numbers up as the bars grow.
-    e.target.querySelectorAll('[data-to]').forEach((b) => {
-      const to = Number(b.dataset.to);
-      const t0 = performance.now();
-      const tick = (now) => {
-        const p = Math.min(1, (now - t0) / 1600);
-        b.textContent = Math.round(to * (1 - (1 - p) ** 3));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    });
-  }), { threshold: 0.35 });
-  document.querySelectorAll('.hx-race, .hx-proof').forEach((el) => io.observe(el));
+  else openQueue();
 }
 
 function renderStatus() {
@@ -254,7 +141,7 @@ function renderStatus() {
     <span class="pill ${s.paypal.enabled ? 'on' : ''}">${s.paypal.enabled ? `PayPal ${esc(s.paypal.env)} connected` : 'PayPal not connected'}</span>
     ${s.user
       ? `<span class="who-signed" title="${esc(s.user.email)}"><span class="avatar">${esc(initials(s.user.name))}</span><span class="who-name">${esc(s.user.name)}</span></span><button class="linkbtn" id="logout">Sign out</button>`
-      : '<a class="btn small" href="/auth/paypal">Log in with PayPal</a>'}`;
+      : `<a class="btn small pp-btn" href="/auth/paypal">${PAYPAL_LOGO}Log in with PayPal</a>`}`;
   const out = $('#logout');
   if (out) {
     out.onclick = async () => {
