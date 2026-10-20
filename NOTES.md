@@ -102,6 +102,11 @@ The other three:
 
 ## Current recorded runs (replays)
 
-- `data/replays/PP-D-27140-HALDEN.json` is a real run, but **not the one to demo**. It treats "never downloaded" as "not delivered" and offers a $600 refund. The prompt fixes for that (the full contract is now always in view; a delivered-vs-received rule) are pushed but **not re-tested yet**, because Groq's daily quota ran out.
-- The other 3 disputes have no recording yet.
-- **Next step:** once a Groq key with quota is active in the environment, run `node scripts/run-one.js <dispute_id> --save` for each dispute, then `npm run eval`.
+Each one is a real live run of the agent, recorded and played back with the "Replay a recorded run" button. Scored by `npm run eval` against each scenario's answer key:
+
+| Dispute | Key evidence found | Strategy | Claims grounded | Notes |
+|---|---|---|---|---|
+| Halden (hero) | 3/4 | ✓ contest + fix | 8/8 | Misses the copyright-on-payment twist (§6.1). |
+| Tandem | 3/4 | ✓ contest + fix | 8/8 | Says "internal communication breakdown" but doesn't mention the co-founder leaving (Slack K3). |
+| Brightline | 4/4 | ✓ partial refund + contest | 10/10 | Honest case handled correctly. |
+| Patel | not recorded | | | First attempt hit a Groq JSON glitch (now handled); the retry hit the daily token quota. Record it when quota frees: `node scripts/run-one.js PP-D-27162-PATEL --save`. |
