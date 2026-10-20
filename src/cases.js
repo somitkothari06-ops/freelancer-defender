@@ -4,14 +4,17 @@
 //   seeded  - the demo scenarios in data/scenarios/*.json. Their dispute and transaction
 //             records use the exact shape of PayPal's API responses, but they don't live
 //             in PayPal. Submissions for them are simulated.
-//   live    - real disputes pulled from the PayPal sandbox via the Disputes API. Each one is
-//             linked to a scenario's evidence locker (contracts, emails, logs: things
-//             PayPal doesn't hold). Submissions for them really go to PayPal.
+//   live    - real disputes pulled from the PayPal sandbox via the Disputes API. A live
+//             dispute can be linked to a demo scenario's evidence locker; otherwise it starts
+//             as a fresh case with only PayPal's records. Submissions really go to PayPal.
+//
+// On any case, the freelancer can add their own evidence (src/evidence/uploads.js).
 const fs = require('fs');
 const path = require('path');
 const config = require('./config');
 const disputesApi = require('./paypal/disputes');
 const transactionsApi = require('./paypal/transactions');
+const uploads = require('./evidence/uploads');
 
 const SCENARIO_DIR = path.join(__dirname, '..', 'data', 'scenarios');
 const HOUR = 60 * 60 * 1000;
@@ -88,13 +91,13 @@ async function listLive() {
           const guess = autoLink(d);
           if (guess) links.set(d.dispute_id, guess);
         }
-        const sc = scenarioById.get(links.get(d.dispute_id));
+        const sc = scenarioById.get(links.get(d.dispute_id)) || freshScenario(d);
         return summary(d, {
           source: 'live',
-          scenario_id: sc?.id || null,
-          freelancer: sc?.freelancer.name || '',
-          client: sc ? `${sc.client.name}, ${sc.client.company}` : d.disputed_transactions?.[0]?.buyer?.name || 'Unknown buyer',
-          title: sc?.title || 'Live sandbox dispute (no evidence locker linked yet)',
+          scenario_id: sc.id,
+          freelancer: sc.freelancer.name,
+          client: `${sc.client.name}, ${sc.client.company}`,
+          title: sc.title,
         });
       }),
       error: null,
@@ -128,7 +131,7 @@ async function loadCase(disputeId) {
   if (seeded) {
     return {
       live: false,
-      scenario: seeded,
+      scenario: withUploads(seeded, disputeId),
       transactions: seeded.paypal_transactions,
       sources: {
         dispute: 'Seeded demo record (PayPal Disputes API format)',
@@ -140,24 +143,20 @@ async function loadCase(disputeId) {
   // Live sandbox dispute.
   const dispute = await disputesApi.getDispute(disputeId);
   const scenarioId = links.get(disputeId) || autoLink(dispute);
-  const base = scenarioById.get(scenarioId);
-  if (!base) {
-    const err = new Error('This live dispute is not linked to an evidence locker yet. Pick one in the dashboard.');
-    err.code = 'NEEDS_LINK';
-    throw err;
-  }
-  const scenario = { ...base, dispute };
+  const base = scenarioById.get(scenarioId) || freshScenario(dispute);
+  const scenario = withUploads({ ...base, dispute }, disputeId);
 
   let transactions = [];
   let txSource = 'PayPal Transaction Search API (sandbox, live)';
   try {
     // Search by the real payer on the PayPal dispute, not the demo client's email.
     const payer = dispute.disputed_transactions?.[0]?.buyer?.email || base.client.email;
+    if (!payer) throw new Error('no payer email on the dispute');
     transactions = await transactionsApi.historyForPayer(payer);
   } catch (err) {
     txSource = `Transaction Search failed (${err.message}); using seeded records`;
   }
-  if (transactions.length === 0) {
+  if (transactions.length === 0 && base.paypal_transactions.length) {
     transactions = base.paypal_transactions;
     if (!txSource.startsWith('Transaction Search failed')) {
       txSource = 'Seeded records (Transaction Search returned no rows yet; sandbox can lag by hours)';
@@ -169,6 +168,36 @@ async function loadCase(disputeId) {
     transactions,
     sources: { dispute: 'PayPal Disputes API (sandbox, live)', transactions: txSource },
   };
+}
+
+// A live dispute with no demo evidence behind it: start from what PayPal knows. The
+// freelancer adds their own contract, emails and logs from the dashboard.
+function freshScenario(dispute) {
+  const tx = dispute.disputed_transactions?.[0] || {};
+  const buyer = tx.buyer || {};
+  const seller = tx.seller || {};
+  const items = (tx.items || []).map((i) => i.item_name).filter(Boolean);
+  return {
+    id: `fresh-${dispute.dispute_id}`,
+    title: items.length ? items.join(', ') : `Payment ${tx.seller_transaction_id || dispute.dispute_id}`,
+    fresh: true,
+    freelancer: {
+      name: config.freelancer.name || seller.name || 'You',
+      business: config.freelancer.business || seller.name || 'Your business',
+      email: config.freelancer.email || seller.email || '',
+      craft: '',
+    },
+    client: { name: buyer.name || 'Your client', company: buyer.name || 'Your client', email: buyer.email || '' },
+    dispute,
+    paypal_transactions: [],
+    documents: [],
+  };
+}
+
+// The scenario plus whatever evidence the freelancer has added to this dispute.
+function withUploads(scenario, disputeId) {
+  const added = uploads.list(disputeId);
+  return added.length ? { ...scenario, documents: [...scenario.documents, ...added] } : scenario;
 }
 
 function linkLive(disputeId, scenarioId) {

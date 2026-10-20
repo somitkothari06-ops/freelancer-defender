@@ -7,7 +7,9 @@
 //   GET  /api/cases/:id/run?mode=replay   play back a recorded run (for demos / when rate-limited)
 //   GET  /api/cases/:id/files/:name       download a generated PDF (response letter, evidence appendix)
 //   POST /api/cases/:id/submit            send the response to PayPal (real for live disputes, simulated for seeded)
-//   POST /api/cases/:id/link              link a live sandbox dispute to an evidence locker
+//   POST /api/cases/:id/evidence          add the freelancer's own document (contract, emails, log...)
+//   DELETE /api/cases/:id/evidence/:docId remove a document the freelancer added
+//   POST /api/cases/:id/link              link a live sandbox dispute to a demo evidence locker
 //   POST /api/cases/:id/sandbox/:action   lifecycle helpers for testing: escalate, require-evidence, adjudicate
 const fs = require('fs');
 const path = require('path');
@@ -17,6 +19,7 @@ const cases = require('./src/cases');
 const { buildLocker } = require('./src/evidence/locker');
 const { runDefender } = require('./src/agent/defender');
 const disputesApi = require('./src/paypal/disputes');
+const uploads = require('./src/evidence/uploads');
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
@@ -72,6 +75,8 @@ app.get('/api/cases/:id', wrap(async (req, res) => {
   res.json({
     live: c.live,
     title,
+    fresh: Boolean(c.scenario.fresh),
+    evidence_kinds: Object.fromEntries(Object.entries(uploads.KINDS).map(([k, v]) => [k, v.label])),
     freelancer,
     client,
     dispute,
@@ -89,6 +94,22 @@ app.get('/api/cases/:id/documents/:docId', wrap(async (req, res) => {
   const doc = locker.read(req.params.docId);
   if (!doc) return res.status(404).json({ error: 'No such document' });
   res.json(doc);
+}));
+
+// ---- The freelancer's own evidence ------------------------------------------------
+
+app.post('/api/cases/:id/evidence', wrap(async (req, res) => {
+  const c = await cases.loadCase(req.params.id);
+  const taken = [...buildLocker(c.scenario, { transactions: c.transactions }).docs.keys()];
+  const doc = uploads.add(req.params.id, req.body || {}, taken);
+  lastRun.delete(req.params.id); // the evidence changed, so an earlier result is stale
+  res.json({ ok: true, doc_id: doc.id, title: doc.title, sections: doc.sections.length });
+}));
+
+app.delete('/api/cases/:id/evidence/:docId', wrap(async (req, res) => {
+  if (!uploads.remove(req.params.id, req.params.docId)) return res.status(404).json({ error: 'No such added document' });
+  lastRun.delete(req.params.id);
+  res.json({ ok: true });
 }));
 
 // ---- Run the agent, streaming events with Server-Sent Events --------------------

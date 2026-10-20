@@ -292,7 +292,6 @@ async function openCase(id) {
   try {
     c = await api(`/api/cases/${encodeURIComponent(id)}`);
   } catch (err) {
-    if (err.data?.code === 'NEEDS_LINK') return renderLinkPicker(id);
     $('#case-head').innerHTML = `<div class="banner warn">${esc(err.message)}</div>`;
     return;
   }
@@ -307,28 +306,6 @@ async function openCase(id) {
   renderTrailSkeleton();
 }
 
-async function renderLinkPicker(id) {
-  const data = state.queue || (await api('/api/cases'));
-  $('#controls').innerHTML = `
-    <div class="card" style="max-width:680px">
-      <h2>Which job is this dispute about?</h2>
-      <p class="muted">PayPal has the dispute and the payment. Your contract, emails and delivery records live with you. Pick the job this belongs to.</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        ${data.scenarios.map((s) => `<button class="btn" data-sc="${esc(s.id)}">${esc(s.freelancer)}: ${esc(s.title)}</button>`).join('')}
-      </div>
-    </div>`;
-  $('#controls').querySelectorAll('[data-sc]').forEach((b) => {
-    b.onclick = async () => {
-      await api(`/api/cases/${encodeURIComponent(id)}/link`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scenario_id: b.dataset.sc }),
-      });
-      openCase(id);
-    };
-  });
-}
-
 function renderHero(c) {
   const d = c.dispute;
   const first = c.freelancer.name.split(' ')[0];
@@ -339,7 +316,7 @@ function renderHero(c) {
       ${c.live ? '<span class="tag green">Live from PayPal sandbox</span>' : '<span class="tag">Demo dispute</span>'}
     </div>
     <h1 class="amount num">${fmtMoney(Number(d.dispute_amount.value), d.dispute_amount.currency_code)}</h1>
-    <p class="lede">${esc(first)}, you did the work. We'll go through your evidence and build your response with you, step by step.</p>
+    <p class="lede">${c.fresh ? 'You did the work. Add your contract, emails and delivery records, and we\'ll' : `${esc(first)}, you did the work. We'll`} go through your evidence and build your response with you, step by step.</p>
     <span class="who">${esc(c.freelancer.business)} · ${esc(c.title)}</span>`;
 }
 
@@ -413,15 +390,95 @@ function renderThree(c) {
 function renderLocker(c) {
   $('#locker-count').textContent = `${c.documents.length} documents`;
   const box = $('#locker');
+  box.innerHTML = '';
+  const own = c.documents.filter((d) => d.kind !== 'paypal_record');
+  if (!own.length) {
+    box.appendChild(h('<div class="nudge">PayPal only has its side. Add your contract, emails and delivery records so the agent can prove the work was agreed and delivered.</div>'));
+  }
   for (const d of c.documents) {
     const b = h(`
-      <button class="doc" data-doc="${esc(d.doc_id)}" title="${esc(d.summary)}">
+      <div class="doc" role="button" tabindex="0" data-doc="${esc(d.doc_id)}" title="${esc(d.summary)}">
         <span class="ld"></span>
-        <span><div class="lt">${esc(d.title)}</div><div class="ls">${d.kind === 'paypal_record' ? '<span class="src-paypal">From PayPal</span> · ' : ''}${esc(d.source)}</div></span>
-      </button>`);
+        <span style="flex:1"><div class="lt">${esc(d.title)}</div><div class="ls">${d.kind === 'paypal_record' ? '<span class="src-paypal">From PayPal</span> · ' : ''}${d.added ? '<span class="src-you">Added by you</span> · ' : ''}${esc(d.source)}</div></span>
+        ${d.added ? '<button class="icon-btn sm" title="Remove this document" aria-label="Remove">✕</button>' : ''}
+      </div>`);
     b.onclick = () => openDrawer(d.doc_id);
+    b.onkeydown = (e) => e.key === 'Enter' && openDrawer(d.doc_id);
+    const rm = $('.icon-btn', b);
+    if (rm) {
+      rm.onclick = async (e) => {
+        e.stopPropagation();
+        if (!confirm(`Remove "${d.title}" from your evidence?`)) return;
+        await api(`/api/cases/${encodeURIComponent(c.id || state.current.id)}/evidence/${encodeURIComponent(d.doc_id)}`, { method: 'DELETE' });
+        reloadEvidence();
+      };
+    }
     box.appendChild(b);
   }
+  const add = h('<button class="btn add-ev">+ Add evidence</button>');
+  add.onclick = openAddEvidence;
+  box.appendChild(add);
+}
+
+async function reloadEvidence() {
+  const c = await api(`/api/cases/${encodeURIComponent(state.current.id)}`);
+  Object.assign(state.current, { documents: c.documents });
+  renderLocker(state.current);
+}
+
+// The freelancer's own document: paste text or pick a text file.
+function openAddEvidence() {
+  const kinds = state.current.evidence_kinds || { contract: 'Contract or agreement', messages: 'Emails or messages', log: 'Delivery or activity log', other: 'Other document' };
+  $('#drawer-kicker').textContent = 'Your evidence';
+  $('#drawer-title').textContent = 'Add a document';
+  const body = $('#drawer-body');
+  body.innerHTML = `
+    <form class="ev-form" id="ev-form">
+      <label>What is it?
+        <select name="kind">${Object.entries(kinds).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('')}</select>
+      </label>
+      <label>Name
+        <input name="title" required maxlength="120" placeholder="e.g. Signed website contract" />
+      </label>
+      <label>Paste the text
+        <textarea name="text" rows="12" required placeholder="Paste the contract, the email thread, or the download log here."></textarea>
+      </label>
+      <div class="ev-file">or <label class="linkbtn" for="ev-file-input">choose a text file</label> (.txt, .eml, .csv, .md). For a PDF, copy its text and paste it above.
+        <input type="file" id="ev-file-input" accept=".txt,.text,.eml,.csv,.md,.log,.json" hidden />
+      </div>
+      <p class="faint" style="font-size:13px;margin:0">We split it into numbered sections, so every sentence in your response can point to the exact place it comes from.</p>
+      <div style="display:flex;gap:8px"><button class="btn primary" type="submit">Add to evidence</button><button class="btn" type="button" id="ev-cancel">Cancel</button></div>
+    </form>`;
+  const form = $('#ev-form');
+  $('#ev-cancel').onclick = closeDrawer;
+  $('#ev-file-input').onchange = async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    form.text.value = await f.text();
+    if (!form.title.value) form.title.value = f.name.replace(/\.[^.]+$/, '');
+  };
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const btn = $('button[type=submit]', form);
+    btn.disabled = true;
+    try {
+      const r = await api(`/api/cases/${encodeURIComponent(state.current.id)}/evidence`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kind: form.kind.value, title: form.title.value, text: form.text.value }),
+      });
+      closeDrawer();
+      await reloadEvidence();
+      toast(`Added "${r.title}" (${r.sections} sections). Run the agent to use it.`);
+    } catch (err) {
+      btn.disabled = false;
+      toast(err.message);
+    }
+  };
+  $('#drawer').classList.add('open');
+  $('#scrim').classList.add('open');
+  $('#drawer').setAttribute('aria-hidden', 'false');
+  setTimeout(() => form.title.focus(), 200);
 }
 
 function markDoc(docId, cls) {
@@ -939,7 +996,9 @@ async function openDrawer(docId, anchor, quote) {
       }
     }
     // Only contract sections are referred to by number; other anchors (E4, L5, IDs) mean nothing to a reader.
-    const title = s.fields ? '' : /^§/.test(s.anchor) ? `${anchorName(s.anchor)} · ${s.heading}` : s.heading;
+    // Skip a heading that just repeats the start of the text (common in pasted messages and logs).
+    const repeats = s.text.startsWith(s.heading.replace(/\.\.\.$/, ''));
+    const title = s.fields ? '' : /^§/.test(s.anchor) ? `${anchorName(s.anchor)} · ${s.heading}` : repeats ? '' : s.heading;
     const bodyHtml = s.fields
       ? `<dl class="fields">${s.fields.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`
       : `<div class="st">${text}</div>`;

@@ -17,6 +17,14 @@ const config = {
     env: process.env.PAYPAL_ENV || 'sandbox',
   },
 
+  // Who the freelancer is, for live disputes not linked to a demo scenario. Optional: without
+  // these, the seller name on the PayPal dispute is used.
+  freelancer: {
+    name: process.env.FREELANCER_NAME || '',
+    business: process.env.FREELANCER_BUSINESS || '',
+    email: process.env.FREELANCER_EMAIL || '',
+  },
+
   // Timelines shown in the dashboard's "asymmetry" clock, with sources (checked Oct 20, 2026).
   timelines: {
     // "Customers can initiate a chargeback within 180 days of the transaction date."
