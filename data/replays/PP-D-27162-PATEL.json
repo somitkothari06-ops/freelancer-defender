@@ -1,0 +1,2012 @@
+{
+ "recorded_at": "2026-10-20T12:42:41.961Z",
+ "events": [
+  {
+   "t": 1,
+   "type": "stage",
+   "payload": {
+    "stage": "intake",
+    "status": "start"
+   }
+  },
+  {
+   "t": 2,
+   "type": "stage",
+   "payload": {
+    "stage": "intake",
+    "status": "done",
+    "data": {
+     "dispute_id": "PP-D-27162-PATEL",
+     "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+     "amount": {
+      "currency_code": "USD",
+      "value": "1800.00"
+     },
+     "statement": "Cardholder statement forwarded by issuing bank: We paid $1,800 for a website for our dental practice. We do not have a working website. Patients searching for us get an error page. The service was never properly provided.",
+     "sources": {
+      "dispute": "Seeded demo record (PayPal Disputes API format)",
+      "transactions": "Seeded demo records (PayPal Transaction Search format)"
+     },
+     "documents": [
+      {
+       "doc_id": "DISPUTE",
+       "title": "PayPal dispute PP-D-27162-PATEL",
+       "kind": "paypal_record",
+       "date": "",
+       "source": "PayPal Disputes API",
+       "summary": "The dispute as filed: reason code, disputed transaction and the client's own statement.",
+       "sections": 3
+      },
+      {
+       "doc_id": "PAYPAL-TXN",
+       "title": "Payment history between this client and the freelancer",
+       "kind": "paypal_record",
+       "date": "",
+       "source": "Seeded demo records (PayPal Transaction Search format)",
+       "summary": "1 PayPal transaction(s) from this payer, with dates, amounts, invoice numbers and item details.",
+       "sections": 1
+      },
+      {
+       "doc_id": "PROPOSAL",
+       "title": "Website proposal + terms (accepted)",
+       "kind": "contract",
+       "date": "2026-05-02",
+       "source": "Accepted proposal PDF",
+       "summary": "Scope, hosting responsibility, handover and support terms.",
+       "sections": 4
+      },
+      {
+       "doc_id": "EMAILS",
+       "title": "Email thread: Sofia <-> Greg",
+       "kind": "correspondence",
+       "date": "2026-06-12 to 2026-06-16",
+       "source": "Freelancer's email export",
+       "summary": "Launch, client acceptance, invoice.",
+       "sections": 3
+      },
+      {
+       "doc_id": "HANDOVER",
+       "title": "Handover document (sent Jun 12)",
+       "kind": "deliverable",
+       "date": "2026-06-12",
+       "source": "PDF attached to launch email",
+       "summary": "Account ownership details for hosting, domain and editor.",
+       "sections": 3
+      },
+      {
+       "doc_id": "UPTIME",
+       "title": "Uptime monitor history: patelfamilydental.com",
+       "kind": "system_log",
+       "date": "2026-06-12 to 2026-10-19",
+       "source": "Freelancer's uptime monitoring service",
+       "summary": "Availability checks and status changes for the site.",
+       "sections": 3
+      },
+      {
+       "doc_id": "REVIEWS",
+       "title": "Google reviews for Patel Family Dental (screenshots)",
+       "kind": "public_record",
+       "date": "2026-07 to 2026-09",
+       "source": "Screenshots captured by freelancer",
+       "summary": "Patient reviews that mention the website.",
+       "sections": 2
+      }
+     ]
+    }
+   }
+  },
+  {
+   "t": 3,
+   "type": "stage",
+   "payload": {
+    "stage": "read",
+    "status": "start"
+   }
+  },
+  {
+   "t": 252,
+   "type": "pacing",
+   "payload": {
+    "ms": 19000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 19856,
+   "type": "pacing",
+   "payload": {
+    "ms": 8000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 30148,
+   "type": "stage",
+   "payload": {
+    "stage": "read",
+    "status": "done",
+    "data": {
+     "stated_complaint": "We do not have a working website; patients get an error page and the service was never properly provided despite paying $1,800.",
+     "literal_claims": [
+      {
+       "claim": "We paid $1,800 for a website for our dental practice.",
+       "quote": "We paid $1,800 for a website for our dental practice."
+      },
+      {
+       "claim": "We do not have a working website.",
+       "quote": "We do not have a working website."
+      },
+      {
+       "claim": "Patients searching for us get an error page.",
+       "quote": "Patients searching for us get an error page."
+      },
+      {
+       "claim": "The service was never properly provided.",
+       "quote": "The service was never properly provided."
+      }
+     ],
+     "vague_phrases": [
+      {
+       "phrase": "working website",
+       "could_mean": [
+        "site fails to load",
+        "missing key features",
+        "not live on domain",
+        "contains bugs or errors"
+       ]
+      },
+      {
+       "phrase": "error page",
+       "could_mean": [
+        "404 Not Found",
+        "500 Server Error",
+        "DNS misconfiguration",
+        "incorrect domain pointing"
+       ]
+      },
+      {
+       "phrase": "never properly provided",
+       "could_mean": [
+        "no files or code delivered",
+        "no admin/login access given",
+        "ownership/hosting not transferred",
+        "delivered incomplete scope"
+       ]
+      }
+     ],
+     "reviewer_tests": [
+      "Was the service delivered, and when?",
+      "Is there proof the client received it or had access to it?",
+      "Did the client acknowledge receipt or use it?",
+      "Is the website functional as agreed in the contract?"
+     ],
+     "open_questions": [
+      "When and how was the website handed over to the client (files, credentials, live URL)?",
+      "Did the client receive login/hosting information and acknowledge receipt?",
+      "Did the client attempt to access the site before filing the dispute, and what error messages were observed?",
+      "Was the site deployed to the agreed domain and DNS settings correctly configured?",
+      "Were any bug‑fixes or support requests submitted by the client prior to the chargeback?"
+     ]
+    },
+    "thinking": "We need to output JSON conforming to read_complaint schema. Fields: stated_complaint (string), literal_claims (array of objects claim, quote), vague_phrases (array of objects with phrase and could_mean array), reviewer_tests (array of strings), open_questions (array of strings). Need to parse client statement.\n\nLiteral claims: \"We paid $1,800 for a website for our dental practice.\" \"We do not have a working website.\" \"Patients searching for us get an error page.\" \"The service was never properly provided.\"\n\nQuotes: exact text segments.\n\nVague phrases: pick 2-4 vaguest phrases. Likely: \"working …"
+   }
+  },
+  {
+   "t": 30149,
+   "type": "stage",
+   "payload": {
+    "stage": "investigate",
+    "status": "start"
+   }
+  },
+  {
+   "t": 30149,
+   "type": "pacing",
+   "payload": {
+    "ms": 13927,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 45074,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We need to investigate using evidence. We'll need to read documents. Let's start by reading the dispute doc, proposal, emails, handover, uptime."
+   }
+  },
+  {
+   "t": 45075,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "DISPUTE",
+    "title": "PayPal dispute PP-D-27162-PATEL",
+    "source": "PayPal Disputes API",
+    "sections": [
+     "REASON",
+     "TXN",
+     "MSG1"
+    ]
+   }
+  },
+  {
+   "t": 45075,
+   "type": "pacing",
+   "payload": {
+    "ms": 23551,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 69398,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have dispute statement. Next open proposal."
+   }
+  },
+  {
+   "t": 69398,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "PROPOSAL",
+    "title": "Website proposal + terms (accepted)",
+    "source": "Accepted proposal PDF",
+    "sections": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ]
+   }
+  },
+  {
+   "t": 69398,
+   "type": "pacing",
+   "payload": {
+    "ms": 10981,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 81300,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We need to get other documents: EMAILS, HANDOVER, UPTIME, REVIEWS, PAYPAL-TXN."
+   }
+  },
+  {
+   "t": 81300,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "EMAILS",
+    "title": "Email thread: Sofia <-> Greg",
+    "source": "Freelancer's email export",
+    "sections": [
+     "E1",
+     "E2",
+     "E3"
+    ]
+   }
+  },
+  {
+   "t": 81301,
+   "type": "pacing",
+   "payload": {
+    "ms": 13110,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 95376,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We need to investigate further: uptime logs, handover doc, maybe reviews. Let's open HANDOVER, UPTIME, REVIEWS."
+   }
+  },
+  {
+   "t": 95376,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "HANDOVER",
+    "title": "Handover document (sent Jun 12)",
+    "source": "PDF attached to launch email",
+    "sections": [
+     "H1",
+     "H2",
+     "H3"
+    ]
+   }
+  },
+  {
+   "t": 95376,
+   "type": "pacing",
+   "payload": {
+    "ms": 20318,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 116710,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have key docs. Need uptime logs."
+   }
+  },
+  {
+   "t": 116710,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "UPTIME",
+    "title": "Uptime monitor history: patelfamilydental.com",
+    "source": "Freelancer's uptime monitoring service",
+    "sections": [
+     "U1",
+     "U2",
+     "U3"
+    ]
+   }
+  },
+  {
+   "t": 116710,
+   "type": "pacing",
+   "payload": {
+    "ms": 11724,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 129549,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have evidence showing site live from Jun 12, client accepted, received appointment requests. Later site down due to hosting payment issue. Dispute filed date? In DISPUTE, transaction date June 16, but dispute likely later (unknown). Need to see when client filed chargeback. Not present. Could be after Oct 2 when site down. The client claims \"never properly provided\". But evidence shows provided and used. Real complaint maybe hosting payment issue leading to suspension, they think freelancer r…"
+   }
+  },
+  {
+   "t": 129549,
+   "type": "tool",
+   "payload": {
+    "name": "search_evidence",
+    "query": "suspend",
+    "hits": [
+     {
+      "doc_id": "HANDOVER",
+      "anchor": "H3",
+      "heading": "If the site ever goes down"
+     },
+     {
+      "doc_id": "UPTIME",
+      "anchor": "U2",
+      "heading": "Status change"
+     },
+     {
+      "doc_id": "UPTIME",
+      "anchor": "U3",
+      "heading": "Still down"
+     }
+    ]
+   }
+  },
+  {
+   "t": 129550,
+   "type": "pacing",
+   "payload": {
+    "ms": 30000,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 162827,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have collected key evidence:\n\n- DISPUTE: client claims no working website, error page, never provided.\n- PROPOSAL: scope, client responsible for hosting billing, handover docs.\n- EMAILS: launch email June 12, client positive June 13, invoice June 16, 30 days support until July 12.\n- HANDOVER: contains login details, instructions about suspension due to payment issue.\n- UPTIME: site up from June 12 to Oct 2, then down due to HostPeak account suspended because billing issue, still down Oct 19.\n…"
+   }
+  },
+  {
+   "t": 162827,
+   "type": "finding",
+   "payload": {
+    "finding": "The website was launched and live on 2026-06-12, as confirmed by the launch email and uptime monitor showing HTTP 200 at that time.",
+    "significance": "Demonstrates that the freelancer delivered a working site as per contract, countering the claim of 'never properly provided'.",
+    "citations": [
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E1"
+     },
+     {
+      "doc_id": "UPTIME",
+      "anchor": "U1"
+     }
+    ],
+    "dropped": 0
+   }
+  },
+  {
+   "t": 163519,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "Now need more findings: client complaint of error page. Uptime shows site down due to suspension on Oct 2. Need to see when client filed dispute: transaction date Jun 16, dispute likely after Oct? Not given. But we can infer client may have seen suspension later.\n\nNeed evidence of client communications after launch regarding any issues. Search email thread for later messages after Jun 16."
+   }
+  },
+  {
+   "t": 163519,
+   "type": "tool",
+   "payload": {
+    "name": "search_evidence",
+    "query": "suspended",
+    "hits": [
+     {
+      "doc_id": "HANDOVER",
+      "anchor": "H3",
+      "heading": "If the site ever goes down"
+     },
+     {
+      "doc_id": "UPTIME",
+      "anchor": "U2",
+      "heading": "Status change"
+     },
+     {
+      "doc_id": "UPTIME",
+      "anchor": "U3",
+      "heading": "Still down"
+     }
+    ]
+   }
+  },
+  {
+   "t": 163519,
+   "type": "pacing",
+   "payload": {
+    "ms": 26199,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 190339,
+   "type": "pacing",
+   "payload": {
+    "ms": 10000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 205231,
+   "type": "finding",
+   "payload": {
+    "finding": "The client, Greg Patel, explicitly confirmed the site was live and functional on 2026-06-13, noting two appointment requests had been received through the form.",
+    "significance": "Shows the client actually used the site and regarded it as working shortly after launch.",
+    "citations": [
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E2"
+     }
+    ]
+   }
+  },
+  {
+   "t": 205231,
+   "type": "finding",
+   "payload": {
+    "finding": "The accepted proposal (dated 2026-05-02) defined the scope as a 6‑page dental practice website with an online appointment form, to be launched on the client’s own hosting account, and included 30 days of post‑launch bug‑fix support.",
+    "significance": "Clarifies the contractual obligations and that the freelancer was not responsible for hosting payments after hand‑over.",
+    "citations": [
+     {
+      "doc_id": "PROPOSAL",
+      "anchor": "P1"
+     },
+     {
+      "doc_id": "PROPOSAL",
+      "anchor": "P2"
+     },
+     {
+      "doc_id": "PROPOSAL",
+      "anchor": "P4"
+     }
+    ]
+   }
+  },
+  {
+   "t": 205231,
+   "type": "finding",
+   "payload": {
+    "finding": "A handover document was sent on 2026-06-12 containing full login credentials for the HostPeak hosting account and domain ownership, confirming the client now owned all accounts.",
+    "significance": "Demonstrates that the freelancer transferred control as required, making the client responsible for any subsequent hosting issues.",
+    "citations": [
+     {
+      "doc_id": "HANDOVER",
+      "anchor": "H1"
+     },
+     {
+      "doc_id": "HANDOVER",
+      "anchor": "H2"
+     }
+    ]
+   }
+  },
+  {
+   "t": 205231,
+   "type": "finding",
+   "payload": {
+    "finding": "Uptime monitoring shows the site remained continuously available (HTTP 200) from 2026‑06‑12 until 2026‑10‑02, when it returned an HTTP 503 “Account Suspended – HostPeak” page due to a billing issue.",
+    "significance": "Indicates the site was functional for over three months; the error the client now sees is a hosting suspension, not a broken site delivered by the freelancer.",
+    "citations": [
+     {
+      "doc_id": "UPTIME",
+      "anchor": "U2"
+     }
+    ]
+   }
+  },
+  {
+   "t": 205231,
+   "type": "finding",
+   "payload": {
+    "finding": "The handover document explicitly instructs the client to check the HostPeak payment method if the site goes down, noting that an “Account Suspended” page appears when billing lapses.",
+    "significance": "Shows the freelancer warned the client that the error page they are seeing is tied to the client’s hosting payment, not a delivery defect.",
+    "citations": [
+     {
+      "doc_id": "HANDOVER",
+      "anchor": "H3"
+     }
+    ]
+   }
+  },
+  {
+   "t": 205231,
+   "type": "finding",
+   "payload": {
+    "finding": "Payment of $1,800 was made on 2026‑06‑16 (PayPal transaction 9PF20448RT6610093, invoice AWS‑2026‑031), matching the amount disputed in the chargeback.",
+    "significance": "Confirms the client paid the agreed fee before filing the dispute, and the transaction is the same one the client is contesting.",
+    "citations": [
+     {
+      "doc_id": "DISPUTE",
+      "anchor": "TXN"
+     }
+    ]
+   }
+  },
+  {
+   "t": 205231,
+   "type": "finding",
+   "payload": {
+    "finding": "There is no record in the evidence locker of the client contacting the freelancer for support or reporting a problem before the dispute was filed.",
+    "significance": "Absence of a support request suggests the client did not seek remediation for the hosting suspension, weakening the “service not provided” claim.",
+    "citations": [
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E3"
+     }
+    ]
+   }
+  },
+  {
+   "t": 205231,
+   "type": "finding",
+   "payload": {
+    "finding": "The buyer who filed the dispute, Greg Patel, is the same individual who hired, approved the work (via email acceptance), and paid for the project.",
+    "significance": "No change of personnel explains the dispute; the same decision‑maker is contesting the service they previously approved.",
+    "citations": [
+     {
+      "doc_id": "DISPUTE",
+      "anchor": "MSG1"
+     },
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E2"
+     }
+    ]
+   }
+  },
+  {
+   "t": 205231,
+   "type": "stage",
+   "payload": {
+    "stage": "investigate",
+    "status": "done",
+    "data": {
+     "summary": "The freelancer delivered a fully functional website on schedule, handed over all credentials, and the client used it successfully for months. The current error page is a HostPeak suspension caused by the client’s own billing lapse, not a failure of the freelancer’s delivery.",
+     "findings": 9,
+     "opened": [
+      "DISPUTE",
+      "PROPOSAL",
+      "EMAILS",
+      "HANDOVER",
+      "UPTIME"
+     ]
+    }
+   }
+  },
+  {
+   "t": 205231,
+   "type": "stage",
+   "payload": {
+    "stage": "diagnose",
+    "status": "start"
+   }
+  },
+  {
+   "t": 205232,
+   "type": "pacing",
+   "payload": {
+    "ms": 7875,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 220438,
+   "type": "stage",
+   "payload": {
+    "stage": "diagnose",
+    "status": "done",
+    "data": {
+     "client_concerns": [
+      {
+       "concern": "We do not have a working website",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U1"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        }
+       ],
+       "answer": "The freelancer launched the site on 2026-06-12 and it responded with HTTP 200, confirming a working website was delivered. A reversed payment would revert ownership of the site back to the freelancer, but the site itself was functional at launch."
+      },
+      {
+       "concern": "Patients searching for us get an error page",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U2"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H3"
+        }
+       ],
+       "answer": "The error page is an HTTP 503 \"Account Suspended – HostPeak\" generated when the client’s hosting account payment lapsed. The handover document explicitly warned the client to check the HostPeak payment method in such cases. If the payment is updated, the site returns to normal. A chargeback would not fix the hosting suspension."
+      },
+      {
+       "concern": "The service was never properly provided",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P1"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P2"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P3"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P4"
+        }
+       ],
+       "answer": "The proposal defined a 6‑page website with an appointment form, to be launched on the client’s own hosting account, and includes 30 days of post‑launch bug‑fix support. All deliverables were handed over on 2026‑06‑12. A reversed payment would undo the contractual transfer of ownership but would not change that the agreed‑upon service was delivered."
+      }
+     ],
+     "freelancer_weaknesses": [
+      {
+       "issue": "No post‑launch support was offered after the 30‑day bug‑fix window expired on 2026‑07‑12, leaving the client without assistance when the hosting suspension occurred in October.",
+       "citations": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P4"
+        },
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U2"
+        }
+       ]
+      }
+     ],
+     "hypotheses": [
+      {
+       "label": "Hosting suspension due to client billing lapse",
+       "explanation": "The site was functional after launch; the error page resulted from the client’s HostPeak account being suspended because the payment method expired, which is the client’s responsibility per the handover and proposal.",
+       "supporting": [
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U2"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H3"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H1"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P2"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "likelihood": 55
+      },
+      {
+       "label": "Client unaware of hosting ownership responsibilities",
+       "explanation": "The client expected the freelancer to maintain hosting and did not realize they needed to keep the payment method current, leading to the mistaken belief the service was not provided.",
+       "supporting": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P2"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H3"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        }
+       ],
+       "likelihood": 20
+      },
+      {
+       "label": "Literal \"service not received\" claim",
+       "explanation": "The client believes the freelancer never delivered a functional website and therefore files a chargeback for non‑delivery.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U1"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        }
+       ],
+       "likelihood": 15
+      },
+      {
+       "label": "Refund sought for unrelated dissatisfaction (e.g., design) using service‑not‑received code",
+       "explanation": "The client may be unhappy with aspects of the website (design, content) and is using the generic \"service not received\" reason to obtain a refund, even though delivery was confirmed.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        },
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U1"
+        }
+       ],
+       "likelihood": 10
+      }
+     ],
+     "real_complaint": {
+      "summary": "The website was delivered and functioned for several months; the current error page is caused by the client’s hosting account being suspended due to an unpaid hosting bill, a responsibility outlined in the handover and proposal. The client’s real need is to reactivate the hosting account (or obtain assistance to do so), not a refund of the $1,800.",
+      "what_the_client_actually_needs": "Reactivate or pay for the HostPeak hosting account to restore the site, or obtain additional paid support if needed after the 30‑day bug‑fix period.",
+      "confidence": 85
+     },
+     "why_this_reason_code": "The client chose the generic \"MERCHANDISE_OR_SERVICE_NOT_RECEIVED\" code because it most directly describes the symptom they see (an error page) and maximizes the chance of a chargeback, even though the underlying issue is a hosting payment lapse they are responsible for."
+    },
+    "thinking": "We need to produce JSON matching schema \"diagnosis\". It must include:\n\n- client_concerns: array of objects with fields: concern (string), said_in (array of {doc_id, anchor}), answered_by (array of same), answer (string).\n\n- freelancer_weaknesses: array of objects with issue (string), citations (array of doc_id/anchor).\n\n- hypotheses: array of objects with label, explanation, supporting (array of citations), contradicting (array of citations), likelihood (int).\n\n- real_complaint: object with summary, what_the_client_actually_needs, confidence (int).\n\n- why_this_reason_code: string.\n\nWe need to list every separate worry voiced by client in their own words, from dispute message (MSG1), maybe also from email E2? But that email is positive. The complaint is \"We do not have a working website; pa…"
+   }
+  },
+  {
+   "t": 220438,
+   "type": "stage",
+   "payload": {
+    "stage": "strategy",
+    "status": "start"
+   }
+  },
+  {
+   "t": 220438,
+   "type": "pacing",
+   "payload": {
+    "ms": 21580,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 245726,
+   "type": "stage",
+   "payload": {
+    "stage": "strategy",
+    "status": "done",
+    "data": {
+     "decision": "CONTEST_AND_RESOLVE",
+     "rationale": "The freelancer delivered the agreed 6‑page website on 2026‑06‑12, confirmed by launch email and continuous uptime with HTTP 200 for over 100 days. The client acknowledged the live, functional site and even received appointment requests. The current error page is a HostPeak \"Account Suspended\" response caused by the client’s unpaid hosting bill, which the contract explicitly makes the client responsible for. The freelancer’s obligation for post‑launch bug‑fix support ended on 2026‑07‑12, so there is no contractual duty to fix hosting issues after that date. Because the service was delivered as contracted, the chargeback under MERCHANDISE_OR_SERVICE_NOT_RECEIVED is invalid. The real need is to reactivate the hosting account; the freelancer can resolve this by offering paid assistance to update the hosting payment or provide additional support at the agreed $80/hour rate, but no refund is owed.",
+     "proof_plan": [
+      {
+       "point": "Service was delivered and functional at launch on 2026‑06‑12",
+       "answers": "BOTH",
+       "evidence": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U1"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P1"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P3"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "Client acknowledged receipt and that the site was working",
+       "answers": "BOTH",
+       "evidence": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "Current error page is due to client’s hosting account suspension, not a delivery failure",
+       "answers": "REAL_COMPLAINT",
+       "evidence": [
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U2"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H3"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H1"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P2"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "Contract limited post‑launch support to 30 days; no obligation after 2026‑07‑12",
+       "answers": "REAL_COMPLAINT",
+       "evidence": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P4"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        }
+       ],
+       "strength": "MODERATE"
+      },
+      {
+       "point": "Chargeback reason MERCHANDISE_OR_SERVICE_NOT_RECEIVED is unsupported because service was delivered",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "REASON"
+        },
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "TXN"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P1"
+        }
+       ],
+       "strength": "STRONG"
+      }
+     ],
+     "refund_amount": "0.00",
+     "resolution_action": "Offer to assist the client in reactivating the HostPeak hosting account (e.g., updating the payment method) and provide any further website support at the contract rate of $80/hour (or a discounted one‑time fee). No refund is required because the contracted service was delivered."
+    },
+    "thinking": "We need to produce JSON according to the strategy schema.\n\nWe need to decide decision, rationale, proof_plan (array of points each with point, answers, evidence array, strength), refund_amount, resolution_action.\n\nGiven situation: Service delivered, functional for months. Issue due to client's hosting payment lapse. Freelancer provided handover, support window ended, no support after. Real need: client wants hosting reactivation or paid support. Money maybe owed? Since service delivered, and client didn't pay hosting, refund not warranted. However freelancer's weakness: no support after 30 day…"
+   }
+  },
+  {
+   "t": 245726,
+   "type": "stage",
+   "payload": {
+    "stage": "draft",
+    "status": "start"
+   }
+  },
+  {
+   "t": 245726,
+   "type": "pacing",
+   "payload": {
+    "ms": 26199,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 272470,
+   "type": "pacing",
+   "payload": {
+    "ms": 14000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 293278,
+   "type": "stage",
+   "payload": {
+    "stage": "draft",
+    "status": "done",
+    "data": {
+     "response_title": "Response to Chargeback – Service Delivered and Hosting Issue",
+     "claims": 9
+    }
+   }
+  },
+  {
+   "t": 293278,
+   "type": "stage",
+   "payload": {
+    "stage": "verify",
+    "status": "start"
+   }
+  },
+  {
+   "t": 293280,
+   "type": "stage",
+   "payload": {
+    "stage": "verify",
+    "status": "done",
+    "data": {
+     "grounded": 9,
+     "total": 9,
+     "repaired": 0,
+     "removed": [],
+     "citations": 13
+    }
+   }
+  },
+  {
+   "t": 293283,
+   "type": "stage",
+   "payload": {
+    "stage": "package",
+    "status": "done",
+    "data": {
+     "package": {
+      "actions": [
+       {
+        "kind": "provide_evidence",
+        "label": "Submit evidence to PayPal",
+        "method": "POST",
+        "path": "/v1/customer/disputes/PP-D-27162-PATEL/provide-evidence",
+        "contentType": "multipart/form-data",
+        "input": {
+         "evidences": [
+          {
+           "evidence_type": "COPY_OF_CONTRACT",
+           "notes": "The buyer was charged $1,800 on 2026-06-16 for invoice AWS-2026-031. [1]\n\nThe contract specified that I would design and build a 6-page website and launch it on the client’s own hosting account for a fee of $1,800. [2]\n\nThe client was responsible for all hosting and domain payments, and the developer does not control the billing. [3]\n\nOn 2026-06-12 I confirmed the site was live and provided all login credentials; the site returned HTTP 200 and remained up for 112 consecutive days. [4][5]\n\nThe client replied on 2026-06-13 that the site looked fantastic and was already receiving appointment requests. [6]\n\nThe contract included 30 days of post‑launch bug‑fix support ending on 2026-07-12; after that any work is billed at $80 per hour. [7][8]\n\nOn 2026-10-02 the site returned a “Account Suspended – HostPeak” page, which the handover document explains is caused by a billing issue on the client’s hosting account. [9][10]\n\nThe chargeback reason “MERCHANDISE_OR_SERVICE_NOT_RECEIVED” does not apply because the website was delivered, functional, and accepted by the client. [11][6]\n\nTherefore no refund is owed; I am willing to assist the client in updating the hosting payment or provide further support at the agreed $80 hourly rate. [7]",
+           "documents": [
+            {
+             "name": "response-letter.pdf"
+            },
+            {
+             "name": "evidence-appendix.pdf"
+            }
+           ]
+          }
+         ]
+        },
+        "files": [
+         {
+          "field": "evidence-file",
+          "name": "response-letter.pdf",
+          "type": "application/pdf",
+          "size": 6627
+         },
+         {
+          "field": "evidence-file",
+          "name": "evidence-appendix.pdf",
+          "type": "application/pdf",
+          "size": 3912
+         }
+        ]
+       },
+       {
+        "kind": "email",
+        "label": "Email Greg Patel directly",
+        "to": "greg@patelfamilydental.com",
+        "note": "PayPal messaging is closed in the chargeback stage, so this goes by email.",
+        "body": {
+         "message": "Hi Greg, the site is down because HostPeak suspended the account after the hosting payment lapsed. The website itself was delivered and working as you confirmed in June. I can help you update the payment method or provide any additional fixes at the contract rate of $80/hour. Let me know how you’d like to proceed, and we’ll get the site back online quickly."
+        }
+       }
+      ],
+      "footnotes": [
+       {
+        "doc_id": "DISPUTE",
+        "anchor": "TXN",
+        "quote": "Disputed transaction: PayPal transaction 9PF20448RT6610093 on 2026-06-16 for $1,800.00 USD, invoice AWS-2026-031, buyer Greg Patel."
+       },
+       {
+        "doc_id": "PROPOSAL",
+        "anchor": "P1",
+        "quote": "Scope: Design and build a 6-page website (Home, Services, Team, Insurance, New Patients, Contact) with online appointment request form, and launch it on Client's hosting account. Fee: $1,800."
+       },
+       {
+        "doc_id": "PROPOSAL",
+        "anchor": "P2",
+        "quote": "Hosting and domain: Hosting and the domain patelfamilydental.com are purchased by and registered to Client, billed to Client's own card. Client is responsible for keeping hosting and domain renewals current. Developer does not control Client's billing."
+       },
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E1",
+        "quote": "Jun 12 - Sofia to Greg: We're live: Greg, patelfamilydental.com is live! Attached is your handover doc with the logins for your hosting account (HostPeak), the website editor and your domain. Everything is in your name."
+       },
+       {
+        "doc_id": "UPTIME",
+        "anchor": "U1",
+        "quote": "Up: 2026-06-12 18:02 UTC - Site UP (HTTP 200). Continuously up for 112 days."
+       },
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E2",
+        "quote": "Jun 13 - Greg to Sofia: Looks fantastic. Our front desk already got two appointment requests through the form this morning. Thank you!"
+       },
+       {
+        "doc_id": "PROPOSAL",
+        "anchor": "P4",
+        "quote": "Support: 30 days of post-launch support for bugs is included. After that, help is billed at $80/hour."
+       },
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E3",
+        "quote": "Jun 16 - Sofia to Greg: So glad to hear it! Invoice AWS-2026-031 sent via PayPal. Your 30 days of support run until July 12."
+       },
+       {
+        "doc_id": "UPTIME",
+        "anchor": "U2",
+        "quote": "Status change: 2026-10-02 04:00 UTC - Site DOWN. Response HTTP 503 with page title \"Account Suspended - HostPeak\". Body text: \"This account has been suspended due to a billing issue. If you are the account owner, please log in to update your payment method.\""
+       },
+       {
+        "doc_id": "HANDOVER",
+        "anchor": "H3",
+        "quote": "If the site ever goes down: First check that the HostPeak payment method is current; suspended hosting shows an \"Account Suspended\" page. Updating the card restores the site within minutes."
+       },
+       {
+        "doc_id": "DISPUTE",
+        "anchor": "REASON",
+        "quote": "Filed reason: Reason code: MERCHANDISE_OR_SERVICE_NOT_RECEIVED (Service not received). Card network code: 13.1. Channel: EXTERNAL. Stage: CHARGEBACK. Amount disputed: $1,800.00 USD."
+       }
+      ],
+      "letter": [
+       "The buyer was charged $1,800 on 2026-06-16 for invoice AWS-2026-031. [1]",
+       "The contract specified that I would design and build a 6-page website and launch it on the client’s own hosting account for a fee of $1,800. [2]",
+       "The client was responsible for all hosting and domain payments, and the developer does not control the billing. [3]",
+       "On 2026-06-12 I confirmed the site was live and provided all login credentials; the site returned HTTP 200 and remained up for 112 consecutive days. [4][5]",
+       "The client replied on 2026-06-13 that the site looked fantastic and was already receiving appointment requests. [6]",
+       "The contract included 30 days of post‑launch bug‑fix support ending on 2026-07-12; after that any work is billed at $80 per hour. [7][8]",
+       "On 2026-10-02 the site returned a “Account Suspended – HostPeak” page, which the handover document explains is caused by a billing issue on the client’s hosting account. [9][10]",
+       "The chargeback reason “MERCHANDISE_OR_SERVICE_NOT_RECEIVED” does not apply because the website was delivered, functional, and accepted by the client. [11][6]",
+       "Therefore no refund is owed; I am willing to assist the client in updating the hosting payment or provide further support at the agreed $80 hourly rate. [7]"
+      ],
+      "clientMessage": "Hi Greg, the site is down because HostPeak suspended the account after the hosting payment lapsed. The website itself was delivered and working as you confirmed in June. I can help you update the payment method or provide any additional fixes at the contract rate of $80/hour. Let me know how you’d like to proceed, and we’ll get the site back online quickly.",
+      "evidencePackage": [
+       {
+        "doc_id": "PROPOSAL",
+        "evidence_type": "COPY_OF_CONTRACT",
+        "why": "Shows scope, fees, hosting responsibility, and support terms"
+       },
+       {
+        "doc_id": "EMAILS",
+        "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+        "why": "Launch confirmation and client acceptance"
+       },
+       {
+        "doc_id": "UPTIME",
+        "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+        "why": "Shows site was up for 112 days and later suspension details"
+       },
+       {
+        "doc_id": "HANDOVER",
+        "evidence_type": "OTHER",
+        "why": "Explains that hosting suspension is due to client’s payment issue"
+       }
+      ],
+      "_files": [
+       {
+        "field": "evidence-file",
+        "name": "response-letter.pdf",
+        "type": "application/pdf",
+        "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUiA3IDAgUl0gL0NvdW50IDIgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQzOTIgPj4Kc3RyZWFtCkJUIC9GMiAxNSBUZiA1NiA3MzYgVGQgKFJlc3BvbnNlIHRvIENoYXJnZWJhY2sgLSBTZXJ2aWNlIERlbGl2ZXJlZCBhbmQgSG9zdGluZyBJc3N1ZSkgVGogRVQKQlQgL0YxIDEwIFRmIDU2IDcxMyBUZCAoRGlzcHV0ZSBQUC1ELTI3MTYyLVBBVEVMIC0gU2VydmljZSBub3QgcmVjZWl2ZWQgLSAxODAwLjAwIFVTRCkgVGogRVQKQlQgL0YxIDEwIFRmIDU2IDY5OSBUZCAoU3VibWl0dGVkIGJ5IFNvZmlhIEFsdmFyZXosIEFsdmFyZXogV2ViIFN0dWRpbyBcKHNvZmlhQGFsdmFyZXp3ZWIuc3R1ZGlvXCkpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA2NzcgVGQgKFRoZSBidXllciB3YXMgY2hhcmdlZCAkMSw4MDAgb24gMjAyNi0wNi0xNiBmb3IgaW52b2ljZSBBV1MtMjAyNi0wMzEuIFsxXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDY1NCBUZCAoVGhlIGNvbnRyYWN0IHNwZWNpZmllZCB0aGF0IEkgd291bGQgZGVzaWduIGFuZCBidWlsZCBhIDYtcGFnZSB3ZWJzaXRlIGFuZCBsYXVuY2ggaXQgb24gdGhlKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjM5IFRkIChjbGllbnQncyBvd24gaG9zdGluZyBhY2NvdW50IGZvciBhIGZlZSBvZiAkMSw4MDAuIFsyXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDYxNiBUZCAoVGhlIGNsaWVudCB3YXMgcmVzcG9uc2libGUgZm9yIGFsbCBob3N0aW5nIGFuZCBkb21haW4gcGF5bWVudHMsIGFuZCB0aGUgZGV2ZWxvcGVyIGRvZXMgbm90KSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjAxIFRkIChjb250cm9sIHRoZSBiaWxsaW5nLiBbM10pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1NzggVGQgKE9uIDIwMjYtMDYtMTIgSSBjb25maXJtZWQgdGhlIHNpdGUgd2FzIGxpdmUgYW5kIHByb3ZpZGVkIGFsbCBsb2dpbiBjcmVkZW50aWFsczsgdGhlIHNpdGUpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1NjMgVGQgKHJldHVybmVkIEhUVFAgMjAwIGFuZCByZW1haW5lZCB1cCBmb3IgMTEyIGNvbnNlY3V0aXZlIGRheXMuIFs0XVs1XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU0MCBUZCAoVGhlIGNsaWVudCByZXBsaWVkIG9uIDIwMjYtMDYtMTMgdGhhdCB0aGUgc2l0ZSBsb29rZWQgZmFudGFzdGljIGFuZCB3YXMgYWxyZWFkeSByZWNlaXZpbmcpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1MjUgVGQgKGFwcG9pbnRtZW50IHJlcXVlc3RzLiBbNl0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1MDIgVGQgKFRoZSBjb250cmFjdCBpbmNsdWRlZCAzMCBkYXlzIG9mIHBvc3QtbGF1bmNoIGJ1Zy1maXggc3VwcG9ydCBlbmRpbmcgb24gMjAyNi0wNy0xMjsgYWZ0ZXIpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA0ODcgVGQgKHRoYXQgYW55IHdvcmsgaXMgYmlsbGVkIGF0ICQ4MCBwZXIgaG91ci4gWzddWzhdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDY0IFRkIChPbiAyMDI2LTEwLTAyIHRoZSBzaXRlIHJldHVybmVkIGEgIkFjY291bnQgU3VzcGVuZGVkIC0gSG9zdFBlYWsiIHBhZ2UsIHdoaWNoIHRoZSBoYW5kb3ZlcikgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQ0OSBUZCAoZG9jdW1lbnQgZXhwbGFpbnMgaXMgY2F1c2VkIGJ5IGEgYmlsbGluZyBpc3N1ZSBvbiB0aGUgY2xpZW50J3MgaG9zdGluZyBhY2NvdW50LiBbOV1bMTBdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDI2IFRkIChUaGUgY2hhcmdlYmFjayByZWFzb24gIk1FUkNIQU5ESVNFX09SX1NFUlZJQ0VfTk9UX1JFQ0VJVkVEIiBkb2VzIG5vdCBhcHBseSBiZWNhdXNlIHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQxMSBUZCAod2Vic2l0ZSB3YXMgZGVsaXZlcmVkLCBmdW5jdGlvbmFsLCBhbmQgYWNjZXB0ZWQgYnkgdGhlIGNsaWVudC4gWzExXVs2XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDM4OCBUZCAoVGhlcmVmb3JlIG5vIHJlZnVuZCBpcyBvd2VkOyBJIGFtIHdpbGxpbmcgdG8gYXNzaXN0IHRoZSBjbGllbnQgaW4gdXBkYXRpbmcgdGhlIGhvc3RpbmcpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAzNzMgVGQgKHBheW1lbnQgb3IgcHJvdmlkZSBmdXJ0aGVyIHN1cHBvcnQgYXQgdGhlIGFncmVlZCAkODAgaG91cmx5IHJhdGUuIFs3XSkgVGogRVQKQlQgL0YyIDEyIFRmIDU2IDM0MiBUZCAoU291cmNlcykgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzIzIFRkIChbMV0gUGF5UGFsIGRpc3B1dGUgUFAtRC0yNzE2Mi1QQVRFTCwgVFhOIFwoUGF5UGFsIERpc3B1dGVzIEFQSVwpOiAiRGlzcHV0ZWQgdHJhbnNhY3Rpb246IFBheVBhbCB0cmFuc2FjdGlvbikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzA5IFRkICg5UEYyMDQ0OFJUNjYxMDA5MyBvbiAyMDI2LTA2LTE2IGZvciAkMSw4MDAuMDAgVVNELCBpbnZvaWNlIEFXUy0yMDI2LTAzMSwgYnV5ZXIgR3JlZyBQYXRlbC4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyOTIgVGQgKFsyXSBXZWJzaXRlIHByb3Bvc2FsICsgdGVybXMgXChhY2NlcHRlZFwpLCBQMSBcKEFjY2VwdGVkIHByb3Bvc2FsIFBERlwpOiAiU2NvcGU6IERlc2lnbiBhbmQgYnVpbGQgYSA2LXBhZ2Ugd2Vic2l0ZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjc4IFRkIChcKEhvbWUsIFNlcnZpY2VzLCBUZWFtLCBJbnN1cmFuY2UsIE5ldyBQYXRpZW50cywgQ29udGFjdFwpIHdpdGggb25saW5lIGFwcG9pbnRtZW50IHJlcXVlc3QgZm9ybSwgYW5kIGxhdW5jaCBpdCBvbikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjY0IFRkIChDbGllbnQncyBob3N0aW5nIGFjY291bnQuIEZlZTogJDEsODAwLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI0NyBUZCAoWzNdIFdlYnNpdGUgcHJvcG9zYWwgKyB0ZXJtcyBcKGFjY2VwdGVkXCksIFAyIFwoQWNjZXB0ZWQgcHJvcG9zYWwgUERGXCk6ICJIb3N0aW5nIGFuZCBkb21haW46IEhvc3RpbmcgYW5kIHRoZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjMzIFRkIChkb21haW4gcGF0ZWxmYW1pbHlkZW50YWwuY29tIGFyZSBwdXJjaGFzZWQgYnkgYW5kIHJlZ2lzdGVyZWQgdG8gQ2xpZW50LCBiaWxsZWQgdG8gQ2xpZW50J3Mgb3duIGNhcmQuIENsaWVudCBpcykgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjE5IFRkIChyZXNwb25zaWJsZSBmb3Iga2VlcGluZyBob3N0aW5nIGFuZCBkb21haW4gcmVuZXdhbHMgY3VycmVudC4gRGV2ZWxvcGVyIGRvZXMgbm90IGNvbnRyb2wgQ2xpZW50J3MgYmlsbGluZy4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyMDIgVGQgKFs0XSBFbWFpbCB0aHJlYWQ6IFNvZmlhIDwtPiBHcmVnLCBFMSBcKEZyZWVsYW5jZXIncyBlbWFpbCBleHBvcnRcKTogIkp1biAxMiAtIFNvZmlhIHRvIEdyZWc6IFdlJ3JlIGxpdmU6IEdyZWcsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxODggVGQgKHBhdGVsZmFtaWx5ZGVudGFsLmNvbSBpcyBsaXZlISBBdHRhY2hlZCBpcyB5b3VyIGhhbmRvdmVyIGRvYyB3aXRoIHRoZSBsb2dpbnMgZm9yIHlvdXIgaG9zdGluZyBhY2NvdW50KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNzQgVGQgKFwoSG9zdFBlYWtcKSwgdGhlIHdlYnNpdGUgZWRpdG9yIGFuZCB5b3VyIGRvbWFpbi4gRXZlcnl0aGluZyBpcyBpbiB5b3VyIG5hbWUuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTU3IFRkIChbNV0gVXB0aW1lIG1vbml0b3IgaGlzdG9yeTogcGF0ZWxmYW1pbHlkZW50YWwuY29tLCBVMSBcKEZyZWVsYW5jZXIncyB1cHRpbWUgbW9uaXRvcmluZyBzZXJ2aWNlXCk6ICJVcDogMjAyNi0wNi0xMikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTQzIFRkICgxODowMiBVVEMgLSBTaXRlIFVQIFwoSFRUUCAyMDBcKS4gQ29udGludW91c2x5IHVwIGZvciAxMTIgZGF5cy4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMjYgVGQgKFs2XSBFbWFpbCB0aHJlYWQ6IFNvZmlhIDwtPiBHcmVnLCBFMiBcKEZyZWVsYW5jZXIncyBlbWFpbCBleHBvcnRcKTogIkp1biAxMyAtIEdyZWcgdG8gU29maWE6IExvb2tzIGZhbnRhc3RpYy4gT3VyKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMTIgVGQgKGZyb250IGRlc2sgYWxyZWFkeSBnb3QgdHdvIGFwcG9pbnRtZW50IHJlcXVlc3RzIHRocm91Z2ggdGhlIGZvcm0gdGhpcyBtb3JuaW5nLiBUaGFuayB5b3UhIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgOTUgVGQgKFs3XSBXZWJzaXRlIHByb3Bvc2FsICsgdGVybXMgXChhY2NlcHRlZFwpLCBQNCBcKEFjY2VwdGVkIHByb3Bvc2FsIFBERlwpOiAiU3VwcG9ydDogMzAgZGF5cyBvZiBwb3N0LWxhdW5jaCBzdXBwb3J0KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA4MSBUZCAoZm9yIGJ1Z3MgaXMgaW5jbHVkZWQuIEFmdGVyIHRoYXQsIGhlbHAgaXMgYmlsbGVkIGF0ICQ4MC9ob3VyLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0IFRkIChbOF0gRW1haWwgdGhyZWFkOiBTb2ZpYSA8LT4gR3JlZywgRTMgXChGcmVlbGFuY2VyJ3MgZW1haWwgZXhwb3J0XCk6ICJKdW4gMTYgLSBTb2ZpYSB0byBHcmVnOiBTbyBnbGFkIHRvIGhlYXIgaXQhKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCjcgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSAzIDAgUiAvRjIgNCAwIFIgPj4gPj4gL0NvbnRlbnRzIDggMCBSID4+CmVuZG9iago4IDAgb2JqCjw8IC9MZW5ndGggMTI5NSA+PgpzdHJlYW0KQlQgL0YxIDkgVGYgNTYgNzM2IFRkIChJbnZvaWNlIEFXUy0yMDI2LTAzMSBzZW50IHZpYSBQYXlQYWwuIFlvdXIgMzAgZGF5cyBvZiBzdXBwb3J0IHJ1biB1bnRpbCBKdWx5IDEyLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDcxOSBUZCAoWzldIFVwdGltZSBtb25pdG9yIGhpc3Rvcnk6IHBhdGVsZmFtaWx5ZGVudGFsLmNvbSwgVTIgXChGcmVlbGFuY2VyJ3MgdXB0aW1lIG1vbml0b3Jpbmcgc2VydmljZVwpOiAiU3RhdHVzIGNoYW5nZTopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDcwNSBUZCAoMjAyNi0xMC0wMiAwNDowMCBVVEMgLSBTaXRlIERPV04uIFJlc3BvbnNlIEhUVFAgNTAzIHdpdGggcGFnZSB0aXRsZSAiQWNjb3VudCBTdXNwZW5kZWQgLSBIb3N0UGVhayIuIEJvZHkgdGV4dDopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY5MSBUZCAoIlRoaXMgYWNjb3VudCBoYXMgYmVlbiBzdXNwZW5kZWQgZHVlIHRvIGEgYmlsbGluZyBpc3N1ZS4gSWYgeW91IGFyZSB0aGUgYWNjb3VudCBvd25lciwgcGxlYXNlIGxvZyBpbiB0byB1cGRhdGUpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY3NyBUZCAoeW91ciBwYXltZW50IG1ldGhvZC4iIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjYwIFRkIChbMTBdIEhhbmRvdmVyIGRvY3VtZW50IFwoc2VudCBKdW4gMTJcKSwgSDMgXChQREYgYXR0YWNoZWQgdG8gbGF1bmNoIGVtYWlsXCk6ICJJZiB0aGUgc2l0ZSBldmVyIGdvZXMgZG93bjogRmlyc3QpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0NiBUZCAoY2hlY2sgdGhhdCB0aGUgSG9zdFBlYWsgcGF5bWVudCBtZXRob2QgaXMgY3VycmVudDsgc3VzcGVuZGVkIGhvc3Rpbmcgc2hvd3MgYW4gIkFjY291bnQgU3VzcGVuZGVkIiBwYWdlLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjMyIFRkIChVcGRhdGluZyB0aGUgY2FyZCByZXN0b3JlcyB0aGUgc2l0ZSB3aXRoaW4gbWludXRlcy4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTUgVGQgKFsxMV0gUGF5UGFsIGRpc3B1dGUgUFAtRC0yNzE2Mi1QQVRFTCwgUkVBU09OIFwoUGF5UGFsIERpc3B1dGVzIEFQSVwpOiAiRmlsZWQgcmVhc29uOiBSZWFzb24gY29kZTopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDYwMSBUZCAoTUVSQ0hBTkRJU0VfT1JfU0VSVklDRV9OT1RfUkVDRUlWRUQgXChTZXJ2aWNlIG5vdCByZWNlaXZlZFwpLiBDYXJkIG5ldHdvcmsgY29kZTogMTMuMS4gQ2hhbm5lbDogRVhURVJOQUwuIFN0YWdlOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTg3IFRkIChDSEFSR0VCQUNLLiBBbW91bnQgZGlzcHV0ZWQ6ICQxLDgwMC4wMCBVU0QuIikgVGogRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTIxIDAwMDAwIG4gCjAwMDAwMDAyMTggMDAwMDAgbiAKMDAwMDAwMDMyMCAwMDAwMCBuIAowMDAwMDAwNDU2IDAwMDAwIG4gCjAwMDAwMDQ5MDAgMDAwMDAgbiAKMDAwMDAwNTAzNiAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDkgL1Jvb3QgMSAwIFIgPj4Kc3RhcnR4cmVmCjYzODMKJSVFT0YK"
+       },
+       {
+        "field": "evidence-file",
+        "name": "evidence-appendix.pdf",
+        "type": "application/pdf",
+        "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDMyMDYgPj4Kc3RyZWFtCkJUIC9GMiAxNCBUZiA1NiA3MzYgVGQgKEV2aWRlbmNlIGFwcGVuZGl4OiBmdWxsIHRleHQgb2YgZXZlcnkgY2l0ZWQgc2VjdGlvbikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDcwNiBUZCAoUGF5UGFsIGRpc3B1dGUgUFAtRC0yNzE2Mi1QQVRFTCAtIHNvdXJjZTogUGF5UGFsIERpc3B1dGVzIEFQSSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjg4IFRkIChUWE4gRGlzcHV0ZWQgdHJhbnNhY3Rpb246IFBheVBhbCB0cmFuc2FjdGlvbiA5UEYyMDQ0OFJUNjYxMDA5MyBvbiAyMDI2LTA2LTE2IGZvciAkMSw4MDAuMDAgVVNELCBpbnZvaWNlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NzQgVGQgKEFXUy0yMDI2LTAzMSwgYnV5ZXIgR3JlZyBQYXRlbC4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY1NyBUZCAoUkVBU09OIEZpbGVkIHJlYXNvbjogUmVhc29uIGNvZGU6IE1FUkNIQU5ESVNFX09SX1NFUlZJQ0VfTk9UX1JFQ0VJVkVEIFwoU2VydmljZSBub3QgcmVjZWl2ZWRcKS4gQ2FyZCBuZXR3b3JrKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NDMgVGQgKGNvZGU6IDEzLjEuIENoYW5uZWw6IEVYVEVSTkFMLiBTdGFnZTogQ0hBUkdFQkFDSy4gQW1vdW50IGRpc3B1dGVkOiAkMSw4MDAuMDAgVVNELikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDYxNyBUZCAoV2Vic2l0ZSBwcm9wb3NhbCArIHRlcm1zIFwoYWNjZXB0ZWRcKSAtIHNvdXJjZTogQWNjZXB0ZWQgcHJvcG9zYWwgUERGKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1OTkgVGQgKFAxIFNjb3BlOiBEZXNpZ24gYW5kIGJ1aWxkIGEgNi1wYWdlIHdlYnNpdGUgXChIb21lLCBTZXJ2aWNlcywgVGVhbSwgSW5zdXJhbmNlLCBOZXcgUGF0aWVudHMsIENvbnRhY3RcKSB3aXRoKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1ODUgVGQgKG9ubGluZSBhcHBvaW50bWVudCByZXF1ZXN0IGZvcm0sIGFuZCBsYXVuY2ggaXQgb24gQ2xpZW50J3MgaG9zdGluZyBhY2NvdW50LiBGZWU6ICQxLDgwMC4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU2OCBUZCAoUDIgSG9zdGluZyBhbmQgZG9tYWluOiBIb3N0aW5nIGFuZCB0aGUgZG9tYWluIHBhdGVsZmFtaWx5ZGVudGFsLmNvbSBhcmUgcHVyY2hhc2VkIGJ5IGFuZCByZWdpc3RlcmVkIHRvIENsaWVudCwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU1NCBUZCAoYmlsbGVkIHRvIENsaWVudCdzIG93biBjYXJkLiBDbGllbnQgaXMgcmVzcG9uc2libGUgZm9yIGtlZXBpbmcgaG9zdGluZyBhbmQgZG9tYWluIHJlbmV3YWxzIGN1cnJlbnQuIERldmVsb3BlcikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTQwIFRkIChkb2VzIG5vdCBjb250cm9sIENsaWVudCdzIGJpbGxpbmcuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1MjMgVGQgKFA0IFN1cHBvcnQ6IDMwIGRheXMgb2YgcG9zdC1sYXVuY2ggc3VwcG9ydCBmb3IgYnVncyBpcyBpbmNsdWRlZC4gQWZ0ZXIgdGhhdCwgaGVscCBpcyBiaWxsZWQgYXQgJDgwL2hvdXIuKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgNDk3IFRkIChFbWFpbCB0aHJlYWQ6IFNvZmlhIDwtPiBHcmVnIC0gc291cmNlOiBGcmVlbGFuY2VyJ3MgZW1haWwgZXhwb3J0KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NzkgVGQgKEUxIEp1biAxMiAtIFNvZmlhIHRvIEdyZWc6IFdlJ3JlIGxpdmU6IEdyZWcsIHBhdGVsZmFtaWx5ZGVudGFsLmNvbSBpcyBsaXZlISBBdHRhY2hlZCBpcyB5b3VyIGhhbmRvdmVyIGRvYyB3aXRoKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NjUgVGQgKHRoZSBsb2dpbnMgZm9yIHlvdXIgaG9zdGluZyBhY2NvdW50IFwoSG9zdFBlYWtcKSwgdGhlIHdlYnNpdGUgZWRpdG9yIGFuZCB5b3VyIGRvbWFpbi4gRXZlcnl0aGluZyBpcyBpbiB5b3VyIG5hbWUuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NDggVGQgKEUyIEp1biAxMyAtIEdyZWcgdG8gU29maWE6IExvb2tzIGZhbnRhc3RpYy4gT3VyIGZyb250IGRlc2sgYWxyZWFkeSBnb3QgdHdvIGFwcG9pbnRtZW50IHJlcXVlc3RzIHRocm91Z2ggdGhlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0MzQgVGQgKGZvcm0gdGhpcyBtb3JuaW5nLiBUaGFuayB5b3UhKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0MTcgVGQgKEUzIEp1biAxNiAtIFNvZmlhIHRvIEdyZWc6IFNvIGdsYWQgdG8gaGVhciBpdCEgSW52b2ljZSBBV1MtMjAyNi0wMzEgc2VudCB2aWEgUGF5UGFsLiBZb3VyIDMwIGRheXMgb2Ygc3VwcG9ydCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDAzIFRkIChydW4gdW50aWwgSnVseSAxMi4pIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAzNzcgVGQgKFVwdGltZSBtb25pdG9yIGhpc3Rvcnk6IHBhdGVsZmFtaWx5ZGVudGFsLmNvbSAtIHNvdXJjZTogRnJlZWxhbmNlcidzIHVwdGltZSBtb25pdG9yaW5nKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgMzYyIFRkIChzZXJ2aWNlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzNDQgVGQgKFUxIFVwOiAyMDI2LTA2LTEyIDE4OjAyIFVUQyAtIFNpdGUgVVAgXChIVFRQIDIwMFwpLiBDb250aW51b3VzbHkgdXAgZm9yIDExMiBkYXlzLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzI3IFRkIChVMiBTdGF0dXMgY2hhbmdlOiAyMDI2LTEwLTAyIDA0OjAwIFVUQyAtIFNpdGUgRE9XTi4gUmVzcG9uc2UgSFRUUCA1MDMgd2l0aCBwYWdlIHRpdGxlICJBY2NvdW50IFN1c3BlbmRlZCAtKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMTMgVGQgKEhvc3RQZWFrIi4gQm9keSB0ZXh0OiAiVGhpcyBhY2NvdW50IGhhcyBiZWVuIHN1c3BlbmRlZCBkdWUgdG8gYSBiaWxsaW5nIGlzc3VlLiBJZiB5b3UgYXJlIHRoZSBhY2NvdW50IG93bmVyLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjk5IFRkIChwbGVhc2UgbG9nIGluIHRvIHVwZGF0ZSB5b3VyIHBheW1lbnQgbWV0aG9kLiIpIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAyNzMgVGQgKEhhbmRvdmVyIGRvY3VtZW50IFwoc2VudCBKdW4gMTJcKSAtIHNvdXJjZTogUERGIGF0dGFjaGVkIHRvIGxhdW5jaCBlbWFpbCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjU1IFRkIChIMyBJZiB0aGUgc2l0ZSBldmVyIGdvZXMgZG93bjogRmlyc3QgY2hlY2sgdGhhdCB0aGUgSG9zdFBlYWsgcGF5bWVudCBtZXRob2QgaXMgY3VycmVudDsgc3VzcGVuZGVkIGhvc3Rpbmcgc2hvd3MpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI0MSBUZCAoYW4gIkFjY291bnQgU3VzcGVuZGVkIiBwYWdlLiBVcGRhdGluZyB0aGUgY2FyZCByZXN0b3JlcyB0aGUgc2l0ZSB3aXRoaW4gbWludXRlcy4pIFRqIEVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNTggMDAwMDAgbiAKMDAwMDAwMDExNSAwMDAwMCBuIAowMDAwMDAwMjEyIDAwMDAwIG4gCjAwMDAwMDAzMTQgMDAwMDAgbiAKMDAwMDAwMDQ1MCAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDcgL1Jvb3QgMSAwIFIgPj4Kc3RhcnR4cmVmCjM3MDgKJSVFT0YK"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "t": 293283,
+   "type": "result",
+   "payload": {
+    "read": {
+     "stated_complaint": "We do not have a working website; patients get an error page and the service was never properly provided despite paying $1,800.",
+     "literal_claims": [
+      {
+       "claim": "We paid $1,800 for a website for our dental practice.",
+       "quote": "We paid $1,800 for a website for our dental practice."
+      },
+      {
+       "claim": "We do not have a working website.",
+       "quote": "We do not have a working website."
+      },
+      {
+       "claim": "Patients searching for us get an error page.",
+       "quote": "Patients searching for us get an error page."
+      },
+      {
+       "claim": "The service was never properly provided.",
+       "quote": "The service was never properly provided."
+      }
+     ],
+     "vague_phrases": [
+      {
+       "phrase": "working website",
+       "could_mean": [
+        "site fails to load",
+        "missing key features",
+        "not live on domain",
+        "contains bugs or errors"
+       ]
+      },
+      {
+       "phrase": "error page",
+       "could_mean": [
+        "404 Not Found",
+        "500 Server Error",
+        "DNS misconfiguration",
+        "incorrect domain pointing"
+       ]
+      },
+      {
+       "phrase": "never properly provided",
+       "could_mean": [
+        "no files or code delivered",
+        "no admin/login access given",
+        "ownership/hosting not transferred",
+        "delivered incomplete scope"
+       ]
+      }
+     ],
+     "reviewer_tests": [
+      "Was the service delivered, and when?",
+      "Is there proof the client received it or had access to it?",
+      "Did the client acknowledge receipt or use it?",
+      "Is the website functional as agreed in the contract?"
+     ],
+     "open_questions": [
+      "When and how was the website handed over to the client (files, credentials, live URL)?",
+      "Did the client receive login/hosting information and acknowledge receipt?",
+      "Did the client attempt to access the site before filing the dispute, and what error messages were observed?",
+      "Was the site deployed to the agreed domain and DNS settings correctly configured?",
+      "Were any bug‑fixes or support requests submitted by the client prior to the chargeback?"
+     ]
+    },
+    "findings": [
+     {
+      "finding": "The website was launched and live on 2026-06-12, as confirmed by the launch email and uptime monitor showing HTTP 200 at that time.",
+      "significance": "Demonstrates that the freelancer delivered a working site as per contract, countering the claim of 'never properly provided'.",
+      "citations": [
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E1"
+       },
+       {
+        "doc_id": "UPTIME",
+        "anchor": "U1"
+       }
+      ]
+     },
+     {
+      "finding": "The client, Greg Patel, explicitly confirmed the site was live and functional on 2026-06-13, noting two appointment requests had been received through the form.",
+      "significance": "Shows the client actually used the site and regarded it as working shortly after launch.",
+      "citations": [
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E2"
+       }
+      ]
+     },
+     {
+      "finding": "The accepted proposal (dated 2026-05-02) defined the scope as a 6‑page dental practice website with an online appointment form, to be launched on the client’s own hosting account, and included 30 days of post‑launch bug‑fix support.",
+      "significance": "Clarifies the contractual obligations and that the freelancer was not responsible for hosting payments after hand‑over.",
+      "citations": [
+       {
+        "doc_id": "PROPOSAL",
+        "anchor": "P1"
+       },
+       {
+        "doc_id": "PROPOSAL",
+        "anchor": "P2"
+       },
+       {
+        "doc_id": "PROPOSAL",
+        "anchor": "P4"
+       }
+      ]
+     },
+     {
+      "finding": "A handover document was sent on 2026-06-12 containing full login credentials for the HostPeak hosting account and domain ownership, confirming the client now owned all accounts.",
+      "significance": "Demonstrates that the freelancer transferred control as required, making the client responsible for any subsequent hosting issues.",
+      "citations": [
+       {
+        "doc_id": "HANDOVER",
+        "anchor": "H1"
+       },
+       {
+        "doc_id": "HANDOVER",
+        "anchor": "H2"
+       }
+      ]
+     },
+     {
+      "finding": "Uptime monitoring shows the site remained continuously available (HTTP 200) from 2026‑06‑12 until 2026‑10‑02, when it returned an HTTP 503 “Account Suspended – HostPeak” page due to a billing issue.",
+      "significance": "Indicates the site was functional for over three months; the error the client now sees is a hosting suspension, not a broken site delivered by the freelancer.",
+      "citations": [
+       {
+        "doc_id": "UPTIME",
+        "anchor": "U2"
+       }
+      ]
+     },
+     {
+      "finding": "The handover document explicitly instructs the client to check the HostPeak payment method if the site goes down, noting that an “Account Suspended” page appears when billing lapses.",
+      "significance": "Shows the freelancer warned the client that the error page they are seeing is tied to the client’s hosting payment, not a delivery defect.",
+      "citations": [
+       {
+        "doc_id": "HANDOVER",
+        "anchor": "H3"
+       }
+      ]
+     },
+     {
+      "finding": "Payment of $1,800 was made on 2026‑06‑16 (PayPal transaction 9PF20448RT6610093, invoice AWS‑2026‑031), matching the amount disputed in the chargeback.",
+      "significance": "Confirms the client paid the agreed fee before filing the dispute, and the transaction is the same one the client is contesting.",
+      "citations": [
+       {
+        "doc_id": "DISPUTE",
+        "anchor": "TXN"
+       }
+      ]
+     },
+     {
+      "finding": "There is no record in the evidence locker of the client contacting the freelancer for support or reporting a problem before the dispute was filed.",
+      "significance": "Absence of a support request suggests the client did not seek remediation for the hosting suspension, weakening the “service not provided” claim.",
+      "citations": [
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E3"
+       }
+      ]
+     },
+     {
+      "finding": "The buyer who filed the dispute, Greg Patel, is the same individual who hired, approved the work (via email acceptance), and paid for the project.",
+      "significance": "No change of personnel explains the dispute; the same decision‑maker is contesting the service they previously approved.",
+      "citations": [
+       {
+        "doc_id": "DISPUTE",
+        "anchor": "MSG1"
+       },
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E2"
+       }
+      ]
+     }
+    ],
+    "diagnosis": {
+     "client_concerns": [
+      {
+       "concern": "We do not have a working website",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U1"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        }
+       ],
+       "answer": "The freelancer launched the site on 2026-06-12 and it responded with HTTP 200, confirming a working website was delivered. A reversed payment would revert ownership of the site back to the freelancer, but the site itself was functional at launch."
+      },
+      {
+       "concern": "Patients searching for us get an error page",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U2"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H3"
+        }
+       ],
+       "answer": "The error page is an HTTP 503 \"Account Suspended – HostPeak\" generated when the client’s hosting account payment lapsed. The handover document explicitly warned the client to check the HostPeak payment method in such cases. If the payment is updated, the site returns to normal. A chargeback would not fix the hosting suspension."
+      },
+      {
+       "concern": "The service was never properly provided",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P1"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P2"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P3"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P4"
+        }
+       ],
+       "answer": "The proposal defined a 6‑page website with an appointment form, to be launched on the client’s own hosting account, and includes 30 days of post‑launch bug‑fix support. All deliverables were handed over on 2026‑06‑12. A reversed payment would undo the contractual transfer of ownership but would not change that the agreed‑upon service was delivered."
+      }
+     ],
+     "freelancer_weaknesses": [
+      {
+       "issue": "No post‑launch support was offered after the 30‑day bug‑fix window expired on 2026‑07‑12, leaving the client without assistance when the hosting suspension occurred in October.",
+       "citations": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P4"
+        },
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U2"
+        }
+       ]
+      }
+     ],
+     "hypotheses": [
+      {
+       "label": "Hosting suspension due to client billing lapse",
+       "explanation": "The site was functional after launch; the error page resulted from the client’s HostPeak account being suspended because the payment method expired, which is the client’s responsibility per the handover and proposal.",
+       "supporting": [
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U2"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H3"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H1"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P2"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "likelihood": 55
+      },
+      {
+       "label": "Client unaware of hosting ownership responsibilities",
+       "explanation": "The client expected the freelancer to maintain hosting and did not realize they needed to keep the payment method current, leading to the mistaken belief the service was not provided.",
+       "supporting": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P2"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H3"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        }
+       ],
+       "likelihood": 20
+      },
+      {
+       "label": "Literal \"service not received\" claim",
+       "explanation": "The client believes the freelancer never delivered a functional website and therefore files a chargeback for non‑delivery.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U1"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        }
+       ],
+       "likelihood": 15
+      },
+      {
+       "label": "Refund sought for unrelated dissatisfaction (e.g., design) using service‑not‑received code",
+       "explanation": "The client may be unhappy with aspects of the website (design, content) and is using the generic \"service not received\" reason to obtain a refund, even though delivery was confirmed.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        },
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U1"
+        }
+       ],
+       "likelihood": 10
+      }
+     ],
+     "real_complaint": {
+      "summary": "The website was delivered and functioned for several months; the current error page is caused by the client’s hosting account being suspended due to an unpaid hosting bill, a responsibility outlined in the handover and proposal. The client’s real need is to reactivate the hosting account (or obtain assistance to do so), not a refund of the $1,800.",
+      "what_the_client_actually_needs": "Reactivate or pay for the HostPeak hosting account to restore the site, or obtain additional paid support if needed after the 30‑day bug‑fix period.",
+      "confidence": 85
+     },
+     "why_this_reason_code": "The client chose the generic \"MERCHANDISE_OR_SERVICE_NOT_RECEIVED\" code because it most directly describes the symptom they see (an error page) and maximizes the chance of a chargeback, even though the underlying issue is a hosting payment lapse they are responsible for."
+    },
+    "strategy": {
+     "decision": "CONTEST_AND_RESOLVE",
+     "rationale": "The freelancer delivered the agreed 6‑page website on 2026‑06‑12, confirmed by launch email and continuous uptime with HTTP 200 for over 100 days. The client acknowledged the live, functional site and even received appointment requests. The current error page is a HostPeak \"Account Suspended\" response caused by the client’s unpaid hosting bill, which the contract explicitly makes the client responsible for. The freelancer’s obligation for post‑launch bug‑fix support ended on 2026‑07‑12, so there is no contractual duty to fix hosting issues after that date. Because the service was delivered as contracted, the chargeback under MERCHANDISE_OR_SERVICE_NOT_RECEIVED is invalid. The real need is to reactivate the hosting account; the freelancer can resolve this by offering paid assistance to update the hosting payment or provide additional support at the agreed $80/hour rate, but no refund is owed.",
+     "proof_plan": [
+      {
+       "point": "Service was delivered and functional at launch on 2026‑06‑12",
+       "answers": "BOTH",
+       "evidence": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U1"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P1"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P3"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "Client acknowledged receipt and that the site was working",
+       "answers": "BOTH",
+       "evidence": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "Current error page is due to client’s hosting account suspension, not a delivery failure",
+       "answers": "REAL_COMPLAINT",
+       "evidence": [
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U2"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H3"
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H1"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P2"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "Contract limited post‑launch support to 30 days; no obligation after 2026‑07‑12",
+       "answers": "REAL_COMPLAINT",
+       "evidence": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P4"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        }
+       ],
+       "strength": "MODERATE"
+      },
+      {
+       "point": "Chargeback reason MERCHANDISE_OR_SERVICE_NOT_RECEIVED is unsupported because service was delivered",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "REASON"
+        },
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "TXN"
+        },
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P1"
+        }
+       ],
+       "strength": "STRONG"
+      }
+     ],
+     "refund_amount": "0.00",
+     "resolution_action": "Offer to assist the client in reactivating the HostPeak hosting account (e.g., updating the payment method) and provide any further website support at the contract rate of $80/hour (or a discounted one‑time fee). No refund is required because the contracted service was delivered."
+    },
+    "draft": {
+     "response_title": "Response to Chargeback – Service Delivered and Hosting Issue",
+     "claims": [
+      {
+       "index": 0,
+       "text": "The buyer was charged $1,800 on 2026-06-16 for invoice AWS-2026-031.",
+       "citations": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "TXN",
+         "quote": "Disputed transaction: PayPal transaction 9PF20448RT6610093 on 2026-06-16 for $1,800.00 USD, invoice AWS-2026-031, buyer Greg Patel.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 1,
+       "text": "The contract specified that I would design and build a 6-page website and launch it on the client’s own hosting account for a fee of $1,800.",
+       "citations": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P1",
+         "quote": "Scope: Design and build a 6-page website (Home, Services, Team, Insurance, New Patients, Contact) with online appointment request form, and launch it on Client's hosting account. Fee: $1,800.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 2,
+       "text": "The client was responsible for all hosting and domain payments, and the developer does not control the billing.",
+       "citations": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P2",
+         "quote": "Hosting and domain: Hosting and the domain patelfamilydental.com are purchased by and registered to Client, billed to Client's own card. Client is responsible for keeping hosting and domain renewals current. Developer does not control Client's billing.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 3,
+       "text": "On 2026-06-12 I confirmed the site was live and provided all login credentials; the site returned HTTP 200 and remained up for 112 consecutive days.",
+       "citations": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1",
+         "quote": "Jun 12 - Sofia to Greg: We're live: Greg, patelfamilydental.com is live! Attached is your handover doc with the logins for your hosting account (HostPeak), the website editor and your domain. Everything is in your name.",
+         "ok": true
+        },
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U1",
+         "quote": "Up: 2026-06-12 18:02 UTC - Site UP (HTTP 200). Continuously up for 112 days.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 4,
+       "text": "The client replied on 2026-06-13 that the site looked fantastic and was already receiving appointment requests.",
+       "citations": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2",
+         "quote": "Jun 13 - Greg to Sofia: Looks fantastic. Our front desk already got two appointment requests through the form this morning. Thank you!",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 5,
+       "text": "The contract included 30 days of post‑launch bug‑fix support ending on 2026-07-12; after that any work is billed at $80 per hour.",
+       "citations": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P4",
+         "quote": "Support: 30 days of post-launch support for bugs is included. After that, help is billed at $80/hour.",
+         "ok": true
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3",
+         "quote": "Jun 16 - Sofia to Greg: So glad to hear it! Invoice AWS-2026-031 sent via PayPal. Your 30 days of support run until July 12.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 6,
+       "text": "On 2026-10-02 the site returned a “Account Suspended – HostPeak” page, which the handover document explains is caused by a billing issue on the client’s hosting account.",
+       "citations": [
+        {
+         "doc_id": "UPTIME",
+         "anchor": "U2",
+         "quote": "Status change: 2026-10-02 04:00 UTC - Site DOWN. Response HTTP 503 with page title \"Account Suspended - HostPeak\". Body text: \"This account has been suspended due to a billing issue. If you are the account owner, please log in to update your payment method.\"",
+         "ok": true
+        },
+        {
+         "doc_id": "HANDOVER",
+         "anchor": "H3",
+         "quote": "If the site ever goes down: First check that the HostPeak payment method is current; suspended hosting shows an \"Account Suspended\" page. Updating the card restores the site within minutes.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 7,
+       "text": "The chargeback reason “MERCHANDISE_OR_SERVICE_NOT_RECEIVED” does not apply because the website was delivered, functional, and accepted by the client.",
+       "citations": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "REASON",
+         "quote": "Filed reason: Reason code: MERCHANDISE_OR_SERVICE_NOT_RECEIVED (Service not received). Card network code: 13.1. Channel: EXTERNAL. Stage: CHARGEBACK. Amount disputed: $1,800.00 USD.",
+         "ok": true
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2",
+         "quote": "Jun 13 - Greg to Sofia: Looks fantastic. Our front desk already got two appointment requests through the form this morning. Thank you!",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 8,
+       "text": "Therefore no refund is owed; I am willing to assist the client in updating the hosting payment or provide further support at the agreed $80 hourly rate.",
+       "citations": [
+        {
+         "doc_id": "PROPOSAL",
+         "anchor": "P4",
+         "quote": "Support: 30 days of post-launch support for bugs is included. After that, help is billed at $80/hour.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      }
+     ],
+     "client_message": "Hi Greg, the site is down because HostPeak suspended the account after the hosting payment lapsed. The website itself was delivered and working as you confirmed in June. I can help you update the payment method or provide any additional fixes at the contract rate of $80/hour. Let me know how you’d like to proceed, and we’ll get the site back online quickly.",
+     "evidence_package": [
+      {
+       "doc_id": "PROPOSAL",
+       "evidence_type": "COPY_OF_CONTRACT",
+       "why": "Shows scope, fees, hosting responsibility, and support terms"
+      },
+      {
+       "doc_id": "EMAILS",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Launch confirmation and client acceptance"
+      },
+      {
+       "doc_id": "UPTIME",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Shows site was up for 112 days and later suspension details"
+      },
+      {
+       "doc_id": "HANDOVER",
+       "evidence_type": "OTHER",
+       "why": "Explains that hosting suspension is due to client’s payment issue"
+      }
+     ]
+    },
+    "removed": [],
+    "package": {
+     "actions": [
+      {
+       "kind": "provide_evidence",
+       "label": "Submit evidence to PayPal",
+       "method": "POST",
+       "path": "/v1/customer/disputes/PP-D-27162-PATEL/provide-evidence",
+       "contentType": "multipart/form-data",
+       "input": {
+        "evidences": [
+         {
+          "evidence_type": "COPY_OF_CONTRACT",
+          "notes": "The buyer was charged $1,800 on 2026-06-16 for invoice AWS-2026-031. [1]\n\nThe contract specified that I would design and build a 6-page website and launch it on the client’s own hosting account for a fee of $1,800. [2]\n\nThe client was responsible for all hosting and domain payments, and the developer does not control the billing. [3]\n\nOn 2026-06-12 I confirmed the site was live and provided all login credentials; the site returned HTTP 200 and remained up for 112 consecutive days. [4][5]\n\nThe client replied on 2026-06-13 that the site looked fantastic and was already receiving appointment requests. [6]\n\nThe contract included 30 days of post‑launch bug‑fix support ending on 2026-07-12; after that any work is billed at $80 per hour. [7][8]\n\nOn 2026-10-02 the site returned a “Account Suspended – HostPeak” page, which the handover document explains is caused by a billing issue on the client’s hosting account. [9][10]\n\nThe chargeback reason “MERCHANDISE_OR_SERVICE_NOT_RECEIVED” does not apply because the website was delivered, functional, and accepted by the client. [11][6]\n\nTherefore no refund is owed; I am willing to assist the client in updating the hosting payment or provide further support at the agreed $80 hourly rate. [7]",
+          "documents": [
+           {
+            "name": "response-letter.pdf"
+           },
+           {
+            "name": "evidence-appendix.pdf"
+           }
+          ]
+         }
+        ]
+       },
+       "files": [
+        {
+         "field": "evidence-file",
+         "name": "response-letter.pdf",
+         "type": "application/pdf",
+         "size": 6627
+        },
+        {
+         "field": "evidence-file",
+         "name": "evidence-appendix.pdf",
+         "type": "application/pdf",
+         "size": 3912
+        }
+       ]
+      },
+      {
+       "kind": "email",
+       "label": "Email Greg Patel directly",
+       "to": "greg@patelfamilydental.com",
+       "note": "PayPal messaging is closed in the chargeback stage, so this goes by email.",
+       "body": {
+        "message": "Hi Greg, the site is down because HostPeak suspended the account after the hosting payment lapsed. The website itself was delivered and working as you confirmed in June. I can help you update the payment method or provide any additional fixes at the contract rate of $80/hour. Let me know how you’d like to proceed, and we’ll get the site back online quickly."
+       }
+      }
+     ],
+     "footnotes": [
+      {
+       "doc_id": "DISPUTE",
+       "anchor": "TXN",
+       "quote": "Disputed transaction: PayPal transaction 9PF20448RT6610093 on 2026-06-16 for $1,800.00 USD, invoice AWS-2026-031, buyer Greg Patel."
+      },
+      {
+       "doc_id": "PROPOSAL",
+       "anchor": "P1",
+       "quote": "Scope: Design and build a 6-page website (Home, Services, Team, Insurance, New Patients, Contact) with online appointment request form, and launch it on Client's hosting account. Fee: $1,800."
+      },
+      {
+       "doc_id": "PROPOSAL",
+       "anchor": "P2",
+       "quote": "Hosting and domain: Hosting and the domain patelfamilydental.com are purchased by and registered to Client, billed to Client's own card. Client is responsible for keeping hosting and domain renewals current. Developer does not control Client's billing."
+      },
+      {
+       "doc_id": "EMAILS",
+       "anchor": "E1",
+       "quote": "Jun 12 - Sofia to Greg: We're live: Greg, patelfamilydental.com is live! Attached is your handover doc with the logins for your hosting account (HostPeak), the website editor and your domain. Everything is in your name."
+      },
+      {
+       "doc_id": "UPTIME",
+       "anchor": "U1",
+       "quote": "Up: 2026-06-12 18:02 UTC - Site UP (HTTP 200). Continuously up for 112 days."
+      },
+      {
+       "doc_id": "EMAILS",
+       "anchor": "E2",
+       "quote": "Jun 13 - Greg to Sofia: Looks fantastic. Our front desk already got two appointment requests through the form this morning. Thank you!"
+      },
+      {
+       "doc_id": "PROPOSAL",
+       "anchor": "P4",
+       "quote": "Support: 30 days of post-launch support for bugs is included. After that, help is billed at $80/hour."
+      },
+      {
+       "doc_id": "EMAILS",
+       "anchor": "E3",
+       "quote": "Jun 16 - Sofia to Greg: So glad to hear it! Invoice AWS-2026-031 sent via PayPal. Your 30 days of support run until July 12."
+      },
+      {
+       "doc_id": "UPTIME",
+       "anchor": "U2",
+       "quote": "Status change: 2026-10-02 04:00 UTC - Site DOWN. Response HTTP 503 with page title \"Account Suspended - HostPeak\". Body text: \"This account has been suspended due to a billing issue. If you are the account owner, please log in to update your payment method.\""
+      },
+      {
+       "doc_id": "HANDOVER",
+       "anchor": "H3",
+       "quote": "If the site ever goes down: First check that the HostPeak payment method is current; suspended hosting shows an \"Account Suspended\" page. Updating the card restores the site within minutes."
+      },
+      {
+       "doc_id": "DISPUTE",
+       "anchor": "REASON",
+       "quote": "Filed reason: Reason code: MERCHANDISE_OR_SERVICE_NOT_RECEIVED (Service not received). Card network code: 13.1. Channel: EXTERNAL. Stage: CHARGEBACK. Amount disputed: $1,800.00 USD."
+      }
+     ],
+     "letter": [
+      "The buyer was charged $1,800 on 2026-06-16 for invoice AWS-2026-031. [1]",
+      "The contract specified that I would design and build a 6-page website and launch it on the client’s own hosting account for a fee of $1,800. [2]",
+      "The client was responsible for all hosting and domain payments, and the developer does not control the billing. [3]",
+      "On 2026-06-12 I confirmed the site was live and provided all login credentials; the site returned HTTP 200 and remained up for 112 consecutive days. [4][5]",
+      "The client replied on 2026-06-13 that the site looked fantastic and was already receiving appointment requests. [6]",
+      "The contract included 30 days of post‑launch bug‑fix support ending on 2026-07-12; after that any work is billed at $80 per hour. [7][8]",
+      "On 2026-10-02 the site returned a “Account Suspended – HostPeak” page, which the handover document explains is caused by a billing issue on the client’s hosting account. [9][10]",
+      "The chargeback reason “MERCHANDISE_OR_SERVICE_NOT_RECEIVED” does not apply because the website was delivered, functional, and accepted by the client. [11][6]",
+      "Therefore no refund is owed; I am willing to assist the client in updating the hosting payment or provide further support at the agreed $80 hourly rate. [7]"
+     ],
+     "clientMessage": "Hi Greg, the site is down because HostPeak suspended the account after the hosting payment lapsed. The website itself was delivered and working as you confirmed in June. I can help you update the payment method or provide any additional fixes at the contract rate of $80/hour. Let me know how you’d like to proceed, and we’ll get the site back online quickly.",
+     "evidencePackage": [
+      {
+       "doc_id": "PROPOSAL",
+       "evidence_type": "COPY_OF_CONTRACT",
+       "why": "Shows scope, fees, hosting responsibility, and support terms"
+      },
+      {
+       "doc_id": "EMAILS",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Launch confirmation and client acceptance"
+      },
+      {
+       "doc_id": "UPTIME",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Shows site was up for 112 days and later suspension details"
+      },
+      {
+       "doc_id": "HANDOVER",
+       "evidence_type": "OTHER",
+       "why": "Explains that hosting suspension is due to client’s payment issue"
+      }
+     ],
+     "_files": [
+      {
+       "field": "evidence-file",
+       "name": "response-letter.pdf",
+       "type": "application/pdf",
+       "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUiA3IDAgUl0gL0NvdW50IDIgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQzOTIgPj4Kc3RyZWFtCkJUIC9GMiAxNSBUZiA1NiA3MzYgVGQgKFJlc3BvbnNlIHRvIENoYXJnZWJhY2sgLSBTZXJ2aWNlIERlbGl2ZXJlZCBhbmQgSG9zdGluZyBJc3N1ZSkgVGogRVQKQlQgL0YxIDEwIFRmIDU2IDcxMyBUZCAoRGlzcHV0ZSBQUC1ELTI3MTYyLVBBVEVMIC0gU2VydmljZSBub3QgcmVjZWl2ZWQgLSAxODAwLjAwIFVTRCkgVGogRVQKQlQgL0YxIDEwIFRmIDU2IDY5OSBUZCAoU3VibWl0dGVkIGJ5IFNvZmlhIEFsdmFyZXosIEFsdmFyZXogV2ViIFN0dWRpbyBcKHNvZmlhQGFsdmFyZXp3ZWIuc3R1ZGlvXCkpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA2NzcgVGQgKFRoZSBidXllciB3YXMgY2hhcmdlZCAkMSw4MDAgb24gMjAyNi0wNi0xNiBmb3IgaW52b2ljZSBBV1MtMjAyNi0wMzEuIFsxXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDY1NCBUZCAoVGhlIGNvbnRyYWN0IHNwZWNpZmllZCB0aGF0IEkgd291bGQgZGVzaWduIGFuZCBidWlsZCBhIDYtcGFnZSB3ZWJzaXRlIGFuZCBsYXVuY2ggaXQgb24gdGhlKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjM5IFRkIChjbGllbnQncyBvd24gaG9zdGluZyBhY2NvdW50IGZvciBhIGZlZSBvZiAkMSw4MDAuIFsyXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDYxNiBUZCAoVGhlIGNsaWVudCB3YXMgcmVzcG9uc2libGUgZm9yIGFsbCBob3N0aW5nIGFuZCBkb21haW4gcGF5bWVudHMsIGFuZCB0aGUgZGV2ZWxvcGVyIGRvZXMgbm90KSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjAxIFRkIChjb250cm9sIHRoZSBiaWxsaW5nLiBbM10pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1NzggVGQgKE9uIDIwMjYtMDYtMTIgSSBjb25maXJtZWQgdGhlIHNpdGUgd2FzIGxpdmUgYW5kIHByb3ZpZGVkIGFsbCBsb2dpbiBjcmVkZW50aWFsczsgdGhlIHNpdGUpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1NjMgVGQgKHJldHVybmVkIEhUVFAgMjAwIGFuZCByZW1haW5lZCB1cCBmb3IgMTEyIGNvbnNlY3V0aXZlIGRheXMuIFs0XVs1XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU0MCBUZCAoVGhlIGNsaWVudCByZXBsaWVkIG9uIDIwMjYtMDYtMTMgdGhhdCB0aGUgc2l0ZSBsb29rZWQgZmFudGFzdGljIGFuZCB3YXMgYWxyZWFkeSByZWNlaXZpbmcpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1MjUgVGQgKGFwcG9pbnRtZW50IHJlcXVlc3RzLiBbNl0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1MDIgVGQgKFRoZSBjb250cmFjdCBpbmNsdWRlZCAzMCBkYXlzIG9mIHBvc3QtbGF1bmNoIGJ1Zy1maXggc3VwcG9ydCBlbmRpbmcgb24gMjAyNi0wNy0xMjsgYWZ0ZXIpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA0ODcgVGQgKHRoYXQgYW55IHdvcmsgaXMgYmlsbGVkIGF0ICQ4MCBwZXIgaG91ci4gWzddWzhdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDY0IFRkIChPbiAyMDI2LTEwLTAyIHRoZSBzaXRlIHJldHVybmVkIGEgIkFjY291bnQgU3VzcGVuZGVkIC0gSG9zdFBlYWsiIHBhZ2UsIHdoaWNoIHRoZSBoYW5kb3ZlcikgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQ0OSBUZCAoZG9jdW1lbnQgZXhwbGFpbnMgaXMgY2F1c2VkIGJ5IGEgYmlsbGluZyBpc3N1ZSBvbiB0aGUgY2xpZW50J3MgaG9zdGluZyBhY2NvdW50LiBbOV1bMTBdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDI2IFRkIChUaGUgY2hhcmdlYmFjayByZWFzb24gIk1FUkNIQU5ESVNFX09SX1NFUlZJQ0VfTk9UX1JFQ0VJVkVEIiBkb2VzIG5vdCBhcHBseSBiZWNhdXNlIHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQxMSBUZCAod2Vic2l0ZSB3YXMgZGVsaXZlcmVkLCBmdW5jdGlvbmFsLCBhbmQgYWNjZXB0ZWQgYnkgdGhlIGNsaWVudC4gWzExXVs2XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDM4OCBUZCAoVGhlcmVmb3JlIG5vIHJlZnVuZCBpcyBvd2VkOyBJIGFtIHdpbGxpbmcgdG8gYXNzaXN0IHRoZSBjbGllbnQgaW4gdXBkYXRpbmcgdGhlIGhvc3RpbmcpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAzNzMgVGQgKHBheW1lbnQgb3IgcHJvdmlkZSBmdXJ0aGVyIHN1cHBvcnQgYXQgdGhlIGFncmVlZCAkODAgaG91cmx5IHJhdGUuIFs3XSkgVGogRVQKQlQgL0YyIDEyIFRmIDU2IDM0MiBUZCAoU291cmNlcykgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzIzIFRkIChbMV0gUGF5UGFsIGRpc3B1dGUgUFAtRC0yNzE2Mi1QQVRFTCwgVFhOIFwoUGF5UGFsIERpc3B1dGVzIEFQSVwpOiAiRGlzcHV0ZWQgdHJhbnNhY3Rpb246IFBheVBhbCB0cmFuc2FjdGlvbikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzA5IFRkICg5UEYyMDQ0OFJUNjYxMDA5MyBvbiAyMDI2LTA2LTE2IGZvciAkMSw4MDAuMDAgVVNELCBpbnZvaWNlIEFXUy0yMDI2LTAzMSwgYnV5ZXIgR3JlZyBQYXRlbC4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyOTIgVGQgKFsyXSBXZWJzaXRlIHByb3Bvc2FsICsgdGVybXMgXChhY2NlcHRlZFwpLCBQMSBcKEFjY2VwdGVkIHByb3Bvc2FsIFBERlwpOiAiU2NvcGU6IERlc2lnbiBhbmQgYnVpbGQgYSA2LXBhZ2Ugd2Vic2l0ZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjc4IFRkIChcKEhvbWUsIFNlcnZpY2VzLCBUZWFtLCBJbnN1cmFuY2UsIE5ldyBQYXRpZW50cywgQ29udGFjdFwpIHdpdGggb25saW5lIGFwcG9pbnRtZW50IHJlcXVlc3QgZm9ybSwgYW5kIGxhdW5jaCBpdCBvbikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjY0IFRkIChDbGllbnQncyBob3N0aW5nIGFjY291bnQuIEZlZTogJDEsODAwLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI0NyBUZCAoWzNdIFdlYnNpdGUgcHJvcG9zYWwgKyB0ZXJtcyBcKGFjY2VwdGVkXCksIFAyIFwoQWNjZXB0ZWQgcHJvcG9zYWwgUERGXCk6ICJIb3N0aW5nIGFuZCBkb21haW46IEhvc3RpbmcgYW5kIHRoZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjMzIFRkIChkb21haW4gcGF0ZWxmYW1pbHlkZW50YWwuY29tIGFyZSBwdXJjaGFzZWQgYnkgYW5kIHJlZ2lzdGVyZWQgdG8gQ2xpZW50LCBiaWxsZWQgdG8gQ2xpZW50J3Mgb3duIGNhcmQuIENsaWVudCBpcykgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjE5IFRkIChyZXNwb25zaWJsZSBmb3Iga2VlcGluZyBob3N0aW5nIGFuZCBkb21haW4gcmVuZXdhbHMgY3VycmVudC4gRGV2ZWxvcGVyIGRvZXMgbm90IGNvbnRyb2wgQ2xpZW50J3MgYmlsbGluZy4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyMDIgVGQgKFs0XSBFbWFpbCB0aHJlYWQ6IFNvZmlhIDwtPiBHcmVnLCBFMSBcKEZyZWVsYW5jZXIncyBlbWFpbCBleHBvcnRcKTogIkp1biAxMiAtIFNvZmlhIHRvIEdyZWc6IFdlJ3JlIGxpdmU6IEdyZWcsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxODggVGQgKHBhdGVsZmFtaWx5ZGVudGFsLmNvbSBpcyBsaXZlISBBdHRhY2hlZCBpcyB5b3VyIGhhbmRvdmVyIGRvYyB3aXRoIHRoZSBsb2dpbnMgZm9yIHlvdXIgaG9zdGluZyBhY2NvdW50KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNzQgVGQgKFwoSG9zdFBlYWtcKSwgdGhlIHdlYnNpdGUgZWRpdG9yIGFuZCB5b3VyIGRvbWFpbi4gRXZlcnl0aGluZyBpcyBpbiB5b3VyIG5hbWUuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTU3IFRkIChbNV0gVXB0aW1lIG1vbml0b3IgaGlzdG9yeTogcGF0ZWxmYW1pbHlkZW50YWwuY29tLCBVMSBcKEZyZWVsYW5jZXIncyB1cHRpbWUgbW9uaXRvcmluZyBzZXJ2aWNlXCk6ICJVcDogMjAyNi0wNi0xMikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTQzIFRkICgxODowMiBVVEMgLSBTaXRlIFVQIFwoSFRUUCAyMDBcKS4gQ29udGludW91c2x5IHVwIGZvciAxMTIgZGF5cy4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMjYgVGQgKFs2XSBFbWFpbCB0aHJlYWQ6IFNvZmlhIDwtPiBHcmVnLCBFMiBcKEZyZWVsYW5jZXIncyBlbWFpbCBleHBvcnRcKTogIkp1biAxMyAtIEdyZWcgdG8gU29maWE6IExvb2tzIGZhbnRhc3RpYy4gT3VyKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMTIgVGQgKGZyb250IGRlc2sgYWxyZWFkeSBnb3QgdHdvIGFwcG9pbnRtZW50IHJlcXVlc3RzIHRocm91Z2ggdGhlIGZvcm0gdGhpcyBtb3JuaW5nLiBUaGFuayB5b3UhIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgOTUgVGQgKFs3XSBXZWJzaXRlIHByb3Bvc2FsICsgdGVybXMgXChhY2NlcHRlZFwpLCBQNCBcKEFjY2VwdGVkIHByb3Bvc2FsIFBERlwpOiAiU3VwcG9ydDogMzAgZGF5cyBvZiBwb3N0LWxhdW5jaCBzdXBwb3J0KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA4MSBUZCAoZm9yIGJ1Z3MgaXMgaW5jbHVkZWQuIEFmdGVyIHRoYXQsIGhlbHAgaXMgYmlsbGVkIGF0ICQ4MC9ob3VyLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0IFRkIChbOF0gRW1haWwgdGhyZWFkOiBTb2ZpYSA8LT4gR3JlZywgRTMgXChGcmVlbGFuY2VyJ3MgZW1haWwgZXhwb3J0XCk6ICJKdW4gMTYgLSBTb2ZpYSB0byBHcmVnOiBTbyBnbGFkIHRvIGhlYXIgaXQhKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCjcgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSAzIDAgUiAvRjIgNCAwIFIgPj4gPj4gL0NvbnRlbnRzIDggMCBSID4+CmVuZG9iago4IDAgb2JqCjw8IC9MZW5ndGggMTI5NSA+PgpzdHJlYW0KQlQgL0YxIDkgVGYgNTYgNzM2IFRkIChJbnZvaWNlIEFXUy0yMDI2LTAzMSBzZW50IHZpYSBQYXlQYWwuIFlvdXIgMzAgZGF5cyBvZiBzdXBwb3J0IHJ1biB1bnRpbCBKdWx5IDEyLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDcxOSBUZCAoWzldIFVwdGltZSBtb25pdG9yIGhpc3Rvcnk6IHBhdGVsZmFtaWx5ZGVudGFsLmNvbSwgVTIgXChGcmVlbGFuY2VyJ3MgdXB0aW1lIG1vbml0b3Jpbmcgc2VydmljZVwpOiAiU3RhdHVzIGNoYW5nZTopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDcwNSBUZCAoMjAyNi0xMC0wMiAwNDowMCBVVEMgLSBTaXRlIERPV04uIFJlc3BvbnNlIEhUVFAgNTAzIHdpdGggcGFnZSB0aXRsZSAiQWNjb3VudCBTdXNwZW5kZWQgLSBIb3N0UGVhayIuIEJvZHkgdGV4dDopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY5MSBUZCAoIlRoaXMgYWNjb3VudCBoYXMgYmVlbiBzdXNwZW5kZWQgZHVlIHRvIGEgYmlsbGluZyBpc3N1ZS4gSWYgeW91IGFyZSB0aGUgYWNjb3VudCBvd25lciwgcGxlYXNlIGxvZyBpbiB0byB1cGRhdGUpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY3NyBUZCAoeW91ciBwYXltZW50IG1ldGhvZC4iIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjYwIFRkIChbMTBdIEhhbmRvdmVyIGRvY3VtZW50IFwoc2VudCBKdW4gMTJcKSwgSDMgXChQREYgYXR0YWNoZWQgdG8gbGF1bmNoIGVtYWlsXCk6ICJJZiB0aGUgc2l0ZSBldmVyIGdvZXMgZG93bjogRmlyc3QpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0NiBUZCAoY2hlY2sgdGhhdCB0aGUgSG9zdFBlYWsgcGF5bWVudCBtZXRob2QgaXMgY3VycmVudDsgc3VzcGVuZGVkIGhvc3Rpbmcgc2hvd3MgYW4gIkFjY291bnQgU3VzcGVuZGVkIiBwYWdlLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjMyIFRkIChVcGRhdGluZyB0aGUgY2FyZCByZXN0b3JlcyB0aGUgc2l0ZSB3aXRoaW4gbWludXRlcy4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTUgVGQgKFsxMV0gUGF5UGFsIGRpc3B1dGUgUFAtRC0yNzE2Mi1QQVRFTCwgUkVBU09OIFwoUGF5UGFsIERpc3B1dGVzIEFQSVwpOiAiRmlsZWQgcmVhc29uOiBSZWFzb24gY29kZTopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDYwMSBUZCAoTUVSQ0hBTkRJU0VfT1JfU0VSVklDRV9OT1RfUkVDRUlWRUQgXChTZXJ2aWNlIG5vdCByZWNlaXZlZFwpLiBDYXJkIG5ldHdvcmsgY29kZTogMTMuMS4gQ2hhbm5lbDogRVhURVJOQUwuIFN0YWdlOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTg3IFRkIChDSEFSR0VCQUNLLiBBbW91bnQgZGlzcHV0ZWQ6ICQxLDgwMC4wMCBVU0QuIikgVGogRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTIxIDAwMDAwIG4gCjAwMDAwMDAyMTggMDAwMDAgbiAKMDAwMDAwMDMyMCAwMDAwMCBuIAowMDAwMDAwNDU2IDAwMDAwIG4gCjAwMDAwMDQ5MDAgMDAwMDAgbiAKMDAwMDAwNTAzNiAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDkgL1Jvb3QgMSAwIFIgPj4Kc3RhcnR4cmVmCjYzODMKJSVFT0YK"
+      },
+      {
+       "field": "evidence-file",
+       "name": "evidence-appendix.pdf",
+       "type": "application/pdf",
+       "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDMyMDYgPj4Kc3RyZWFtCkJUIC9GMiAxNCBUZiA1NiA3MzYgVGQgKEV2aWRlbmNlIGFwcGVuZGl4OiBmdWxsIHRleHQgb2YgZXZlcnkgY2l0ZWQgc2VjdGlvbikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDcwNiBUZCAoUGF5UGFsIGRpc3B1dGUgUFAtRC0yNzE2Mi1QQVRFTCAtIHNvdXJjZTogUGF5UGFsIERpc3B1dGVzIEFQSSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjg4IFRkIChUWE4gRGlzcHV0ZWQgdHJhbnNhY3Rpb246IFBheVBhbCB0cmFuc2FjdGlvbiA5UEYyMDQ0OFJUNjYxMDA5MyBvbiAyMDI2LTA2LTE2IGZvciAkMSw4MDAuMDAgVVNELCBpbnZvaWNlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NzQgVGQgKEFXUy0yMDI2LTAzMSwgYnV5ZXIgR3JlZyBQYXRlbC4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY1NyBUZCAoUkVBU09OIEZpbGVkIHJlYXNvbjogUmVhc29uIGNvZGU6IE1FUkNIQU5ESVNFX09SX1NFUlZJQ0VfTk9UX1JFQ0VJVkVEIFwoU2VydmljZSBub3QgcmVjZWl2ZWRcKS4gQ2FyZCBuZXR3b3JrKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NDMgVGQgKGNvZGU6IDEzLjEuIENoYW5uZWw6IEVYVEVSTkFMLiBTdGFnZTogQ0hBUkdFQkFDSy4gQW1vdW50IGRpc3B1dGVkOiAkMSw4MDAuMDAgVVNELikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDYxNyBUZCAoV2Vic2l0ZSBwcm9wb3NhbCArIHRlcm1zIFwoYWNjZXB0ZWRcKSAtIHNvdXJjZTogQWNjZXB0ZWQgcHJvcG9zYWwgUERGKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1OTkgVGQgKFAxIFNjb3BlOiBEZXNpZ24gYW5kIGJ1aWxkIGEgNi1wYWdlIHdlYnNpdGUgXChIb21lLCBTZXJ2aWNlcywgVGVhbSwgSW5zdXJhbmNlLCBOZXcgUGF0aWVudHMsIENvbnRhY3RcKSB3aXRoKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1ODUgVGQgKG9ubGluZSBhcHBvaW50bWVudCByZXF1ZXN0IGZvcm0sIGFuZCBsYXVuY2ggaXQgb24gQ2xpZW50J3MgaG9zdGluZyBhY2NvdW50LiBGZWU6ICQxLDgwMC4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU2OCBUZCAoUDIgSG9zdGluZyBhbmQgZG9tYWluOiBIb3N0aW5nIGFuZCB0aGUgZG9tYWluIHBhdGVsZmFtaWx5ZGVudGFsLmNvbSBhcmUgcHVyY2hhc2VkIGJ5IGFuZCByZWdpc3RlcmVkIHRvIENsaWVudCwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU1NCBUZCAoYmlsbGVkIHRvIENsaWVudCdzIG93biBjYXJkLiBDbGllbnQgaXMgcmVzcG9uc2libGUgZm9yIGtlZXBpbmcgaG9zdGluZyBhbmQgZG9tYWluIHJlbmV3YWxzIGN1cnJlbnQuIERldmVsb3BlcikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTQwIFRkIChkb2VzIG5vdCBjb250cm9sIENsaWVudCdzIGJpbGxpbmcuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1MjMgVGQgKFA0IFN1cHBvcnQ6IDMwIGRheXMgb2YgcG9zdC1sYXVuY2ggc3VwcG9ydCBmb3IgYnVncyBpcyBpbmNsdWRlZC4gQWZ0ZXIgdGhhdCwgaGVscCBpcyBiaWxsZWQgYXQgJDgwL2hvdXIuKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgNDk3IFRkIChFbWFpbCB0aHJlYWQ6IFNvZmlhIDwtPiBHcmVnIC0gc291cmNlOiBGcmVlbGFuY2VyJ3MgZW1haWwgZXhwb3J0KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NzkgVGQgKEUxIEp1biAxMiAtIFNvZmlhIHRvIEdyZWc6IFdlJ3JlIGxpdmU6IEdyZWcsIHBhdGVsZmFtaWx5ZGVudGFsLmNvbSBpcyBsaXZlISBBdHRhY2hlZCBpcyB5b3VyIGhhbmRvdmVyIGRvYyB3aXRoKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NjUgVGQgKHRoZSBsb2dpbnMgZm9yIHlvdXIgaG9zdGluZyBhY2NvdW50IFwoSG9zdFBlYWtcKSwgdGhlIHdlYnNpdGUgZWRpdG9yIGFuZCB5b3VyIGRvbWFpbi4gRXZlcnl0aGluZyBpcyBpbiB5b3VyIG5hbWUuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NDggVGQgKEUyIEp1biAxMyAtIEdyZWcgdG8gU29maWE6IExvb2tzIGZhbnRhc3RpYy4gT3VyIGZyb250IGRlc2sgYWxyZWFkeSBnb3QgdHdvIGFwcG9pbnRtZW50IHJlcXVlc3RzIHRocm91Z2ggdGhlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0MzQgVGQgKGZvcm0gdGhpcyBtb3JuaW5nLiBUaGFuayB5b3UhKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0MTcgVGQgKEUzIEp1biAxNiAtIFNvZmlhIHRvIEdyZWc6IFNvIGdsYWQgdG8gaGVhciBpdCEgSW52b2ljZSBBV1MtMjAyNi0wMzEgc2VudCB2aWEgUGF5UGFsLiBZb3VyIDMwIGRheXMgb2Ygc3VwcG9ydCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDAzIFRkIChydW4gdW50aWwgSnVseSAxMi4pIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAzNzcgVGQgKFVwdGltZSBtb25pdG9yIGhpc3Rvcnk6IHBhdGVsZmFtaWx5ZGVudGFsLmNvbSAtIHNvdXJjZTogRnJlZWxhbmNlcidzIHVwdGltZSBtb25pdG9yaW5nKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgMzYyIFRkIChzZXJ2aWNlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzNDQgVGQgKFUxIFVwOiAyMDI2LTA2LTEyIDE4OjAyIFVUQyAtIFNpdGUgVVAgXChIVFRQIDIwMFwpLiBDb250aW51b3VzbHkgdXAgZm9yIDExMiBkYXlzLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzI3IFRkIChVMiBTdGF0dXMgY2hhbmdlOiAyMDI2LTEwLTAyIDA0OjAwIFVUQyAtIFNpdGUgRE9XTi4gUmVzcG9uc2UgSFRUUCA1MDMgd2l0aCBwYWdlIHRpdGxlICJBY2NvdW50IFN1c3BlbmRlZCAtKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMTMgVGQgKEhvc3RQZWFrIi4gQm9keSB0ZXh0OiAiVGhpcyBhY2NvdW50IGhhcyBiZWVuIHN1c3BlbmRlZCBkdWUgdG8gYSBiaWxsaW5nIGlzc3VlLiBJZiB5b3UgYXJlIHRoZSBhY2NvdW50IG93bmVyLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjk5IFRkIChwbGVhc2UgbG9nIGluIHRvIHVwZGF0ZSB5b3VyIHBheW1lbnQgbWV0aG9kLiIpIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAyNzMgVGQgKEhhbmRvdmVyIGRvY3VtZW50IFwoc2VudCBKdW4gMTJcKSAtIHNvdXJjZTogUERGIGF0dGFjaGVkIHRvIGxhdW5jaCBlbWFpbCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjU1IFRkIChIMyBJZiB0aGUgc2l0ZSBldmVyIGdvZXMgZG93bjogRmlyc3QgY2hlY2sgdGhhdCB0aGUgSG9zdFBlYWsgcGF5bWVudCBtZXRob2QgaXMgY3VycmVudDsgc3VzcGVuZGVkIGhvc3Rpbmcgc2hvd3MpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI0MSBUZCAoYW4gIkFjY291bnQgU3VzcGVuZGVkIiBwYWdlLiBVcGRhdGluZyB0aGUgY2FyZCByZXN0b3JlcyB0aGUgc2l0ZSB3aXRoaW4gbWludXRlcy4pIFRqIEVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNTggMDAwMDAgbiAKMDAwMDAwMDExNSAwMDAwMCBuIAowMDAwMDAwMjEyIDAwMDAwIG4gCjAwMDAwMDAzMTQgMDAwMDAgbiAKMDAwMDAwMDQ1MCAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDcgL1Jvb3QgMSAwIFIgPj4Kc3RhcnR4cmVmCjM3MDgKJSVFT0YK"
+      }
+     ]
+    },
+    "usage": {
+     "prompt": 32343,
+     "completion": 9767,
+     "calls": 13
+    }
+   }
+  }
+ ]
+}

@@ -122,7 +122,7 @@ Each one is a real live run of the agent, recorded and played back with the "Rep
 
 | Dispute | Key evidence found | Strategy | Claims grounded | Notes |
 |---|---|---|---|---|
-| Halden (hero) | 3/4 | ✓ contest + fix | 8/8 | Misses the copyright-on-payment twist (§6.1). |
-| Tandem | 3/4 | ✓ contest + fix | 8/8 | Says "internal communication breakdown" but doesn't mention the co-founder leaving (Slack K3). |
+| Halden (hero) | 3/4 | ✓ contest + fix | 8/8 | Finds the copyright-on-payment twist (§6.1): tells the bank a reversal would cost the client the logo. Missed the contact-form message this run. |
+| Tandem | 4/4 | ✓ contest + fix | 10/10 | Explains the co-founder who hired Marcus had left (Slack K3). |
 | Brightline | 4/4 | ✓ partial refund + contest | 10/10 | Honest case handled correctly. |
-| Patel | not recorded | | | First attempt hit a Groq JSON glitch (now handled); the retry hit the daily token quota. Record it when quota frees: `node scripts/run-one.js PP-D-27162-PATEL --save`. |
+| Patel | 3/4 | ✓ contest + fix | 9/9 | Finds the client's own hosting lapsed; missed the Google review (R2). |
