@@ -1,0 +1,2292 @@
+{
+ "recorded_at": "2026-10-20T06:48:53.895Z",
+ "events": [
+  {
+   "t": 1,
+   "type": "stage",
+   "payload": {
+    "stage": "intake",
+    "status": "start"
+   }
+  },
+  {
+   "t": 1,
+   "type": "stage",
+   "payload": {
+    "stage": "intake",
+    "status": "done",
+    "data": {
+     "dispute_id": "PP-D-27170-BRIGHT",
+     "reason": "MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED",
+     "amount": {
+      "currency_code": "USD",
+      "value": "1500.00"
+     },
+     "statement": "Cardholder statement forwarded by issuing bank: The content we paid for was incomplete and low quality. The writer stopped responding. We want our money back.",
+     "sources": {
+      "dispute": "Seeded demo record (PayPal Disputes API format)",
+      "transactions": "Seeded demo records (PayPal Transaction Search format)"
+     },
+     "documents": [
+      {
+       "doc_id": "DISPUTE",
+       "title": "PayPal dispute PP-D-27170-BRIGHT",
+       "kind": "paypal_record",
+       "date": "",
+       "source": "PayPal Disputes API",
+       "summary": "The dispute as filed: reason code, disputed transaction and the client's own statement.",
+       "sections": 3
+      },
+      {
+       "doc_id": "PAYPAL-TXN",
+       "title": "Payment history between this client and the freelancer",
+       "kind": "paypal_record",
+       "date": "",
+       "source": "Seeded demo records (PayPal Transaction Search format)",
+       "summary": "1 PayPal transaction(s) from this payer, with dates, amounts, invoice numbers and item details.",
+       "sections": 1
+      },
+      {
+       "doc_id": "AGREEMENT",
+       "title": "Content agreement (email acceptance)",
+       "kind": "contract",
+       "date": "2026-08-04",
+       "source": "Email-accepted agreement",
+       "summary": "Deliverables, pricing per piece, schedule.",
+       "sections": 4
+      },
+      {
+       "doc_id": "DELIVERIES",
+       "title": "Delivery log (shared Google Drive folder)",
+       "kind": "system_log",
+       "date": "2026-08-12 to 2026-10-10",
+       "source": "Google Drive activity export",
+       "summary": "What was delivered and when.",
+       "sections": 6
+      },
+      {
+       "doc_id": "EMAILS",
+       "title": "Email thread: Jordan <-> Nadia",
+       "kind": "correspondence",
+       "date": "2026-08-19 to 2026-09-24",
+       "source": "Freelancer's email export",
+       "summary": "Feedback on pieces and follow-ups about the last article.",
+       "sections": 4
+      },
+      {
+       "doc_id": "BLOG",
+       "title": "brightlinefit.com/blog (public pages, captured Oct 10)",
+       "kind": "public_record",
+       "date": "2026-10-10",
+       "source": "Page captures by freelancer",
+       "summary": "Which delivered pieces the client published.",
+       "sections": 2
+      }
+     ]
+    }
+   }
+  },
+  {
+   "t": 1,
+   "type": "stage",
+   "payload": {
+    "stage": "read",
+    "status": "start"
+   }
+  },
+  {
+   "t": 166,
+   "type": "pacing",
+   "payload": {
+    "ms": 11000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 14251,
+   "type": "stage",
+   "payload": {
+    "stage": "read",
+    "status": "done",
+    "data": {
+     "stated_complaint": "The client claims the content was incomplete and low quality, the writer stopped responding, and therefore they want a refund.",
+     "literal_claims": [
+      {
+       "claim": "The content was incomplete",
+       "quote": "The content we paid for was incomplete"
+      },
+      {
+       "claim": "The content was low quality",
+       "quote": "The content we paid for was ... low quality"
+      },
+      {
+       "claim": "The writer stopped responding",
+       "quote": "The writer stopped responding"
+      }
+     ],
+     "vague_phrases": [
+      {
+       "phrase": "incomplete",
+       "could_mean": [
+        "missing sections",
+        "unfinished drafts",
+        "lacked required deliverables",
+        "partial content only"
+       ]
+      },
+      {
+       "phrase": "low quality",
+       "could_mean": [
+        "poor writing style",
+        "numerous grammatical errors",
+        "did not match brand tone",
+        "generic or filler content"
+       ]
+      },
+      {
+       "phrase": "stopped responding",
+       "could_mean": [
+        "no replies to messages after delivery",
+        "ignored follow‑up emails",
+        "failed to address revision requests",
+        "became uncontactable"
+       ]
+      }
+     ],
+     "reviewer_tests": [
+      "What exactly was the service described as (contract, invoice, scope)?",
+      "Did what was delivered match that description?",
+      "Did the client accept or approve the work?",
+      "Has the client used the work since (signs that it was fit for purpose)?"
+     ],
+     "open_questions": [
+      "What specific deliverables were outlined in the contract/invoice for the copywriting project?",
+      "Did Jordan Kim submit all agreed‑upon files, and on what date were they delivered?",
+      "Did Nadia Rossi acknowledge receipt of the files and provide any acceptance or revision feedback?",
+      "Were there any communications from the freelancer after delivery, and if so, what was their content/timing?",
+      "Has Brightline Fitness used the delivered copy in any marketing material or on their website?",
+      "If revisions were requested, were they provided within the agreed timeframe?"
+     ]
+    },
+    "thinking": "We need to produce JSON according to read_complaint schema: it's an array? Actually schema says type: array at top? Wait: The schema defines read_complaint as an object with properties: literal_claims (array), open_questions (array), reviewer_tests (array), stated_complaint (string), vague_phrases (array). required list includes those. So the top-level JSON is an object with those keys.\n\nWe need to fill:\n\n- stated_complaint: One sentence: what client formally says is wrong. From statement: \"The content we paid for was incomplete and low quality. The writer stopped responding. We want our money…"
+   }
+  },
+  {
+   "t": 14251,
+   "type": "stage",
+   "payload": {
+    "stage": "investigate",
+    "status": "start"
+   }
+  },
+  {
+   "t": 14251,
+   "type": "pacing",
+   "payload": {
+    "ms": 14082,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 29274,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We need to investigate using evidence locker. We'll need to read documents: AGREEMENT, DELIVERIES, EMAILS, BLOG, DISPUTE, maybe PAYPAL-TXN.\n\nWe'll call read_document for each. Then search maybe for keywords \"incomplete\", \"quality\", etc.\n\nWe need to record findings with citations.\n\nProceed step by step."
+   }
+  },
+  {
+   "t": 29274,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "AGREEMENT",
+    "title": "Content agreement (email acceptance)",
+    "source": "Email-accepted agreement",
+    "sections": [
+     "A1",
+     "A2",
+     "A3",
+     "A4"
+    ]
+   }
+  },
+  {
+   "t": 29274,
+   "type": "pacing",
+   "payload": {
+    "ms": 19440,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 49494,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "Now read delivery log."
+   }
+  },
+  {
+   "t": 49494,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "DELIVERIES",
+    "title": "Delivery log (shared Google Drive folder)",
+    "source": "Google Drive activity export",
+    "sections": [
+     "D1",
+     "D2",
+     "D3",
+     "D4",
+     "D5",
+     "D6"
+    ]
+   }
+  },
+  {
+   "t": 49494,
+   "type": "pacing",
+   "payload": {
+    "ms": 18549,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 68943,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have agreement defining deliverables. Delivery log shows article 5 missing. Email thread likely includes communication about missing article or response. Let's read EMAILS."
+   }
+  },
+  {
+   "t": 68943,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "EMAILS",
+    "title": "Email thread: Jordan <-> Nadia",
+    "source": "Freelancer's email export",
+    "sections": [
+     "E1",
+     "E2",
+     "E3",
+     "E4"
+    ]
+   }
+  },
+  {
+   "t": 68943,
+   "type": "pacing",
+   "payload": {
+    "ms": 13173,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 83222,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have agreement, deliveries, emails, also need blog and dispute and txn. Let's read dispute and blog for client usage.\n\n"
+   }
+  },
+  {
+   "t": 83222,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "DISPUTE",
+    "title": "PayPal dispute PP-D-27170-BRIGHT",
+    "source": "PayPal Disputes API",
+    "sections": [
+     "REASON",
+     "TXN",
+     "MSG1"
+    ]
+   }
+  },
+  {
+   "t": 83222,
+   "type": "pacing",
+   "payload": {
+    "ms": 5228,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 89218,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have evidence. Need to answer open questions and produce findings.\n\nOpen questions:\n\n- What specific deliverables outlined? From AGREEMENT A1 etc.\n\n- Did Jordan submit all files and dates? Delivery log shows all except article5.\n\n- Did Nadia acknowledge receipt? Delivery log shows approvals for articles 1-4, email sequence, and revision. So yes for those.\n\n- Any communications after delivery? Emails show Jordan said under weather, promised article5 by Sep12. Then Nadia follow-ups Sep16, Sep24…"
+   }
+  },
+  {
+   "t": 89218,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "BLOG",
+    "title": "brightlinefit.com/blog (public pages, captured Oct 10)",
+    "source": "Page captures by freelancer",
+    "sections": [
+     "B1",
+     "B2"
+    ]
+   }
+  },
+  {
+   "t": 89218,
+   "type": "pacing",
+   "payload": {
+    "ms": 29911,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 121885,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have the evidence. Need to record findings: contract deliverables, schedule, revisions. Delivery log shows 4 articles delivered and approved, email sequence delivered and approved, article 5 missing. Email thread shows freelancer said under the weather, promised article 5 by Sep 12, but no delivery. Client checked in Sep 16, Sep 24 no reply. So \"incomplete\" = missing article 5. \"Low quality\" maybe not evidenced; but we have client positive feedback early (E1 praising article 2). No evidence o…"
+   }
+  },
+  {
+   "t": 121885,
+   "type": "finding",
+   "payload": {
+    "finding": "The contract required delivery of five SEO blog articles (1,200‑1,500 words each) and a four‑email welcome sequence, with one article per week starting Aug 12 and the final article due Sep 9, plus one round of revisions per piece.",
+    "significance": "Sets the baseline expectations for deliverables and schedule; the dispute hinges on whether these were met.",
+    "citations": [
+     {
+      "doc_id": "AGREEMENT",
+      "anchor": "A1"
+     },
+     {
+      "doc_id": "AGREEMENT",
+      "anchor": "A3"
+     },
+     {
+      "doc_id": "AGREEMENT",
+      "anchor": "A4"
+     }
+    ],
+    "dropped": 0
+   }
+  },
+  {
+   "t": 121885,
+   "type": "pacing",
+   "payload": {
+    "ms": 9818,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 132336,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "Now need to collect more findings: delivery of first four articles and email sequence completed and approved; article 5 missing as of Oct 10. Also note communications about article 5 promised by Sep 12 but not delivered; client follow-ups after Sep 16 and Sep 24 with no response. Also client used the four delivered articles on website (published). Also note quality? We might need to see any evidence of quality complaints. No explicit quality feedback, but could infer from lack of revision reques…"
+   }
+  },
+  {
+   "t": 132337,
+   "type": "tool",
+   "payload": {
+    "name": "search_evidence",
+    "query": "quality",
+    "hits": [
+     {
+      "doc_id": "DISPUTE",
+      "anchor": "MSG1",
+      "heading": "Message from buyer"
+     }
+    ]
+   }
+  },
+  {
+   "t": 132337,
+   "type": "pacing",
+   "payload": {
+    "ms": 26865,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 161250,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "Now we have key facts: agreement, delivery log shows Article 5 missing. Emails show last communication: Jordan said will deliver by Sep 12, then Nadia followed up Sep 8, Sep 16, Sep 24. No reply after Sep 12. Delivery log shows no Article 5 uploaded as of Oct 10. So incomplete (missing one article). Low quality claim: need evidence of quality. Could compare published articles to see if they are present; they are published, so presumably decent. No direct quality feedback except positive for arti…"
+   }
+  },
+  {
+   "t": 161250,
+   "type": "finding",
+   "payload": {
+    "finding": "Jordan delivered Articles 1‑4 and the email sequence on schedule; each was marked approved by Nadia (Article 1 Aug 13, Article 2 Aug 19, Article 3 Aug 29 after revision, Email sequence Sep 1, Article 4 Sep 3).",
+    "significance": "Demonstrates that the majority of the contract deliverables were completed, accepted, and usable by the client, contradicting a blanket claim of incomplete or low‑quality work.",
+    "citations": [
+     {
+      "doc_id": "DELIVERIES",
+      "anchor": "D1"
+     },
+     {
+      "doc_id": "DELIVERIES",
+      "anchor": "D2"
+     },
+     {
+      "doc_id": "DELIVERIES",
+      "anchor": "D3"
+     },
+     {
+      "doc_id": "DELIVERIES",
+      "anchor": "D4"
+     },
+     {
+      "doc_id": "DELIVERIES",
+      "anchor": "D5"
+     }
+    ],
+    "dropped": 0
+   }
+  },
+  {
+   "t": 161251,
+   "type": "pacing",
+   "payload": {
+    "ms": 19515,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 181855,
+   "type": "pacing",
+   "payload": {
+    "ms": 500,
+    "reason": "model output glitch, retrying"
+   }
+  },
+  {
+   "t": 181855,
+   "type": "pacing",
+   "payload": {
+    "ms": 23282,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 208515,
+   "type": "finding",
+   "payload": {
+    "finding": "No file was uploaded for Article 5 as of Oct 10.",
+    "significance": "Represents the sole missing deliverable; the client’s claim of “incomplete” can be tied to this undelivered article.",
+    "citations": [
+     {
+      "doc_id": "DELIVERIES",
+      "anchor": "D6"
+     }
+    ]
+   }
+  },
+  {
+   "t": 208516,
+   "type": "finding",
+   "payload": {
+    "finding": "Nadia emailed positive feedback on Article 2 on Aug 19, calling it “the best thing on our blog” and noting member sharing.",
+    "significance": "Demonstrates client satisfaction with at least one delivered piece, weakening the “low quality” allegation.",
+    "citations": [
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E1"
+     }
+    ]
+   }
+  },
+  {
+   "t": 208516,
+   "type": "finding",
+   "payload": {
+    "finding": "Jordan informed Nadia on Sep 8 that he was ill and would deliver Article 5 by Sep 12.",
+    "significance": "Provides context for the delay and shows the freelancer communicated a revised timeline.",
+    "citations": [
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E2"
+     }
+    ]
+   }
+  },
+  {
+   "t": 208516,
+   "type": "finding",
+   "payload": {
+    "finding": "Nadia followed up on Sep 16 asking about the last article and again on Sep 24 noting two weeks of no reply.",
+    "significance": "Indicates a breakdown in communication after the Sep 8 message; the freelancer did not respond to these follow‑ups.",
+    "citations": [
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E3"
+     },
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E4"
+     }
+    ]
+   }
+  },
+  {
+   "t": 208516,
+   "type": "finding",
+   "payload": {
+    "finding": "The client’s blog shows Articles 1‑4 published on the site with text matching the delivered files.",
+    "significance": "Confirms the client actually received and used the majority of the work, undercutting the claim of non‑receipt.",
+    "citations": [
+     {
+      "doc_id": "BLOG",
+      "anchor": "B1"
+     }
+    ]
+   }
+  },
+  {
+   "t": 208516,
+   "type": "finding",
+   "payload": {
+    "finding": "The newsletter signup on the site sends the four‑email welcome sequence, confirming the email deliverable is live.",
+    "significance": "Shows the email sequence was not only delivered but also implemented, further refuting “incomplete” assertions.",
+    "citations": [
+     {
+      "doc_id": "BLOG",
+      "anchor": "B2"
+     }
+    ]
+   }
+  },
+  {
+   "t": 208516,
+   "type": "finding",
+   "payload": {
+    "finding": "The PayPal dispute filed under code MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED claims the content was incomplete, low quality, and that the writer stopped responding.",
+    "significance": "Summarizes the client’s formal allegation that the investigation must address.",
+    "citations": [
+     {
+      "doc_id": "DISPUTE",
+      "anchor": "REASON"
+     },
+     {
+      "doc_id": "DISPUTE",
+      "anchor": "MSG1"
+     }
+    ]
+   }
+  },
+  {
+   "t": 208516,
+   "type": "stage",
+   "payload": {
+    "stage": "investigate",
+    "status": "done",
+    "data": {
+     "summary": "Jordan fulfilled four of five required articles and the email sequence on time, all of which the client approved and published, disproving a total lack of delivery or quality. The only breach is the undelivered fifth article and the freelancer’s failure to respond to the client’s September follow‑ups, which supports a partial refund rather than a full chargeback.",
+     "findings": 9,
+     "opened": [
+      "AGREEMENT",
+      "DELIVERIES",
+      "EMAILS",
+      "DISPUTE",
+      "BLOG"
+     ]
+    }
+   }
+  },
+  {
+   "t": 208516,
+   "type": "stage",
+   "payload": {
+    "stage": "diagnose",
+    "status": "start"
+   }
+  },
+  {
+   "t": 208516,
+   "type": "pacing",
+   "payload": {
+    "ms": 16612,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 229323,
+   "type": "stage",
+   "payload": {
+    "stage": "diagnose",
+    "status": "done",
+    "data": {
+     "hypotheses": [
+      {
+       "label": "Missing final article drives refund request",
+       "explanation": "The only undelivered piece is Article 5; the client is satisfied with the other four, so the dispute centers on the single missing deliverable rather than overall quality.",
+       "supporting": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D6"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        },
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A3"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B1"
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B2"
+        }
+       ],
+       "likelihood": 45
+      },
+      {
+       "label": "Literal complaint – incomplete, low quality, writer vanished",
+       "explanation": "The client asserts the work was unfinished, of poor quality, and that the freelancer stopped replying, matching the dispute message.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D6"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5"
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B1"
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B2"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        }
+       ],
+       "likelihood": 30
+      },
+      {
+       "label": "Schedule disruption caused business impact",
+       "explanation": "The contract schedule required the fifth article by Sep 9; its absence broke the client’s content calendar, prompting a chargeback to recoup perceived loss.",
+       "supporting": [
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D6"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5"
+        }
+       ],
+       "likelihood": 20
+      },
+      {
+       "label": "Communication breakdown after illness",
+       "explanation": "The freelancer’s illness note was followed by silence, leading the client to conclude the writer stopped responding, though earlier work was fine.",
+       "supporting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5"
+        }
+       ],
+       "likelihood": 5
+      }
+     ],
+     "real_complaint": {
+      "summary": "The client’s core grievance is that the fifth SEO article was never delivered and the freelancer stopped replying, making the overall project feel incomplete and, in the client’s view, low quality.",
+      "what_the_client_actually_needs": "Delivery of the missing Article 5 (or a proportional refund for that undelivered piece).",
+      "confidence": 90
+     },
+     "why_this_reason_code": "The MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED code is the closest match for a claim that the purchased content was incomplete, low quality, and that the provider ceased communication, which are the primary points the client raised in the dispute.",
+     "freelancer_weaknesses": [
+      {
+       "issue": "Failed to deliver Article 5 as required by the schedule",
+       "citations": [
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D6"
+        }
+       ]
+      },
+      {
+       "issue": "Did not respond to client follow‑up emails after Sep 8, creating the impression of abandonment",
+       "citations": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        }
+       ]
+      }
+     ]
+    },
+    "thinking": "We need to output JSON matching diagnosis schema. Must include hypotheses array, real_complaint object, why_this_reason_code string, freelancer_weaknesses array.\n\nWe need 2-4 hypotheses. Include literal reading: incomplete and low quality, writer stopped responding. Another: client dissatisfied because final article missing, causing project incomplete, but quality of delivered is fine. Another: client expects all 5 articles; missing one triggers claim; also maybe they think quality low because they haven't seen article5. Another: client may be using dispute to get refund for missing article only, not overall quality.\n\nWe must cite doc_ids/anchors for supporting and contradicting evidence.\n\nFreelancer weaknesses: missing article5, failure to respond to follow-ups (E3, E4). Also maybe qualit…"
+   }
+  },
+  {
+   "t": 229323,
+   "type": "stage",
+   "payload": {
+    "stage": "strategy",
+    "status": "start"
+   }
+  },
+  {
+   "t": 229323,
+   "type": "pacing",
+   "payload": {
+    "ms": 18789,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 248689,
+   "type": "pacing",
+   "payload": {
+    "ms": 4000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 257315,
+   "type": "stage",
+   "payload": {
+    "stage": "strategy",
+    "status": "done",
+    "data": {
+     "decision": "PARTIAL_REFUND_AND_CONTEST",
+     "rationale": "The agreement specified five SEO articles and a four‑email sequence for $1,500. Articles 1‑4 and the email sequence were uploaded on schedule, approved by the client, and published on the client’s site, proving that the majority of the service was delivered as described and was used. The only missing deliverable is Article 5, which was never uploaded and the freelancer stopped responding after Sep 8, creating the client’s impression of abandonment. Therefore the client is entitled only to a proportional refund for the undelivered article ($250), and the rest of the chargeback should be contested.",
+     "proof_plan": [
+      {
+       "point": "The contract explicitly described the deliverables as five SEO blog articles (1,200‑1,500 words each) and a four‑email welcome sequence.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A1"
+        },
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A2"
+        },
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A3"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "All four of the first articles and the email sequence were uploaded on the agreed dates and approved by the buyer, showing compliance with the described service.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "The buyer explicitly approved each delivered piece (Articles 1‑4 and the email sequence) via email confirmations dated Aug‑13, Aug‑19, Aug‑29, Sep‑1, and Sep‑3.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "The delivered articles have been published on the client’s website and the email sequence is live, demonstrating that the work was used and fit for purpose.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "BLOG",
+         "anchor": "B1"
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B2"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "Article 5 was never uploaded; the delivery log shows no file for Article 5 as of 2026‑10‑10, constituting the undelivered portion of the contract.",
+       "answers": "REAL_COMPLAINT",
+       "evidence": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D6"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "After informing the client on Sep 8 that he was ill and would deliver Article 5 by Sep 12, the freelancer failed to respond to the client’s follow‑up messages on Sep 16 and Sep 24, creating the impression of abandonment.",
+       "answers": "REAL_COMPLAINT",
+       "evidence": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        }
+       ],
+       "strength": "STRONG"
+      }
+     ],
+     "refund_amount": "250.00",
+     "resolution_action": "Deliver the missing Article 5 to the client within 5 business days; if the client declines the delivery, issue a $250.00 refund."
+    },
+    "thinking": "We need to produce a JSON with fields: decision, rationale, proof_plan (array of points), refund_amount, resolution_action.\n\nWe need to decide strategy. The filed reason is \"MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED\". Reviewer tests: service described? delivered match? client accept? used? So we must answer those with evidence.\n\nReal complaint: missing article 5 and no response. So we likely need to either partially refund for the missing article (250) and contest rest, or deliver missing article. Since freelancer can still deliver article? But deadline passed Sep 9, but they could still deliver…"
+   }
+  },
+  {
+   "t": 257315,
+   "type": "stage",
+   "payload": {
+    "stage": "draft",
+    "status": "start"
+   }
+  },
+  {
+   "t": 257316,
+   "type": "pacing",
+   "payload": {
+    "ms": 21832,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 279824,
+   "type": "pacing",
+   "payload": {
+    "ms": 1000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 280825,
+   "type": "pacing",
+   "payload": {
+    "ms": 2879,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 283857,
+   "type": "pacing",
+   "payload": {
+    "ms": 4000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 296585,
+   "type": "pacing",
+   "payload": {
+    "ms": 25022,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 328776,
+   "type": "stage",
+   "payload": {
+    "stage": "draft",
+    "status": "done",
+    "data": {
+     "response_title": "Response to Chargeback – Partial Refund Offered",
+     "claims": 10
+    }
+   }
+  },
+  {
+   "t": 328776,
+   "type": "stage",
+   "payload": {
+    "stage": "verify",
+    "status": "start"
+   }
+  },
+  {
+   "t": 328777,
+   "type": "stage",
+   "payload": {
+    "stage": "verify",
+    "status": "done",
+    "data": {
+     "grounded": 10,
+     "total": 10,
+     "repaired": 0,
+     "removed": [],
+     "citations": 23
+    }
+   }
+  },
+  {
+   "t": 328781,
+   "type": "stage",
+   "payload": {
+    "stage": "package",
+    "status": "done",
+    "data": {
+     "package": {
+      "actions": [
+       {
+        "kind": "provide_evidence",
+        "label": "Submit evidence to PayPal",
+        "method": "POST",
+        "path": "/v1/customer/disputes/PP-D-27170-BRIGHT/provide-evidence",
+        "contentType": "multipart/form-data",
+        "input": {
+         "evidences": [
+          {
+           "evidence_type": "COPY_OF_CONTRACT",
+           "notes": "The agreement between Jordan Kim and Nadia Rossi clearly defined the deliverables as five SEO blog articles of 1,200‑1,500 words each and a four‑email welcome sequence. [1]\n\nThe disputed PayPal transaction of $1,500.00 USD (invoice JKC-088) was paid on 2026‑08‑05 in full accordance with the contract price of $250 per article plus $250 for the email sequence. [2][3]\n\nArticle 1 was uploaded on 2026‑08‑12 and approved by the buyer on Aug 13; Article 2 was uploaded on 2026‑08‑19 and approved the same day; Article 3 was uploaded on 2026‑08‑26, revised, and approved on Aug 29; Article 4 was uploaded on 2026‑09‑02 and approved on Sep 3; the 4‑email sequence was uploaded on 2026‑08‑30 and approved on Sep 1. [4][5][6][7][8]\n\nAll four delivered articles have been published on the client’s blog and the email sequence is live, confirming that the work was used and fit for its intended purpose. [9][10]\n\nArticle 5 was never uploaded; the delivery log shows no file for Article 5 as of 2026‑10‑10. [11]\n\nJordan informed Nadia on Sep 8 that he was ill and would deliver Article 5 by Sep 12, but after Nadia’s follow‑up messages on Sep 16 and Sep 24 the freelancer did not respond, creating the impression of abandonment. [12][13][14]\n\nBecause one of the five articles (20 % of the total contract value) was not delivered, a proportional refund of $250 is warranted under the agreed pricing. [3]\n\nJordan will deliver the missing Article 5 within five business days; if Nadia declines the delivery, a $250 refund will be issued promptly. [15]\n\nGiven that four articles and the email sequence were fully delivered, approved, published, and used, the remainder of the chargeback is contested and should be reversed. [4][5][6][7][8][9]\n\nAccordingly, PayPal should release $1,250 to the seller and approve the $250 partial refund to the buyer as the fair resolution. [2]",
+           "documents": [
+            {
+             "name": "response-letter.pdf"
+            },
+            {
+             "name": "evidence-appendix.pdf"
+            }
+           ]
+          }
+         ]
+        },
+        "files": [
+         {
+          "field": "evidence-file",
+          "name": "response-letter.pdf",
+          "type": "application/pdf",
+          "size": 7975
+         },
+         {
+          "field": "evidence-file",
+          "name": "evidence-appendix.pdf",
+          "type": "application/pdf",
+          "size": 3913
+         }
+        ]
+       },
+       {
+        "kind": "make_offer",
+        "label": "Offer a 250.00 USD partial refund",
+        "method": "POST",
+        "path": "/v1/customer/disputes/PP-D-27170-BRIGHT/make-offer",
+        "contentType": "application/json",
+        "body": {
+         "note": "Deliver the missing Article 5 to the client within 5 business days; if the client declines the delivery, issue a $250.00 refund.",
+         "offer_amount": {
+          "currency_code": "USD",
+          "value": "250.00"
+         },
+         "offer_type": "REFUND"
+        }
+       },
+       {
+        "kind": "email",
+        "label": "Email Nadia Rossi directly",
+        "to": "nadia@brightlinefit.com",
+        "note": "PayPal messaging is closed in the chargeback stage, so this goes by email.",
+        "body": {
+         "message": "Hi Nadia, I’m sorry the final article never reached you and that I stopped responding while I was ill. I will send you the missing piece within the next five business days, and if it doesn’t meet your needs I’ll issue a $250 refund right away. Thank you for your patience."
+        }
+       }
+      ],
+      "footnotes": [
+       {
+        "doc_id": "AGREEMENT",
+        "anchor": "A1",
+        "quote": "Deliverables: Five SEO blog articles of 1,200-1,500 words each, and one 4-email welcome sequence."
+       },
+       {
+        "doc_id": "DISPUTE",
+        "anchor": "TXN",
+        "quote": "Disputed transaction: PayPal transaction 1JK70382WA4410757 on 2026-08-05 for $1,500.00 USD, invoice JKC-088, buyer Nadia Rossi."
+       },
+       {
+        "doc_id": "AGREEMENT",
+        "anchor": "A2",
+        "quote": "Pricing: $250 per article (5 x $250 = $1,250) and $250 for the email sequence. Total $1,500, paid upfront."
+       },
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D1",
+        "quote": "Article 1: 2026-08-12 - \"7 Mistakes New Lifters Make\" (1,380 words) uploaded. Marked approved by nadia@brightlinefit.com on Aug 13."
+       },
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D2",
+        "quote": "Article 2: 2026-08-19 - \"Recovery Days Are Training Days\" (1,450 words) uploaded. Approved Aug 19."
+       },
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D3",
+        "quote": "Article 3: 2026-08-26 - \"How to Pick a Gym You'll Actually Go To\" (1,290 words) uploaded. One revision requested Aug 27, revised version approved Aug 29."
+       },
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D4",
+        "quote": "Email sequence: 2026-08-30 - \"Welcome to Brightline\" 4-email sequence uploaded. Approved Sep 1."
+       },
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D5",
+        "quote": "Article 4: 2026-09-02 - \"Strength Training After 40\" (1,410 words) uploaded. Approved Sep 3."
+       },
+       {
+        "doc_id": "BLOG",
+        "anchor": "B1",
+        "quote": "Published articles: Published on brightlinefit.com/blog: \"7 Mistakes New Lifters Make\" (Aug 15), \"Recovery Days Are Training Days\" (Aug 22), \"How to Pick a Gym You'll Actually Go To\" (Aug 31), \"Strength Training After 40\" (Sep 5). The text matches the delivered files."
+       },
+       {
+        "doc_id": "BLOG",
+        "anchor": "B2",
+        "quote": "Email signup: The site's newsletter signup sends the \"Welcome to Brightline\" sequence. Captured Oct 10."
+       },
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D6",
+        "quote": "Article 5: No file uploaded for Article 5 as of 2026-10-10."
+       },
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E2",
+        "quote": "Sep 8 - Jordan to Nadia: Quick heads up, I'm under the weather this week. Article 5 will be with you by Friday the 12th."
+       },
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E3",
+        "quote": "Sep 16 - Nadia to Jordan: Hi Jordan, checking in on the last article? We had it on our content calendar for this week."
+       },
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E4",
+        "quote": "Sep 24 - Nadia to Jordan: Jordan, it's been two weeks with no reply. Please let me know if you're still able to finish this."
+       },
+       {
+        "doc_id": "AGREEMENT",
+        "anchor": "A3",
+        "quote": "Schedule: One article per week starting Aug 12, email sequence by Aug 30. Last article due Sep 9."
+       }
+      ],
+      "letter": [
+       "The agreement between Jordan Kim and Nadia Rossi clearly defined the deliverables as five SEO blog articles of 1,200‑1,500 words each and a four‑email welcome sequence. [1]",
+       "The disputed PayPal transaction of $1,500.00 USD (invoice JKC-088) was paid on 2026‑08‑05 in full accordance with the contract price of $250 per article plus $250 for the email sequence. [2][3]",
+       "Article 1 was uploaded on 2026‑08‑12 and approved by the buyer on Aug 13; Article 2 was uploaded on 2026‑08‑19 and approved the same day; Article 3 was uploaded on 2026‑08‑26, revised, and approved on Aug 29; Article 4 was uploaded on 2026‑09‑02 and approved on Sep 3; the 4‑email sequence was uploaded on 2026‑08‑30 and approved on Sep 1. [4][5][6][7][8]",
+       "All four delivered articles have been published on the client’s blog and the email sequence is live, confirming that the work was used and fit for its intended purpose. [9][10]",
+       "Article 5 was never uploaded; the delivery log shows no file for Article 5 as of 2026‑10‑10. [11]",
+       "Jordan informed Nadia on Sep 8 that he was ill and would deliver Article 5 by Sep 12, but after Nadia’s follow‑up messages on Sep 16 and Sep 24 the freelancer did not respond, creating the impression of abandonment. [12][13][14]",
+       "Because one of the five articles (20 % of the total contract value) was not delivered, a proportional refund of $250 is warranted under the agreed pricing. [3]",
+       "Jordan will deliver the missing Article 5 within five business days; if Nadia declines the delivery, a $250 refund will be issued promptly. [15]",
+       "Given that four articles and the email sequence were fully delivered, approved, published, and used, the remainder of the chargeback is contested and should be reversed. [4][5][6][7][8][9]",
+       "Accordingly, PayPal should release $1,250 to the seller and approve the $250 partial refund to the buyer as the fair resolution. [2]"
+      ],
+      "clientMessage": "Hi Nadia, I’m sorry the final article never reached you and that I stopped responding while I was ill. I will send you the missing piece within the next five business days, and if it doesn’t meet your needs I’ll issue a $250 refund right away. Thank you for your patience.",
+      "evidencePackage": [
+       {
+        "doc_id": "AGREEMENT",
+        "evidence_type": "COPY_OF_CONTRACT",
+        "why": "Shows agreed deliverables, pricing, and schedule"
+       },
+       {
+        "doc_id": "AGREEMENT",
+        "evidence_type": "ITEM_DESCRIPTION",
+        "why": "Details the five articles and email sequence as the purchased items"
+       },
+       {
+        "doc_id": "DELIVERIES",
+        "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+        "why": "Provides timestamps and approval confirmations for Articles 1‑4 and the email sequence"
+       },
+       {
+        "doc_id": "BLOG",
+        "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+        "why": "Demonstrates that the delivered content was published and used"
+       },
+       {
+        "doc_id": "EMAILS",
+        "evidence_type": "OTHER",
+        "why": "Shows communication about the delayed Article 5 and lack of response"
+       }
+      ],
+      "_files": [
+       {
+        "field": "evidence-file",
+        "name": "response-letter.pdf",
+        "type": "application/pdf",
+        "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUiA3IDAgUl0gL0NvdW50IDIgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQxMzQgPj4Kc3RyZWFtCkJUIC9GMiAxNSBUZiA1NiA3MzYgVGQgKFJlc3BvbnNlIHRvIENoYXJnZWJhY2sgLSBQYXJ0aWFsIFJlZnVuZCBPZmZlcmVkKSBUaiBFVApCVCAvRjEgMTAgVGYgNTYgNzEzIFRkIChEaXNwdXRlIFBQLUQtMjcxNzAtQlJJR0hUIC0gTm90IGFzIGRlc2NyaWJlZCAtIDE1MDAuMDAgVVNEKSBUaiBFVApCVCAvRjEgMTAgVGYgNTYgNjk5IFRkIChTdWJtaXR0ZWQgYnkgSm9yZGFuIEtpbSwgSm9yZGFuIEtpbSBDb3B5IFwoam9yZGFuQGpvcmRhbmtpbWNvcHkuY29tXCkpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA2NzcgVGQgKFRoZSBhZ3JlZW1lbnQgYmV0d2VlbiBKb3JkYW4gS2ltIGFuZCBOYWRpYSBSb3NzaSBjbGVhcmx5IGRlZmluZWQgdGhlIGRlbGl2ZXJhYmxlcyBhcyBmaXZlKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjYyIFRkIChTRU8gYmxvZyBhcnRpY2xlcyBvZiAxLDIwMC0xLDUwMCB3b3JkcyBlYWNoIGFuZCBhIGZvdXItZW1haWwgd2VsY29tZSBzZXF1ZW5jZS4gWzFdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjM5IFRkIChUaGUgZGlzcHV0ZWQgUGF5UGFsIHRyYW5zYWN0aW9uIG9mICQxLDUwMC4wMCBVU0QgXChpbnZvaWNlIEpLQy0wODhcKSB3YXMgcGFpZCBvbiAyMDI2LTA4LTA1KSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjI0IFRkIChpbiBmdWxsIGFjY29yZGFuY2Ugd2l0aCB0aGUgY29udHJhY3QgcHJpY2Ugb2YgJDI1MCBwZXIgYXJ0aWNsZSBwbHVzICQyNTAgZm9yIHRoZSBlbWFpbCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDYwOSBUZCAoc2VxdWVuY2UuIFsyXVszXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU4NiBUZCAoQXJ0aWNsZSAxIHdhcyB1cGxvYWRlZCBvbiAyMDI2LTA4LTEyIGFuZCBhcHByb3ZlZCBieSB0aGUgYnV5ZXIgb24gQXVnIDEzOyBBcnRpY2xlIDIgd2FzKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNTcxIFRkICh1cGxvYWRlZCBvbiAyMDI2LTA4LTE5IGFuZCBhcHByb3ZlZCB0aGUgc2FtZSBkYXk7IEFydGljbGUgMyB3YXMgdXBsb2FkZWQgb24gMjAyNi0wOC0yNiwpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1NTYgVGQgKHJldmlzZWQsIGFuZCBhcHByb3ZlZCBvbiBBdWcgMjk7IEFydGljbGUgNCB3YXMgdXBsb2FkZWQgb24gMjAyNi0wOS0wMiBhbmQgYXBwcm92ZWQgb24gU2VwKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNTQxIFRkICgzOyB0aGUgNC1lbWFpbCBzZXF1ZW5jZSB3YXMgdXBsb2FkZWQgb24gMjAyNi0wOC0zMCBhbmQgYXBwcm92ZWQgb24gU2VwIDEuIFs0XVs1XVs2XVs3XVs4XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDUxOCBUZCAoQWxsIGZvdXIgZGVsaXZlcmVkIGFydGljbGVzIGhhdmUgYmVlbiBwdWJsaXNoZWQgb24gdGhlIGNsaWVudCdzIGJsb2cgYW5kIHRoZSBlbWFpbCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDUwMyBUZCAoc2VxdWVuY2UgaXMgbGl2ZSwgY29uZmlybWluZyB0aGF0IHRoZSB3b3JrIHdhcyB1c2VkIGFuZCBmaXQgZm9yIGl0cyBpbnRlbmRlZCBwdXJwb3NlLikgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQ4OCBUZCAoWzldWzEwXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQ2NSBUZCAoQXJ0aWNsZSA1IHdhcyBuZXZlciB1cGxvYWRlZDsgdGhlIGRlbGl2ZXJ5IGxvZyBzaG93cyBubyBmaWxlIGZvciBBcnRpY2xlIDUgYXMgb2YpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA0NTAgVGQgKDIwMjYtMTAtMTAuIFsxMV0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA0MjcgVGQgKEpvcmRhbiBpbmZvcm1lZCBOYWRpYSBvbiBTZXAgOCB0aGF0IGhlIHdhcyBpbGwgYW5kIHdvdWxkIGRlbGl2ZXIgQXJ0aWNsZSA1IGJ5IFNlcCAxMiwgYnV0KSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDEyIFRkIChhZnRlciBOYWRpYSdzIGZvbGxvdy11cCBtZXNzYWdlcyBvbiBTZXAgMTYgYW5kIFNlcCAyNCB0aGUgZnJlZWxhbmNlciBkaWQgbm90IHJlc3BvbmQsKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMzk3IFRkIChjcmVhdGluZyB0aGUgaW1wcmVzc2lvbiBvZiBhYmFuZG9ubWVudC4gWzEyXVsxM11bMTRdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMzc0IFRkIChCZWNhdXNlIG9uZSBvZiB0aGUgZml2ZSBhcnRpY2xlcyBcKDIwICUgb2YgdGhlIHRvdGFsIGNvbnRyYWN0IHZhbHVlXCkgd2FzIG5vdCBkZWxpdmVyZWQsIGEpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAzNTkgVGQgKHByb3BvcnRpb25hbCByZWZ1bmQgb2YgJDI1MCBpcyB3YXJyYW50ZWQgdW5kZXIgdGhlIGFncmVlZCBwcmljaW5nLiBbM10pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAzMzYgVGQgKEpvcmRhbiB3aWxsIGRlbGl2ZXIgdGhlIG1pc3NpbmcgQXJ0aWNsZSA1IHdpdGhpbiBmaXZlIGJ1c2luZXNzIGRheXM7IGlmIE5hZGlhIGRlY2xpbmVzIHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDMyMSBUZCAoZGVsaXZlcnksIGEgJDI1MCByZWZ1bmQgd2lsbCBiZSBpc3N1ZWQgcHJvbXB0bHkuIFsxNV0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAyOTggVGQgKEdpdmVuIHRoYXQgZm91ciBhcnRpY2xlcyBhbmQgdGhlIGVtYWlsIHNlcXVlbmNlIHdlcmUgZnVsbHkgZGVsaXZlcmVkLCBhcHByb3ZlZCwgcHVibGlzaGVkLCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDI4MyBUZCAoYW5kIHVzZWQsIHRoZSByZW1haW5kZXIgb2YgdGhlIGNoYXJnZWJhY2sgaXMgY29udGVzdGVkIGFuZCBzaG91bGQgYmUgcmV2ZXJzZWQuKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMjY4IFRkIChbNF1bNV1bNl1bN11bOF1bOV0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAyNDUgVGQgKEFjY29yZGluZ2x5LCBQYXlQYWwgc2hvdWxkIHJlbGVhc2UgJDEsMjUwIHRvIHRoZSBzZWxsZXIgYW5kIGFwcHJvdmUgdGhlICQyNTAgcGFydGlhbCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDIzMCBUZCAocmVmdW5kIHRvIHRoZSBidXllciBhcyB0aGUgZmFpciByZXNvbHV0aW9uLiBbMl0pIFRqIEVUCkJUIC9GMiAxMiBUZiA1NiAxOTkgVGQgKFNvdXJjZXMpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE4MCBUZCAoWzFdIENvbnRlbnQgYWdyZWVtZW50IFwoZW1haWwgYWNjZXB0YW5jZVwpLCBBMSBcKEVtYWlsLWFjY2VwdGVkIGFncmVlbWVudFwpOiAiRGVsaXZlcmFibGVzOiBGaXZlIFNFTyBibG9nIGFydGljbGVzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNjYgVGQgKG9mIDEsMjAwLTEsNTAwIHdvcmRzIGVhY2gsIGFuZCBvbmUgNC1lbWFpbCB3ZWxjb21lIHNlcXVlbmNlLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE0OSBUZCAoWzJdIFBheVBhbCBkaXNwdXRlIFBQLUQtMjcxNzAtQlJJR0hULCBUWE4gXChQYXlQYWwgRGlzcHV0ZXMgQVBJXCk6ICJEaXNwdXRlZCB0cmFuc2FjdGlvbjogUGF5UGFsIHRyYW5zYWN0aW9uKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMzUgVGQgKDFKSzcwMzgyV0E0NDEwNzU3IG9uIDIwMjYtMDgtMDUgZm9yICQxLDUwMC4wMCBVU0QsIGludm9pY2UgSktDLTA4OCwgYnV5ZXIgTmFkaWEgUm9zc2kuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTE4IFRkIChbM10gQ29udGVudCBhZ3JlZW1lbnQgXChlbWFpbCBhY2NlcHRhbmNlXCksIEEyIFwoRW1haWwtYWNjZXB0ZWQgYWdyZWVtZW50XCk6ICJQcmljaW5nOiAkMjUwIHBlciBhcnRpY2xlIFwoNSB4ICQyNTAgPSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTA0IFRkICgkMSwyNTBcKSBhbmQgJDI1MCBmb3IgdGhlIGVtYWlsIHNlcXVlbmNlLiBUb3RhbCAkMSw1MDAsIHBhaWQgdXBmcm9udC4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA4NyBUZCAoWzRdIERlbGl2ZXJ5IGxvZyBcKHNoYXJlZCBHb29nbGUgRHJpdmUgZm9sZGVyXCksIEQxIFwoR29vZ2xlIERyaXZlIGFjdGl2aXR5IGV4cG9ydFwpOiAiQXJ0aWNsZSAxOiAyMDI2LTA4LTEyIC0gIjcpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDczIFRkIChNaXN0YWtlcyBOZXcgTGlmdGVycyBNYWtlIiBcKDEsMzgwIHdvcmRzXCkgdXBsb2FkZWQuIE1hcmtlZCBhcHByb3ZlZCBieSBuYWRpYUBicmlnaHRsaW5lZml0LmNvbSBvbiBBdWcgMTMuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTYgVGQgKFs1XSBEZWxpdmVyeSBsb2cgXChzaGFyZWQgR29vZ2xlIERyaXZlIGZvbGRlclwpLCBEMiBcKEdvb2dsZSBEcml2ZSBhY3Rpdml0eSBleHBvcnRcKTogIkFydGljbGUgMjogMjAyNi0wOC0xOSAtKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCjcgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSAzIDAgUiAvRjIgNCAwIFIgPj4gPj4gL0NvbnRlbnRzIDggMCBSID4+CmVuZG9iago4IDAgb2JqCjw8IC9MZW5ndGggMjkwMSA+PgpzdHJlYW0KQlQgL0YxIDkgVGYgNTYgNzM2IFRkICgiUmVjb3ZlcnkgRGF5cyBBcmUgVHJhaW5pbmcgRGF5cyIgXCgxLDQ1MCB3b3Jkc1wpIHVwbG9hZGVkLiBBcHByb3ZlZCBBdWcgMTkuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNzE5IFRkIChbNl0gRGVsaXZlcnkgbG9nIFwoc2hhcmVkIEdvb2dsZSBEcml2ZSBmb2xkZXJcKSwgRDMgXChHb29nbGUgRHJpdmUgYWN0aXZpdHkgZXhwb3J0XCk6ICJBcnRpY2xlIDM6IDIwMjYtMDgtMjYgLSAiSG93KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA3MDUgVGQgKHRvIFBpY2sgYSBHeW0gWW91J2xsIEFjdHVhbGx5IEdvIFRvIiBcKDEsMjkwIHdvcmRzXCkgdXBsb2FkZWQuIE9uZSByZXZpc2lvbiByZXF1ZXN0ZWQgQXVnIDI3LCByZXZpc2VkIHZlcnNpb24pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY5MSBUZCAoYXBwcm92ZWQgQXVnIDI5LiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY3NCBUZCAoWzddIERlbGl2ZXJ5IGxvZyBcKHNoYXJlZCBHb29nbGUgRHJpdmUgZm9sZGVyXCksIEQ0IFwoR29vZ2xlIERyaXZlIGFjdGl2aXR5IGV4cG9ydFwpOiAiRW1haWwgc2VxdWVuY2U6IDIwMjYtMDgtMzAgLSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjYwIFRkICgiV2VsY29tZSB0byBCcmlnaHRsaW5lIiA0LWVtYWlsIHNlcXVlbmNlIHVwbG9hZGVkLiBBcHByb3ZlZCBTZXAgMS4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NDMgVGQgKFs4XSBEZWxpdmVyeSBsb2cgXChzaGFyZWQgR29vZ2xlIERyaXZlIGZvbGRlclwpLCBENSBcKEdvb2dsZSBEcml2ZSBhY3Rpdml0eSBleHBvcnRcKTogIkFydGljbGUgNDogMjAyNi0wOS0wMiAtKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MjkgVGQgKCJTdHJlbmd0aCBUcmFpbmluZyBBZnRlciA0MCIgXCgxLDQxMCB3b3Jkc1wpIHVwbG9hZGVkLiBBcHByb3ZlZCBTZXAgMy4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTIgVGQgKFs5XSBicmlnaHRsaW5lZml0LmNvbS9ibG9nIFwocHVibGljIHBhZ2VzLCBjYXB0dXJlZCBPY3QgMTBcKSwgQjEgXChQYWdlIGNhcHR1cmVzIGJ5IGZyZWVsYW5jZXJcKTogIlB1Ymxpc2hlZCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTk4IFRkIChhcnRpY2xlczogUHVibGlzaGVkIG9uIGJyaWdodGxpbmVmaXQuY29tL2Jsb2c6ICI3IE1pc3Rha2VzIE5ldyBMaWZ0ZXJzIE1ha2UiIFwoQXVnIDE1XCksICJSZWNvdmVyeSBEYXlzIEFyZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTg0IFRkIChUcmFpbmluZyBEYXlzIiBcKEF1ZyAyMlwpLCAiSG93IHRvIFBpY2sgYSBHeW0gWW91J2xsIEFjdHVhbGx5IEdvIFRvIiBcKEF1ZyAzMVwpLCAiU3RyZW5ndGggVHJhaW5pbmcgQWZ0ZXIgNDAiIFwoU2VwKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1NzAgVGQgKDVcKS4gVGhlIHRleHQgbWF0Y2hlcyB0aGUgZGVsaXZlcmVkIGZpbGVzLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU1MyBUZCAoWzEwXSBicmlnaHRsaW5lZml0LmNvbS9ibG9nIFwocHVibGljIHBhZ2VzLCBjYXB0dXJlZCBPY3QgMTBcKSwgQjIgXChQYWdlIGNhcHR1cmVzIGJ5IGZyZWVsYW5jZXJcKTogIkVtYWlsIHNpZ251cDopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDUzOSBUZCAoVGhlIHNpdGUncyBuZXdzbGV0dGVyIHNpZ251cCBzZW5kcyB0aGUgIldlbGNvbWUgdG8gQnJpZ2h0bGluZSIgc2VxdWVuY2UuIENhcHR1cmVkIE9jdCAxMC4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1MjIgVGQgKFsxMV0gRGVsaXZlcnkgbG9nIFwoc2hhcmVkIEdvb2dsZSBEcml2ZSBmb2xkZXJcKSwgRDYgXChHb29nbGUgRHJpdmUgYWN0aXZpdHkgZXhwb3J0XCk6ICJBcnRpY2xlIDU6IE5vIGZpbGUgdXBsb2FkZWQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDUwOCBUZCAoZm9yIEFydGljbGUgNSBhcyBvZiAyMDI2LTEwLTEwLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ5MSBUZCAoWzEyXSBFbWFpbCB0aHJlYWQ6IEpvcmRhbiA8LT4gTmFkaWEsIEUyIFwoRnJlZWxhbmNlcidzIGVtYWlsIGV4cG9ydFwpOiAiU2VwIDggLSBKb3JkYW4gdG8gTmFkaWE6IFF1aWNrIGhlYWRzIHVwLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDc3IFRkIChJJ20gdW5kZXIgdGhlIHdlYXRoZXIgdGhpcyB3ZWVrLiBBcnRpY2xlIDUgd2lsbCBiZSB3aXRoIHlvdSBieSBGcmlkYXkgdGhlIDEydGguIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDYwIFRkIChbMTNdIEVtYWlsIHRocmVhZDogSm9yZGFuIDwtPiBOYWRpYSwgRTMgXChGcmVlbGFuY2VyJ3MgZW1haWwgZXhwb3J0XCk6ICJTZXAgMTYgLSBOYWRpYSB0byBKb3JkYW46IEhpIEpvcmRhbiwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ0NiBUZCAoY2hlY2tpbmcgaW4gb24gdGhlIGxhc3QgYXJ0aWNsZT8gV2UgaGFkIGl0IG9uIG91ciBjb250ZW50IGNhbGVuZGFyIGZvciB0aGlzIHdlZWsuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDI5IFRkIChbMTRdIEVtYWlsIHRocmVhZDogSm9yZGFuIDwtPiBOYWRpYSwgRTQgXChGcmVlbGFuY2VyJ3MgZW1haWwgZXhwb3J0XCk6ICJTZXAgMjQgLSBOYWRpYSB0byBKb3JkYW46IEpvcmRhbiwgaXQncykgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDE1IFRkIChiZWVuIHR3byB3ZWVrcyB3aXRoIG5vIHJlcGx5LiBQbGVhc2UgbGV0IG1lIGtub3cgaWYgeW91J3JlIHN0aWxsIGFibGUgdG8gZmluaXNoIHRoaXMuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzk4IFRkIChbMTVdIENvbnRlbnQgYWdyZWVtZW50IFwoZW1haWwgYWNjZXB0YW5jZVwpLCBBMyBcKEVtYWlsLWFjY2VwdGVkIGFncmVlbWVudFwpOiAiU2NoZWR1bGU6IE9uZSBhcnRpY2xlIHBlciB3ZWVrKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzODQgVGQgKHN0YXJ0aW5nIEF1ZyAxMiwgZW1haWwgc2VxdWVuY2UgYnkgQXVnIDMwLiBMYXN0IGFydGljbGUgZHVlIFNlcCA5LiIpIFRqIEVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDkKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNTggMDAwMDAgbiAKMDAwMDAwMDEyMSAwMDAwMCBuIAowMDAwMDAwMjE4IDAwMDAwIG4gCjAwMDAwMDAzMjAgMDAwMDAgbiAKMDAwMDAwMDQ1NiAwMDAwMCBuIAowMDAwMDA0NjQyIDAwMDAwIG4gCjAwMDAwMDQ3NzggMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA5IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgo3NzMxCiUlRU9GCg=="
+       },
+       {
+        "field": "evidence-file",
+        "name": "evidence-appendix.pdf",
+        "type": "application/pdf",
+        "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDMyMDcgPj4Kc3RyZWFtCkJUIC9GMiAxNCBUZiA1NiA3MzYgVGQgKEV2aWRlbmNlIGFwcGVuZGl4OiBmdWxsIHRleHQgb2YgZXZlcnkgY2l0ZWQgc2VjdGlvbikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDcwNiBUZCAoQ29udGVudCBhZ3JlZW1lbnQgXChlbWFpbCBhY2NlcHRhbmNlXCkgLSBzb3VyY2U6IEVtYWlsLWFjY2VwdGVkIGFncmVlbWVudCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjg4IFRkIChBMSBEZWxpdmVyYWJsZXM6IEZpdmUgU0VPIGJsb2cgYXJ0aWNsZXMgb2YgMSwyMDAtMSw1MDAgd29yZHMgZWFjaCwgYW5kIG9uZSA0LWVtYWlsIHdlbGNvbWUgc2VxdWVuY2UuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NzEgVGQgKEEyIFByaWNpbmc6ICQyNTAgcGVyIGFydGljbGUgXCg1IHggJDI1MCA9ICQxLDI1MFwpIGFuZCAkMjUwIGZvciB0aGUgZW1haWwgc2VxdWVuY2UuIFRvdGFsICQxLDUwMCwgcGFpZCB1cGZyb250LikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjU0IFRkIChBMyBTY2hlZHVsZTogT25lIGFydGljbGUgcGVyIHdlZWsgc3RhcnRpbmcgQXVnIDEyLCBlbWFpbCBzZXF1ZW5jZSBieSBBdWcgMzAuIExhc3QgYXJ0aWNsZSBkdWUgU2VwIDkuKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgNjI4IFRkIChQYXlQYWwgZGlzcHV0ZSBQUC1ELTI3MTcwLUJSSUdIVCAtIHNvdXJjZTogUGF5UGFsIERpc3B1dGVzIEFQSSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjEwIFRkIChUWE4gRGlzcHV0ZWQgdHJhbnNhY3Rpb246IFBheVBhbCB0cmFuc2FjdGlvbiAxSks3MDM4MldBNDQxMDc1NyBvbiAyMDI2LTA4LTA1IGZvciAkMSw1MDAuMDAgVVNELCBpbnZvaWNlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1OTYgVGQgKEpLQy0wODgsIGJ1eWVyIE5hZGlhIFJvc3NpLikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDU3MCBUZCAoRGVsaXZlcnkgbG9nIFwoc2hhcmVkIEdvb2dsZSBEcml2ZSBmb2xkZXJcKSAtIHNvdXJjZTogR29vZ2xlIERyaXZlIGFjdGl2aXR5IGV4cG9ydCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTUyIFRkIChEMSBBcnRpY2xlIDE6IDIwMjYtMDgtMTIgLSAiNyBNaXN0YWtlcyBOZXcgTGlmdGVycyBNYWtlIiBcKDEsMzgwIHdvcmRzXCkgdXBsb2FkZWQuIE1hcmtlZCBhcHByb3ZlZCBieSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTM4IFRkIChuYWRpYUBicmlnaHRsaW5lZml0LmNvbSBvbiBBdWcgMTMuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1MjEgVGQgKEQyIEFydGljbGUgMjogMjAyNi0wOC0xOSAtICJSZWNvdmVyeSBEYXlzIEFyZSBUcmFpbmluZyBEYXlzIiBcKDEsNDUwIHdvcmRzXCkgdXBsb2FkZWQuIEFwcHJvdmVkIEF1ZyAxOS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDUwNCBUZCAoRDMgQXJ0aWNsZSAzOiAyMDI2LTA4LTI2IC0gIkhvdyB0byBQaWNrIGEgR3ltIFlvdSdsbCBBY3R1YWxseSBHbyBUbyIgXCgxLDI5MCB3b3Jkc1wpIHVwbG9hZGVkLiBPbmUgcmV2aXNpb24pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ5MCBUZCAocmVxdWVzdGVkIEF1ZyAyNywgcmV2aXNlZCB2ZXJzaW9uIGFwcHJvdmVkIEF1ZyAyOS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ3MyBUZCAoRDQgRW1haWwgc2VxdWVuY2U6IDIwMjYtMDgtMzAgLSAiV2VsY29tZSB0byBCcmlnaHRsaW5lIiA0LWVtYWlsIHNlcXVlbmNlIHVwbG9hZGVkLiBBcHByb3ZlZCBTZXAgMS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ1NiBUZCAoRDUgQXJ0aWNsZSA0OiAyMDI2LTA5LTAyIC0gIlN0cmVuZ3RoIFRyYWluaW5nIEFmdGVyIDQwIiBcKDEsNDEwIHdvcmRzXCkgdXBsb2FkZWQuIEFwcHJvdmVkIFNlcCAzLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDM5IFRkIChENiBBcnRpY2xlIDU6IE5vIGZpbGUgdXBsb2FkZWQgZm9yIEFydGljbGUgNSBhcyBvZiAyMDI2LTEwLTEwLikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDQxMyBUZCAoYnJpZ2h0bGluZWZpdC5jb20vYmxvZyBcKHB1YmxpYyBwYWdlcywgY2FwdHVyZWQgT2N0IDEwXCkgLSBzb3VyY2U6IFBhZ2UgY2FwdHVyZXMgYnkpIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAzOTggVGQgKGZyZWVsYW5jZXIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDM4MCBUZCAoQjEgUHVibGlzaGVkIGFydGljbGVzOiBQdWJsaXNoZWQgb24gYnJpZ2h0bGluZWZpdC5jb20vYmxvZzogIjcgTWlzdGFrZXMgTmV3IExpZnRlcnMgTWFrZSIgXChBdWcgMTVcKSwgIlJlY292ZXJ5KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzNjYgVGQgKERheXMgQXJlIFRyYWluaW5nIERheXMiIFwoQXVnIDIyXCksICJIb3cgdG8gUGljayBhIEd5bSBZb3UnbGwgQWN0dWFsbHkgR28gVG8iIFwoQXVnIDMxXCksICJTdHJlbmd0aCBUcmFpbmluZyBBZnRlcikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzUyIFRkICg0MCIgXChTZXAgNVwpLiBUaGUgdGV4dCBtYXRjaGVzIHRoZSBkZWxpdmVyZWQgZmlsZXMuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMzUgVGQgKEIyIEVtYWlsIHNpZ251cDogVGhlIHNpdGUncyBuZXdzbGV0dGVyIHNpZ251cCBzZW5kcyB0aGUgIldlbGNvbWUgdG8gQnJpZ2h0bGluZSIgc2VxdWVuY2UuIENhcHR1cmVkIE9jdCAxMC4pIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAzMDkgVGQgKEVtYWlsIHRocmVhZDogSm9yZGFuIDwtPiBOYWRpYSAtIHNvdXJjZTogRnJlZWxhbmNlcidzIGVtYWlsIGV4cG9ydCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjkxIFRkIChFMiBTZXAgOCAtIEpvcmRhbiB0byBOYWRpYTogUXVpY2sgaGVhZHMgdXAsIEknbSB1bmRlciB0aGUgd2VhdGhlciB0aGlzIHdlZWsuIEFydGljbGUgNSB3aWxsIGJlIHdpdGggeW91IGJ5KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyNzcgVGQgKEZyaWRheSB0aGUgMTJ0aC4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI2MCBUZCAoRTMgU2VwIDE2IC0gTmFkaWEgdG8gSm9yZGFuOiBIaSBKb3JkYW4sIGNoZWNraW5nIGluIG9uIHRoZSBsYXN0IGFydGljbGU/IFdlIGhhZCBpdCBvbiBvdXIgY29udGVudCBjYWxlbmRhciBmb3IpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI0NiBUZCAodGhpcyB3ZWVrLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjI5IFRkIChFNCBTZXAgMjQgLSBOYWRpYSB0byBKb3JkYW46IEpvcmRhbiwgaXQncyBiZWVuIHR3byB3ZWVrcyB3aXRoIG5vIHJlcGx5LiBQbGVhc2UgbGV0IG1lIGtub3cgaWYgeW91J3JlIHN0aWxsIGFibGUpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDIxNSBUZCAodG8gZmluaXNoIHRoaXMuKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA3CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDIxMiAwMDAwMCBuIAowMDAwMDAwMzE0IDAwMDAwIG4gCjAwMDAwMDA0NTAgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA3IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgozNzA5CiUlRU9GCg=="
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "t": 328781,
+   "type": "result",
+   "payload": {
+    "read": {
+     "stated_complaint": "The client claims the content was incomplete and low quality, the writer stopped responding, and therefore they want a refund.",
+     "literal_claims": [
+      {
+       "claim": "The content was incomplete",
+       "quote": "The content we paid for was incomplete"
+      },
+      {
+       "claim": "The content was low quality",
+       "quote": "The content we paid for was ... low quality"
+      },
+      {
+       "claim": "The writer stopped responding",
+       "quote": "The writer stopped responding"
+      }
+     ],
+     "vague_phrases": [
+      {
+       "phrase": "incomplete",
+       "could_mean": [
+        "missing sections",
+        "unfinished drafts",
+        "lacked required deliverables",
+        "partial content only"
+       ]
+      },
+      {
+       "phrase": "low quality",
+       "could_mean": [
+        "poor writing style",
+        "numerous grammatical errors",
+        "did not match brand tone",
+        "generic or filler content"
+       ]
+      },
+      {
+       "phrase": "stopped responding",
+       "could_mean": [
+        "no replies to messages after delivery",
+        "ignored follow‑up emails",
+        "failed to address revision requests",
+        "became uncontactable"
+       ]
+      }
+     ],
+     "reviewer_tests": [
+      "What exactly was the service described as (contract, invoice, scope)?",
+      "Did what was delivered match that description?",
+      "Did the client accept or approve the work?",
+      "Has the client used the work since (signs that it was fit for purpose)?"
+     ],
+     "open_questions": [
+      "What specific deliverables were outlined in the contract/invoice for the copywriting project?",
+      "Did Jordan Kim submit all agreed‑upon files, and on what date were they delivered?",
+      "Did Nadia Rossi acknowledge receipt of the files and provide any acceptance or revision feedback?",
+      "Were there any communications from the freelancer after delivery, and if so, what was their content/timing?",
+      "Has Brightline Fitness used the delivered copy in any marketing material or on their website?",
+      "If revisions were requested, were they provided within the agreed timeframe?"
+     ]
+    },
+    "findings": [
+     {
+      "finding": "The contract required delivery of five SEO blog articles (1,200‑1,500 words each) and a four‑email welcome sequence, with one article per week starting Aug 12 and the final article due Sep 9, plus one round of revisions per piece.",
+      "significance": "Sets the baseline expectations for deliverables and schedule; the dispute hinges on whether these were met.",
+      "citations": [
+       {
+        "doc_id": "AGREEMENT",
+        "anchor": "A1"
+       },
+       {
+        "doc_id": "AGREEMENT",
+        "anchor": "A3"
+       },
+       {
+        "doc_id": "AGREEMENT",
+        "anchor": "A4"
+       }
+      ]
+     },
+     {
+      "finding": "Jordan delivered Articles 1‑4 and the email sequence on schedule; each was marked approved by Nadia (Article 1 Aug 13, Article 2 Aug 19, Article 3 Aug 29 after revision, Email sequence Sep 1, Article 4 Sep 3).",
+      "significance": "Demonstrates that the majority of the contract deliverables were completed, accepted, and usable by the client, contradicting a blanket claim of incomplete or low‑quality work.",
+      "citations": [
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D1"
+       },
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D2"
+       },
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D3"
+       },
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D4"
+       },
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D5"
+       }
+      ]
+     },
+     {
+      "finding": "No file was uploaded for Article 5 as of Oct 10.",
+      "significance": "Represents the sole missing deliverable; the client’s claim of “incomplete” can be tied to this undelivered article.",
+      "citations": [
+       {
+        "doc_id": "DELIVERIES",
+        "anchor": "D6"
+       }
+      ]
+     },
+     {
+      "finding": "Nadia emailed positive feedback on Article 2 on Aug 19, calling it “the best thing on our blog” and noting member sharing.",
+      "significance": "Demonstrates client satisfaction with at least one delivered piece, weakening the “low quality” allegation.",
+      "citations": [
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E1"
+       }
+      ]
+     },
+     {
+      "finding": "Jordan informed Nadia on Sep 8 that he was ill and would deliver Article 5 by Sep 12.",
+      "significance": "Provides context for the delay and shows the freelancer communicated a revised timeline.",
+      "citations": [
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E2"
+       }
+      ]
+     },
+     {
+      "finding": "Nadia followed up on Sep 16 asking about the last article and again on Sep 24 noting two weeks of no reply.",
+      "significance": "Indicates a breakdown in communication after the Sep 8 message; the freelancer did not respond to these follow‑ups.",
+      "citations": [
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E3"
+       },
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E4"
+       }
+      ]
+     },
+     {
+      "finding": "The client’s blog shows Articles 1‑4 published on the site with text matching the delivered files.",
+      "significance": "Confirms the client actually received and used the majority of the work, undercutting the claim of non‑receipt.",
+      "citations": [
+       {
+        "doc_id": "BLOG",
+        "anchor": "B1"
+       }
+      ]
+     },
+     {
+      "finding": "The newsletter signup on the site sends the four‑email welcome sequence, confirming the email deliverable is live.",
+      "significance": "Shows the email sequence was not only delivered but also implemented, further refuting “incomplete” assertions.",
+      "citations": [
+       {
+        "doc_id": "BLOG",
+        "anchor": "B2"
+       }
+      ]
+     },
+     {
+      "finding": "The PayPal dispute filed under code MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED claims the content was incomplete, low quality, and that the writer stopped responding.",
+      "significance": "Summarizes the client’s formal allegation that the investigation must address.",
+      "citations": [
+       {
+        "doc_id": "DISPUTE",
+        "anchor": "REASON"
+       },
+       {
+        "doc_id": "DISPUTE",
+        "anchor": "MSG1"
+       }
+      ]
+     }
+    ],
+    "diagnosis": {
+     "hypotheses": [
+      {
+       "label": "Missing final article drives refund request",
+       "explanation": "The only undelivered piece is Article 5; the client is satisfied with the other four, so the dispute centers on the single missing deliverable rather than overall quality.",
+       "supporting": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D6"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        },
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A3"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B1"
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B2"
+        }
+       ],
+       "likelihood": 45
+      },
+      {
+       "label": "Literal complaint – incomplete, low quality, writer vanished",
+       "explanation": "The client asserts the work was unfinished, of poor quality, and that the freelancer stopped replying, matching the dispute message.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D6"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5"
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B1"
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B2"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        }
+       ],
+       "likelihood": 30
+      },
+      {
+       "label": "Schedule disruption caused business impact",
+       "explanation": "The contract schedule required the fifth article by Sep 9; its absence broke the client’s content calendar, prompting a chargeback to recoup perceived loss.",
+       "supporting": [
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D6"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5"
+        }
+       ],
+       "likelihood": 20
+      },
+      {
+       "label": "Communication breakdown after illness",
+       "explanation": "The freelancer’s illness note was followed by silence, leading the client to conclude the writer stopped responding, though earlier work was fine.",
+       "supporting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5"
+        }
+       ],
+       "likelihood": 5
+      }
+     ],
+     "real_complaint": {
+      "summary": "The client’s core grievance is that the fifth SEO article was never delivered and the freelancer stopped replying, making the overall project feel incomplete and, in the client’s view, low quality.",
+      "what_the_client_actually_needs": "Delivery of the missing Article 5 (or a proportional refund for that undelivered piece).",
+      "confidence": 90
+     },
+     "why_this_reason_code": "The MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED code is the closest match for a claim that the purchased content was incomplete, low quality, and that the provider ceased communication, which are the primary points the client raised in the dispute.",
+     "freelancer_weaknesses": [
+      {
+       "issue": "Failed to deliver Article 5 as required by the schedule",
+       "citations": [
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D6"
+        }
+       ]
+      },
+      {
+       "issue": "Did not respond to client follow‑up emails after Sep 8, creating the impression of abandonment",
+       "citations": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        }
+       ]
+      }
+     ]
+    },
+    "strategy": {
+     "decision": "PARTIAL_REFUND_AND_CONTEST",
+     "rationale": "The agreement specified five SEO articles and a four‑email sequence for $1,500. Articles 1‑4 and the email sequence were uploaded on schedule, approved by the client, and published on the client’s site, proving that the majority of the service was delivered as described and was used. The only missing deliverable is Article 5, which was never uploaded and the freelancer stopped responding after Sep 8, creating the client’s impression of abandonment. Therefore the client is entitled only to a proportional refund for the undelivered article ($250), and the rest of the chargeback should be contested.",
+     "proof_plan": [
+      {
+       "point": "The contract explicitly described the deliverables as five SEO blog articles (1,200‑1,500 words each) and a four‑email welcome sequence.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A1"
+        },
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A2"
+        },
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A3"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "All four of the first articles and the email sequence were uploaded on the agreed dates and approved by the buyer, showing compliance with the described service.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "The buyer explicitly approved each delivered piece (Articles 1‑4 and the email sequence) via email confirmations dated Aug‑13, Aug‑19, Aug‑29, Sep‑1, and Sep‑3.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4"
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "The delivered articles have been published on the client’s website and the email sequence is live, demonstrating that the work was used and fit for purpose.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "BLOG",
+         "anchor": "B1"
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B2"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "Article 5 was never uploaded; the delivery log shows no file for Article 5 as of 2026‑10‑10, constituting the undelivered portion of the contract.",
+       "answers": "REAL_COMPLAINT",
+       "evidence": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D6"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "After informing the client on Sep 8 that he was ill and would deliver Article 5 by Sep 12, the freelancer failed to respond to the client’s follow‑up messages on Sep 16 and Sep 24, creating the impression of abandonment.",
+       "answers": "REAL_COMPLAINT",
+       "evidence": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        }
+       ],
+       "strength": "STRONG"
+      }
+     ],
+     "refund_amount": "250.00",
+     "resolution_action": "Deliver the missing Article 5 to the client within 5 business days; if the client declines the delivery, issue a $250.00 refund."
+    },
+    "draft": {
+     "response_title": "Response to Chargeback – Partial Refund Offered",
+     "claims": [
+      {
+       "index": 0,
+       "text": "The agreement between Jordan Kim and Nadia Rossi clearly defined the deliverables as five SEO blog articles of 1,200‑1,500 words each and a four‑email welcome sequence.",
+       "citations": [
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A1",
+         "quote": "Deliverables: Five SEO blog articles of 1,200-1,500 words each, and one 4-email welcome sequence.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 1,
+       "text": "The disputed PayPal transaction of $1,500.00 USD (invoice JKC-088) was paid on 2026‑08‑05 in full accordance with the contract price of $250 per article plus $250 for the email sequence.",
+       "citations": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "TXN",
+         "quote": "Disputed transaction: PayPal transaction 1JK70382WA4410757 on 2026-08-05 for $1,500.00 USD, invoice JKC-088, buyer Nadia Rossi.",
+         "ok": true
+        },
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A2",
+         "quote": "Pricing: $250 per article (5 x $250 = $1,250) and $250 for the email sequence. Total $1,500, paid upfront.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 2,
+       "text": "Article 1 was uploaded on 2026‑08‑12 and approved by the buyer on Aug 13; Article 2 was uploaded on 2026‑08‑19 and approved the same day; Article 3 was uploaded on 2026‑08‑26, revised, and approved on Aug 29; Article 4 was uploaded on 2026‑09‑02 and approved on Sep 3; the 4‑email sequence was uploaded on 2026‑08‑30 and approved on Sep 1.",
+       "citations": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1",
+         "quote": "Article 1: 2026-08-12 - \"7 Mistakes New Lifters Make\" (1,380 words) uploaded. Marked approved by nadia@brightlinefit.com on Aug 13.",
+         "ok": true
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2",
+         "quote": "Article 2: 2026-08-19 - \"Recovery Days Are Training Days\" (1,450 words) uploaded. Approved Aug 19.",
+         "ok": true
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3",
+         "quote": "Article 3: 2026-08-26 - \"How to Pick a Gym You'll Actually Go To\" (1,290 words) uploaded. One revision requested Aug 27, revised version approved Aug 29.",
+         "ok": true
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4",
+         "quote": "Email sequence: 2026-08-30 - \"Welcome to Brightline\" 4-email sequence uploaded. Approved Sep 1.",
+         "ok": true
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5",
+         "quote": "Article 4: 2026-09-02 - \"Strength Training After 40\" (1,410 words) uploaded. Approved Sep 3.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 3,
+       "text": "All four delivered articles have been published on the client’s blog and the email sequence is live, confirming that the work was used and fit for its intended purpose.",
+       "citations": [
+        {
+         "doc_id": "BLOG",
+         "anchor": "B1",
+         "quote": "Published articles: Published on brightlinefit.com/blog: \"7 Mistakes New Lifters Make\" (Aug 15), \"Recovery Days Are Training Days\" (Aug 22), \"How to Pick a Gym You'll Actually Go To\" (Aug 31), \"Strength Training After 40\" (Sep 5). The text matches the delivered files.",
+         "ok": true
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B2",
+         "quote": "Email signup: The site's newsletter signup sends the \"Welcome to Brightline\" sequence. Captured Oct 10.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 4,
+       "text": "Article 5 was never uploaded; the delivery log shows no file for Article 5 as of 2026‑10‑10.",
+       "citations": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D6",
+         "quote": "Article 5: No file uploaded for Article 5 as of 2026-10-10.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 5,
+       "text": "Jordan informed Nadia on Sep 8 that he was ill and would deliver Article 5 by Sep 12, but after Nadia’s follow‑up messages on Sep 16 and Sep 24 the freelancer did not respond, creating the impression of abandonment.",
+       "citations": [
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E2",
+         "quote": "Sep 8 - Jordan to Nadia: Quick heads up, I'm under the weather this week. Article 5 will be with you by Friday the 12th.",
+         "ok": true
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E3",
+         "quote": "Sep 16 - Nadia to Jordan: Hi Jordan, checking in on the last article? We had it on our content calendar for this week.",
+         "ok": true
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4",
+         "quote": "Sep 24 - Nadia to Jordan: Jordan, it's been two weeks with no reply. Please let me know if you're still able to finish this.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 6,
+       "text": "Because one of the five articles (20 % of the total contract value) was not delivered, a proportional refund of $250 is warranted under the agreed pricing.",
+       "citations": [
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A2",
+         "quote": "Pricing: $250 per article (5 x $250 = $1,250) and $250 for the email sequence. Total $1,500, paid upfront.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 7,
+       "text": "Jordan will deliver the missing Article 5 within five business days; if Nadia declines the delivery, a $250 refund will be issued promptly.",
+       "citations": [
+        {
+         "doc_id": "AGREEMENT",
+         "anchor": "A3",
+         "quote": "Schedule: One article per week starting Aug 12, email sequence by Aug 30. Last article due Sep 9.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 8,
+       "text": "Given that four articles and the email sequence were fully delivered, approved, published, and used, the remainder of the chargeback is contested and should be reversed.",
+       "citations": [
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D1",
+         "quote": "Article 1: 2026-08-12 - \"7 Mistakes New Lifters Make\" (1,380 words) uploaded. Marked approved by nadia@brightlinefit.com on Aug 13.",
+         "ok": true
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D2",
+         "quote": "Article 2: 2026-08-19 - \"Recovery Days Are Training Days\" (1,450 words) uploaded. Approved Aug 19.",
+         "ok": true
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D3",
+         "quote": "Article 3: 2026-08-26 - \"How to Pick a Gym You'll Actually Go To\" (1,290 words) uploaded. One revision requested Aug 27, revised version approved Aug 29.",
+         "ok": true
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D4",
+         "quote": "Email sequence: 2026-08-30 - \"Welcome to Brightline\" 4-email sequence uploaded. Approved Sep 1.",
+         "ok": true
+        },
+        {
+         "doc_id": "DELIVERIES",
+         "anchor": "D5",
+         "quote": "Article 4: 2026-09-02 - \"Strength Training After 40\" (1,410 words) uploaded. Approved Sep 3.",
+         "ok": true
+        },
+        {
+         "doc_id": "BLOG",
+         "anchor": "B1",
+         "quote": "Published articles: Published on brightlinefit.com/blog: \"7 Mistakes New Lifters Make\" (Aug 15), \"Recovery Days Are Training Days\" (Aug 22), \"How to Pick a Gym You'll Actually Go To\" (Aug 31), \"Strength Training After 40\" (Sep 5). The text matches the delivered files.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 9,
+       "text": "Accordingly, PayPal should release $1,250 to the seller and approve the $250 partial refund to the buyer as the fair resolution.",
+       "citations": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "TXN",
+         "quote": "Disputed transaction: PayPal transaction 1JK70382WA4410757 on 2026-08-05 for $1,500.00 USD, invoice JKC-088, buyer Nadia Rossi.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      }
+     ],
+     "client_message": "Hi Nadia, I’m sorry the final article never reached you and that I stopped responding while I was ill. I will send you the missing piece within the next five business days, and if it doesn’t meet your needs I’ll issue a $250 refund right away. Thank you for your patience.",
+     "evidence_package": [
+      {
+       "doc_id": "AGREEMENT",
+       "evidence_type": "COPY_OF_CONTRACT",
+       "why": "Shows agreed deliverables, pricing, and schedule"
+      },
+      {
+       "doc_id": "AGREEMENT",
+       "evidence_type": "ITEM_DESCRIPTION",
+       "why": "Details the five articles and email sequence as the purchased items"
+      },
+      {
+       "doc_id": "DELIVERIES",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Provides timestamps and approval confirmations for Articles 1‑4 and the email sequence"
+      },
+      {
+       "doc_id": "BLOG",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Demonstrates that the delivered content was published and used"
+      },
+      {
+       "doc_id": "EMAILS",
+       "evidence_type": "OTHER",
+       "why": "Shows communication about the delayed Article 5 and lack of response"
+      }
+     ]
+    },
+    "removed": [],
+    "package": {
+     "actions": [
+      {
+       "kind": "provide_evidence",
+       "label": "Submit evidence to PayPal",
+       "method": "POST",
+       "path": "/v1/customer/disputes/PP-D-27170-BRIGHT/provide-evidence",
+       "contentType": "multipart/form-data",
+       "input": {
+        "evidences": [
+         {
+          "evidence_type": "COPY_OF_CONTRACT",
+          "notes": "The agreement between Jordan Kim and Nadia Rossi clearly defined the deliverables as five SEO blog articles of 1,200‑1,500 words each and a four‑email welcome sequence. [1]\n\nThe disputed PayPal transaction of $1,500.00 USD (invoice JKC-088) was paid on 2026‑08‑05 in full accordance with the contract price of $250 per article plus $250 for the email sequence. [2][3]\n\nArticle 1 was uploaded on 2026‑08‑12 and approved by the buyer on Aug 13; Article 2 was uploaded on 2026‑08‑19 and approved the same day; Article 3 was uploaded on 2026‑08‑26, revised, and approved on Aug 29; Article 4 was uploaded on 2026‑09‑02 and approved on Sep 3; the 4‑email sequence was uploaded on 2026‑08‑30 and approved on Sep 1. [4][5][6][7][8]\n\nAll four delivered articles have been published on the client’s blog and the email sequence is live, confirming that the work was used and fit for its intended purpose. [9][10]\n\nArticle 5 was never uploaded; the delivery log shows no file for Article 5 as of 2026‑10‑10. [11]\n\nJordan informed Nadia on Sep 8 that he was ill and would deliver Article 5 by Sep 12, but after Nadia’s follow‑up messages on Sep 16 and Sep 24 the freelancer did not respond, creating the impression of abandonment. [12][13][14]\n\nBecause one of the five articles (20 % of the total contract value) was not delivered, a proportional refund of $250 is warranted under the agreed pricing. [3]\n\nJordan will deliver the missing Article 5 within five business days; if Nadia declines the delivery, a $250 refund will be issued promptly. [15]\n\nGiven that four articles and the email sequence were fully delivered, approved, published, and used, the remainder of the chargeback is contested and should be reversed. [4][5][6][7][8][9]\n\nAccordingly, PayPal should release $1,250 to the seller and approve the $250 partial refund to the buyer as the fair resolution. [2]",
+          "documents": [
+           {
+            "name": "response-letter.pdf"
+           },
+           {
+            "name": "evidence-appendix.pdf"
+           }
+          ]
+         }
+        ]
+       },
+       "files": [
+        {
+         "field": "evidence-file",
+         "name": "response-letter.pdf",
+         "type": "application/pdf",
+         "size": 7975
+        },
+        {
+         "field": "evidence-file",
+         "name": "evidence-appendix.pdf",
+         "type": "application/pdf",
+         "size": 3913
+        }
+       ]
+      },
+      {
+       "kind": "make_offer",
+       "label": "Offer a 250.00 USD partial refund",
+       "method": "POST",
+       "path": "/v1/customer/disputes/PP-D-27170-BRIGHT/make-offer",
+       "contentType": "application/json",
+       "body": {
+        "note": "Deliver the missing Article 5 to the client within 5 business days; if the client declines the delivery, issue a $250.00 refund.",
+        "offer_amount": {
+         "currency_code": "USD",
+         "value": "250.00"
+        },
+        "offer_type": "REFUND"
+       }
+      },
+      {
+       "kind": "email",
+       "label": "Email Nadia Rossi directly",
+       "to": "nadia@brightlinefit.com",
+       "note": "PayPal messaging is closed in the chargeback stage, so this goes by email.",
+       "body": {
+        "message": "Hi Nadia, I’m sorry the final article never reached you and that I stopped responding while I was ill. I will send you the missing piece within the next five business days, and if it doesn’t meet your needs I’ll issue a $250 refund right away. Thank you for your patience."
+       }
+      }
+     ],
+     "footnotes": [
+      {
+       "doc_id": "AGREEMENT",
+       "anchor": "A1",
+       "quote": "Deliverables: Five SEO blog articles of 1,200-1,500 words each, and one 4-email welcome sequence."
+      },
+      {
+       "doc_id": "DISPUTE",
+       "anchor": "TXN",
+       "quote": "Disputed transaction: PayPal transaction 1JK70382WA4410757 on 2026-08-05 for $1,500.00 USD, invoice JKC-088, buyer Nadia Rossi."
+      },
+      {
+       "doc_id": "AGREEMENT",
+       "anchor": "A2",
+       "quote": "Pricing: $250 per article (5 x $250 = $1,250) and $250 for the email sequence. Total $1,500, paid upfront."
+      },
+      {
+       "doc_id": "DELIVERIES",
+       "anchor": "D1",
+       "quote": "Article 1: 2026-08-12 - \"7 Mistakes New Lifters Make\" (1,380 words) uploaded. Marked approved by nadia@brightlinefit.com on Aug 13."
+      },
+      {
+       "doc_id": "DELIVERIES",
+       "anchor": "D2",
+       "quote": "Article 2: 2026-08-19 - \"Recovery Days Are Training Days\" (1,450 words) uploaded. Approved Aug 19."
+      },
+      {
+       "doc_id": "DELIVERIES",
+       "anchor": "D3",
+       "quote": "Article 3: 2026-08-26 - \"How to Pick a Gym You'll Actually Go To\" (1,290 words) uploaded. One revision requested Aug 27, revised version approved Aug 29."
+      },
+      {
+       "doc_id": "DELIVERIES",
+       "anchor": "D4",
+       "quote": "Email sequence: 2026-08-30 - \"Welcome to Brightline\" 4-email sequence uploaded. Approved Sep 1."
+      },
+      {
+       "doc_id": "DELIVERIES",
+       "anchor": "D5",
+       "quote": "Article 4: 2026-09-02 - \"Strength Training After 40\" (1,410 words) uploaded. Approved Sep 3."
+      },
+      {
+       "doc_id": "BLOG",
+       "anchor": "B1",
+       "quote": "Published articles: Published on brightlinefit.com/blog: \"7 Mistakes New Lifters Make\" (Aug 15), \"Recovery Days Are Training Days\" (Aug 22), \"How to Pick a Gym You'll Actually Go To\" (Aug 31), \"Strength Training After 40\" (Sep 5). The text matches the delivered files."
+      },
+      {
+       "doc_id": "BLOG",
+       "anchor": "B2",
+       "quote": "Email signup: The site's newsletter signup sends the \"Welcome to Brightline\" sequence. Captured Oct 10."
+      },
+      {
+       "doc_id": "DELIVERIES",
+       "anchor": "D6",
+       "quote": "Article 5: No file uploaded for Article 5 as of 2026-10-10."
+      },
+      {
+       "doc_id": "EMAILS",
+       "anchor": "E2",
+       "quote": "Sep 8 - Jordan to Nadia: Quick heads up, I'm under the weather this week. Article 5 will be with you by Friday the 12th."
+      },
+      {
+       "doc_id": "EMAILS",
+       "anchor": "E3",
+       "quote": "Sep 16 - Nadia to Jordan: Hi Jordan, checking in on the last article? We had it on our content calendar for this week."
+      },
+      {
+       "doc_id": "EMAILS",
+       "anchor": "E4",
+       "quote": "Sep 24 - Nadia to Jordan: Jordan, it's been two weeks with no reply. Please let me know if you're still able to finish this."
+      },
+      {
+       "doc_id": "AGREEMENT",
+       "anchor": "A3",
+       "quote": "Schedule: One article per week starting Aug 12, email sequence by Aug 30. Last article due Sep 9."
+      }
+     ],
+     "letter": [
+      "The agreement between Jordan Kim and Nadia Rossi clearly defined the deliverables as five SEO blog articles of 1,200‑1,500 words each and a four‑email welcome sequence. [1]",
+      "The disputed PayPal transaction of $1,500.00 USD (invoice JKC-088) was paid on 2026‑08‑05 in full accordance with the contract price of $250 per article plus $250 for the email sequence. [2][3]",
+      "Article 1 was uploaded on 2026‑08‑12 and approved by the buyer on Aug 13; Article 2 was uploaded on 2026‑08‑19 and approved the same day; Article 3 was uploaded on 2026‑08‑26, revised, and approved on Aug 29; Article 4 was uploaded on 2026‑09‑02 and approved on Sep 3; the 4‑email sequence was uploaded on 2026‑08‑30 and approved on Sep 1. [4][5][6][7][8]",
+      "All four delivered articles have been published on the client’s blog and the email sequence is live, confirming that the work was used and fit for its intended purpose. [9][10]",
+      "Article 5 was never uploaded; the delivery log shows no file for Article 5 as of 2026‑10‑10. [11]",
+      "Jordan informed Nadia on Sep 8 that he was ill and would deliver Article 5 by Sep 12, but after Nadia’s follow‑up messages on Sep 16 and Sep 24 the freelancer did not respond, creating the impression of abandonment. [12][13][14]",
+      "Because one of the five articles (20 % of the total contract value) was not delivered, a proportional refund of $250 is warranted under the agreed pricing. [3]",
+      "Jordan will deliver the missing Article 5 within five business days; if Nadia declines the delivery, a $250 refund will be issued promptly. [15]",
+      "Given that four articles and the email sequence were fully delivered, approved, published, and used, the remainder of the chargeback is contested and should be reversed. [4][5][6][7][8][9]",
+      "Accordingly, PayPal should release $1,250 to the seller and approve the $250 partial refund to the buyer as the fair resolution. [2]"
+     ],
+     "clientMessage": "Hi Nadia, I’m sorry the final article never reached you and that I stopped responding while I was ill. I will send you the missing piece within the next five business days, and if it doesn’t meet your needs I’ll issue a $250 refund right away. Thank you for your patience.",
+     "evidencePackage": [
+      {
+       "doc_id": "AGREEMENT",
+       "evidence_type": "COPY_OF_CONTRACT",
+       "why": "Shows agreed deliverables, pricing, and schedule"
+      },
+      {
+       "doc_id": "AGREEMENT",
+       "evidence_type": "ITEM_DESCRIPTION",
+       "why": "Details the five articles and email sequence as the purchased items"
+      },
+      {
+       "doc_id": "DELIVERIES",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Provides timestamps and approval confirmations for Articles 1‑4 and the email sequence"
+      },
+      {
+       "doc_id": "BLOG",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Demonstrates that the delivered content was published and used"
+      },
+      {
+       "doc_id": "EMAILS",
+       "evidence_type": "OTHER",
+       "why": "Shows communication about the delayed Article 5 and lack of response"
+      }
+     ],
+     "_files": [
+      {
+       "field": "evidence-file",
+       "name": "response-letter.pdf",
+       "type": "application/pdf",
+       "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUiA3IDAgUl0gL0NvdW50IDIgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQxMzQgPj4Kc3RyZWFtCkJUIC9GMiAxNSBUZiA1NiA3MzYgVGQgKFJlc3BvbnNlIHRvIENoYXJnZWJhY2sgLSBQYXJ0aWFsIFJlZnVuZCBPZmZlcmVkKSBUaiBFVApCVCAvRjEgMTAgVGYgNTYgNzEzIFRkIChEaXNwdXRlIFBQLUQtMjcxNzAtQlJJR0hUIC0gTm90IGFzIGRlc2NyaWJlZCAtIDE1MDAuMDAgVVNEKSBUaiBFVApCVCAvRjEgMTAgVGYgNTYgNjk5IFRkIChTdWJtaXR0ZWQgYnkgSm9yZGFuIEtpbSwgSm9yZGFuIEtpbSBDb3B5IFwoam9yZGFuQGpvcmRhbmtpbWNvcHkuY29tXCkpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA2NzcgVGQgKFRoZSBhZ3JlZW1lbnQgYmV0d2VlbiBKb3JkYW4gS2ltIGFuZCBOYWRpYSBSb3NzaSBjbGVhcmx5IGRlZmluZWQgdGhlIGRlbGl2ZXJhYmxlcyBhcyBmaXZlKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjYyIFRkIChTRU8gYmxvZyBhcnRpY2xlcyBvZiAxLDIwMC0xLDUwMCB3b3JkcyBlYWNoIGFuZCBhIGZvdXItZW1haWwgd2VsY29tZSBzZXF1ZW5jZS4gWzFdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjM5IFRkIChUaGUgZGlzcHV0ZWQgUGF5UGFsIHRyYW5zYWN0aW9uIG9mICQxLDUwMC4wMCBVU0QgXChpbnZvaWNlIEpLQy0wODhcKSB3YXMgcGFpZCBvbiAyMDI2LTA4LTA1KSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjI0IFRkIChpbiBmdWxsIGFjY29yZGFuY2Ugd2l0aCB0aGUgY29udHJhY3QgcHJpY2Ugb2YgJDI1MCBwZXIgYXJ0aWNsZSBwbHVzICQyNTAgZm9yIHRoZSBlbWFpbCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDYwOSBUZCAoc2VxdWVuY2UuIFsyXVszXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU4NiBUZCAoQXJ0aWNsZSAxIHdhcyB1cGxvYWRlZCBvbiAyMDI2LTA4LTEyIGFuZCBhcHByb3ZlZCBieSB0aGUgYnV5ZXIgb24gQXVnIDEzOyBBcnRpY2xlIDIgd2FzKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNTcxIFRkICh1cGxvYWRlZCBvbiAyMDI2LTA4LTE5IGFuZCBhcHByb3ZlZCB0aGUgc2FtZSBkYXk7IEFydGljbGUgMyB3YXMgdXBsb2FkZWQgb24gMjAyNi0wOC0yNiwpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1NTYgVGQgKHJldmlzZWQsIGFuZCBhcHByb3ZlZCBvbiBBdWcgMjk7IEFydGljbGUgNCB3YXMgdXBsb2FkZWQgb24gMjAyNi0wOS0wMiBhbmQgYXBwcm92ZWQgb24gU2VwKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNTQxIFRkICgzOyB0aGUgNC1lbWFpbCBzZXF1ZW5jZSB3YXMgdXBsb2FkZWQgb24gMjAyNi0wOC0zMCBhbmQgYXBwcm92ZWQgb24gU2VwIDEuIFs0XVs1XVs2XVs3XVs4XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDUxOCBUZCAoQWxsIGZvdXIgZGVsaXZlcmVkIGFydGljbGVzIGhhdmUgYmVlbiBwdWJsaXNoZWQgb24gdGhlIGNsaWVudCdzIGJsb2cgYW5kIHRoZSBlbWFpbCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDUwMyBUZCAoc2VxdWVuY2UgaXMgbGl2ZSwgY29uZmlybWluZyB0aGF0IHRoZSB3b3JrIHdhcyB1c2VkIGFuZCBmaXQgZm9yIGl0cyBpbnRlbmRlZCBwdXJwb3NlLikgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQ4OCBUZCAoWzldWzEwXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQ2NSBUZCAoQXJ0aWNsZSA1IHdhcyBuZXZlciB1cGxvYWRlZDsgdGhlIGRlbGl2ZXJ5IGxvZyBzaG93cyBubyBmaWxlIGZvciBBcnRpY2xlIDUgYXMgb2YpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA0NTAgVGQgKDIwMjYtMTAtMTAuIFsxMV0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA0MjcgVGQgKEpvcmRhbiBpbmZvcm1lZCBOYWRpYSBvbiBTZXAgOCB0aGF0IGhlIHdhcyBpbGwgYW5kIHdvdWxkIGRlbGl2ZXIgQXJ0aWNsZSA1IGJ5IFNlcCAxMiwgYnV0KSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDEyIFRkIChhZnRlciBOYWRpYSdzIGZvbGxvdy11cCBtZXNzYWdlcyBvbiBTZXAgMTYgYW5kIFNlcCAyNCB0aGUgZnJlZWxhbmNlciBkaWQgbm90IHJlc3BvbmQsKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMzk3IFRkIChjcmVhdGluZyB0aGUgaW1wcmVzc2lvbiBvZiBhYmFuZG9ubWVudC4gWzEyXVsxM11bMTRdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMzc0IFRkIChCZWNhdXNlIG9uZSBvZiB0aGUgZml2ZSBhcnRpY2xlcyBcKDIwICUgb2YgdGhlIHRvdGFsIGNvbnRyYWN0IHZhbHVlXCkgd2FzIG5vdCBkZWxpdmVyZWQsIGEpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAzNTkgVGQgKHByb3BvcnRpb25hbCByZWZ1bmQgb2YgJDI1MCBpcyB3YXJyYW50ZWQgdW5kZXIgdGhlIGFncmVlZCBwcmljaW5nLiBbM10pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAzMzYgVGQgKEpvcmRhbiB3aWxsIGRlbGl2ZXIgdGhlIG1pc3NpbmcgQXJ0aWNsZSA1IHdpdGhpbiBmaXZlIGJ1c2luZXNzIGRheXM7IGlmIE5hZGlhIGRlY2xpbmVzIHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDMyMSBUZCAoZGVsaXZlcnksIGEgJDI1MCByZWZ1bmQgd2lsbCBiZSBpc3N1ZWQgcHJvbXB0bHkuIFsxNV0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAyOTggVGQgKEdpdmVuIHRoYXQgZm91ciBhcnRpY2xlcyBhbmQgdGhlIGVtYWlsIHNlcXVlbmNlIHdlcmUgZnVsbHkgZGVsaXZlcmVkLCBhcHByb3ZlZCwgcHVibGlzaGVkLCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDI4MyBUZCAoYW5kIHVzZWQsIHRoZSByZW1haW5kZXIgb2YgdGhlIGNoYXJnZWJhY2sgaXMgY29udGVzdGVkIGFuZCBzaG91bGQgYmUgcmV2ZXJzZWQuKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMjY4IFRkIChbNF1bNV1bNl1bN11bOF1bOV0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAyNDUgVGQgKEFjY29yZGluZ2x5LCBQYXlQYWwgc2hvdWxkIHJlbGVhc2UgJDEsMjUwIHRvIHRoZSBzZWxsZXIgYW5kIGFwcHJvdmUgdGhlICQyNTAgcGFydGlhbCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDIzMCBUZCAocmVmdW5kIHRvIHRoZSBidXllciBhcyB0aGUgZmFpciByZXNvbHV0aW9uLiBbMl0pIFRqIEVUCkJUIC9GMiAxMiBUZiA1NiAxOTkgVGQgKFNvdXJjZXMpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE4MCBUZCAoWzFdIENvbnRlbnQgYWdyZWVtZW50IFwoZW1haWwgYWNjZXB0YW5jZVwpLCBBMSBcKEVtYWlsLWFjY2VwdGVkIGFncmVlbWVudFwpOiAiRGVsaXZlcmFibGVzOiBGaXZlIFNFTyBibG9nIGFydGljbGVzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNjYgVGQgKG9mIDEsMjAwLTEsNTAwIHdvcmRzIGVhY2gsIGFuZCBvbmUgNC1lbWFpbCB3ZWxjb21lIHNlcXVlbmNlLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE0OSBUZCAoWzJdIFBheVBhbCBkaXNwdXRlIFBQLUQtMjcxNzAtQlJJR0hULCBUWE4gXChQYXlQYWwgRGlzcHV0ZXMgQVBJXCk6ICJEaXNwdXRlZCB0cmFuc2FjdGlvbjogUGF5UGFsIHRyYW5zYWN0aW9uKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMzUgVGQgKDFKSzcwMzgyV0E0NDEwNzU3IG9uIDIwMjYtMDgtMDUgZm9yICQxLDUwMC4wMCBVU0QsIGludm9pY2UgSktDLTA4OCwgYnV5ZXIgTmFkaWEgUm9zc2kuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTE4IFRkIChbM10gQ29udGVudCBhZ3JlZW1lbnQgXChlbWFpbCBhY2NlcHRhbmNlXCksIEEyIFwoRW1haWwtYWNjZXB0ZWQgYWdyZWVtZW50XCk6ICJQcmljaW5nOiAkMjUwIHBlciBhcnRpY2xlIFwoNSB4ICQyNTAgPSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTA0IFRkICgkMSwyNTBcKSBhbmQgJDI1MCBmb3IgdGhlIGVtYWlsIHNlcXVlbmNlLiBUb3RhbCAkMSw1MDAsIHBhaWQgdXBmcm9udC4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA4NyBUZCAoWzRdIERlbGl2ZXJ5IGxvZyBcKHNoYXJlZCBHb29nbGUgRHJpdmUgZm9sZGVyXCksIEQxIFwoR29vZ2xlIERyaXZlIGFjdGl2aXR5IGV4cG9ydFwpOiAiQXJ0aWNsZSAxOiAyMDI2LTA4LTEyIC0gIjcpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDczIFRkIChNaXN0YWtlcyBOZXcgTGlmdGVycyBNYWtlIiBcKDEsMzgwIHdvcmRzXCkgdXBsb2FkZWQuIE1hcmtlZCBhcHByb3ZlZCBieSBuYWRpYUBicmlnaHRsaW5lZml0LmNvbSBvbiBBdWcgMTMuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTYgVGQgKFs1XSBEZWxpdmVyeSBsb2cgXChzaGFyZWQgR29vZ2xlIERyaXZlIGZvbGRlclwpLCBEMiBcKEdvb2dsZSBEcml2ZSBhY3Rpdml0eSBleHBvcnRcKTogIkFydGljbGUgMjogMjAyNi0wOC0xOSAtKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCjcgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSAzIDAgUiAvRjIgNCAwIFIgPj4gPj4gL0NvbnRlbnRzIDggMCBSID4+CmVuZG9iago4IDAgb2JqCjw8IC9MZW5ndGggMjkwMSA+PgpzdHJlYW0KQlQgL0YxIDkgVGYgNTYgNzM2IFRkICgiUmVjb3ZlcnkgRGF5cyBBcmUgVHJhaW5pbmcgRGF5cyIgXCgxLDQ1MCB3b3Jkc1wpIHVwbG9hZGVkLiBBcHByb3ZlZCBBdWcgMTkuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNzE5IFRkIChbNl0gRGVsaXZlcnkgbG9nIFwoc2hhcmVkIEdvb2dsZSBEcml2ZSBmb2xkZXJcKSwgRDMgXChHb29nbGUgRHJpdmUgYWN0aXZpdHkgZXhwb3J0XCk6ICJBcnRpY2xlIDM6IDIwMjYtMDgtMjYgLSAiSG93KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA3MDUgVGQgKHRvIFBpY2sgYSBHeW0gWW91J2xsIEFjdHVhbGx5IEdvIFRvIiBcKDEsMjkwIHdvcmRzXCkgdXBsb2FkZWQuIE9uZSByZXZpc2lvbiByZXF1ZXN0ZWQgQXVnIDI3LCByZXZpc2VkIHZlcnNpb24pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY5MSBUZCAoYXBwcm92ZWQgQXVnIDI5LiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY3NCBUZCAoWzddIERlbGl2ZXJ5IGxvZyBcKHNoYXJlZCBHb29nbGUgRHJpdmUgZm9sZGVyXCksIEQ0IFwoR29vZ2xlIERyaXZlIGFjdGl2aXR5IGV4cG9ydFwpOiAiRW1haWwgc2VxdWVuY2U6IDIwMjYtMDgtMzAgLSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjYwIFRkICgiV2VsY29tZSB0byBCcmlnaHRsaW5lIiA0LWVtYWlsIHNlcXVlbmNlIHVwbG9hZGVkLiBBcHByb3ZlZCBTZXAgMS4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NDMgVGQgKFs4XSBEZWxpdmVyeSBsb2cgXChzaGFyZWQgR29vZ2xlIERyaXZlIGZvbGRlclwpLCBENSBcKEdvb2dsZSBEcml2ZSBhY3Rpdml0eSBleHBvcnRcKTogIkFydGljbGUgNDogMjAyNi0wOS0wMiAtKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MjkgVGQgKCJTdHJlbmd0aCBUcmFpbmluZyBBZnRlciA0MCIgXCgxLDQxMCB3b3Jkc1wpIHVwbG9hZGVkLiBBcHByb3ZlZCBTZXAgMy4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTIgVGQgKFs5XSBicmlnaHRsaW5lZml0LmNvbS9ibG9nIFwocHVibGljIHBhZ2VzLCBjYXB0dXJlZCBPY3QgMTBcKSwgQjEgXChQYWdlIGNhcHR1cmVzIGJ5IGZyZWVsYW5jZXJcKTogIlB1Ymxpc2hlZCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTk4IFRkIChhcnRpY2xlczogUHVibGlzaGVkIG9uIGJyaWdodGxpbmVmaXQuY29tL2Jsb2c6ICI3IE1pc3Rha2VzIE5ldyBMaWZ0ZXJzIE1ha2UiIFwoQXVnIDE1XCksICJSZWNvdmVyeSBEYXlzIEFyZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTg0IFRkIChUcmFpbmluZyBEYXlzIiBcKEF1ZyAyMlwpLCAiSG93IHRvIFBpY2sgYSBHeW0gWW91J2xsIEFjdHVhbGx5IEdvIFRvIiBcKEF1ZyAzMVwpLCAiU3RyZW5ndGggVHJhaW5pbmcgQWZ0ZXIgNDAiIFwoU2VwKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1NzAgVGQgKDVcKS4gVGhlIHRleHQgbWF0Y2hlcyB0aGUgZGVsaXZlcmVkIGZpbGVzLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU1MyBUZCAoWzEwXSBicmlnaHRsaW5lZml0LmNvbS9ibG9nIFwocHVibGljIHBhZ2VzLCBjYXB0dXJlZCBPY3QgMTBcKSwgQjIgXChQYWdlIGNhcHR1cmVzIGJ5IGZyZWVsYW5jZXJcKTogIkVtYWlsIHNpZ251cDopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDUzOSBUZCAoVGhlIHNpdGUncyBuZXdzbGV0dGVyIHNpZ251cCBzZW5kcyB0aGUgIldlbGNvbWUgdG8gQnJpZ2h0bGluZSIgc2VxdWVuY2UuIENhcHR1cmVkIE9jdCAxMC4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1MjIgVGQgKFsxMV0gRGVsaXZlcnkgbG9nIFwoc2hhcmVkIEdvb2dsZSBEcml2ZSBmb2xkZXJcKSwgRDYgXChHb29nbGUgRHJpdmUgYWN0aXZpdHkgZXhwb3J0XCk6ICJBcnRpY2xlIDU6IE5vIGZpbGUgdXBsb2FkZWQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDUwOCBUZCAoZm9yIEFydGljbGUgNSBhcyBvZiAyMDI2LTEwLTEwLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ5MSBUZCAoWzEyXSBFbWFpbCB0aHJlYWQ6IEpvcmRhbiA8LT4gTmFkaWEsIEUyIFwoRnJlZWxhbmNlcidzIGVtYWlsIGV4cG9ydFwpOiAiU2VwIDggLSBKb3JkYW4gdG8gTmFkaWE6IFF1aWNrIGhlYWRzIHVwLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDc3IFRkIChJJ20gdW5kZXIgdGhlIHdlYXRoZXIgdGhpcyB3ZWVrLiBBcnRpY2xlIDUgd2lsbCBiZSB3aXRoIHlvdSBieSBGcmlkYXkgdGhlIDEydGguIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDYwIFRkIChbMTNdIEVtYWlsIHRocmVhZDogSm9yZGFuIDwtPiBOYWRpYSwgRTMgXChGcmVlbGFuY2VyJ3MgZW1haWwgZXhwb3J0XCk6ICJTZXAgMTYgLSBOYWRpYSB0byBKb3JkYW46IEhpIEpvcmRhbiwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ0NiBUZCAoY2hlY2tpbmcgaW4gb24gdGhlIGxhc3QgYXJ0aWNsZT8gV2UgaGFkIGl0IG9uIG91ciBjb250ZW50IGNhbGVuZGFyIGZvciB0aGlzIHdlZWsuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDI5IFRkIChbMTRdIEVtYWlsIHRocmVhZDogSm9yZGFuIDwtPiBOYWRpYSwgRTQgXChGcmVlbGFuY2VyJ3MgZW1haWwgZXhwb3J0XCk6ICJTZXAgMjQgLSBOYWRpYSB0byBKb3JkYW46IEpvcmRhbiwgaXQncykgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDE1IFRkIChiZWVuIHR3byB3ZWVrcyB3aXRoIG5vIHJlcGx5LiBQbGVhc2UgbGV0IG1lIGtub3cgaWYgeW91J3JlIHN0aWxsIGFibGUgdG8gZmluaXNoIHRoaXMuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzk4IFRkIChbMTVdIENvbnRlbnQgYWdyZWVtZW50IFwoZW1haWwgYWNjZXB0YW5jZVwpLCBBMyBcKEVtYWlsLWFjY2VwdGVkIGFncmVlbWVudFwpOiAiU2NoZWR1bGU6IE9uZSBhcnRpY2xlIHBlciB3ZWVrKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzODQgVGQgKHN0YXJ0aW5nIEF1ZyAxMiwgZW1haWwgc2VxdWVuY2UgYnkgQXVnIDMwLiBMYXN0IGFydGljbGUgZHVlIFNlcCA5LiIpIFRqIEVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDkKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNTggMDAwMDAgbiAKMDAwMDAwMDEyMSAwMDAwMCBuIAowMDAwMDAwMjE4IDAwMDAwIG4gCjAwMDAwMDAzMjAgMDAwMDAgbiAKMDAwMDAwMDQ1NiAwMDAwMCBuIAowMDAwMDA0NjQyIDAwMDAwIG4gCjAwMDAwMDQ3NzggMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA5IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgo3NzMxCiUlRU9GCg=="
+      },
+      {
+       "field": "evidence-file",
+       "name": "evidence-appendix.pdf",
+       "type": "application/pdf",
+       "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDMyMDcgPj4Kc3RyZWFtCkJUIC9GMiAxNCBUZiA1NiA3MzYgVGQgKEV2aWRlbmNlIGFwcGVuZGl4OiBmdWxsIHRleHQgb2YgZXZlcnkgY2l0ZWQgc2VjdGlvbikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDcwNiBUZCAoQ29udGVudCBhZ3JlZW1lbnQgXChlbWFpbCBhY2NlcHRhbmNlXCkgLSBzb3VyY2U6IEVtYWlsLWFjY2VwdGVkIGFncmVlbWVudCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjg4IFRkIChBMSBEZWxpdmVyYWJsZXM6IEZpdmUgU0VPIGJsb2cgYXJ0aWNsZXMgb2YgMSwyMDAtMSw1MDAgd29yZHMgZWFjaCwgYW5kIG9uZSA0LWVtYWlsIHdlbGNvbWUgc2VxdWVuY2UuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NzEgVGQgKEEyIFByaWNpbmc6ICQyNTAgcGVyIGFydGljbGUgXCg1IHggJDI1MCA9ICQxLDI1MFwpIGFuZCAkMjUwIGZvciB0aGUgZW1haWwgc2VxdWVuY2UuIFRvdGFsICQxLDUwMCwgcGFpZCB1cGZyb250LikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjU0IFRkIChBMyBTY2hlZHVsZTogT25lIGFydGljbGUgcGVyIHdlZWsgc3RhcnRpbmcgQXVnIDEyLCBlbWFpbCBzZXF1ZW5jZSBieSBBdWcgMzAuIExhc3QgYXJ0aWNsZSBkdWUgU2VwIDkuKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgNjI4IFRkIChQYXlQYWwgZGlzcHV0ZSBQUC1ELTI3MTcwLUJSSUdIVCAtIHNvdXJjZTogUGF5UGFsIERpc3B1dGVzIEFQSSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjEwIFRkIChUWE4gRGlzcHV0ZWQgdHJhbnNhY3Rpb246IFBheVBhbCB0cmFuc2FjdGlvbiAxSks3MDM4MldBNDQxMDc1NyBvbiAyMDI2LTA4LTA1IGZvciAkMSw1MDAuMDAgVVNELCBpbnZvaWNlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1OTYgVGQgKEpLQy0wODgsIGJ1eWVyIE5hZGlhIFJvc3NpLikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDU3MCBUZCAoRGVsaXZlcnkgbG9nIFwoc2hhcmVkIEdvb2dsZSBEcml2ZSBmb2xkZXJcKSAtIHNvdXJjZTogR29vZ2xlIERyaXZlIGFjdGl2aXR5IGV4cG9ydCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTUyIFRkIChEMSBBcnRpY2xlIDE6IDIwMjYtMDgtMTIgLSAiNyBNaXN0YWtlcyBOZXcgTGlmdGVycyBNYWtlIiBcKDEsMzgwIHdvcmRzXCkgdXBsb2FkZWQuIE1hcmtlZCBhcHByb3ZlZCBieSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTM4IFRkIChuYWRpYUBicmlnaHRsaW5lZml0LmNvbSBvbiBBdWcgMTMuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1MjEgVGQgKEQyIEFydGljbGUgMjogMjAyNi0wOC0xOSAtICJSZWNvdmVyeSBEYXlzIEFyZSBUcmFpbmluZyBEYXlzIiBcKDEsNDUwIHdvcmRzXCkgdXBsb2FkZWQuIEFwcHJvdmVkIEF1ZyAxOS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDUwNCBUZCAoRDMgQXJ0aWNsZSAzOiAyMDI2LTA4LTI2IC0gIkhvdyB0byBQaWNrIGEgR3ltIFlvdSdsbCBBY3R1YWxseSBHbyBUbyIgXCgxLDI5MCB3b3Jkc1wpIHVwbG9hZGVkLiBPbmUgcmV2aXNpb24pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ5MCBUZCAocmVxdWVzdGVkIEF1ZyAyNywgcmV2aXNlZCB2ZXJzaW9uIGFwcHJvdmVkIEF1ZyAyOS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ3MyBUZCAoRDQgRW1haWwgc2VxdWVuY2U6IDIwMjYtMDgtMzAgLSAiV2VsY29tZSB0byBCcmlnaHRsaW5lIiA0LWVtYWlsIHNlcXVlbmNlIHVwbG9hZGVkLiBBcHByb3ZlZCBTZXAgMS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ1NiBUZCAoRDUgQXJ0aWNsZSA0OiAyMDI2LTA5LTAyIC0gIlN0cmVuZ3RoIFRyYWluaW5nIEFmdGVyIDQwIiBcKDEsNDEwIHdvcmRzXCkgdXBsb2FkZWQuIEFwcHJvdmVkIFNlcCAzLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDM5IFRkIChENiBBcnRpY2xlIDU6IE5vIGZpbGUgdXBsb2FkZWQgZm9yIEFydGljbGUgNSBhcyBvZiAyMDI2LTEwLTEwLikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDQxMyBUZCAoYnJpZ2h0bGluZWZpdC5jb20vYmxvZyBcKHB1YmxpYyBwYWdlcywgY2FwdHVyZWQgT2N0IDEwXCkgLSBzb3VyY2U6IFBhZ2UgY2FwdHVyZXMgYnkpIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAzOTggVGQgKGZyZWVsYW5jZXIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDM4MCBUZCAoQjEgUHVibGlzaGVkIGFydGljbGVzOiBQdWJsaXNoZWQgb24gYnJpZ2h0bGluZWZpdC5jb20vYmxvZzogIjcgTWlzdGFrZXMgTmV3IExpZnRlcnMgTWFrZSIgXChBdWcgMTVcKSwgIlJlY292ZXJ5KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzNjYgVGQgKERheXMgQXJlIFRyYWluaW5nIERheXMiIFwoQXVnIDIyXCksICJIb3cgdG8gUGljayBhIEd5bSBZb3UnbGwgQWN0dWFsbHkgR28gVG8iIFwoQXVnIDMxXCksICJTdHJlbmd0aCBUcmFpbmluZyBBZnRlcikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzUyIFRkICg0MCIgXChTZXAgNVwpLiBUaGUgdGV4dCBtYXRjaGVzIHRoZSBkZWxpdmVyZWQgZmlsZXMuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMzUgVGQgKEIyIEVtYWlsIHNpZ251cDogVGhlIHNpdGUncyBuZXdzbGV0dGVyIHNpZ251cCBzZW5kcyB0aGUgIldlbGNvbWUgdG8gQnJpZ2h0bGluZSIgc2VxdWVuY2UuIENhcHR1cmVkIE9jdCAxMC4pIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAzMDkgVGQgKEVtYWlsIHRocmVhZDogSm9yZGFuIDwtPiBOYWRpYSAtIHNvdXJjZTogRnJlZWxhbmNlcidzIGVtYWlsIGV4cG9ydCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjkxIFRkIChFMiBTZXAgOCAtIEpvcmRhbiB0byBOYWRpYTogUXVpY2sgaGVhZHMgdXAsIEknbSB1bmRlciB0aGUgd2VhdGhlciB0aGlzIHdlZWsuIEFydGljbGUgNSB3aWxsIGJlIHdpdGggeW91IGJ5KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyNzcgVGQgKEZyaWRheSB0aGUgMTJ0aC4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI2MCBUZCAoRTMgU2VwIDE2IC0gTmFkaWEgdG8gSm9yZGFuOiBIaSBKb3JkYW4sIGNoZWNraW5nIGluIG9uIHRoZSBsYXN0IGFydGljbGU/IFdlIGhhZCBpdCBvbiBvdXIgY29udGVudCBjYWxlbmRhciBmb3IpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI0NiBUZCAodGhpcyB3ZWVrLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjI5IFRkIChFNCBTZXAgMjQgLSBOYWRpYSB0byBKb3JkYW46IEpvcmRhbiwgaXQncyBiZWVuIHR3byB3ZWVrcyB3aXRoIG5vIHJlcGx5LiBQbGVhc2UgbGV0IG1lIGtub3cgaWYgeW91J3JlIHN0aWxsIGFibGUpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDIxNSBUZCAodG8gZmluaXNoIHRoaXMuKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA3CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDIxMiAwMDAwMCBuIAowMDAwMDAwMzE0IDAwMDAwIG4gCjAwMDAwMDA0NTAgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA3IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgozNzA5CiUlRU9GCg=="
+      }
+     ]
+    },
+    "usage": {
+     "prompt": 29737,
+     "completion": 10707,
+     "calls": 13
+    }
+   }
+  }
+ ]
+}

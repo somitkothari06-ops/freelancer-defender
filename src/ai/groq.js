@@ -121,6 +121,10 @@ async function chatJSON({ messages, schema, name, maxTokens = 3000, reasoningEff
       return { data: JSON.parse(message.content), usage, reasoning: message.reasoning || '' };
     } catch (err) {
       lastErr = err;
+      // Groq sometimes rejects an answer that is actually fine. If the rejected text parses
+      // and matches our schema, use it.
+      const salvaged = salvage(err.groq?.failed_generation, schema);
+      if (salvaged) return { data: salvaged, usage: null, reasoning: '' };
       // A schema-validation failure on Groq's side comes back as a 400; retry once.
       if (err.status && err.status !== 400) throw err;
       // If the answer was cut off, give the retry more room.
@@ -130,4 +134,27 @@ async function chatJSON({ messages, schema, name, maxTokens = 3000, reasoningEff
   throw lastErr;
 }
 
-module.exports = { chat, chatJSON };
+// Parse text and check it against the JSON Schema subset we use (object/array/string/integer/enum).
+function salvage(text, schema) {
+  if (!text) return null;
+  try {
+    const value = JSON.parse(text);
+    return fitsSchema(value, schema) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function fitsSchema(v, s) {
+  if (s.enum && !s.enum.includes(v)) return false;
+  if (s.type === 'string') return typeof v === 'string';
+  if (s.type === 'integer') return Number.isInteger(v);
+  if (s.type === 'array') return Array.isArray(v) && v.every((x) => fitsSchema(x, s.items));
+  if (s.type === 'object') {
+    if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
+    return (s.required || []).every((k) => k in v && fitsSchema(v[k], s.properties[k]));
+  }
+  return true;
+}
+
+module.exports = { chat, chatJSON, fitsSchema };

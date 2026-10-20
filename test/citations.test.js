@@ -72,3 +72,12 @@ test('quotes may include the section heading and typographic hyphens', () => {
   const r = checkCitation(locker, { doc_id: 'CONTRACT', anchor: '§3.2', quote: 'Final Asset Package: On completion ... a print‑ready PDF brand guide' });
   assert.equal(r.ok, true);
 });
+
+test('schema check used to salvage valid JSON that Groq rejected', () => {
+  const { fitsSchema } = require('../src/ai/groq');
+  const { findingsSchema } = require('../src/agent/prompts');
+  const ok = { findings: [{ finding: 'x', significance: 'y', citations: [{ doc_id: 'A', anchor: 'B' }] }], summary: 's' };
+  assert.equal(fitsSchema(ok, findingsSchema), true);
+  assert.equal(fitsSchema({ findings: [] }, findingsSchema), false);
+  assert.equal(fitsSchema({ findings: [{ finding: 'x' }], summary: 's' }, findingsSchema), false);
+});

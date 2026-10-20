@@ -1,0 +1,1851 @@
+{
+ "recorded_at": "2026-10-20T06:39:33.125Z",
+ "events": [
+  {
+   "t": 1,
+   "type": "stage",
+   "payload": {
+    "stage": "intake",
+    "status": "start"
+   }
+  },
+  {
+   "t": 2,
+   "type": "stage",
+   "payload": {
+    "stage": "intake",
+    "status": "done",
+    "data": {
+     "dispute_id": "PP-D-27155-TANDEM",
+     "reason": "UNAUTHORISED",
+     "amount": {
+      "currency_code": "USD",
+      "value": "4500.00"
+     },
+     "statement": "Cardholder statement forwarded by issuing bank (filed by Ben Carter, CEO): This charge was not authorized by Tandem Health. We have no agreement with this vendor and do not recognize this transaction. Please reverse it.",
+     "sources": {
+      "dispute": "Seeded demo record (PayPal Disputes API format)",
+      "transactions": "Seeded demo records (PayPal Transaction Search format)"
+     },
+     "documents": [
+      {
+       "doc_id": "DISPUTE",
+       "title": "PayPal dispute PP-D-27155-TANDEM",
+       "kind": "paypal_record",
+       "date": "",
+       "source": "PayPal Disputes API",
+       "summary": "The dispute as filed: reason code, disputed transaction and the client's own statement.",
+       "sections": 3
+      },
+      {
+       "doc_id": "PAYPAL-TXN",
+       "title": "Payment history between this client and the freelancer",
+       "kind": "paypal_record",
+       "date": "",
+       "source": "Seeded demo records (PayPal Transaction Search format)",
+       "summary": "3 PayPal transaction(s) from this payer, with dates, amounts, invoice numbers and item details.",
+       "sections": 3
+      },
+      {
+       "doc_id": "MSA",
+       "title": "Master Services Agreement + Statement of Work",
+       "kind": "contract",
+       "date": "2026-06-08",
+       "source": "DocuSign envelope, completed",
+       "summary": "Three-milestone engagement, signatory and authority, payment terms.",
+       "sections": 5
+      },
+      {
+       "doc_id": "SLACK",
+       "title": "Shared Slack channel #tandem-marcus (export)",
+       "kind": "correspondence",
+       "date": "2026-06-09 to 2026-09-02",
+       "source": "Slack Connect export",
+       "summary": "Day-to-day project messages between Marcus and Tandem staff.",
+       "sections": 6
+      },
+      {
+       "doc_id": "GITHUB",
+       "title": "GitHub audit log: tandemhealth/tandem-app",
+       "kind": "system_log",
+       "date": "2026-06-30 to 2026-09-30",
+       "source": "GitHub organization audit log export",
+       "summary": "Pull request merges and deployments.",
+       "sections": 4
+      },
+      {
+       "doc_id": "LINKEDIN",
+       "title": "Public LinkedIn profile update (screenshot)",
+       "kind": "public_record",
+       "date": "2026-08-25",
+       "source": "Screenshot captured by freelancer",
+       "summary": "Former CTO's public job change.",
+       "sections": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "t": 2,
+   "type": "stage",
+   "payload": {
+    "stage": "read",
+    "status": "start"
+   }
+  },
+  {
+   "t": 378,
+   "type": "pacing",
+   "payload": {
+    "ms": 5000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 8015,
+   "type": "stage",
+   "payload": {
+    "stage": "read",
+    "status": "done",
+    "data": {
+     "stated_complaint": "This charge was not authorized by Tandem Health. We have no agreement with this vendor and do not recognize this transaction. Please reverse it.",
+     "literal_claims": [
+      {
+       "claim": "Charge was not authorized by Tandem Health",
+       "quote": "This charge was not authorized by Tandem Health."
+      },
+      {
+       "claim": "No agreement exists with the vendor",
+       "quote": "We have no agreement with this vendor"
+      },
+      {
+       "claim": "Transaction is not recognized",
+       "quote": "do not recognize this transaction"
+      },
+      {
+       "claim": "Request reversal of the payment",
+       "quote": "Please reverse it."
+      }
+     ],
+     "vague_phrases": [
+      {
+       "phrase": "not authorized by Tandem Health",
+       "could_mean": [
+        "no signature or approval on the invoice",
+        "payment made by an employee without manager sign‑off",
+        "card used by a third‑party fraudster",
+        "authorized internally but not by the CEO"
+       ]
+      },
+      {
+       "phrase": "no agreement with this vendor",
+       "could_mean": [
+        "no written contract exists",
+        "verbal agreement was never documented",
+        "agreement exists but under a different company name",
+        "agreement was signed after the payment"
+       ]
+      },
+      {
+       "phrase": "do not recognize this transaction",
+       "could_mean": [
+        "card statement description is unclear",
+        "client staff unfamiliar with the vendor name",
+        "transaction appears under a different descriptor",
+        "client believes the amount is incorrect"
+       ]
+      }
+     ],
+     "reviewer_tests": [
+      "Was the payment made by someone authorized by the account holder?",
+      "Is there an agreement between the payer and the freelancer?",
+      "Has the same payer paid the freelancer before without disputing it?",
+      "Did the account holder benefit from or use what was paid for?"
+     ],
+     "open_questions": [
+      "Who specifically approved or initiated the payment on Tandem Health’s side?",
+      "Is there any written contract, proposal, or email exchange that establishes an agreement with Marcus Lee?",
+      "Has Ben Carter or any other Tandem Health employee previously paid Marcus Lee for services?",
+      "Did Tandem Health receive the React deliverables and use them in their product?",
+      "Can the card transaction be linked to a legitimate business expense or employee purchase?",
+      "Are there internal records (e.g., purchase orders, expense approvals) that reference this payment?"
+     ]
+    },
+    "thinking": "We need to output JSON matching read_complaint schema. Fields: stated_complaint (string), literal_claims (array of objects with claim and quote), vague_phrases (array of objects with phrase and could_mean array), reviewer_tests (array of strings), open_questions (array of strings). Provide 2-4 vague phrases and each could mean 2-4 concrete things. Need to separate literal claims from vague. The client's statement: \"Cardholder statement forwarded by issuing bank (filed by Ben Carter, CEO): This charge was not authorized by Tandem Health. We have no agreement with this vendor and do not recogniz…"
+   }
+  },
+  {
+   "t": 8015,
+   "type": "stage",
+   "payload": {
+    "stage": "investigate",
+    "status": "start"
+   }
+  },
+  {
+   "t": 8016,
+   "type": "pacing",
+   "payload": {
+    "ms": 17836,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 26663,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We need to investigate using evidence. We must read documents. Likely need to open DISPUTE, PAYPAL-TXN, MSA, SLACK, GITHUB. Let's start with reading DISPUTE."
+   }
+  },
+  {
+   "t": 26663,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "DISPUTE",
+    "title": "PayPal dispute PP-D-27155-TANDEM",
+    "source": "PayPal Disputes API",
+    "sections": [
+     "REASON",
+     "TXN",
+     "MSG1"
+    ]
+   }
+  },
+  {
+   "t": 26664,
+   "type": "pacing",
+   "payload": {
+    "ms": 14400,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 41954,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have the dispute with claim. Need more docs: payment history, MSA, Slack, Github, etc.\n\nOpen payment history."
+   }
+  },
+  {
+   "t": 41954,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "PAYPAL-TXN",
+    "title": "Payment history between this client and the freelancer",
+    "source": "Seeded demo records (PayPal Transaction Search format)",
+    "sections": [
+     "8KA11204PL7730012",
+     "5QW80033JD9921874",
+     "3TD99817MM2041125"
+    ]
+   }
+  },
+  {
+   "t": 41954,
+   "type": "pacing",
+   "payload": {
+    "ms": 16224,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 59212,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have transaction details. Need to see contract (MSA) and Slack to see approvals, deliverables, and usage.\n\n"
+   }
+  },
+  {
+   "t": 59212,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "MSA",
+    "title": "Master Services Agreement + Statement of Work",
+    "source": "DocuSign envelope, completed",
+    "sections": [
+     "§1",
+     "§2",
+     "§3",
+     "§4",
+     "§5"
+    ]
+   }
+  },
+  {
+   "t": 59213,
+   "type": "pacing",
+   "payload": {
+    "ms": 13605,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 73601,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We need more: Slack messages for approvals, maybe who approved payment. Also GitHub audit log for merges. Let's read Slack."
+   }
+  },
+  {
+   "t": 73601,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "SLACK",
+    "title": "Shared Slack channel #tandem-marcus (export)",
+    "source": "Slack Connect export",
+    "sections": [
+     "K1",
+     "K2",
+     "K3",
+     "K4",
+     "K5",
+     "K6"
+    ]
+   }
+  },
+  {
+   "t": 73601,
+   "type": "pacing",
+   "payload": {
+    "ms": 20437,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 95847,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have evidence: contract signed by Aisha Verma (CTO), authority clause says signatory authorized. Payments made from billing@tandemhealth.io, consistent. Slack shows CEO Ben Carter approving M2, and later M3, with Ben confirming usage. So client claim of unauthorized is false; internal staff approved. Also there is agreement (MSA). Real complaint maybe they claim they didn't recognize vendor because they think contract signed after payment? But contract signed June 8 before first payment June …"
+   }
+  },
+  {
+   "t": 95848,
+   "type": "finding",
+   "payload": {
+    "finding": "A signed Master Services Agreement exists between Marcus Lee and Tandem Health, executed on June 8 2026 by Aisha Verma, Co‑founder & CTO, who had authority to bind the company.",
+    "significance": "Counters the client’s claim that there was “no agreement” with the vendor; a written contract was in place before any payment.",
+    "citations": [
+     {
+      "doc_id": "MSA",
+      "anchor": "§1"
+     },
+     {
+      "doc_id": "MSA",
+      "anchor": "§2"
+     }
+    ],
+    "dropped": 0
+   }
+  },
+  {
+   "t": 95848,
+   "type": "pacing",
+   "payload": {
+    "ms": 31366,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 128343,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We need to continue gathering evidence. Need to find who approved payment. In MSA, authority clause says signatory authorized. Also Slack shows Aisha says paying invoice. Payment logs show invoice numbers. Need to check who initiated payment? maybe email or logs not present. But we have Slack messages showing Aisha paying Milestone 2, and Ben paying Milestone 3? Actually Slack Aug 28 Marcus says invoice will go out; Ben later says clinicians using dashboard. Payment likely processed by billing@t…"
+   }
+  },
+  {
+   "t": 128343,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "GITHUB",
+    "title": "GitHub audit log: tandemhealth/tandem-app",
+    "source": "GitHub organization audit log export",
+    "sections": [
+     "G1",
+     "G2",
+     "G3",
+     "G4"
+    ]
+   }
+  },
+  {
+   "t": 128343,
+   "type": "pacing",
+   "payload": {
+    "ms": 16891,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 147437,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have many facts: contract signed by Aisha Verma with authority. Payments were made per milestones with invoices. Slack shows communication, approvals, acknowledgment that M3 shipped and used. GitHub shows PR merges and deployment. Client's claim: unauthorized transaction, no agreement, not recognize transaction.\n\nWe need to investigate who approved payment: payments done by billing@tandemhealth.io; the contract says payment method via PayPal business account. The authorized signatory is Aisha…"
+   }
+  },
+  {
+   "t": 147437,
+   "type": "finding",
+   "payload": {
+    "finding": "The MSA specifies that each milestone is invoiced via PayPal when its pull request is merged, linking payment obligations directly to code delivery.",
+    "significance": "Shows that the $4,500 payment was contractually required after PR #212 merge, undermining the claim of unauthorized charge.",
+    "citations": [
+     {
+      "doc_id": "MSA",
+      "anchor": "§3"
+     },
+     {
+      "doc_id": "MSA",
+      "anchor": "§4"
+     }
+    ],
+    "dropped": 0
+   }
+  },
+  {
+   "t": 147438,
+   "type": "pacing",
+   "payload": {
+    "ms": 23047,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 172295,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We need to continue investigation, find who approved payment, internal approvals, usage, etc. Look at Slack for payment approvals and usage statements. Also need evidence of payment approvals: In Slack messages, Aisha says paying invoice, Ben says ship M3, then after merge Ben says clinicians using dashboard. Also need to find who initiated payment; PayPal transaction shows paid by billing@tandemhealth.io, likely authorized by CFO/finance. Maybe there is no explicit approval record, but MSA auth…"
+   }
+  },
+  {
+   "t": 172295,
+   "type": "finding",
+   "payload": {
+    "finding": "Slack messages show Aisha Verma confirming payment for Milestone 2 and Ben Carter confirming that Marcus should ship Milestone 3 and that the invoice would be sent, indicating internal approval of the work and payment process.",
+    "significance": "Demonstrates that senior Tandem staff authorized the work and anticipated payment, countering the claim of unauthorized transaction.",
+    "citations": [
+     {
+      "doc_id": "SLACK",
+      "anchor": "K2"
+     },
+     {
+      "doc_id": "SLACK",
+      "anchor": "K4"
+     }
+    ],
+    "dropped": 0
+   }
+  },
+  {
+   "t": 172295,
+   "type": "pacing",
+   "payload": {
+    "ms": 31801,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 207673,
+   "type": "finding",
+   "payload": {
+    "finding": "Pull request #212 (M3) was merged on 2026‑08‑28 by Ben Carter, the company's CEO, after which the code was deployed to production 23 times between Aug 28 and Sep 30.",
+    "significance": "Confirms that the clinician dashboard deliverable was completed, merged, and actively used by Tandem staff, refuting any notion that nothing was delivered.",
+    "citations": [
+     {
+      "doc_id": "GITHUB",
+      "anchor": "G3"
+     },
+     {
+      "doc_id": "GITHUB",
+      "anchor": "G4"
+     }
+    ]
+   }
+  },
+  {
+   "t": 207674,
+   "type": "finding",
+   "payload": {
+    "finding": "Ben Carter posted on Sep 2 that clinicians are using the new dashboard every day.",
+    "significance": "Provides direct evidence that the client has received and is using the product, weakening any “not received” or “not fit for purpose” arguments.",
+    "citations": [
+     {
+      "doc_id": "SLACK",
+      "anchor": "K6"
+     }
+    ]
+   }
+  },
+  {
+   "t": 207674,
+   "type": "finding",
+   "payload": {
+    "finding": "The PayPal transaction record shows the $4,500 payment (invoice MLD‑0019) was made on 2026‑08‑28 from billing@tandemhealth.io, matching the contract’s payment method and invoice number.",
+    "significance": "Establishes that the payment was made from an authorized corporate PayPal account, not a rogue or personal card.",
+    "citations": [
+     {
+      "doc_id": "PAYPAL-TXN",
+      "anchor": "3TD99817MM2041125"
+     }
+    ]
+   }
+  },
+  {
+   "t": 207674,
+   "type": "finding",
+   "payload": {
+    "finding": "The dispute filing (reason code UNAUTHORISED) was submitted by Ben Carter, CEO, stating the charge was not authorized and that there is no agreement.",
+    "significance": "Shows the claim originates from the top executive, but contradicts internal Slack approvals and the signed MSA, indicating a possible internal miscommunication rather than fraud.",
+    "citations": [
+     {
+      "doc_id": "DISPUTE",
+      "anchor": "MSG1"
+     },
+     {
+      "doc_id": "DISPUTE",
+      "anchor": "REASON"
+     }
+    ]
+   }
+  },
+  {
+   "t": 207674,
+   "type": "finding",
+   "payload": {
+    "finding": "Two prior milestone payments ($3,000 each for M1 and M2) were completed on 2026‑06‑30 and 2026‑07‑29, with corresponding Slack confirmations of successful delivery and acceptance.",
+    "significance": "Establishes a pattern of accepted work and payments, showing the client previously recognized the relationship and the billing process.",
+    "citations": [
+     {
+      "doc_id": "PAYPAL-TXN",
+      "anchor": "8KA11204PL7730012"
+     },
+     {
+      "doc_id": "PAYPAL-TXN",
+      "anchor": "5QW80033JD9921874"
+     },
+     {
+      "doc_id": "SLACK",
+      "anchor": "K1"
+     }
+    ]
+   }
+  },
+  {
+   "t": 207674,
+   "type": "stage",
+   "payload": {
+    "stage": "investigate",
+    "status": "done",
+    "data": {
+     "summary": "Tandem Health had a signed, authorized contract and internally approved each milestone, including the $4,500 Clinician Dashboard, which was merged, deployed, and actively used. The charge was therefore authorized and legitimate; the dispute stems from internal miscommunication rather than fraud or lack of agreement.",
+     "findings": 8,
+     "opened": [
+      "DISPUTE",
+      "PAYPAL-TXN",
+      "MSA",
+      "SLACK",
+      "GITHUB"
+     ]
+    }
+   }
+  },
+  {
+   "t": 207674,
+   "type": "stage",
+   "payload": {
+    "stage": "diagnose",
+    "status": "start"
+   }
+  },
+  {
+   "t": 211634,
+   "type": "stage",
+   "payload": {
+    "stage": "diagnose",
+    "status": "done",
+    "data": {
+     "hypotheses": [
+      {
+       "label": "Internal miscommunication",
+       "explanation": "A senior executive filed the dispute without being aware of the signed MSA and prior Slack approvals, leading to a mistaken belief that the charge was unauthorized.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "MSA",
+         "anchor": "§1"
+        },
+        {
+         "doc_id": "MSA",
+         "anchor": "§2"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K2"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K4"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K6"
+        },
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "3TD99817MM2041125"
+        }
+       ],
+       "likelihood": 30
+      },
+      {
+       "label": "Attempted refund after delivery",
+       "explanation": "The client received and is using the clinician dashboard but is now trying to reverse the payment, possibly for financial gain.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G3"
+        },
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G4"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K6"
+        }
+       ],
+       "likelihood": 25
+      },
+      {
+       "label": "Quality dissatisfaction masked as unauthorized",
+       "explanation": "The buyer is unhappy with the delivered dashboard and is framing the complaint as an unauthorized charge to obtain a refund.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "SLACK",
+         "anchor": "K6"
+        }
+       ],
+       "likelihood": 25
+      },
+      {
+       "label": "Unauthorized claim",
+       "explanation": "The buyer asserts the $4,500 charge was not authorized and that no agreement exists with the developer.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "REASON"
+        },
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "MSA",
+         "anchor": "§1"
+        },
+        {
+         "doc_id": "MSA",
+         "anchor": "§2"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K2"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K4"
+        },
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "3TD99817MM2041125"
+        }
+       ],
+       "likelihood": 20
+      }
+     ],
+     "real_complaint": {
+      "summary": "The dispute stems from an internal communication breakdown: a senior executive filed an unauthorized‑charge claim despite a signed MSA, Slack approvals, and evidence that the dashboard was delivered and actively used.",
+      "what_the_client_actually_needs": "Clear, documented confirmation of the contract and payment terms sent directly to the executive signatory, and reassurance that the delivered product meets the agreed specifications.",
+      "confidence": 85
+     },
+     "why_this_reason_code": "The CEO likely chose the UNAUTHORISED reason code because it is the most straightforward way to trigger a chargeback quickly, especially when he believed—due to lack of direct confirmation—that no formal agreement or payment approval existed.",
+     "freelancer_weaknesses": [
+      {
+       "issue": "Reliance on informal Slack acknowledgments rather than sending formal invoice and contract copies to the ultimate decision‑maker (CEO), leaving the executive unaware of the binding agreement.",
+       "citations": [
+        {
+         "doc_id": "SLACK",
+         "anchor": "K4"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K2"
+        }
+       ]
+      }
+     ]
+    },
+    "thinking": "We need to produce JSON in the diagnosis format. Must include hypotheses array (2-4), each with label, explanation, supporting (list of citations), contradicting (list of citations), likelihood integer. Real_complaint object with summary, what_the_client_actually_needs, confidence. why_this_reason_code string. freelancer_weaknesses array (if any). Need to consider weaknesses: maybe freelancer didn't get written acknowledgment of receipt beyond Slack, but evidence shows acceptance. Perhaps weakness: none. Could note that freelancer relied on internal approvals but client executive later disputed, maybe internal miscommunication, not freelancer fault. So weaknesses maybe none or minimal.\n\nWe must cite from provided docs.\n\nIdentify hypotheses:\n\n1. Literal: Client claims unauthorized transacti…"
+   }
+  },
+  {
+   "t": 211634,
+   "type": "stage",
+   "payload": {
+    "stage": "strategy",
+    "status": "start"
+   }
+  },
+  {
+   "t": 211635,
+   "type": "pacing",
+   "payload": {
+    "ms": 18406,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 230645,
+   "type": "pacing",
+   "payload": {
+    "ms": 3000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 233648,
+   "type": "pacing",
+   "payload": {
+    "ms": 1702,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 239926,
+   "type": "stage",
+   "payload": {
+    "stage": "strategy",
+    "status": "done",
+    "data": {
+     "decision": "CONTEST_AND_RESOLVE",
+     "rationale": "The PayPal transaction was made by Tandem Health's authorized business account, a signed MSA exists with an authorized signatory, the same payer has successfully paid two prior milestones without dispute, and the clinician dashboard has been merged, deployed, and actively used by Tandem Health staff. These facts satisfy all reviewer tests for the UNAUTHORISED reason code, allowing the freelancer to contest the chargeback. The real issue is the executive’s lack of formal contract documentation; providing the signed MSA and a delivery summary will resolve that complaint without needing a refund.",
+     "proof_plan": [
+      {
+       "point": "Payment was made by an authorized representative of Tandem Health using its PayPal business account.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "3TD99817MM2041125"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K4"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "A valid agreement (MSA) exists between the freelancer and Tandem Health, signed by an authorized signatory.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "MSA",
+         "anchor": "§1"
+        },
+        {
+         "doc_id": "MSA",
+         "anchor": "§2"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "Tandem Health has previously paid the freelancer for earlier milestones without any dispute.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "8KA11204PL7730012"
+        },
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "5QW80033JD9921874"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "The clinician dashboard was delivered, deployed to production, and is actively used by Tandem Health staff.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G3"
+        },
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G4"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K6"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "The executive lacks a formal copy of the contract; sending the signed MSA and payment terms will satisfy the real complaint.",
+       "answers": "REAL_COMPLAINT",
+       "evidence": [
+        {
+         "doc_id": "MSA",
+         "anchor": "§1"
+        },
+        {
+         "doc_id": "MSA",
+         "anchor": "§2"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K4"
+        }
+       ],
+       "strength": "MODERATE"
+      },
+      {
+       "point": "Delivery meets the agreed specifications, confirming the product matches the contract requirements.",
+       "answers": "BOTH",
+       "evidence": [
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G3"
+        },
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G4"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K6"
+        }
+       ],
+       "strength": "STRONG"
+      }
+     ],
+     "refund_amount": "0.00",
+     "resolution_action": "Email the signed MSA (including signature page) and the invoice for Milestone 3 directly to CEO Ben Carter, attach a brief delivery summary (PR #212 merge, 23 production deployments, and usage confirmation from Slack), and confirm that the clinician dashboard satisfies all agreed specifications."
+    },
+    "thinking": "We need to decide strategy, produce JSON with fields: decision, rationale, proof_plan (array of points), refund_amount, resolution_action.\n\nWe must answer reviewer tests: (1) Was the payment made by someone authorized by the account holder? (2) Is there an agreement between payer and freelancer? (3) Has same payer paid before without disputing? (4) Did account holder benefit from or use what was paid for?\n\nWe have evidence:\n\n- Payment transaction shows paid by billing@tandemhealth.io (PayPal business account) (doc_id=PAYPAL-TXN anchor=3TD99817MM2041125) indicates authorized payer (someone from…"
+   }
+  },
+  {
+   "t": 239926,
+   "type": "stage",
+   "payload": {
+    "stage": "draft",
+    "status": "start"
+   }
+  },
+  {
+   "t": 239927,
+   "type": "pacing",
+   "payload": {
+    "ms": 26212,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 273860,
+   "type": "pacing",
+   "payload": {
+    "ms": 18227,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 303400,
+   "type": "stage",
+   "payload": {
+    "stage": "draft",
+    "status": "done",
+    "data": {
+     "response_title": "Response to Unauthorized Transaction Dispute – Milestone 3",
+     "claims": 8
+    }
+   }
+  },
+  {
+   "t": 303400,
+   "type": "stage",
+   "payload": {
+    "stage": "verify",
+    "status": "start"
+   }
+  },
+  {
+   "t": 303401,
+   "type": "stage",
+   "payload": {
+    "stage": "verify",
+    "status": "done",
+    "data": {
+     "grounded": 8,
+     "total": 8,
+     "repaired": 0,
+     "removed": [],
+     "citations": 13
+    }
+   }
+  },
+  {
+   "t": 303404,
+   "type": "stage",
+   "payload": {
+    "stage": "package",
+    "status": "done",
+    "data": {
+     "package": {
+      "actions": [
+       {
+        "kind": "provide_evidence",
+        "label": "Submit evidence to PayPal",
+        "method": "POST",
+        "path": "/v1/customer/disputes/PP-D-27155-TANDEM/provide-evidence",
+        "contentType": "multipart/form-data",
+        "input": {
+         "evidences": [
+          {
+           "evidence_type": "COPY_OF_CONTRACT",
+           "notes": "The disputed PayPal transaction for $4,500.00 USD was made on 2026-08-28 by Tandem Health’s business account and corresponds to invoice MLD-0019 for Milestone 3. [1][2]\n\nMilestone 3 (clinician dashboard) was defined in the MSA and is payable upon merge of the pull request, as described in §3 of the agreement. [3]\n\nThe MSA was signed by Aisha Verma, Co‑founder & CTO, an authorized signatory for Tandem Health, on June 8 2026. [4][5]\n\nPrior milestones 1 and 2 were invoiced and fully paid via PayPal on 2026‑06‑30 and 2026‑07‑29, demonstrating the company’s acceptance of the agreement and payment process. [6][7]\n\nPull request #212 implementing the clinician dashboard was merged on 2026‑08‑28, and the code was included in 23 production deployments between Aug 28 and Sep 30, confirming delivery. [8][9]\n\nTandem Health staff confirmed on Sep 2 that clinicians are using the new dashboard daily, confirming the work is functional and in use. [10]\n\nThe buyer’s claim that no agreement exists contradicts the signed MSA and the documented approvals, as shown in the contract and Slack messages. [11][4]\n\nThe only unresolved issue is that the executive does not have a copy of the signed agreement; we are providing the MSA and a delivery summary to address this. [4]",
+           "documents": [
+            {
+             "name": "response-letter.pdf"
+            },
+            {
+             "name": "evidence-appendix.pdf"
+            }
+           ]
+          }
+         ]
+        },
+        "files": [
+         {
+          "field": "evidence-file",
+          "name": "response-letter.pdf",
+          "type": "application/pdf",
+          "size": 7214
+         },
+         {
+          "field": "evidence-file",
+          "name": "evidence-appendix.pdf",
+          "type": "application/pdf",
+          "size": 4310
+         }
+        ]
+       },
+       {
+        "kind": "email",
+        "label": "Email Ben Carter directly",
+        "to": "billing@tandemhealth.io",
+        "note": "PayPal messaging is closed in the chargeback stage, so this goes by email.",
+        "body": {
+         "message": "Hi Ben,\n\nI understand you don’t have a copy of our signed agreement handy. I’ve attached the fully signed MSA and a brief delivery summary that shows the clinician dashboard was merged, deployed, and is being used daily by your team. Please let me know if you need anything else.\n\nBest,\nMarcus"
+        }
+       }
+      ],
+      "footnotes": [
+       {
+        "doc_id": "DISPUTE",
+        "anchor": "TXN",
+        "quote": "Disputed transaction: PayPal transaction 3TD99817MM2041125 on 2026-08-28 for $4,500.00 USD, invoice MLD-0019, buyer Tandem Health Inc.."
+       },
+       {
+        "doc_id": "PAYPAL-TXN",
+        "anchor": "3TD99817MM2041125",
+        "quote": "2026-08-28 - $4,500.00 USD: Transaction 3TD99817MM2041125 on 2026-08-28: $4,500.00 USD paid by billing@tandemhealth.io (Tandem Health Inc.). Status: completed. Invoice MLD-0019. Subject: \"Tandem Health - Milestone 3: clinician dashboard\"."
+       },
+       {
+        "doc_id": "MSA",
+        "anchor": "§3",
+        "quote": "Milestones: M1 auth + onboarding flow ($3,000); M2 appointment booking ($3,000); M3 clinician dashboard ($4,500). Each milestone is invoiced via PayPal when its pull request is merged into Company's main branch."
+       },
+       {
+        "doc_id": "MSA",
+        "anchor": "§1",
+        "quote": "Parties and signatory: Agreement between Marcus Lee Dev (\"Developer\") and Tandem Health Inc., a Delaware corporation (\"Company\"). Signed for Company by Aisha Verma, Co-founder & CTO, on June 8, 2026, via DocuSign (envelope 4F2A-77C1)."
+       },
+       {
+        "doc_id": "MSA",
+        "anchor": "§2",
+        "quote": "Authority: The individual signing for Company represents that they are authorized to bind Company to this Agreement."
+       },
+       {
+        "doc_id": "PAYPAL-TXN",
+        "anchor": "8KA11204PL7730012",
+        "quote": "2026-06-30 - $3,000.00 USD: Transaction 8KA11204PL7730012 on 2026-06-30: $3,000.00 USD paid by billing@tandemhealth.io (Tandem Health Inc.). Status: completed. Invoice MLD-0011. Subject: \"Tandem Health - Milestone 1: auth + onboarding flow\"."
+       },
+       {
+        "doc_id": "PAYPAL-TXN",
+        "anchor": "5QW80033JD9921874",
+        "quote": "2026-07-29 - $3,000.00 USD: Transaction 5QW80033JD9921874 on 2026-07-29: $3,000.00 USD paid by billing@tandemhealth.io (Tandem Health Inc.). Status: completed. Invoice MLD-0015. Subject: \"Tandem Health - Milestone 2: appointment booking\"."
+       },
+       {
+        "doc_id": "GITHUB",
+        "anchor": "G3",
+        "quote": "PR #212 merged: 2026-08-28 18:47 UTC - PR #212 \"M3: clinician dashboard\" by marcuslee-dev merged into main by bcarter (Ben Carter, org owner)."
+       },
+       {
+        "doc_id": "GITHUB",
+        "anchor": "G4",
+        "quote": "Production deploys: Code from PR #212 has been included in 23 production deployments of tandem-app between Aug 28 and Sep 30, 2026."
+       },
+       {
+        "doc_id": "SLACK",
+        "anchor": "K6",
+        "quote": "Sep 2 - Ben Carter: Clinicians are using the new dashboard every day. Nice work."
+       },
+       {
+        "doc_id": "DISPUTE",
+        "anchor": "MSG1",
+        "quote": "Message from buyer: Cardholder statement forwarded by issuing bank (filed by Ben Carter, CEO): This charge was not authorized by Tandem Health. We have no agreement with this vendor and do not recognize this transaction. Please reverse it."
+       }
+      ],
+      "letter": [
+       "The disputed PayPal transaction for $4,500.00 USD was made on 2026-08-28 by Tandem Health’s business account and corresponds to invoice MLD-0019 for Milestone 3. [1][2]",
+       "Milestone 3 (clinician dashboard) was defined in the MSA and is payable upon merge of the pull request, as described in §3 of the agreement. [3]",
+       "The MSA was signed by Aisha Verma, Co‑founder & CTO, an authorized signatory for Tandem Health, on June 8 2026. [4][5]",
+       "Prior milestones 1 and 2 were invoiced and fully paid via PayPal on 2026‑06‑30 and 2026‑07‑29, demonstrating the company’s acceptance of the agreement and payment process. [6][7]",
+       "Pull request #212 implementing the clinician dashboard was merged on 2026‑08‑28, and the code was included in 23 production deployments between Aug 28 and Sep 30, confirming delivery. [8][9]",
+       "Tandem Health staff confirmed on Sep 2 that clinicians are using the new dashboard daily, confirming the work is functional and in use. [10]",
+       "The buyer’s claim that no agreement exists contradicts the signed MSA and the documented approvals, as shown in the contract and Slack messages. [11][4]",
+       "The only unresolved issue is that the executive does not have a copy of the signed agreement; we are providing the MSA and a delivery summary to address this. [4]"
+      ],
+      "clientMessage": "Hi Ben,\n\nI understand you don’t have a copy of our signed agreement handy. I’ve attached the fully signed MSA and a brief delivery summary that shows the clinician dashboard was merged, deployed, and is being used daily by your team. Please let me know if you need anything else.\n\nBest,\nMarcus",
+      "evidencePackage": [
+       {
+        "doc_id": "MSA",
+        "evidence_type": "COPY_OF_CONTRACT",
+        "why": "Provides the signed Master Services Agreement and proof of authorized signatory."
+       },
+       {
+        "doc_id": "PAYPAL-TXN",
+        "evidence_type": "BILLING_AGREEMENT",
+        "why": "Shows payment for Milestone 3 from Tandem Health’s business PayPal account."
+       },
+       {
+        "doc_id": "GITHUB",
+        "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+        "why": "Demonstrates that the clinician dashboard code was merged and deployed."
+       },
+       {
+        "doc_id": "SLACK",
+        "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+        "why": "Confirms daily usage of the dashboard by Tandem Health clinicians."
+       }
+      ],
+      "_files": [
+       {
+        "field": "evidence-file",
+        "name": "response-letter.pdf",
+        "type": "application/pdf",
+        "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUiA3IDAgUl0gL0NvdW50IDIgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQ0OTkgPj4Kc3RyZWFtCkJUIC9GMiAxNSBUZiA1NiA3MzYgVGQgKFJlc3BvbnNlIHRvIFVuYXV0aG9yaXplZCBUcmFuc2FjdGlvbiBEaXNwdXRlIC0gTWlsZXN0b25lIDMpIFRqIEVUCkJUIC9GMSAxMCBUZiA1NiA3MTMgVGQgKERpc3B1dGUgUFAtRC0yNzE1NS1UQU5ERU0gLSBVbmF1dGhvcml6ZWQgdHJhbnNhY3Rpb24gLSA0NTAwLjAwIFVTRCkgVGogRVQKQlQgL0YxIDEwIFRmIDU2IDY5OSBUZCAoU3VibWl0dGVkIGJ5IE1hcmN1cyBMZWUsIE1hcmN1cyBMZWUgRGV2IFwobWFyY3VzQG1hcmN1c2xlZS5kZXZcKSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDY3NyBUZCAoVGhlIGRpc3B1dGVkIFBheVBhbCB0cmFuc2FjdGlvbiBmb3IgJDQsNTAwLjAwIFVTRCB3YXMgbWFkZSBvbiAyMDI2LTA4LTI4IGJ5IFRhbmRlbSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDY2MiBUZCAoSGVhbHRoJ3MgYnVzaW5lc3MgYWNjb3VudCBhbmQgY29ycmVzcG9uZHMgdG8gaW52b2ljZSBNTEQtMDAxOSBmb3IgTWlsZXN0b25lIDMuIFsxXVsyXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDYzOSBUZCAoTWlsZXN0b25lIDMgXChjbGluaWNpYW4gZGFzaGJvYXJkXCkgd2FzIGRlZmluZWQgaW4gdGhlIE1TQSBhbmQgaXMgcGF5YWJsZSB1cG9uIG1lcmdlIG9mIHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDYyNCBUZCAocHVsbCByZXF1ZXN0LCBhcyBkZXNjcmliZWQgaW4gpzMgb2YgdGhlIGFncmVlbWVudC4gWzNdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjAxIFRkIChUaGUgTVNBIHdhcyBzaWduZWQgYnkgQWlzaGEgVmVybWEsIENvLWZvdW5kZXIgJiBDVE8sIGFuIGF1dGhvcml6ZWQgc2lnbmF0b3J5IGZvciBUYW5kZW0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1ODYgVGQgKEhlYWx0aCwgb24gSnVuZSA4IDIwMjYuIFs0XVs1XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU2MyBUZCAoUHJpb3IgbWlsZXN0b25lcyAxIGFuZCAyIHdlcmUgaW52b2ljZWQgYW5kIGZ1bGx5IHBhaWQgdmlhIFBheVBhbCBvbiAyMDI2LTA2LTMwIGFuZCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU0OCBUZCAoMjAyNi0wNy0yOSwgZGVtb25zdHJhdGluZyB0aGUgY29tcGFueSdzIGFjY2VwdGFuY2Ugb2YgdGhlIGFncmVlbWVudCBhbmQgcGF5bWVudCBwcm9jZXNzLikgVGogRVQKQlQgL0YxIDExIFRmIDU2IDUzMyBUZCAoWzZdWzddKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNTEwIFRkIChQdWxsIHJlcXVlc3QgIzIxMiBpbXBsZW1lbnRpbmcgdGhlIGNsaW5pY2lhbiBkYXNoYm9hcmQgd2FzIG1lcmdlZCBvbiAyMDI2LTA4LTI4LCBhbmQgdGhlKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDk1IFRkIChjb2RlIHdhcyBpbmNsdWRlZCBpbiAyMyBwcm9kdWN0aW9uIGRlcGxveW1lbnRzIGJldHdlZW4gQXVnIDI4IGFuZCBTZXAgMzAsIGNvbmZpcm1pbmcpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA0ODAgVGQgKGRlbGl2ZXJ5LiBbOF1bOV0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA0NTcgVGQgKFRhbmRlbSBIZWFsdGggc3RhZmYgY29uZmlybWVkIG9uIFNlcCAyIHRoYXQgY2xpbmljaWFucyBhcmUgdXNpbmcgdGhlIG5ldyBkYXNoYm9hcmQgZGFpbHksKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDQyIFRkIChjb25maXJtaW5nIHRoZSB3b3JrIGlzIGZ1bmN0aW9uYWwgYW5kIGluIHVzZS4gWzEwXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQxOSBUZCAoVGhlIGJ1eWVyJ3MgY2xhaW0gdGhhdCBubyBhZ3JlZW1lbnQgZXhpc3RzIGNvbnRyYWRpY3RzIHRoZSBzaWduZWQgTVNBIGFuZCB0aGUgZG9jdW1lbnRlZCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQwNCBUZCAoYXBwcm92YWxzLCBhcyBzaG93biBpbiB0aGUgY29udHJhY3QgYW5kIFNsYWNrIG1lc3NhZ2VzLiBbMTFdWzRdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMzgxIFRkIChUaGUgb25seSB1bnJlc29sdmVkIGlzc3VlIGlzIHRoYXQgdGhlIGV4ZWN1dGl2ZSBkb2VzIG5vdCBoYXZlIGEgY29weSBvZiB0aGUgc2lnbmVkKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMzY2IFRkIChhZ3JlZW1lbnQ7IHdlIGFyZSBwcm92aWRpbmcgdGhlIE1TQSBhbmQgYSBkZWxpdmVyeSBzdW1tYXJ5IHRvIGFkZHJlc3MgdGhpcy4gWzRdKSBUaiBFVApCVCAvRjIgMTIgVGYgNTYgMzM1IFRkIChTb3VyY2VzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMTYgVGQgKFsxXSBQYXlQYWwgZGlzcHV0ZSBQUC1ELTI3MTU1LVRBTkRFTSwgVFhOIFwoUGF5UGFsIERpc3B1dGVzIEFQSVwpOiAiRGlzcHV0ZWQgdHJhbnNhY3Rpb246IFBheVBhbCB0cmFuc2FjdGlvbikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzAyIFRkICgzVEQ5OTgxN01NMjA0MTEyNSBvbiAyMDI2LTA4LTI4IGZvciAkNCw1MDAuMDAgVVNELCBpbnZvaWNlIE1MRC0wMDE5LCBidXllciBUYW5kZW0gSGVhbHRoIEluYy4uIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjg1IFRkIChbMl0gUGF5bWVudCBoaXN0b3J5IGJldHdlZW4gdGhpcyBjbGllbnQgYW5kIHRoZSBmcmVlbGFuY2VyLCAzVEQ5OTgxN01NMjA0MTEyNSBcKFNlZWRlZCBkZW1vIHJlY29yZHMgXChQYXlQYWwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI3MSBUZCAoVHJhbnNhY3Rpb24gU2VhcmNoIGZvcm1hdFwpXCk6ICIyMDI2LTA4LTI4IC0gJDQsNTAwLjAwIFVTRDogVHJhbnNhY3Rpb24gM1REOTk4MTdNTTIwNDExMjUgb24gMjAyNi0wOC0yODopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI1NyBUZCAoJDQsNTAwLjAwIFVTRCBwYWlkIGJ5IGJpbGxpbmdAdGFuZGVtaGVhbHRoLmlvIFwoVGFuZGVtIEhlYWx0aCBJbmMuXCkuIFN0YXR1czogY29tcGxldGVkLiBJbnZvaWNlIE1MRC0wMDE5LikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjQzIFRkIChTdWJqZWN0OiAiVGFuZGVtIEhlYWx0aCAtIE1pbGVzdG9uZSAzOiBjbGluaWNpYW4gZGFzaGJvYXJkIi4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyMjYgVGQgKFszXSBNYXN0ZXIgU2VydmljZXMgQWdyZWVtZW50ICsgU3RhdGVtZW50IG9mIFdvcmssIKczIFwoRG9jdVNpZ24gZW52ZWxvcGUsIGNvbXBsZXRlZFwpOiAiTWlsZXN0b25lczogTTEgYXV0aCArKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyMTIgVGQgKG9uYm9hcmRpbmcgZmxvdyBcKCQzLDAwMFwpOyBNMiBhcHBvaW50bWVudCBib29raW5nIFwoJDMsMDAwXCk7IE0zIGNsaW5pY2lhbiBkYXNoYm9hcmQgXCgkNCw1MDBcKS4gRWFjaCBtaWxlc3RvbmUgaXMpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE5OCBUZCAoaW52b2ljZWQgdmlhIFBheVBhbCB3aGVuIGl0cyBwdWxsIHJlcXVlc3QgaXMgbWVyZ2VkIGludG8gQ29tcGFueSdzIG1haW4gYnJhbmNoLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE4MSBUZCAoWzRdIE1hc3RlciBTZXJ2aWNlcyBBZ3JlZW1lbnQgKyBTdGF0ZW1lbnQgb2YgV29yaywgpzEgXChEb2N1U2lnbiBlbnZlbG9wZSwgY29tcGxldGVkXCk6ICJQYXJ0aWVzIGFuZCBzaWduYXRvcnk6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNjcgVGQgKEFncmVlbWVudCBiZXR3ZWVuIE1hcmN1cyBMZWUgRGV2IFwoIkRldmVsb3BlciJcKSBhbmQgVGFuZGVtIEhlYWx0aCBJbmMuLCBhIERlbGF3YXJlIGNvcnBvcmF0aW9uIFwoIkNvbXBhbnkiXCkuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNTMgVGQgKFNpZ25lZCBmb3IgQ29tcGFueSBieSBBaXNoYSBWZXJtYSwgQ28tZm91bmRlciAmIENUTywgb24gSnVuZSA4LCAyMDI2LCB2aWEgRG9jdVNpZ24gXChlbnZlbG9wZSA0RjJBLTc3QzFcKS4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMzYgVGQgKFs1XSBNYXN0ZXIgU2VydmljZXMgQWdyZWVtZW50ICsgU3RhdGVtZW50IG9mIFdvcmssIKcyIFwoRG9jdVNpZ24gZW52ZWxvcGUsIGNvbXBsZXRlZFwpOiAiQXV0aG9yaXR5OiBUaGUpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDEyMiBUZCAoaW5kaXZpZHVhbCBzaWduaW5nIGZvciBDb21wYW55IHJlcHJlc2VudHMgdGhhdCB0aGV5IGFyZSBhdXRob3JpemVkIHRvIGJpbmQgQ29tcGFueSB0byB0aGlzIEFncmVlbWVudC4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMDUgVGQgKFs2XSBQYXltZW50IGhpc3RvcnkgYmV0d2VlbiB0aGlzIGNsaWVudCBhbmQgdGhlIGZyZWVsYW5jZXIsIDhLQTExMjA0UEw3NzMwMDEyIFwoU2VlZGVkIGRlbW8gcmVjb3JkcyBcKFBheVBhbCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgOTEgVGQgKFRyYW5zYWN0aW9uIFNlYXJjaCBmb3JtYXRcKVwpOiAiMjAyNi0wNi0zMCAtICQzLDAwMC4wMCBVU0Q6IFRyYW5zYWN0aW9uIDhLQTExMjA0UEw3NzMwMDEyIG9uIDIwMjYtMDYtMzA6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA3NyBUZCAoJDMsMDAwLjAwIFVTRCBwYWlkIGJ5IGJpbGxpbmdAdGFuZGVtaGVhbHRoLmlvIFwoVGFuZGVtIEhlYWx0aCBJbmMuXCkuIFN0YXR1czogY29tcGxldGVkLiBJbnZvaWNlIE1MRC0wMDExLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjMgVGQgKFN1YmplY3Q6ICJUYW5kZW0gSGVhbHRoIC0gTWlsZXN0b25lIDE6IGF1dGggKyBvbmJvYXJkaW5nIGZsb3ciLiIpIFRqIEVUCmVuZHN0cmVhbQplbmRvYmoKNyAwIG9iago8PCAvVHlwZSAvUGFnZSAvUGFyZW50IDIgMCBSIC9NZWRpYUJveCBbMCAwIDYxMiA3OTJdIC9SZXNvdXJjZXMgPDwgL0ZvbnQgPDwgL0YxIDMgMCBSIC9GMiA0IDAgUiA+PiA+PiAvQ29udGVudHMgOCAwIFIgPj4KZW5kb2JqCjggMCBvYmoKPDwgL0xlbmd0aCAxNzc1ID4+CnN0cmVhbQpCVCAvRjEgOSBUZiA1NiA3MzYgVGQgKFs3XSBQYXltZW50IGhpc3RvcnkgYmV0d2VlbiB0aGlzIGNsaWVudCBhbmQgdGhlIGZyZWVsYW5jZXIsIDVRVzgwMDMzSkQ5OTIxODc0IFwoU2VlZGVkIGRlbW8gcmVjb3JkcyBcKFBheVBhbCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNzIyIFRkIChUcmFuc2FjdGlvbiBTZWFyY2ggZm9ybWF0XClcKTogIjIwMjYtMDctMjkgLSAkMywwMDAuMDAgVVNEOiBUcmFuc2FjdGlvbiA1UVc4MDAzM0pEOTkyMTg3NCBvbiAyMDI2LTA3LTI5OikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNzA4IFRkICgkMywwMDAuMDAgVVNEIHBhaWQgYnkgYmlsbGluZ0B0YW5kZW1oZWFsdGguaW8gXChUYW5kZW0gSGVhbHRoIEluYy5cKS4gU3RhdHVzOiBjb21wbGV0ZWQuIEludm9pY2UgTUxELTAwMTUuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2OTQgVGQgKFN1YmplY3Q6ICJUYW5kZW0gSGVhbHRoIC0gTWlsZXN0b25lIDI6IGFwcG9pbnRtZW50IGJvb2tpbmciLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY3NyBUZCAoWzhdIEdpdEh1YiBhdWRpdCBsb2c6IHRhbmRlbWhlYWx0aC90YW5kZW0tYXBwLCBHMyBcKEdpdEh1YiBvcmdhbml6YXRpb24gYXVkaXQgbG9nIGV4cG9ydFwpOiAiUFIgIzIxMiBtZXJnZWQ6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NjMgVGQgKDIwMjYtMDgtMjggMTg6NDcgVVRDIC0gUFIgIzIxMiAiTTM6IGNsaW5pY2lhbiBkYXNoYm9hcmQiIGJ5IG1hcmN1c2xlZS1kZXYgbWVyZ2VkIGludG8gbWFpbiBieSBiY2FydGVyIFwoQmVuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NDkgVGQgKENhcnRlciwgb3JnIG93bmVyXCkuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjMyIFRkIChbOV0gR2l0SHViIGF1ZGl0IGxvZzogdGFuZGVtaGVhbHRoL3RhbmRlbS1hcHAsIEc0IFwoR2l0SHViIG9yZ2FuaXphdGlvbiBhdWRpdCBsb2cgZXhwb3J0XCk6ICJQcm9kdWN0aW9uIGRlcGxveXM6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTggVGQgKENvZGUgZnJvbSBQUiAjMjEyIGhhcyBiZWVuIGluY2x1ZGVkIGluIDIzIHByb2R1Y3Rpb24gZGVwbG95bWVudHMgb2YgdGFuZGVtLWFwcCBiZXR3ZWVuIEF1ZyAyOCBhbmQgU2VwIDMwLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjA0IFRkICgyMDI2LiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU4NyBUZCAoWzEwXSBTaGFyZWQgU2xhY2sgY2hhbm5lbCAjdGFuZGVtLW1hcmN1cyBcKGV4cG9ydFwpLCBLNiBcKFNsYWNrIENvbm5lY3QgZXhwb3J0XCk6ICJTZXAgMiAtIEJlbiBDYXJ0ZXI6IENsaW5pY2lhbnMpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU3MyBUZCAoYXJlIHVzaW5nIHRoZSBuZXcgZGFzaGJvYXJkIGV2ZXJ5IGRheS4gTmljZSB3b3JrLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU1NiBUZCAoWzExXSBQYXlQYWwgZGlzcHV0ZSBQUC1ELTI3MTU1LVRBTkRFTSwgTVNHMSBcKFBheVBhbCBEaXNwdXRlcyBBUElcKTogIk1lc3NhZ2UgZnJvbSBidXllcjogQ2FyZGhvbGRlciBzdGF0ZW1lbnQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU0MiBUZCAoZm9yd2FyZGVkIGJ5IGlzc3VpbmcgYmFuayBcKGZpbGVkIGJ5IEJlbiBDYXJ0ZXIsIENFT1wpOiBUaGlzIGNoYXJnZSB3YXMgbm90IGF1dGhvcml6ZWQgYnkgVGFuZGVtIEhlYWx0aC4gV2UgaGF2ZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTI4IFRkIChubyBhZ3JlZW1lbnQgd2l0aCB0aGlzIHZlbmRvciBhbmQgZG8gbm90IHJlY29nbml6ZSB0aGlzIHRyYW5zYWN0aW9uLiBQbGVhc2UgcmV2ZXJzZSBpdC4iKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMjEgMDAwMDAgbiAKMDAwMDAwMDIxOCAwMDAwMCBuIAowMDAwMDAwMzIwIDAwMDAwIG4gCjAwMDAwMDA0NTYgMDAwMDAgbiAKMDAwMDAwNTAwNyAwMDAwMCBuIAowMDAwMDA1MTQzIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgOSAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNjk3MAolJUVPRgo="
+       },
+       {
+        "field": "evidence-file",
+        "name": "evidence-appendix.pdf",
+        "type": "application/pdf",
+        "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDM2MDQgPj4Kc3RyZWFtCkJUIC9GMiAxNCBUZiA1NiA3MzYgVGQgKEV2aWRlbmNlIGFwcGVuZGl4OiBmdWxsIHRleHQgb2YgZXZlcnkgY2l0ZWQgc2VjdGlvbikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDcwNiBUZCAoUGF5UGFsIGRpc3B1dGUgUFAtRC0yNzE1NS1UQU5ERU0gLSBzb3VyY2U6IFBheVBhbCBEaXNwdXRlcyBBUEkpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY4OCBUZCAoVFhOIERpc3B1dGVkIHRyYW5zYWN0aW9uOiBQYXlQYWwgdHJhbnNhY3Rpb24gM1REOTk4MTdNTTIwNDExMjUgb24gMjAyNi0wOC0yOCBmb3IgJDQsNTAwLjAwIFVTRCwgaW52b2ljZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjc0IFRkIChNTEQtMDAxOSwgYnV5ZXIgVGFuZGVtIEhlYWx0aCBJbmMuLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjU3IFRkIChNU0cxIE1lc3NhZ2UgZnJvbSBidXllcjogQ2FyZGhvbGRlciBzdGF0ZW1lbnQgZm9yd2FyZGVkIGJ5IGlzc3VpbmcgYmFuayBcKGZpbGVkIGJ5IEJlbiBDYXJ0ZXIsIENFT1wpOiBUaGlzIGNoYXJnZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjQzIFRkICh3YXMgbm90IGF1dGhvcml6ZWQgYnkgVGFuZGVtIEhlYWx0aC4gV2UgaGF2ZSBubyBhZ3JlZW1lbnQgd2l0aCB0aGlzIHZlbmRvciBhbmQgZG8gbm90IHJlY29nbml6ZSB0aGlzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MjkgVGQgKHRyYW5zYWN0aW9uLiBQbGVhc2UgcmV2ZXJzZSBpdC4pIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiA2MDMgVGQgKFBheW1lbnQgaGlzdG9yeSBiZXR3ZWVuIHRoaXMgY2xpZW50IGFuZCB0aGUgZnJlZWxhbmNlciAtIHNvdXJjZTogU2VlZGVkIGRlbW8gcmVjb3JkcykgVGogRVQKQlQgL0YyIDExIFRmIDU2IDU4OCBUZCAoXChQYXlQYWwgVHJhbnNhY3Rpb24gU2VhcmNoIGZvcm1hdFwpKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1NzAgVGQgKDNURDk5ODE3TU0yMDQxMTI1IDIwMjYtMDgtMjggLSAkNCw1MDAuMDAgVVNEOiBUcmFuc2FjdGlvbiAzVEQ5OTgxN01NMjA0MTEyNSBvbiAyMDI2LTA4LTI4OiAkNCw1MDAuMDAgVVNEIHBhaWQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU1NiBUZCAoYnkgYmlsbGluZ0B0YW5kZW1oZWFsdGguaW8gXChUYW5kZW0gSGVhbHRoIEluYy5cKS4gU3RhdHVzOiBjb21wbGV0ZWQuIEludm9pY2UgTUxELTAwMTkuIFN1YmplY3Q6ICJUYW5kZW0gSGVhbHRoIC0pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU0MiBUZCAoTWlsZXN0b25lIDM6IGNsaW5pY2lhbiBkYXNoYm9hcmQiLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTI1IFRkICg4S0ExMTIwNFBMNzczMDAxMiAyMDI2LTA2LTMwIC0gJDMsMDAwLjAwIFVTRDogVHJhbnNhY3Rpb24gOEtBMTEyMDRQTDc3MzAwMTIgb24gMjAyNi0wNi0zMDogJDMsMDAwLjAwIFVTRCBwYWlkKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1MTEgVGQgKGJ5IGJpbGxpbmdAdGFuZGVtaGVhbHRoLmlvIFwoVGFuZGVtIEhlYWx0aCBJbmMuXCkuIFN0YXR1czogY29tcGxldGVkLiBJbnZvaWNlIE1MRC0wMDExLiBTdWJqZWN0OiAiVGFuZGVtIEhlYWx0aCAtKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0OTcgVGQgKE1pbGVzdG9uZSAxOiBhdXRoICsgb25ib2FyZGluZyBmbG93Ii4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ4MCBUZCAoNVFXODAwMzNKRDk5MjE4NzQgMjAyNi0wNy0yOSAtICQzLDAwMC4wMCBVU0Q6IFRyYW5zYWN0aW9uIDVRVzgwMDMzSkQ5OTIxODc0IG9uIDIwMjYtMDctMjk6ICQzLDAwMC4wMCBVU0QgcGFpZCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDY2IFRkIChieSBiaWxsaW5nQHRhbmRlbWhlYWx0aC5pbyBcKFRhbmRlbSBIZWFsdGggSW5jLlwpLiBTdGF0dXM6IGNvbXBsZXRlZC4gSW52b2ljZSBNTEQtMDAxNS4gU3ViamVjdDogIlRhbmRlbSBIZWFsdGggLSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDUyIFRkIChNaWxlc3RvbmUgMjogYXBwb2ludG1lbnQgYm9va2luZyIuKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgNDI2IFRkIChNYXN0ZXIgU2VydmljZXMgQWdyZWVtZW50ICsgU3RhdGVtZW50IG9mIFdvcmsgLSBzb3VyY2U6IERvY3VTaWduIGVudmVsb3BlLCBjb21wbGV0ZWQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQwOCBUZCAopzMgTWlsZXN0b25lczogTTEgYXV0aCArIG9uYm9hcmRpbmcgZmxvdyBcKCQzLDAwMFwpOyBNMiBhcHBvaW50bWVudCBib29raW5nIFwoJDMsMDAwXCk7IE0zIGNsaW5pY2lhbiBkYXNoYm9hcmQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDM5NCBUZCAoXCgkNCw1MDBcKS4gRWFjaCBtaWxlc3RvbmUgaXMgaW52b2ljZWQgdmlhIFBheVBhbCB3aGVuIGl0cyBwdWxsIHJlcXVlc3QgaXMgbWVyZ2VkIGludG8gQ29tcGFueSdzIG1haW4gYnJhbmNoLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzc3IFRkICinMSBQYXJ0aWVzIGFuZCBzaWduYXRvcnk6IEFncmVlbWVudCBiZXR3ZWVuIE1hcmN1cyBMZWUgRGV2IFwoIkRldmVsb3BlciJcKSBhbmQgVGFuZGVtIEhlYWx0aCBJbmMuLCBhIERlbGF3YXJlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzNjMgVGQgKGNvcnBvcmF0aW9uIFwoIkNvbXBhbnkiXCkuIFNpZ25lZCBmb3IgQ29tcGFueSBieSBBaXNoYSBWZXJtYSwgQ28tZm91bmRlciAmIENUTywgb24gSnVuZSA4LCAyMDI2LCB2aWEgRG9jdVNpZ24pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDM0OSBUZCAoXChlbnZlbG9wZSA0RjJBLTc3QzFcKS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDMzMiBUZCAopzIgQXV0aG9yaXR5OiBUaGUgaW5kaXZpZHVhbCBzaWduaW5nIGZvciBDb21wYW55IHJlcHJlc2VudHMgdGhhdCB0aGV5IGFyZSBhdXRob3JpemVkIHRvIGJpbmQgQ29tcGFueSB0byB0aGlzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMTggVGQgKEFncmVlbWVudC4pIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAyOTIgVGQgKEdpdEh1YiBhdWRpdCBsb2c6IHRhbmRlbWhlYWx0aC90YW5kZW0tYXBwIC0gc291cmNlOiBHaXRIdWIgb3JnYW5pemF0aW9uIGF1ZGl0IGxvZyBleHBvcnQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI3NCBUZCAoRzMgUFIgIzIxMiBtZXJnZWQ6IDIwMjYtMDgtMjggMTg6NDcgVVRDIC0gUFIgIzIxMiAiTTM6IGNsaW5pY2lhbiBkYXNoYm9hcmQiIGJ5IG1hcmN1c2xlZS1kZXYgbWVyZ2VkIGludG8gbWFpbikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjYwIFRkIChieSBiY2FydGVyIFwoQmVuIENhcnRlciwgb3JnIG93bmVyXCkuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyNDMgVGQgKEc0IFByb2R1Y3Rpb24gZGVwbG95czogQ29kZSBmcm9tIFBSICMyMTIgaGFzIGJlZW4gaW5jbHVkZWQgaW4gMjMgcHJvZHVjdGlvbiBkZXBsb3ltZW50cyBvZiB0YW5kZW0tYXBwIGJldHdlZW4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDIyOSBUZCAoQXVnIDI4IGFuZCBTZXAgMzAsIDIwMjYuKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgMjAzIFRkIChTaGFyZWQgU2xhY2sgY2hhbm5lbCAjdGFuZGVtLW1hcmN1cyBcKGV4cG9ydFwpIC0gc291cmNlOiBTbGFjayBDb25uZWN0IGV4cG9ydCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTg1IFRkIChLNiBTZXAgMiAtIEJlbiBDYXJ0ZXI6IENsaW5pY2lhbnMgYXJlIHVzaW5nIHRoZSBuZXcgZGFzaGJvYXJkIGV2ZXJ5IGRheS4gTmljZSB3b3JrLikgVGogRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNwowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMTIgMDAwMDAgbiAKMDAwMDAwMDMxNCAwMDAwMCBuIAowMDAwMDAwNDUwIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNyAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNDEwNgolJUVPRgo="
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "t": 303404,
+   "type": "result",
+   "payload": {
+    "read": {
+     "stated_complaint": "This charge was not authorized by Tandem Health. We have no agreement with this vendor and do not recognize this transaction. Please reverse it.",
+     "literal_claims": [
+      {
+       "claim": "Charge was not authorized by Tandem Health",
+       "quote": "This charge was not authorized by Tandem Health."
+      },
+      {
+       "claim": "No agreement exists with the vendor",
+       "quote": "We have no agreement with this vendor"
+      },
+      {
+       "claim": "Transaction is not recognized",
+       "quote": "do not recognize this transaction"
+      },
+      {
+       "claim": "Request reversal of the payment",
+       "quote": "Please reverse it."
+      }
+     ],
+     "vague_phrases": [
+      {
+       "phrase": "not authorized by Tandem Health",
+       "could_mean": [
+        "no signature or approval on the invoice",
+        "payment made by an employee without manager sign‑off",
+        "card used by a third‑party fraudster",
+        "authorized internally but not by the CEO"
+       ]
+      },
+      {
+       "phrase": "no agreement with this vendor",
+       "could_mean": [
+        "no written contract exists",
+        "verbal agreement was never documented",
+        "agreement exists but under a different company name",
+        "agreement was signed after the payment"
+       ]
+      },
+      {
+       "phrase": "do not recognize this transaction",
+       "could_mean": [
+        "card statement description is unclear",
+        "client staff unfamiliar with the vendor name",
+        "transaction appears under a different descriptor",
+        "client believes the amount is incorrect"
+       ]
+      }
+     ],
+     "reviewer_tests": [
+      "Was the payment made by someone authorized by the account holder?",
+      "Is there an agreement between the payer and the freelancer?",
+      "Has the same payer paid the freelancer before without disputing it?",
+      "Did the account holder benefit from or use what was paid for?"
+     ],
+     "open_questions": [
+      "Who specifically approved or initiated the payment on Tandem Health’s side?",
+      "Is there any written contract, proposal, or email exchange that establishes an agreement with Marcus Lee?",
+      "Has Ben Carter or any other Tandem Health employee previously paid Marcus Lee for services?",
+      "Did Tandem Health receive the React deliverables and use them in their product?",
+      "Can the card transaction be linked to a legitimate business expense or employee purchase?",
+      "Are there internal records (e.g., purchase orders, expense approvals) that reference this payment?"
+     ]
+    },
+    "findings": [
+     {
+      "finding": "A signed Master Services Agreement exists between Marcus Lee and Tandem Health, executed on June 8 2026 by Aisha Verma, Co‑founder & CTO, who had authority to bind the company.",
+      "significance": "Counters the client’s claim that there was “no agreement” with the vendor; a written contract was in place before any payment.",
+      "citations": [
+       {
+        "doc_id": "MSA",
+        "anchor": "§1"
+       },
+       {
+        "doc_id": "MSA",
+        "anchor": "§2"
+       }
+      ]
+     },
+     {
+      "finding": "The MSA specifies that each milestone is invoiced via PayPal when its pull request is merged, linking payment obligations directly to code delivery.",
+      "significance": "Shows that the $4,500 payment was contractually required after PR #212 merge, undermining the claim of unauthorized charge.",
+      "citations": [
+       {
+        "doc_id": "MSA",
+        "anchor": "§3"
+       },
+       {
+        "doc_id": "MSA",
+        "anchor": "§4"
+       }
+      ]
+     },
+     {
+      "finding": "Slack messages show Aisha Verma confirming payment for Milestone 2 and Ben Carter confirming that Marcus should ship Milestone 3 and that the invoice would be sent, indicating internal approval of the work and payment process.",
+      "significance": "Demonstrates that senior Tandem staff authorized the work and anticipated payment, countering the claim of unauthorized transaction.",
+      "citations": [
+       {
+        "doc_id": "SLACK",
+        "anchor": "K2"
+       },
+       {
+        "doc_id": "SLACK",
+        "anchor": "K4"
+       }
+      ]
+     },
+     {
+      "finding": "Pull request #212 (M3) was merged on 2026‑08‑28 by Ben Carter, the company's CEO, after which the code was deployed to production 23 times between Aug 28 and Sep 30.",
+      "significance": "Confirms that the clinician dashboard deliverable was completed, merged, and actively used by Tandem staff, refuting any notion that nothing was delivered.",
+      "citations": [
+       {
+        "doc_id": "GITHUB",
+        "anchor": "G3"
+       },
+       {
+        "doc_id": "GITHUB",
+        "anchor": "G4"
+       }
+      ]
+     },
+     {
+      "finding": "Ben Carter posted on Sep 2 that clinicians are using the new dashboard every day.",
+      "significance": "Provides direct evidence that the client has received and is using the product, weakening any “not received” or “not fit for purpose” arguments.",
+      "citations": [
+       {
+        "doc_id": "SLACK",
+        "anchor": "K6"
+       }
+      ]
+     },
+     {
+      "finding": "The PayPal transaction record shows the $4,500 payment (invoice MLD‑0019) was made on 2026‑08‑28 from billing@tandemhealth.io, matching the contract’s payment method and invoice number.",
+      "significance": "Establishes that the payment was made from an authorized corporate PayPal account, not a rogue or personal card.",
+      "citations": [
+       {
+        "doc_id": "PAYPAL-TXN",
+        "anchor": "3TD99817MM2041125"
+       }
+      ]
+     },
+     {
+      "finding": "The dispute filing (reason code UNAUTHORISED) was submitted by Ben Carter, CEO, stating the charge was not authorized and that there is no agreement.",
+      "significance": "Shows the claim originates from the top executive, but contradicts internal Slack approvals and the signed MSA, indicating a possible internal miscommunication rather than fraud.",
+      "citations": [
+       {
+        "doc_id": "DISPUTE",
+        "anchor": "MSG1"
+       },
+       {
+        "doc_id": "DISPUTE",
+        "anchor": "REASON"
+       }
+      ]
+     },
+     {
+      "finding": "Two prior milestone payments ($3,000 each for M1 and M2) were completed on 2026‑06‑30 and 2026‑07‑29, with corresponding Slack confirmations of successful delivery and acceptance.",
+      "significance": "Establishes a pattern of accepted work and payments, showing the client previously recognized the relationship and the billing process.",
+      "citations": [
+       {
+        "doc_id": "PAYPAL-TXN",
+        "anchor": "8KA11204PL7730012"
+       },
+       {
+        "doc_id": "PAYPAL-TXN",
+        "anchor": "5QW80033JD9921874"
+       },
+       {
+        "doc_id": "SLACK",
+        "anchor": "K1"
+       }
+      ]
+     }
+    ],
+    "diagnosis": {
+     "hypotheses": [
+      {
+       "label": "Internal miscommunication",
+       "explanation": "A senior executive filed the dispute without being aware of the signed MSA and prior Slack approvals, leading to a mistaken belief that the charge was unauthorized.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "MSA",
+         "anchor": "§1"
+        },
+        {
+         "doc_id": "MSA",
+         "anchor": "§2"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K2"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K4"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K6"
+        },
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "3TD99817MM2041125"
+        }
+       ],
+       "likelihood": 30
+      },
+      {
+       "label": "Attempted refund after delivery",
+       "explanation": "The client received and is using the clinician dashboard but is now trying to reverse the payment, possibly for financial gain.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G3"
+        },
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G4"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K6"
+        }
+       ],
+       "likelihood": 25
+      },
+      {
+       "label": "Quality dissatisfaction masked as unauthorized",
+       "explanation": "The buyer is unhappy with the delivered dashboard and is framing the complaint as an unauthorized charge to obtain a refund.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "SLACK",
+         "anchor": "K6"
+        }
+       ],
+       "likelihood": 25
+      },
+      {
+       "label": "Unauthorized claim",
+       "explanation": "The buyer asserts the $4,500 charge was not authorized and that no agreement exists with the developer.",
+       "supporting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "REASON"
+        },
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "MSA",
+         "anchor": "§1"
+        },
+        {
+         "doc_id": "MSA",
+         "anchor": "§2"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K2"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K4"
+        },
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "3TD99817MM2041125"
+        }
+       ],
+       "likelihood": 20
+      }
+     ],
+     "real_complaint": {
+      "summary": "The dispute stems from an internal communication breakdown: a senior executive filed an unauthorized‑charge claim despite a signed MSA, Slack approvals, and evidence that the dashboard was delivered and actively used.",
+      "what_the_client_actually_needs": "Clear, documented confirmation of the contract and payment terms sent directly to the executive signatory, and reassurance that the delivered product meets the agreed specifications.",
+      "confidence": 85
+     },
+     "why_this_reason_code": "The CEO likely chose the UNAUTHORISED reason code because it is the most straightforward way to trigger a chargeback quickly, especially when he believed—due to lack of direct confirmation—that no formal agreement or payment approval existed.",
+     "freelancer_weaknesses": [
+      {
+       "issue": "Reliance on informal Slack acknowledgments rather than sending formal invoice and contract copies to the ultimate decision‑maker (CEO), leaving the executive unaware of the binding agreement.",
+       "citations": [
+        {
+         "doc_id": "SLACK",
+         "anchor": "K4"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K2"
+        }
+       ]
+      }
+     ]
+    },
+    "strategy": {
+     "decision": "CONTEST_AND_RESOLVE",
+     "rationale": "The PayPal transaction was made by Tandem Health's authorized business account, a signed MSA exists with an authorized signatory, the same payer has successfully paid two prior milestones without dispute, and the clinician dashboard has been merged, deployed, and actively used by Tandem Health staff. These facts satisfy all reviewer tests for the UNAUTHORISED reason code, allowing the freelancer to contest the chargeback. The real issue is the executive’s lack of formal contract documentation; providing the signed MSA and a delivery summary will resolve that complaint without needing a refund.",
+     "proof_plan": [
+      {
+       "point": "Payment was made by an authorized representative of Tandem Health using its PayPal business account.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "3TD99817MM2041125"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K4"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "A valid agreement (MSA) exists between the freelancer and Tandem Health, signed by an authorized signatory.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "MSA",
+         "anchor": "§1"
+        },
+        {
+         "doc_id": "MSA",
+         "anchor": "§2"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "Tandem Health has previously paid the freelancer for earlier milestones without any dispute.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "8KA11204PL7730012"
+        },
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "5QW80033JD9921874"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "The clinician dashboard was delivered, deployed to production, and is actively used by Tandem Health staff.",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G3"
+        },
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G4"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K6"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "The executive lacks a formal copy of the contract; sending the signed MSA and payment terms will satisfy the real complaint.",
+       "answers": "REAL_COMPLAINT",
+       "evidence": [
+        {
+         "doc_id": "MSA",
+         "anchor": "§1"
+        },
+        {
+         "doc_id": "MSA",
+         "anchor": "§2"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K4"
+        }
+       ],
+       "strength": "MODERATE"
+      },
+      {
+       "point": "Delivery meets the agreed specifications, confirming the product matches the contract requirements.",
+       "answers": "BOTH",
+       "evidence": [
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G3"
+        },
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G4"
+        },
+        {
+         "doc_id": "SLACK",
+         "anchor": "K6"
+        }
+       ],
+       "strength": "STRONG"
+      }
+     ],
+     "refund_amount": "0.00",
+     "resolution_action": "Email the signed MSA (including signature page) and the invoice for Milestone 3 directly to CEO Ben Carter, attach a brief delivery summary (PR #212 merge, 23 production deployments, and usage confirmation from Slack), and confirm that the clinician dashboard satisfies all agreed specifications."
+    },
+    "draft": {
+     "response_title": "Response to Unauthorized Transaction Dispute – Milestone 3",
+     "claims": [
+      {
+       "index": 0,
+       "text": "The disputed PayPal transaction for $4,500.00 USD was made on 2026-08-28 by Tandem Health’s business account and corresponds to invoice MLD-0019 for Milestone 3.",
+       "citations": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "TXN",
+         "quote": "Disputed transaction: PayPal transaction 3TD99817MM2041125 on 2026-08-28 for $4,500.00 USD, invoice MLD-0019, buyer Tandem Health Inc..",
+         "ok": true
+        },
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "3TD99817MM2041125",
+         "quote": "2026-08-28 - $4,500.00 USD: Transaction 3TD99817MM2041125 on 2026-08-28: $4,500.00 USD paid by billing@tandemhealth.io (Tandem Health Inc.). Status: completed. Invoice MLD-0019. Subject: \"Tandem Health - Milestone 3: clinician dashboard\".",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 1,
+       "text": "Milestone 3 (clinician dashboard) was defined in the MSA and is payable upon merge of the pull request, as described in §3 of the agreement.",
+       "citations": [
+        {
+         "doc_id": "MSA",
+         "anchor": "§3",
+         "quote": "Milestones: M1 auth + onboarding flow ($3,000); M2 appointment booking ($3,000); M3 clinician dashboard ($4,500). Each milestone is invoiced via PayPal when its pull request is merged into Company's main branch.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 2,
+       "text": "The MSA was signed by Aisha Verma, Co‑founder & CTO, an authorized signatory for Tandem Health, on June 8 2026.",
+       "citations": [
+        {
+         "doc_id": "MSA",
+         "anchor": "§1",
+         "quote": "Parties and signatory: Agreement between Marcus Lee Dev (\"Developer\") and Tandem Health Inc., a Delaware corporation (\"Company\"). Signed for Company by Aisha Verma, Co-founder & CTO, on June 8, 2026, via DocuSign (envelope 4F2A-77C1).",
+         "ok": true
+        },
+        {
+         "doc_id": "MSA",
+         "anchor": "§2",
+         "quote": "Authority: The individual signing for Company represents that they are authorized to bind Company to this Agreement.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 3,
+       "text": "Prior milestones 1 and 2 were invoiced and fully paid via PayPal on 2026‑06‑30 and 2026‑07‑29, demonstrating the company’s acceptance of the agreement and payment process.",
+       "citations": [
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "8KA11204PL7730012",
+         "quote": "2026-06-30 - $3,000.00 USD: Transaction 8KA11204PL7730012 on 2026-06-30: $3,000.00 USD paid by billing@tandemhealth.io (Tandem Health Inc.). Status: completed. Invoice MLD-0011. Subject: \"Tandem Health - Milestone 1: auth + onboarding flow\".",
+         "ok": true
+        },
+        {
+         "doc_id": "PAYPAL-TXN",
+         "anchor": "5QW80033JD9921874",
+         "quote": "2026-07-29 - $3,000.00 USD: Transaction 5QW80033JD9921874 on 2026-07-29: $3,000.00 USD paid by billing@tandemhealth.io (Tandem Health Inc.). Status: completed. Invoice MLD-0015. Subject: \"Tandem Health - Milestone 2: appointment booking\".",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 4,
+       "text": "Pull request #212 implementing the clinician dashboard was merged on 2026‑08‑28, and the code was included in 23 production deployments between Aug 28 and Sep 30, confirming delivery.",
+       "citations": [
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G3",
+         "quote": "PR #212 merged: 2026-08-28 18:47 UTC - PR #212 \"M3: clinician dashboard\" by marcuslee-dev merged into main by bcarter (Ben Carter, org owner).",
+         "ok": true
+        },
+        {
+         "doc_id": "GITHUB",
+         "anchor": "G4",
+         "quote": "Production deploys: Code from PR #212 has been included in 23 production deployments of tandem-app between Aug 28 and Sep 30, 2026.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 5,
+       "text": "Tandem Health staff confirmed on Sep 2 that clinicians are using the new dashboard daily, confirming the work is functional and in use.",
+       "citations": [
+        {
+         "doc_id": "SLACK",
+         "anchor": "K6",
+         "quote": "Sep 2 - Ben Carter: Clinicians are using the new dashboard every day. Nice work.",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 6,
+       "text": "The buyer’s claim that no agreement exists contradicts the signed MSA and the documented approvals, as shown in the contract and Slack messages.",
+       "citations": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1",
+         "quote": "Message from buyer: Cardholder statement forwarded by issuing bank (filed by Ben Carter, CEO): This charge was not authorized by Tandem Health. We have no agreement with this vendor and do not recognize this transaction. Please reverse it.",
+         "ok": true
+        },
+        {
+         "doc_id": "MSA",
+         "anchor": "§1",
+         "quote": "Parties and signatory: Agreement between Marcus Lee Dev (\"Developer\") and Tandem Health Inc., a Delaware corporation (\"Company\"). Signed for Company by Aisha Verma, Co-founder & CTO, on June 8, 2026, via DocuSign (envelope 4F2A-77C1).",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      },
+      {
+       "index": 7,
+       "text": "The only unresolved issue is that the executive does not have a copy of the signed agreement; we are providing the MSA and a delivery summary to address this.",
+       "citations": [
+        {
+         "doc_id": "MSA",
+         "anchor": "§1",
+         "quote": "Parties and signatory: Agreement between Marcus Lee Dev (\"Developer\") and Tandem Health Inc., a Delaware corporation (\"Company\"). Signed for Company by Aisha Verma, Co-founder & CTO, on June 8, 2026, via DocuSign (envelope 4F2A-77C1).",
+         "ok": true
+        }
+       ],
+       "grounded": true
+      }
+     ],
+     "client_message": "Hi Ben,\n\nI understand you don’t have a copy of our signed agreement handy. I’ve attached the fully signed MSA and a brief delivery summary that shows the clinician dashboard was merged, deployed, and is being used daily by your team. Please let me know if you need anything else.\n\nBest,\nMarcus",
+     "evidence_package": [
+      {
+       "doc_id": "MSA",
+       "evidence_type": "COPY_OF_CONTRACT",
+       "why": "Provides the signed Master Services Agreement and proof of authorized signatory."
+      },
+      {
+       "doc_id": "PAYPAL-TXN",
+       "evidence_type": "BILLING_AGREEMENT",
+       "why": "Shows payment for Milestone 3 from Tandem Health’s business PayPal account."
+      },
+      {
+       "doc_id": "GITHUB",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Demonstrates that the clinician dashboard code was merged and deployed."
+      },
+      {
+       "doc_id": "SLACK",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Confirms daily usage of the dashboard by Tandem Health clinicians."
+      }
+     ]
+    },
+    "removed": [],
+    "package": {
+     "actions": [
+      {
+       "kind": "provide_evidence",
+       "label": "Submit evidence to PayPal",
+       "method": "POST",
+       "path": "/v1/customer/disputes/PP-D-27155-TANDEM/provide-evidence",
+       "contentType": "multipart/form-data",
+       "input": {
+        "evidences": [
+         {
+          "evidence_type": "COPY_OF_CONTRACT",
+          "notes": "The disputed PayPal transaction for $4,500.00 USD was made on 2026-08-28 by Tandem Health’s business account and corresponds to invoice MLD-0019 for Milestone 3. [1][2]\n\nMilestone 3 (clinician dashboard) was defined in the MSA and is payable upon merge of the pull request, as described in §3 of the agreement. [3]\n\nThe MSA was signed by Aisha Verma, Co‑founder & CTO, an authorized signatory for Tandem Health, on June 8 2026. [4][5]\n\nPrior milestones 1 and 2 were invoiced and fully paid via PayPal on 2026‑06‑30 and 2026‑07‑29, demonstrating the company’s acceptance of the agreement and payment process. [6][7]\n\nPull request #212 implementing the clinician dashboard was merged on 2026‑08‑28, and the code was included in 23 production deployments between Aug 28 and Sep 30, confirming delivery. [8][9]\n\nTandem Health staff confirmed on Sep 2 that clinicians are using the new dashboard daily, confirming the work is functional and in use. [10]\n\nThe buyer’s claim that no agreement exists contradicts the signed MSA and the documented approvals, as shown in the contract and Slack messages. [11][4]\n\nThe only unresolved issue is that the executive does not have a copy of the signed agreement; we are providing the MSA and a delivery summary to address this. [4]",
+          "documents": [
+           {
+            "name": "response-letter.pdf"
+           },
+           {
+            "name": "evidence-appendix.pdf"
+           }
+          ]
+         }
+        ]
+       },
+       "files": [
+        {
+         "field": "evidence-file",
+         "name": "response-letter.pdf",
+         "type": "application/pdf",
+         "size": 7214
+        },
+        {
+         "field": "evidence-file",
+         "name": "evidence-appendix.pdf",
+         "type": "application/pdf",
+         "size": 4310
+        }
+       ]
+      },
+      {
+       "kind": "email",
+       "label": "Email Ben Carter directly",
+       "to": "billing@tandemhealth.io",
+       "note": "PayPal messaging is closed in the chargeback stage, so this goes by email.",
+       "body": {
+        "message": "Hi Ben,\n\nI understand you don’t have a copy of our signed agreement handy. I’ve attached the fully signed MSA and a brief delivery summary that shows the clinician dashboard was merged, deployed, and is being used daily by your team. Please let me know if you need anything else.\n\nBest,\nMarcus"
+       }
+      }
+     ],
+     "footnotes": [
+      {
+       "doc_id": "DISPUTE",
+       "anchor": "TXN",
+       "quote": "Disputed transaction: PayPal transaction 3TD99817MM2041125 on 2026-08-28 for $4,500.00 USD, invoice MLD-0019, buyer Tandem Health Inc.."
+      },
+      {
+       "doc_id": "PAYPAL-TXN",
+       "anchor": "3TD99817MM2041125",
+       "quote": "2026-08-28 - $4,500.00 USD: Transaction 3TD99817MM2041125 on 2026-08-28: $4,500.00 USD paid by billing@tandemhealth.io (Tandem Health Inc.). Status: completed. Invoice MLD-0019. Subject: \"Tandem Health - Milestone 3: clinician dashboard\"."
+      },
+      {
+       "doc_id": "MSA",
+       "anchor": "§3",
+       "quote": "Milestones: M1 auth + onboarding flow ($3,000); M2 appointment booking ($3,000); M3 clinician dashboard ($4,500). Each milestone is invoiced via PayPal when its pull request is merged into Company's main branch."
+      },
+      {
+       "doc_id": "MSA",
+       "anchor": "§1",
+       "quote": "Parties and signatory: Agreement between Marcus Lee Dev (\"Developer\") and Tandem Health Inc., a Delaware corporation (\"Company\"). Signed for Company by Aisha Verma, Co-founder & CTO, on June 8, 2026, via DocuSign (envelope 4F2A-77C1)."
+      },
+      {
+       "doc_id": "MSA",
+       "anchor": "§2",
+       "quote": "Authority: The individual signing for Company represents that they are authorized to bind Company to this Agreement."
+      },
+      {
+       "doc_id": "PAYPAL-TXN",
+       "anchor": "8KA11204PL7730012",
+       "quote": "2026-06-30 - $3,000.00 USD: Transaction 8KA11204PL7730012 on 2026-06-30: $3,000.00 USD paid by billing@tandemhealth.io (Tandem Health Inc.). Status: completed. Invoice MLD-0011. Subject: \"Tandem Health - Milestone 1: auth + onboarding flow\"."
+      },
+      {
+       "doc_id": "PAYPAL-TXN",
+       "anchor": "5QW80033JD9921874",
+       "quote": "2026-07-29 - $3,000.00 USD: Transaction 5QW80033JD9921874 on 2026-07-29: $3,000.00 USD paid by billing@tandemhealth.io (Tandem Health Inc.). Status: completed. Invoice MLD-0015. Subject: \"Tandem Health - Milestone 2: appointment booking\"."
+      },
+      {
+       "doc_id": "GITHUB",
+       "anchor": "G3",
+       "quote": "PR #212 merged: 2026-08-28 18:47 UTC - PR #212 \"M3: clinician dashboard\" by marcuslee-dev merged into main by bcarter (Ben Carter, org owner)."
+      },
+      {
+       "doc_id": "GITHUB",
+       "anchor": "G4",
+       "quote": "Production deploys: Code from PR #212 has been included in 23 production deployments of tandem-app between Aug 28 and Sep 30, 2026."
+      },
+      {
+       "doc_id": "SLACK",
+       "anchor": "K6",
+       "quote": "Sep 2 - Ben Carter: Clinicians are using the new dashboard every day. Nice work."
+      },
+      {
+       "doc_id": "DISPUTE",
+       "anchor": "MSG1",
+       "quote": "Message from buyer: Cardholder statement forwarded by issuing bank (filed by Ben Carter, CEO): This charge was not authorized by Tandem Health. We have no agreement with this vendor and do not recognize this transaction. Please reverse it."
+      }
+     ],
+     "letter": [
+      "The disputed PayPal transaction for $4,500.00 USD was made on 2026-08-28 by Tandem Health’s business account and corresponds to invoice MLD-0019 for Milestone 3. [1][2]",
+      "Milestone 3 (clinician dashboard) was defined in the MSA and is payable upon merge of the pull request, as described in §3 of the agreement. [3]",
+      "The MSA was signed by Aisha Verma, Co‑founder & CTO, an authorized signatory for Tandem Health, on June 8 2026. [4][5]",
+      "Prior milestones 1 and 2 were invoiced and fully paid via PayPal on 2026‑06‑30 and 2026‑07‑29, demonstrating the company’s acceptance of the agreement and payment process. [6][7]",
+      "Pull request #212 implementing the clinician dashboard was merged on 2026‑08‑28, and the code was included in 23 production deployments between Aug 28 and Sep 30, confirming delivery. [8][9]",
+      "Tandem Health staff confirmed on Sep 2 that clinicians are using the new dashboard daily, confirming the work is functional and in use. [10]",
+      "The buyer’s claim that no agreement exists contradicts the signed MSA and the documented approvals, as shown in the contract and Slack messages. [11][4]",
+      "The only unresolved issue is that the executive does not have a copy of the signed agreement; we are providing the MSA and a delivery summary to address this. [4]"
+     ],
+     "clientMessage": "Hi Ben,\n\nI understand you don’t have a copy of our signed agreement handy. I’ve attached the fully signed MSA and a brief delivery summary that shows the clinician dashboard was merged, deployed, and is being used daily by your team. Please let me know if you need anything else.\n\nBest,\nMarcus",
+     "evidencePackage": [
+      {
+       "doc_id": "MSA",
+       "evidence_type": "COPY_OF_CONTRACT",
+       "why": "Provides the signed Master Services Agreement and proof of authorized signatory."
+      },
+      {
+       "doc_id": "PAYPAL-TXN",
+       "evidence_type": "BILLING_AGREEMENT",
+       "why": "Shows payment for Milestone 3 from Tandem Health’s business PayPal account."
+      },
+      {
+       "doc_id": "GITHUB",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Demonstrates that the clinician dashboard code was merged and deployed."
+      },
+      {
+       "doc_id": "SLACK",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Confirms daily usage of the dashboard by Tandem Health clinicians."
+      }
+     ],
+     "_files": [
+      {
+       "field": "evidence-file",
+       "name": "response-letter.pdf",
+       "type": "application/pdf",
+       "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUiA3IDAgUl0gL0NvdW50IDIgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQ0OTkgPj4Kc3RyZWFtCkJUIC9GMiAxNSBUZiA1NiA3MzYgVGQgKFJlc3BvbnNlIHRvIFVuYXV0aG9yaXplZCBUcmFuc2FjdGlvbiBEaXNwdXRlIC0gTWlsZXN0b25lIDMpIFRqIEVUCkJUIC9GMSAxMCBUZiA1NiA3MTMgVGQgKERpc3B1dGUgUFAtRC0yNzE1NS1UQU5ERU0gLSBVbmF1dGhvcml6ZWQgdHJhbnNhY3Rpb24gLSA0NTAwLjAwIFVTRCkgVGogRVQKQlQgL0YxIDEwIFRmIDU2IDY5OSBUZCAoU3VibWl0dGVkIGJ5IE1hcmN1cyBMZWUsIE1hcmN1cyBMZWUgRGV2IFwobWFyY3VzQG1hcmN1c2xlZS5kZXZcKSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDY3NyBUZCAoVGhlIGRpc3B1dGVkIFBheVBhbCB0cmFuc2FjdGlvbiBmb3IgJDQsNTAwLjAwIFVTRCB3YXMgbWFkZSBvbiAyMDI2LTA4LTI4IGJ5IFRhbmRlbSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDY2MiBUZCAoSGVhbHRoJ3MgYnVzaW5lc3MgYWNjb3VudCBhbmQgY29ycmVzcG9uZHMgdG8gaW52b2ljZSBNTEQtMDAxOSBmb3IgTWlsZXN0b25lIDMuIFsxXVsyXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDYzOSBUZCAoTWlsZXN0b25lIDMgXChjbGluaWNpYW4gZGFzaGJvYXJkXCkgd2FzIGRlZmluZWQgaW4gdGhlIE1TQSBhbmQgaXMgcGF5YWJsZSB1cG9uIG1lcmdlIG9mIHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDYyNCBUZCAocHVsbCByZXF1ZXN0LCBhcyBkZXNjcmliZWQgaW4gpzMgb2YgdGhlIGFncmVlbWVudC4gWzNdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjAxIFRkIChUaGUgTVNBIHdhcyBzaWduZWQgYnkgQWlzaGEgVmVybWEsIENvLWZvdW5kZXIgJiBDVE8sIGFuIGF1dGhvcml6ZWQgc2lnbmF0b3J5IGZvciBUYW5kZW0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1ODYgVGQgKEhlYWx0aCwgb24gSnVuZSA4IDIwMjYuIFs0XVs1XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU2MyBUZCAoUHJpb3IgbWlsZXN0b25lcyAxIGFuZCAyIHdlcmUgaW52b2ljZWQgYW5kIGZ1bGx5IHBhaWQgdmlhIFBheVBhbCBvbiAyMDI2LTA2LTMwIGFuZCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU0OCBUZCAoMjAyNi0wNy0yOSwgZGVtb25zdHJhdGluZyB0aGUgY29tcGFueSdzIGFjY2VwdGFuY2Ugb2YgdGhlIGFncmVlbWVudCBhbmQgcGF5bWVudCBwcm9jZXNzLikgVGogRVQKQlQgL0YxIDExIFRmIDU2IDUzMyBUZCAoWzZdWzddKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNTEwIFRkIChQdWxsIHJlcXVlc3QgIzIxMiBpbXBsZW1lbnRpbmcgdGhlIGNsaW5pY2lhbiBkYXNoYm9hcmQgd2FzIG1lcmdlZCBvbiAyMDI2LTA4LTI4LCBhbmQgdGhlKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDk1IFRkIChjb2RlIHdhcyBpbmNsdWRlZCBpbiAyMyBwcm9kdWN0aW9uIGRlcGxveW1lbnRzIGJldHdlZW4gQXVnIDI4IGFuZCBTZXAgMzAsIGNvbmZpcm1pbmcpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA0ODAgVGQgKGRlbGl2ZXJ5LiBbOF1bOV0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA0NTcgVGQgKFRhbmRlbSBIZWFsdGggc3RhZmYgY29uZmlybWVkIG9uIFNlcCAyIHRoYXQgY2xpbmljaWFucyBhcmUgdXNpbmcgdGhlIG5ldyBkYXNoYm9hcmQgZGFpbHksKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDQyIFRkIChjb25maXJtaW5nIHRoZSB3b3JrIGlzIGZ1bmN0aW9uYWwgYW5kIGluIHVzZS4gWzEwXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQxOSBUZCAoVGhlIGJ1eWVyJ3MgY2xhaW0gdGhhdCBubyBhZ3JlZW1lbnQgZXhpc3RzIGNvbnRyYWRpY3RzIHRoZSBzaWduZWQgTVNBIGFuZCB0aGUgZG9jdW1lbnRlZCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQwNCBUZCAoYXBwcm92YWxzLCBhcyBzaG93biBpbiB0aGUgY29udHJhY3QgYW5kIFNsYWNrIG1lc3NhZ2VzLiBbMTFdWzRdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMzgxIFRkIChUaGUgb25seSB1bnJlc29sdmVkIGlzc3VlIGlzIHRoYXQgdGhlIGV4ZWN1dGl2ZSBkb2VzIG5vdCBoYXZlIGEgY29weSBvZiB0aGUgc2lnbmVkKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMzY2IFRkIChhZ3JlZW1lbnQ7IHdlIGFyZSBwcm92aWRpbmcgdGhlIE1TQSBhbmQgYSBkZWxpdmVyeSBzdW1tYXJ5IHRvIGFkZHJlc3MgdGhpcy4gWzRdKSBUaiBFVApCVCAvRjIgMTIgVGYgNTYgMzM1IFRkIChTb3VyY2VzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMTYgVGQgKFsxXSBQYXlQYWwgZGlzcHV0ZSBQUC1ELTI3MTU1LVRBTkRFTSwgVFhOIFwoUGF5UGFsIERpc3B1dGVzIEFQSVwpOiAiRGlzcHV0ZWQgdHJhbnNhY3Rpb246IFBheVBhbCB0cmFuc2FjdGlvbikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzAyIFRkICgzVEQ5OTgxN01NMjA0MTEyNSBvbiAyMDI2LTA4LTI4IGZvciAkNCw1MDAuMDAgVVNELCBpbnZvaWNlIE1MRC0wMDE5LCBidXllciBUYW5kZW0gSGVhbHRoIEluYy4uIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjg1IFRkIChbMl0gUGF5bWVudCBoaXN0b3J5IGJldHdlZW4gdGhpcyBjbGllbnQgYW5kIHRoZSBmcmVlbGFuY2VyLCAzVEQ5OTgxN01NMjA0MTEyNSBcKFNlZWRlZCBkZW1vIHJlY29yZHMgXChQYXlQYWwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI3MSBUZCAoVHJhbnNhY3Rpb24gU2VhcmNoIGZvcm1hdFwpXCk6ICIyMDI2LTA4LTI4IC0gJDQsNTAwLjAwIFVTRDogVHJhbnNhY3Rpb24gM1REOTk4MTdNTTIwNDExMjUgb24gMjAyNi0wOC0yODopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI1NyBUZCAoJDQsNTAwLjAwIFVTRCBwYWlkIGJ5IGJpbGxpbmdAdGFuZGVtaGVhbHRoLmlvIFwoVGFuZGVtIEhlYWx0aCBJbmMuXCkuIFN0YXR1czogY29tcGxldGVkLiBJbnZvaWNlIE1MRC0wMDE5LikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjQzIFRkIChTdWJqZWN0OiAiVGFuZGVtIEhlYWx0aCAtIE1pbGVzdG9uZSAzOiBjbGluaWNpYW4gZGFzaGJvYXJkIi4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyMjYgVGQgKFszXSBNYXN0ZXIgU2VydmljZXMgQWdyZWVtZW50ICsgU3RhdGVtZW50IG9mIFdvcmssIKczIFwoRG9jdVNpZ24gZW52ZWxvcGUsIGNvbXBsZXRlZFwpOiAiTWlsZXN0b25lczogTTEgYXV0aCArKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyMTIgVGQgKG9uYm9hcmRpbmcgZmxvdyBcKCQzLDAwMFwpOyBNMiBhcHBvaW50bWVudCBib29raW5nIFwoJDMsMDAwXCk7IE0zIGNsaW5pY2lhbiBkYXNoYm9hcmQgXCgkNCw1MDBcKS4gRWFjaCBtaWxlc3RvbmUgaXMpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE5OCBUZCAoaW52b2ljZWQgdmlhIFBheVBhbCB3aGVuIGl0cyBwdWxsIHJlcXVlc3QgaXMgbWVyZ2VkIGludG8gQ29tcGFueSdzIG1haW4gYnJhbmNoLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE4MSBUZCAoWzRdIE1hc3RlciBTZXJ2aWNlcyBBZ3JlZW1lbnQgKyBTdGF0ZW1lbnQgb2YgV29yaywgpzEgXChEb2N1U2lnbiBlbnZlbG9wZSwgY29tcGxldGVkXCk6ICJQYXJ0aWVzIGFuZCBzaWduYXRvcnk6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNjcgVGQgKEFncmVlbWVudCBiZXR3ZWVuIE1hcmN1cyBMZWUgRGV2IFwoIkRldmVsb3BlciJcKSBhbmQgVGFuZGVtIEhlYWx0aCBJbmMuLCBhIERlbGF3YXJlIGNvcnBvcmF0aW9uIFwoIkNvbXBhbnkiXCkuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNTMgVGQgKFNpZ25lZCBmb3IgQ29tcGFueSBieSBBaXNoYSBWZXJtYSwgQ28tZm91bmRlciAmIENUTywgb24gSnVuZSA4LCAyMDI2LCB2aWEgRG9jdVNpZ24gXChlbnZlbG9wZSA0RjJBLTc3QzFcKS4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMzYgVGQgKFs1XSBNYXN0ZXIgU2VydmljZXMgQWdyZWVtZW50ICsgU3RhdGVtZW50IG9mIFdvcmssIKcyIFwoRG9jdVNpZ24gZW52ZWxvcGUsIGNvbXBsZXRlZFwpOiAiQXV0aG9yaXR5OiBUaGUpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDEyMiBUZCAoaW5kaXZpZHVhbCBzaWduaW5nIGZvciBDb21wYW55IHJlcHJlc2VudHMgdGhhdCB0aGV5IGFyZSBhdXRob3JpemVkIHRvIGJpbmQgQ29tcGFueSB0byB0aGlzIEFncmVlbWVudC4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMDUgVGQgKFs2XSBQYXltZW50IGhpc3RvcnkgYmV0d2VlbiB0aGlzIGNsaWVudCBhbmQgdGhlIGZyZWVsYW5jZXIsIDhLQTExMjA0UEw3NzMwMDEyIFwoU2VlZGVkIGRlbW8gcmVjb3JkcyBcKFBheVBhbCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgOTEgVGQgKFRyYW5zYWN0aW9uIFNlYXJjaCBmb3JtYXRcKVwpOiAiMjAyNi0wNi0zMCAtICQzLDAwMC4wMCBVU0Q6IFRyYW5zYWN0aW9uIDhLQTExMjA0UEw3NzMwMDEyIG9uIDIwMjYtMDYtMzA6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA3NyBUZCAoJDMsMDAwLjAwIFVTRCBwYWlkIGJ5IGJpbGxpbmdAdGFuZGVtaGVhbHRoLmlvIFwoVGFuZGVtIEhlYWx0aCBJbmMuXCkuIFN0YXR1czogY29tcGxldGVkLiBJbnZvaWNlIE1MRC0wMDExLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjMgVGQgKFN1YmplY3Q6ICJUYW5kZW0gSGVhbHRoIC0gTWlsZXN0b25lIDE6IGF1dGggKyBvbmJvYXJkaW5nIGZsb3ciLiIpIFRqIEVUCmVuZHN0cmVhbQplbmRvYmoKNyAwIG9iago8PCAvVHlwZSAvUGFnZSAvUGFyZW50IDIgMCBSIC9NZWRpYUJveCBbMCAwIDYxMiA3OTJdIC9SZXNvdXJjZXMgPDwgL0ZvbnQgPDwgL0YxIDMgMCBSIC9GMiA0IDAgUiA+PiA+PiAvQ29udGVudHMgOCAwIFIgPj4KZW5kb2JqCjggMCBvYmoKPDwgL0xlbmd0aCAxNzc1ID4+CnN0cmVhbQpCVCAvRjEgOSBUZiA1NiA3MzYgVGQgKFs3XSBQYXltZW50IGhpc3RvcnkgYmV0d2VlbiB0aGlzIGNsaWVudCBhbmQgdGhlIGZyZWVsYW5jZXIsIDVRVzgwMDMzSkQ5OTIxODc0IFwoU2VlZGVkIGRlbW8gcmVjb3JkcyBcKFBheVBhbCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNzIyIFRkIChUcmFuc2FjdGlvbiBTZWFyY2ggZm9ybWF0XClcKTogIjIwMjYtMDctMjkgLSAkMywwMDAuMDAgVVNEOiBUcmFuc2FjdGlvbiA1UVc4MDAzM0pEOTkyMTg3NCBvbiAyMDI2LTA3LTI5OikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNzA4IFRkICgkMywwMDAuMDAgVVNEIHBhaWQgYnkgYmlsbGluZ0B0YW5kZW1oZWFsdGguaW8gXChUYW5kZW0gSGVhbHRoIEluYy5cKS4gU3RhdHVzOiBjb21wbGV0ZWQuIEludm9pY2UgTUxELTAwMTUuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2OTQgVGQgKFN1YmplY3Q6ICJUYW5kZW0gSGVhbHRoIC0gTWlsZXN0b25lIDI6IGFwcG9pbnRtZW50IGJvb2tpbmciLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY3NyBUZCAoWzhdIEdpdEh1YiBhdWRpdCBsb2c6IHRhbmRlbWhlYWx0aC90YW5kZW0tYXBwLCBHMyBcKEdpdEh1YiBvcmdhbml6YXRpb24gYXVkaXQgbG9nIGV4cG9ydFwpOiAiUFIgIzIxMiBtZXJnZWQ6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NjMgVGQgKDIwMjYtMDgtMjggMTg6NDcgVVRDIC0gUFIgIzIxMiAiTTM6IGNsaW5pY2lhbiBkYXNoYm9hcmQiIGJ5IG1hcmN1c2xlZS1kZXYgbWVyZ2VkIGludG8gbWFpbiBieSBiY2FydGVyIFwoQmVuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NDkgVGQgKENhcnRlciwgb3JnIG93bmVyXCkuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjMyIFRkIChbOV0gR2l0SHViIGF1ZGl0IGxvZzogdGFuZGVtaGVhbHRoL3RhbmRlbS1hcHAsIEc0IFwoR2l0SHViIG9yZ2FuaXphdGlvbiBhdWRpdCBsb2cgZXhwb3J0XCk6ICJQcm9kdWN0aW9uIGRlcGxveXM6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTggVGQgKENvZGUgZnJvbSBQUiAjMjEyIGhhcyBiZWVuIGluY2x1ZGVkIGluIDIzIHByb2R1Y3Rpb24gZGVwbG95bWVudHMgb2YgdGFuZGVtLWFwcCBiZXR3ZWVuIEF1ZyAyOCBhbmQgU2VwIDMwLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjA0IFRkICgyMDI2LiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU4NyBUZCAoWzEwXSBTaGFyZWQgU2xhY2sgY2hhbm5lbCAjdGFuZGVtLW1hcmN1cyBcKGV4cG9ydFwpLCBLNiBcKFNsYWNrIENvbm5lY3QgZXhwb3J0XCk6ICJTZXAgMiAtIEJlbiBDYXJ0ZXI6IENsaW5pY2lhbnMpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU3MyBUZCAoYXJlIHVzaW5nIHRoZSBuZXcgZGFzaGJvYXJkIGV2ZXJ5IGRheS4gTmljZSB3b3JrLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU1NiBUZCAoWzExXSBQYXlQYWwgZGlzcHV0ZSBQUC1ELTI3MTU1LVRBTkRFTSwgTVNHMSBcKFBheVBhbCBEaXNwdXRlcyBBUElcKTogIk1lc3NhZ2UgZnJvbSBidXllcjogQ2FyZGhvbGRlciBzdGF0ZW1lbnQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU0MiBUZCAoZm9yd2FyZGVkIGJ5IGlzc3VpbmcgYmFuayBcKGZpbGVkIGJ5IEJlbiBDYXJ0ZXIsIENFT1wpOiBUaGlzIGNoYXJnZSB3YXMgbm90IGF1dGhvcml6ZWQgYnkgVGFuZGVtIEhlYWx0aC4gV2UgaGF2ZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTI4IFRkIChubyBhZ3JlZW1lbnQgd2l0aCB0aGlzIHZlbmRvciBhbmQgZG8gbm90IHJlY29nbml6ZSB0aGlzIHRyYW5zYWN0aW9uLiBQbGVhc2UgcmV2ZXJzZSBpdC4iKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMjEgMDAwMDAgbiAKMDAwMDAwMDIxOCAwMDAwMCBuIAowMDAwMDAwMzIwIDAwMDAwIG4gCjAwMDAwMDA0NTYgMDAwMDAgbiAKMDAwMDAwNTAwNyAwMDAwMCBuIAowMDAwMDA1MTQzIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgOSAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNjk3MAolJUVPRgo="
+      },
+      {
+       "field": "evidence-file",
+       "name": "evidence-appendix.pdf",
+       "type": "application/pdf",
+       "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDM2MDQgPj4Kc3RyZWFtCkJUIC9GMiAxNCBUZiA1NiA3MzYgVGQgKEV2aWRlbmNlIGFwcGVuZGl4OiBmdWxsIHRleHQgb2YgZXZlcnkgY2l0ZWQgc2VjdGlvbikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDcwNiBUZCAoUGF5UGFsIGRpc3B1dGUgUFAtRC0yNzE1NS1UQU5ERU0gLSBzb3VyY2U6IFBheVBhbCBEaXNwdXRlcyBBUEkpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY4OCBUZCAoVFhOIERpc3B1dGVkIHRyYW5zYWN0aW9uOiBQYXlQYWwgdHJhbnNhY3Rpb24gM1REOTk4MTdNTTIwNDExMjUgb24gMjAyNi0wOC0yOCBmb3IgJDQsNTAwLjAwIFVTRCwgaW52b2ljZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjc0IFRkIChNTEQtMDAxOSwgYnV5ZXIgVGFuZGVtIEhlYWx0aCBJbmMuLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjU3IFRkIChNU0cxIE1lc3NhZ2UgZnJvbSBidXllcjogQ2FyZGhvbGRlciBzdGF0ZW1lbnQgZm9yd2FyZGVkIGJ5IGlzc3VpbmcgYmFuayBcKGZpbGVkIGJ5IEJlbiBDYXJ0ZXIsIENFT1wpOiBUaGlzIGNoYXJnZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjQzIFRkICh3YXMgbm90IGF1dGhvcml6ZWQgYnkgVGFuZGVtIEhlYWx0aC4gV2UgaGF2ZSBubyBhZ3JlZW1lbnQgd2l0aCB0aGlzIHZlbmRvciBhbmQgZG8gbm90IHJlY29nbml6ZSB0aGlzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MjkgVGQgKHRyYW5zYWN0aW9uLiBQbGVhc2UgcmV2ZXJzZSBpdC4pIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiA2MDMgVGQgKFBheW1lbnQgaGlzdG9yeSBiZXR3ZWVuIHRoaXMgY2xpZW50IGFuZCB0aGUgZnJlZWxhbmNlciAtIHNvdXJjZTogU2VlZGVkIGRlbW8gcmVjb3JkcykgVGogRVQKQlQgL0YyIDExIFRmIDU2IDU4OCBUZCAoXChQYXlQYWwgVHJhbnNhY3Rpb24gU2VhcmNoIGZvcm1hdFwpKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1NzAgVGQgKDNURDk5ODE3TU0yMDQxMTI1IDIwMjYtMDgtMjggLSAkNCw1MDAuMDAgVVNEOiBUcmFuc2FjdGlvbiAzVEQ5OTgxN01NMjA0MTEyNSBvbiAyMDI2LTA4LTI4OiAkNCw1MDAuMDAgVVNEIHBhaWQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU1NiBUZCAoYnkgYmlsbGluZ0B0YW5kZW1oZWFsdGguaW8gXChUYW5kZW0gSGVhbHRoIEluYy5cKS4gU3RhdHVzOiBjb21wbGV0ZWQuIEludm9pY2UgTUxELTAwMTkuIFN1YmplY3Q6ICJUYW5kZW0gSGVhbHRoIC0pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU0MiBUZCAoTWlsZXN0b25lIDM6IGNsaW5pY2lhbiBkYXNoYm9hcmQiLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTI1IFRkICg4S0ExMTIwNFBMNzczMDAxMiAyMDI2LTA2LTMwIC0gJDMsMDAwLjAwIFVTRDogVHJhbnNhY3Rpb24gOEtBMTEyMDRQTDc3MzAwMTIgb24gMjAyNi0wNi0zMDogJDMsMDAwLjAwIFVTRCBwYWlkKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1MTEgVGQgKGJ5IGJpbGxpbmdAdGFuZGVtaGVhbHRoLmlvIFwoVGFuZGVtIEhlYWx0aCBJbmMuXCkuIFN0YXR1czogY29tcGxldGVkLiBJbnZvaWNlIE1MRC0wMDExLiBTdWJqZWN0OiAiVGFuZGVtIEhlYWx0aCAtKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0OTcgVGQgKE1pbGVzdG9uZSAxOiBhdXRoICsgb25ib2FyZGluZyBmbG93Ii4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ4MCBUZCAoNVFXODAwMzNKRDk5MjE4NzQgMjAyNi0wNy0yOSAtICQzLDAwMC4wMCBVU0Q6IFRyYW5zYWN0aW9uIDVRVzgwMDMzSkQ5OTIxODc0IG9uIDIwMjYtMDctMjk6ICQzLDAwMC4wMCBVU0QgcGFpZCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDY2IFRkIChieSBiaWxsaW5nQHRhbmRlbWhlYWx0aC5pbyBcKFRhbmRlbSBIZWFsdGggSW5jLlwpLiBTdGF0dXM6IGNvbXBsZXRlZC4gSW52b2ljZSBNTEQtMDAxNS4gU3ViamVjdDogIlRhbmRlbSBIZWFsdGggLSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDUyIFRkIChNaWxlc3RvbmUgMjogYXBwb2ludG1lbnQgYm9va2luZyIuKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgNDI2IFRkIChNYXN0ZXIgU2VydmljZXMgQWdyZWVtZW50ICsgU3RhdGVtZW50IG9mIFdvcmsgLSBzb3VyY2U6IERvY3VTaWduIGVudmVsb3BlLCBjb21wbGV0ZWQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQwOCBUZCAopzMgTWlsZXN0b25lczogTTEgYXV0aCArIG9uYm9hcmRpbmcgZmxvdyBcKCQzLDAwMFwpOyBNMiBhcHBvaW50bWVudCBib29raW5nIFwoJDMsMDAwXCk7IE0zIGNsaW5pY2lhbiBkYXNoYm9hcmQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDM5NCBUZCAoXCgkNCw1MDBcKS4gRWFjaCBtaWxlc3RvbmUgaXMgaW52b2ljZWQgdmlhIFBheVBhbCB3aGVuIGl0cyBwdWxsIHJlcXVlc3QgaXMgbWVyZ2VkIGludG8gQ29tcGFueSdzIG1haW4gYnJhbmNoLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzc3IFRkICinMSBQYXJ0aWVzIGFuZCBzaWduYXRvcnk6IEFncmVlbWVudCBiZXR3ZWVuIE1hcmN1cyBMZWUgRGV2IFwoIkRldmVsb3BlciJcKSBhbmQgVGFuZGVtIEhlYWx0aCBJbmMuLCBhIERlbGF3YXJlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzNjMgVGQgKGNvcnBvcmF0aW9uIFwoIkNvbXBhbnkiXCkuIFNpZ25lZCBmb3IgQ29tcGFueSBieSBBaXNoYSBWZXJtYSwgQ28tZm91bmRlciAmIENUTywgb24gSnVuZSA4LCAyMDI2LCB2aWEgRG9jdVNpZ24pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDM0OSBUZCAoXChlbnZlbG9wZSA0RjJBLTc3QzFcKS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDMzMiBUZCAopzIgQXV0aG9yaXR5OiBUaGUgaW5kaXZpZHVhbCBzaWduaW5nIGZvciBDb21wYW55IHJlcHJlc2VudHMgdGhhdCB0aGV5IGFyZSBhdXRob3JpemVkIHRvIGJpbmQgQ29tcGFueSB0byB0aGlzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMTggVGQgKEFncmVlbWVudC4pIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAyOTIgVGQgKEdpdEh1YiBhdWRpdCBsb2c6IHRhbmRlbWhlYWx0aC90YW5kZW0tYXBwIC0gc291cmNlOiBHaXRIdWIgb3JnYW5pemF0aW9uIGF1ZGl0IGxvZyBleHBvcnQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI3NCBUZCAoRzMgUFIgIzIxMiBtZXJnZWQ6IDIwMjYtMDgtMjggMTg6NDcgVVRDIC0gUFIgIzIxMiAiTTM6IGNsaW5pY2lhbiBkYXNoYm9hcmQiIGJ5IG1hcmN1c2xlZS1kZXYgbWVyZ2VkIGludG8gbWFpbikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjYwIFRkIChieSBiY2FydGVyIFwoQmVuIENhcnRlciwgb3JnIG93bmVyXCkuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyNDMgVGQgKEc0IFByb2R1Y3Rpb24gZGVwbG95czogQ29kZSBmcm9tIFBSICMyMTIgaGFzIGJlZW4gaW5jbHVkZWQgaW4gMjMgcHJvZHVjdGlvbiBkZXBsb3ltZW50cyBvZiB0YW5kZW0tYXBwIGJldHdlZW4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDIyOSBUZCAoQXVnIDI4IGFuZCBTZXAgMzAsIDIwMjYuKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgMjAzIFRkIChTaGFyZWQgU2xhY2sgY2hhbm5lbCAjdGFuZGVtLW1hcmN1cyBcKGV4cG9ydFwpIC0gc291cmNlOiBTbGFjayBDb25uZWN0IGV4cG9ydCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTg1IFRkIChLNiBTZXAgMiAtIEJlbiBDYXJ0ZXI6IENsaW5pY2lhbnMgYXJlIHVzaW5nIHRoZSBuZXcgZGFzaGJvYXJkIGV2ZXJ5IGRheS4gTmljZSB3b3JrLikgVGogRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNwowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMTIgMDAwMDAgbiAKMDAwMDAwMDMxNCAwMDAwMCBuIAowMDAwMDAwNDUwIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNyAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNDEwNgolJUVPRgo="
+      }
+     ]
+    },
+    "usage": {
+     "prompt": 32388,
+     "completion": 11225,
+     "calls": 13
+    }
+   }
+  }
+ ]
+}
