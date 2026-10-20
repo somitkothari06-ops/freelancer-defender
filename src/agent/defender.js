@@ -145,7 +145,8 @@ async function runDefender({ scenario, locker, sources }, emit) {
       if (!doc) return { forModel: { error: `No document ${args.doc_id}. Use a doc_id from the index.` } };
       opened.add(doc.doc_id);
       emit('tool', { name, doc_id: doc.doc_id, title: doc.title, source: doc.source, sections: doc.sections.map((s) => s.anchor) });
-      return { forModel: doc };
+      // `fields` is a display-only breakdown for the dashboard; the model reads the text.
+      return { forModel: { ...doc, sections: doc.sections.map(({ fields, ...s }) => s) } };
     }
     if (name === 'search_evidence') {
       const hits = locker.search(String(args.query || ''));

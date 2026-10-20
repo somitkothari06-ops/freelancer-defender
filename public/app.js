@@ -44,6 +44,8 @@ const DECISIONS = {
 // Friendly names for documents, so citations read "Contract · §7.2" not "CONTRACT · §7.2".
 const DOC_NAMES = { DISPUTE: 'PayPal dispute', 'PAYPAL-TXN': 'PayPal payments', 'PAYPAL-INVOICE': 'PayPal invoice', MSA: 'Contract', GITHUB: 'GitHub log' };
 const docName = (id) => DOC_NAMES[id] || id.toLowerCase().replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
+// Contract anchors use the legal "§" sign; show "Section 6.1" instead.
+const anchorName = (a) => String(a).replace(/^§\s*/, 'Section ');
 
 function timeLeft(due) {
   // No due date means PayPal isn't waiting on the freelancer right now (e.g. under review).
@@ -150,20 +152,22 @@ function renderTimeline(rows) {
     return;
   }
   const withDue = rows.filter((r) => r.due);
+  // Each bar runs from now to the deadline, so its length is the time left. The view starts a
+  // little before now and ends just after the last deadline, scaled to fit the card.
+  const now = Date.now();
+  const start = new Date(now - 864e5 / 3);
   const resources = withDue.map((r) => ({ id: r.dispute_id, name: r.client.split(',').pop().trim(), amount: fmtMoney(r.amount) }));
   const events = withDue.map((r) => {
     const t = timeLeft(r.due);
     return {
       id: r.dispute_id,
       resourceId: r.dispute_id,
-      startDate: new Date(r.created),
+      startDate: new Date(now),
       endDate: new Date(r.due),
-      name: `${t.short} left · ${r.has_replay ? 'response ready' : 'not analyzed yet'}`,
+      name: `${t.short} left`,
       eventColor: t.hrs < 48 ? 'red' : r.has_replay ? 'blue' : 'gray',
     };
   });
-  // Show from yesterday until just after the last deadline, scaled to fit the card.
-  const start = new Date(Date.now() - 864e5);
   const end = new Date(Math.max(Date.now() + 4 * 864e5, ...events.map((e) => +e.endDate)) + 864e5);
   if (state.scheduler) state.scheduler.destroy();
   el.innerHTML = '';
@@ -177,7 +181,7 @@ function renderTimeline(rows) {
     barMargin: 8,
     readOnly: true,
     eventStyle: 'rounded',
-    features: { timeRanges: { showCurrentTimeLine: true }, eventTooltip: false, cellMenu: false, eventMenu: false, scheduleMenu: false },
+    features: { timeRanges: { showCurrentTimeLine: { name: 'Now' } }, eventTooltip: false, cellMenu: false, eventMenu: false, scheduleMenu: false },
     columns: [
       { text: 'Client', field: 'name', width: 170 },
       { text: 'Amount', field: 'amount', width: 100 },
@@ -514,7 +518,7 @@ document.addEventListener('click', (e) => {
 
 function chip(c, kind = '') {
   const isPP = c.doc_id === 'DISPUTE' || c.doc_id.startsWith('PAYPAL');
-  const el = h(`<button class="chip ${isPP ? 'paypal' : ''} ${kind}">${esc(docName(c.doc_id))} · ${esc(c.anchor)}</button>`);
+  const el = h(`<button class="chip ${isPP ? 'paypal' : ''} ${kind}">${esc(docName(c.doc_id))} · ${esc(anchorName(c.anchor))}</button>`);
   el.onclick = () => openDrawer(c.doc_id, c.anchor, c.quote);
   return el;
 }
@@ -768,7 +772,7 @@ function renderResult(r) {
     cl.citations.forEach((x) => {
       if (seen.has(x.doc_id)) return;
       seen.add(x.doc_id);
-      const b = h(`<button class="fn" title="${esc(docName(x.doc_id) + ' ' + x.anchor)}">${esc(docName(x.doc_id))}</button>`);
+      const b = h(`<button class="fn" title="${esc(docName(x.doc_id) + ' · ' + anchorName(x.anchor))}">${esc(docName(x.doc_id))}</button>`);
       b.onclick = () => openDrawer(x.doc_id, x.anchor, x.quote);
       p.appendChild(b);
     });
@@ -859,7 +863,7 @@ function renderLedger(r, notes, key) {
         field: 'source',
         flex: 1.2,
         minWidth: 180,
-        cellRenderer: (p) => (p.value ? `<div class="cell-stack"><span class="main" style="font-size:14px">${esc(p.value)}</span><span class="sub">${esc(docName(p.data.doc_id))} · ${esc(p.data.anchor)}</span></div>` : ''),
+        cellRenderer: (p) => (p.value ? `<div class="cell-stack"><span class="main" style="font-size:14px">${esc(p.value)}</span><span class="sub">${esc(docName(p.data.doc_id))} · ${esc(anchorName(p.data.anchor))}</span></div>` : ''),
       },
       { headerName: 'From', field: 'origin', width: 130, cellRenderer: (p) => (p.value ? `<span class="tag ${p.value === 'PayPal' ? 'blue' : ''}">${esc(p.value)}</span>` : '') },
       { headerName: 'Exact quote', field: 'quote', flex: 2, minWidth: 220, cellStyle: { lineHeight: '1.45', paddingTop: '10px', paddingBottom: '10px', fontStyle: 'italic', color: '#475569' } },
@@ -934,7 +938,12 @@ async function openDrawer(docId, anchor, quote) {
         text = text.replace(new RegExp(safe, 'i'), (m) => `<mark>${m}</mark>`);
       }
     }
-    const el = h(`<div class="sec ${s.anchor === anchor ? 'hl' : ''} ${focus && s.anchor !== anchor ? 'hidden other' : ''}"><div class="sh">${esc(s.anchor)} · ${esc(s.heading)}</div><div class="st">${text}</div></div>`);
+    // Only contract sections are referred to by number; other anchors (E4, L5, IDs) mean nothing to a reader.
+    const title = s.fields ? '' : /^§/.test(s.anchor) ? `${anchorName(s.anchor)} · ${s.heading}` : s.heading;
+    const bodyHtml = s.fields
+      ? `<dl class="fields">${s.fields.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`
+      : `<div class="st">${text}</div>`;
+    const el = h(`<div class="sec ${s.anchor === anchor ? 'hl' : ''} ${focus && s.anchor !== anchor ? 'hidden other' : ''}">${title ? `<div class="sh">${esc(title)}</div>` : ''}${bodyHtml}</div>`);
     if (s.anchor === anchor) target = el;
     body.appendChild(el);
   }

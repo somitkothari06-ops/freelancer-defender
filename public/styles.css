@@ -314,3 +314,21 @@ pre.req { width: 100%; margin: 6px 0 0; padding: 12px; border-radius: 10px; back
 
 .concern { padding: 8px 0; border-top: 1px solid var(--line, #e5e7eb); }
 .concern:first-of-type { border-top: 0; }
+
+/* Timeline "Now" marker: a thin navy line with a small label, not a big orange block */
+#timeline .b-sch-current-time { border-left: 2px solid var(--navy, #0b1b3f) !important; background: none !important; }
+#timeline .b-sch-timerange.b-sch-current-time label,
+#timeline .b-timeaxis-header .b-sch-current-time { background: var(--navy, #0b1b3f) !important; color: #fff !important; font-size: 11px; font-weight: 700; border-radius: 4px; padding: 1px 6px; }
+
+/* Label/value list for structured records (e.g. PayPal payments) */
+.fields { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 6px 0 0; font-size: 15px; }
+.fields dt { color: var(--faint); font-weight: 600; }
+.fields dd { margin: 0; color: var(--ink, #0b1b3f); overflow-wrap: anywhere; }
+#timeline .b-timeaxis-header .b-sch-current-time, #timeline .b-sch-current-time label { display: none !important; }
+.tl-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--faint); }
+.tl-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.tl-legend i { width: 14px; height: 10px; border-radius: 3px; display: inline-block; }
+.tl-legend i.ln { width: 2px; height: 14px; border-radius: 0; background: var(--navy); }
+/* Short bars: let the "time left" label run past the end of the bar instead of being cut off */
+#timeline .b-sch-event, #timeline .b-sch-event-wrap, #timeline .b-sch-event-content { overflow: visible !important; }
+#timeline .b-sch-event-content { white-space: nowrap; }

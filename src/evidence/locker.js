@@ -88,6 +88,17 @@ function transactionsDocument(rows, source) {
           ` (${r.payer_info?.payer_name?.alternate_full_name || ''}). Status: ${t.transaction_status === 'S' ? 'completed' : t.transaction_status}. ` +
           `Invoice ${t.invoice_id || 'n/a'}. Subject: "${t.transaction_subject || ''}".` +
           (items ? ` Items: ${items}.` : ''),
+        // The same facts as label/value pairs, for display only.
+        fields: [
+          ['Amount', money(t.transaction_amount)],
+          ['Date', t.transaction_initiation_date.slice(0, 10)],
+          ['Paid by', [r.payer_info?.payer_name?.alternate_full_name, r.payer_info?.email_address].filter(Boolean).join(' · ') || 'Unknown'],
+          ['Status', t.transaction_status === 'S' ? 'Completed' : t.transaction_status],
+          ['Invoice', t.invoice_id || 'n/a'],
+          ['For', t.transaction_subject || ''],
+          ...(r.cart_info?.item_details || []).map((it, i) => [i ? '' : 'Items', `${it.item_name} · ${money(it.item_amount)}`]),
+          ['Transaction ID', t.transaction_id],
+        ],
       };
     }),
   };
