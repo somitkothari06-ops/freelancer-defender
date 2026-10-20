@@ -205,4 +205,4 @@ function linkLive(disputeId, scenarioId) {
   links.set(disputeId, scenarioId);
 }
 
-module.exports = { listCases, loadCase, linkLive, scenarios };
+module.exports = { listCases, loadCase, linkLive, scenarios, freshScenario };
