@@ -12,7 +12,8 @@ function toLatin(text) {
   return String(text)
     .replace(/[‘’]/g, "'")
     .replace(/[“”]/g, '"')
-    .replace(/[–—]/g, '-')
+    .replace(/[‐-—−]/g, '-')
+    .replace(/[  ]/g, ' ')
     .replace(/…/g, '...')
     .replace(/[^\x20-\x7E§]/g, '');
 }

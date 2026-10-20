@@ -67,3 +67,8 @@ test('every scenario answer key points at real sections', () => {
     }
   }
 });
+
+test('quotes may include the section heading and typographic hyphens', () => {
+  const r = checkCitation(locker, { doc_id: 'CONTRACT', anchor: '§3.2', quote: 'Final Asset Package: On completion ... a print‑ready PDF brand guide' });
+  assert.equal(r.ok, true);
+});

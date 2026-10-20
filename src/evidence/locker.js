@@ -105,7 +105,8 @@ function normalize(text) {
     .toLowerCase()
     .replace(/[‘’‛`]/g, "'")
     .replace(/[“”"]/g, '"')
-    .replace(/[–—]/g, '-')
+    .replace(/[‐-—−]/g, '-') // all the hyphen/dash variants
+    .replace(/[  ]/g, ' ') // non-breaking spaces
     .replace(/\s+/g, ' ')
     .trim();
 }

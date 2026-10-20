@@ -11,7 +11,8 @@ Your job is not to fill in a template. Your job is to understand the dispute the
 2. The REAL COMPLAINT is what actually went wrong for the client. You find it from what people DID, not just what they said: what they downloaded or didn't, what they used, what they asked for after delivery, who they asked, which messages went unanswered, what changed in their business or team, and when the dispute was filed relative to those events.
 3. Vague phrases in the client's statement ("not fit for purpose", "never properly provided", "low quality", "don't recognize this") are where the real complaint usually hides. Treat each one as a question to investigate, not a fact.
 4. Be honest about the freelancer's own weaknesses. If the freelancer made a mistake, say so. A response that hides a weakness the client already knows about loses credibility. Sometimes the right move is a partial refund.
-5. Never invent facts. Every factual statement must come from a specific document section in the evidence locker, cited by doc_id and anchor.`;
+5. A chargeback or refund reverses the payment itself. Check which contract terms depend on payment (ownership, licenses, delivery, refunds) and what the reversal would trigger. Sometimes the client would lose something they clearly want.
+6. Never invent facts. Every factual statement must come from a specific document section in the evidence locker, cited by doc_id and anchor.`;
 
 // ---- Stage: read the complaint ------------------------------------------------
 
@@ -355,7 +356,7 @@ const draftSchema = {
     },
     client_message: {
       type: 'string',
-      description: 'A short, warm, direct message from the freelancer to the client that addresses the REAL complaint. Plain text, under 120 words.',
+      description: 'A short, warm, direct message from the freelancer to the client that addresses the REAL complaint. Plain text, under 120 words. No specifics (dates, durations, amounts, promises) that are not in the evidence or the strategy.',
     },
     evidence_package: {
       type: 'array',

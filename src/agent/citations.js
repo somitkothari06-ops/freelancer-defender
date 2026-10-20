@@ -15,7 +15,8 @@ function checkCitation(locker, c) {
   if (!locker.docs.has(c.doc_id)) return { ok: false, problem: `document ${c.doc_id} does not exist` };
   if (!section) return { ok: false, problem: `${c.doc_id} has no section ${c.anchor}` };
 
-  const source = normalize(section.text);
+  // The heading counts as part of the section (models often quote "Heading: text").
+  const source = normalize(`${section.heading}: ${section.text}`);
   const pieces = normalize(c.quote || '')
     .replace(/^"|"$/g, '')
     .split(/\s*(?:\.\.\.|…)\s*/)

@@ -456,7 +456,11 @@ function startRun(mode) {
   on('verify_issue', (p) => {
     const body = stageBody('verify');
     const card = h(`<div class="card"><h4>${p.failed.length} claim(s) failed the citation check, sending back to the model to repair</h4></div>`);
-    p.failed.forEach((f) => card.appendChild(h(`<div class="f-why">✗ "${esc(f.text)}" (${esc(f.problems.join('; ') || 'no citation')})</div>`)));
+    const list = h('<div class="thinking"></div>');
+    p.failed.forEach((f) => list.appendChild(h(`<div>✗ "${esc(f.text)}"\n   ${esc(f.problems.join('; ') || 'no citation')}</div>`)));
+    const toggle = h('<button class="think-toggle">▸ show which claims and why</button>');
+    toggle.onclick = () => list.classList.toggle('open');
+    card.append(toggle, list);
     body.appendChild(card);
   });
   on('result', (r) => renderResult(r));
