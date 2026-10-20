@@ -1,5 +1,5 @@
 {
- "recorded_at": "2026-10-20T06:34:14.314Z",
+ "recorded_at": "2026-10-20T12:31:49.769Z",
  "events": [
   {
    "t": 1,
@@ -10,7 +10,7 @@
    }
   },
   {
-   "t": 1,
+   "t": 2,
    "type": "stage",
    "payload": {
     "stage": "intake",
@@ -113,7 +113,7 @@
    }
   },
   {
-   "t": 2394,
+   "t": 3407,
    "type": "stage",
    "payload": {
     "stage": "read",
@@ -122,75 +122,75 @@
      "stated_complaint": "The design work delivered was not what was agreed in the contract. We were promised a complete, professional brand package. What we received cannot be used by our vendors and is not fit for purpose for our business. We are requesting a full refund of $2,400.",
      "literal_claims": [
       {
-       "claim": "Delivered design work does not match contract agreement",
+       "claim": "The design work delivered was not what was agreed in the contract.",
        "quote": "The design work delivered was not what was agreed in the contract."
       },
       {
-       "claim": "Client was promised a complete, professional brand package",
+       "claim": "We were promised a complete, professional brand package.",
        "quote": "We were promised a complete, professional brand package."
       },
       {
-       "claim": "Client requests full refund of $2,400",
+       "claim": "What we received cannot be used by our vendors.",
+       "quote": "What we received cannot be used by our vendors"
+      },
+      {
+       "claim": "The work is not fit for purpose for our business.",
+       "quote": "is not fit for purpose for our business"
+      },
+      {
+       "claim": "We are requesting a full refund of $2,400.",
        "quote": "We are requesting a full refund of $2,400."
       }
      ],
      "vague_phrases": [
       {
-       "phrase": "not what was agreed in the contract",
-       "could_mean": [
-        "Missing deliverables listed in scope",
-        "Different design style than specified",
-        "Incomplete file formats",
-        "Lower quality than expected"
-       ]
-      },
-      {
        "phrase": "complete, professional brand package",
        "could_mean": [
-        "Logo, color palette, typography, brand guidelines",
-        "Print‑ready assets for packaging",
-        "Digital assets for web and social media",
-        "All files delivered in editable source format"
+        "logo files in multiple formats (AI, EPS, PNG, SVG)",
+        "brand style guide with color palette and typography",
+        "stationery templates (business cards, letterhead)",
+        "social media kit and usage guidelines"
        ]
       },
       {
        "phrase": "cannot be used by our vendors",
        "could_mean": [
-        "Wrong file types (e.g., PNG instead of AI)",
-        "Insufficient resolution for print",
-        "Missing required specifications (bleed, color profiles)",
-        "Licensing restrictions preventing commercial use"
+        "files delivered in wrong format or low resolution",
+        "missing source files needed for print production",
+        "incorrect color profiles causing print errors",
+        "lack of licensing or usage rights for commercial use"
        ]
       },
       {
        "phrase": "not fit for purpose for our business",
        "could_mean": [
-        "Design does not align with brand positioning",
-        "Colors/fonts clash with existing brand assets",
-        "Layout unsuitable for packaging size",
-        "Concept fails to meet target market expectations"
+        "brand identity does not match target market aesthetics",
+        "messaging and tone are inconsistent with coffee brand",
+        "design elements conflict with existing packaging constraints",
+        "assets fail to meet regulatory or label requirements"
        ]
       }
      ],
      "reviewer_tests": [
-      "Identify the exact service description in the contract, invoice, or scope document.",
-      "Compare the delivered deliverables to the described service.",
-      "Determine whether the client formally accepted or approved any of the work.",
-      "Check for evidence that the client has used or attempted to use the work (e.g., vendor communications, production files)."
+      "What exactly was the service described as in the contract, invoice, or scope of work?",
+      "Did the delivered materials match that description in content, format, and quality?",
+      "Did the client formally accept or approve any of the delivered work?",
+      "Has the client actually used the delivered work in any channel, indicating it was fit for purpose?"
      ],
      "open_questions": [
-      "What specific items were listed in the contract as part of the 'complete, professional brand package'?",
-      "Did the freelancer provide all deliverables in the file formats and resolutions required by the client’s vendors?",
-      "Was there any written approval, sign‑off, or feedback from the client on any version of the work?",
-      "Has the client attempted to use the assets with their vendors, and if so, what issues were reported?",
-      "Did the freelancer respond to any client concerns or requests for revisions after delivery?"
+      "What specific deliverables were listed in the agreed scope (e.g., logo variations, brand guidelines, file formats)?",
+      "Did Priya provide all deliverables in the formats required by Halden Coffee's vendors?",
+      "Was there any documented client feedback or approval of interim drafts or final assets?",
+      "Has Halden Coffee used any of the delivered assets in marketing, packaging, or online presence?",
+      "Were there any requests for revisions and how were they handled?",
+      "Who on the client side authorized the original contract and who filed the chargeback?"
      ]
     },
-    "thinking": "We need to output JSON matching read_complaint schema: an array? Actually schema says type: array at top? Wait read_complaint schema: {\"additionalProperties\":false,\"properties\":{...},\"required\":[...],\"type\":\"object\"} but also says type:\"array\"? It includes both. There's confusion. The outermost is type:\"array\"? Actually the schema appears to have \"type\":\"array\" at the end, but also \"properties\". That's contradictory. Possibly they intend the outer type to be array of objects? However required fields indicate object. Likely they made mistake; we must output object with required fields: stated_c…"
+    "thinking": "We need to produce JSON in read_complaint format. Fields: stated_complaint, literal_claims (array of objects with claim and quote), vague_phrases (array objects with phrase and could_mean array), reviewer_tests (array), open_questions (array).\n\nWe need to separate literal claims from vague. Client statement: \"The design work delivered was not what was agreed in the contract. We were promised a complete, professional brand package. What we received cannot be used by our vendors and is not fit for purpose for our business. We are requesting a full refund of $2,400.\"\n\nLiteral claims: 1) \"design w…"
    }
   },
   {
-   "t": 2395,
+   "t": 3407,
    "type": "stage",
    "payload": {
     "stage": "investigate",
@@ -198,23 +198,15 @@
    }
   },
   {
-   "t": 2395,
-   "type": "pacing",
-   "payload": {
-    "ms": 16008,
-    "reason": "free-tier token budget"
-   }
-  },
-  {
-   "t": 19725,
+   "t": 4053,
    "type": "thinking",
    "payload": {
     "stage": "investigate",
-    "text": "We need to investigate. We'll need to read contract, emails, delivery log, maybe dispute statement. Let's open these docs."
+    "text": "We need to investigate. First open CONTRACT to see scope."
    }
   },
   {
-   "t": 19726,
+   "t": 4054,
    "type": "tool",
    "payload": {
     "name": "read_document",
@@ -237,23 +229,54 @@
    }
   },
   {
-   "t": 19726,
+   "t": 4054,
    "type": "pacing",
    "payload": {
-    "ms": 24041,
+    "ms": 3211,
     "reason": "free-tier token budget"
    }
   },
   {
-   "t": 44533,
+   "t": 7928,
    "type": "thinking",
    "payload": {
     "stage": "investigate",
-    "text": "We have contract details. Need to see email thread for approvals and revisions."
+    "text": "We need to investigate other docs: DISPUTE, PAYPAL-TXN, EMAILS, DELIVERY-LOG, SOCIAL, CONTACT-FORM, PAYPAL-INVOICE. Let's open DISPUTE."
    }
   },
   {
-   "t": 44533,
+   "t": 7928,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "DISPUTE",
+    "title": "PayPal dispute PP-D-27140-HALDEN",
+    "source": "PayPal Disputes API",
+    "sections": [
+     "REASON",
+     "TXN",
+     "MSG1"
+    ]
+   }
+  },
+  {
+   "t": 7928,
+   "type": "pacing",
+   "payload": {
+    "ms": 20986,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 29739,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We need more evidence: email thread, delivery log, invoice, maybe social posts."
+   }
+  },
+  {
+   "t": 29739,
    "type": "tool",
    "payload": {
     "name": "read_document",
@@ -272,54 +295,23 @@
    }
   },
   {
-   "t": 44533,
+   "t": 29740,
    "type": "pacing",
    "payload": {
-    "ms": 22192,
+    "ms": 31696,
     "reason": "free-tier token budget"
    }
   },
   {
-   "t": 67661,
+   "t": 62808,
    "type": "thinking",
    "payload": {
     "stage": "investigate",
-    "text": "We have contract details, email thread showing approvals, delivery email. Need to check delivery logs to confirm download. Also check any later correspondence maybe missing. Also check DISPUTE document for client's claim."
+    "text": "We have contract, dispute, emails, also need delivery log, invoice, social posts, maybe PAYPAL-TXN. Let's open delivery log."
    }
   },
   {
-   "t": 67661,
-   "type": "tool",
-   "payload": {
-    "name": "read_document",
-    "doc_id": "DISPUTE",
-    "title": "PayPal dispute PP-D-27140-HALDEN",
-    "source": "PayPal Disputes API",
-    "sections": [
-     "REASON",
-     "TXN",
-     "MSG1"
-    ]
-   }
-  },
-  {
-   "t": 67661,
-   "type": "pacing",
-   "payload": {
-    "ms": 24092,
-    "reason": "free-tier token budget"
-   }
-  },
-  {
-   "t": 93065,
-   "type": "thinking",
-   "payload": {
-    "stage": "investigate",
-    "text": "We have contract, emails, delivery log, etc. Need to investigate delivery formats and usage issues. Open DELIVERY-LOG."
-   }
-  },
-  {
-   "t": 93065,
+   "t": 62808,
    "type": "tool",
    "payload": {
     "name": "read_document",
@@ -337,128 +329,37 @@
    }
   },
   {
-   "t": 93065,
+   "t": 62809,
    "type": "pacing",
    "payload": {
-    "ms": 24488,
+    "ms": 19628,
     "reason": "free-tier token budget"
    }
   },
   {
-   "t": 118908,
+   "t": 83723,
    "type": "thinking",
    "payload": {
     "stage": "investigate",
-    "text": "We have contract, emails, delivery log, dispute statement. Need to answer open questions and find real complaint.\n\nFindings: Scope includes logo, color palette, typography, and deliverables include web/social pack PNG/JPG, master vector source AI/SVG/EPS, print-ready PDF brand guide, assignment letter.\n\nEmails show client approved on Jun 29, before invoice/payment. Then final assets delivered July 1. Client downloaded web/social pack, but never downloaded master vectors (0 downloads). That sugge…"
+    "text": "We have contract specifying final asset package includes master vector source files etc. Email shows Priya sent two download links, client acknowledged receipt and said \"Got it, downloading now. Can't wait to put this on the cups.\" However delivery log shows that master vectors zip was never downloaded. So client may claim not usable because they didn't get the source files. Need to see if they requested re-issue. Check if any further emails after July. Let's search."
    }
   },
   {
-   "t": 118908,
-   "type": "tool",
-   "payload": {
-    "name": "read_document",
-    "doc_id": "CONTACT-FORM",
-    "title": "Website contact form: submissions and settings",
-    "source": "Export from freelancer's website builder",
-    "sections": [
-     "F0",
-     "F1"
-    ]
-   }
-  },
-  {
-   "t": 118908,
-   "type": "pacing",
-   "payload": {
-    "ms": 30766,
-    "reason": "free-tier token budget"
-   }
-  },
-  {
-   "t": 152194,
-   "type": "thinking",
-   "payload": {
-    "stage": "investigate",
-    "text": "We have many documents. Need to extract findings.\n\nKey points:\n\n- Contract specifies final asset package includes master vector files in AI, SVG, EPS suitable for print, plus print-ready PDF brand guide, etc. (from CONTRACT §3.2)\n\n- Email thread shows client approved design on Jun 29 and requested invoice; freelancer delivered final asset package on Jul 1, with two zip files: web/social pack (PNG/JPG) and master vectors (AI/SVG/EPS) and guide. (EMAILS E6)\n\n- Delivery log shows the web/social pac…"
-   }
-  },
-  {
-   "t": 152194,
-   "type": "finding",
-   "payload": {
-    "finding": "The contract obligates the freelancer to deliver a Final Asset Package that includes master vector source files (AI, SVG, EPS) and a print‑ready PDF brand guide.",
-    "significance": "Establishes the expected deliverables that the client claims are missing.",
-    "citations": [
-     {
-      "doc_id": "CONTRACT",
-      "anchor": "§3.2"
-     },
-     {
-      "doc_id": "CONTRACT",
-      "anchor": "§7.1"
-     }
-    ],
-    "dropped": 0
-   }
-  },
-  {
-   "t": 152194,
-   "type": "pacing",
-   "payload": {
-    "ms": 29897,
-    "reason": "free-tier token budget"
-   }
-  },
-  {
-   "t": 183147,
-   "type": "thinking",
-   "payload": {
-    "stage": "investigate",
-    "text": "We need more findings. Open PAYPAL-INVOICE maybe includes line items."
-   }
-  },
-  {
-   "t": 183147,
-   "type": "tool",
-   "payload": {
-    "name": "read_document",
-    "doc_id": "PAYPAL-INVOICE",
-    "title": "PayPal invoice INV-2026-0042",
-    "source": "PayPal Invoicing",
-    "sections": [
-     "I1",
-     "I2",
-     "I3"
-    ]
-   }
-  },
-  {
-   "t": 183147,
-   "type": "pacing",
-   "payload": {
-    "ms": 32939,
-    "reason": "free-tier token budget"
-   }
-  },
-  {
-   "t": 217754,
-   "type": "thinking",
-   "payload": {
-    "stage": "investigate",
-    "text": "We have gathered key documents. Need to investigate further: Did client download master vector file? Delivery log shows Master Vectors zip had zero downloads. That is important: client never accessed the master files needed for vendors. They only downloaded Web & Social pack (which are PNG/JPG). That explains \"cannot be used by vendors\" - they got only web assets.\n\nWe also have contact form submission indicating vendor issues with logo only good for screens and concerns about ownership. That sug…"
-   }
-  },
-  {
-   "t": 217755,
+   "t": 83724,
    "type": "tool",
    "payload": {
     "name": "search_evidence",
-    "query": "Sep 2026",
+    "query": "master vectors",
     "hits": [
      {
-      "doc_id": "PAYPAL-TXN",
-      "anchor": "7HL40291KX5523310",
-      "heading": "2026-07-01 - $2,400.00 USD"
+      "doc_id": "EMAILS",
+      "anchor": "E6",
+      "heading": "Jul 1 - Priya to Daniel: Final Asset Package"
+     },
+     {
+      "doc_id": "CONTRACT",
+      "anchor": "§3.2",
+      "heading": "Final Asset Package"
      },
      {
       "doc_id": "DELIVERY-LOG",
@@ -467,67 +368,231 @@
      },
      {
       "doc_id": "DELIVERY-LOG",
-      "anchor": "L2",
-      "heading": "Email delivered"
+      "anchor": "L5",
+      "heading": "No activity"
      },
      {
-      "doc_id": "DISPUTE",
-      "anchor": "TXN",
-      "heading": "Disputed transaction"
+      "doc_id": "PAYPAL-TXN",
+      "anchor": "7HL40291KX5523310",
+      "heading": "2026-07-01 - $2,400.00 USD"
      },
+     {
+      "doc_id": "PAYPAL-INVOICE",
+      "anchor": "I1",
+      "heading": "Line items"
+     }
+    ]
+   }
+  },
+  {
+   "t": 83724,
+   "type": "pacing",
+   "payload": {
+    "ms": 32048,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 117625,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have contract details, email thread shows client approval and request for final files, delivery email sent, delivery log shows web/social pack downloaded twice, but master vectors zip not downloaded at all. That suggests client didn't get the master vector files needed for vendors. That aligns with claim \"cannot be used by our vendors\". Also contract says non-refundable after written approval; client gave approval on Jun 29 (E4). So refund claim is weak contractually. However client may not h…"
+   }
+  },
+  {
+   "t": 117629,
+   "type": "tool",
+   "payload": {
+    "name": "search_evidence",
+    "query": "download",
+    "hits": [
      {
       "doc_id": "CONTRACT",
-      "anchor": "§1",
-      "heading": "Parties"
+      "anchor": "§7.1",
+      "heading": "Delivery method"
+     },
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E6",
+      "heading": "Jul 1 - Priya to Daniel: Final Asset Package"
      },
      {
       "doc_id": "DELIVERY-LOG",
       "anchor": "L3",
       "heading": "Download"
-     }
-    ]
-   }
-  },
-  {
-   "t": 217756,
-   "type": "pacing",
-   "payload": {
-    "ms": 32249,
-    "reason": "free-tier token budget"
-   }
-  },
-  {
-   "t": 253546,
-   "type": "pacing",
-   "payload": {
-    "ms": 22058,
-    "reason": "free-tier token budget"
-   }
-  },
-  {
-   "t": 278786,
-   "type": "finding",
-   "payload": {
-    "finding": "The freelancer sent two download links on July 1: one containing web/social PNG/JPG assets and another containing the master vector files and brand guide.",
-    "significance": "Shows that the freelancer attempted to deliver all contract‑specified items.",
-    "citations": [
-     {
-      "doc_id": "EMAILS",
-      "anchor": "E6"
      },
      {
       "doc_id": "DELIVERY-LOG",
-      "anchor": "L1"
+      "anchor": "L4",
+      "heading": "Download"
+     },
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E7",
+      "heading": "Jul 1 - Daniel to Priya"
+     },
+     {
+      "doc_id": "DELIVERY-LOG",
+      "anchor": "L5",
+      "heading": "No activity"
      }
     ]
    }
   },
   {
-   "t": 278786,
+   "t": 117629,
+   "type": "pacing",
+   "payload": {
+    "ms": 34684,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 153708,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have many relevant docs. Need to answer open questions, and determine real complaint.\n\nFrom evidence:\n\n- Contract defines deliverables, includes master vector files, web/social pack, brand guide, copyright assignment. Also non-refundable after written approval (E4 approval email). Payment made after approval.\n\n- Email approval on Jun 29 shows client approved final design, requesting invoice. So acceptance.\n\n- Delivery: Two zip files, one for web/social (downloaded), the other master vectors (…"
+   }
+  },
+  {
+   "t": 153708,
+   "type": "tool",
+   "payload": {
+    "name": "read_document",
+    "doc_id": "SOCIAL",
+    "title": "Halden Coffee Roasters public Instagram posts (screenshots)",
+    "source": "Screenshots captured by freelancer, with post URLs",
+    "sections": [
+     "S1",
+     "S2"
+    ]
+   }
+  },
+  {
+   "t": 153708,
+   "type": "pacing",
+   "payload": {
+    "ms": 26858,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 183049,
+   "type": "thinking",
+   "payload": {
+    "stage": "investigate",
+    "text": "We have evidence: contract scope includes master vector source files, print-ready PDF brand guide, etc. Email shows client approved design before final asset package delivery. Delivery log shows web/social pack was downloaded twice, master vectors zip never downloaded. So client likely didn't obtain the vector files needed for vendors. The dispute claims \"cannot be used by vendors\". The real issue: client never downloaded the master vector package, maybe because they didn't know or link expired.…"
+   }
+  },
+  {
+   "t": 183049,
    "type": "finding",
    "payload": {
-    "finding": "The client downloaded the Web & Social pack on July 1 and again on July 9, but never downloaded the Master Vectors & Copyright zip.",
-    "significance": "Indicates the client may not have actually received the vector source files required for print production.",
+    "finding": "The agreement specifies the Final Asset Package must include a Web & Social pack (PNG/JPG) and master vector source files (AI, SVG, EPS), a print‑ready PDF brand guide, and a signed copyright assignment.",
+    "significance": "Defines the exact deliverables the client expected; later we can check if each was provided.",
+    "citations": [
+     {
+      "doc_id": "CONTRACT",
+      "anchor": "§3.2"
+     },
+     {
+      "doc_id": "CONTRACT",
+      "anchor": "§2"
+     }
+    ],
+    "dropped": 0
+   }
+  },
+  {
+   "t": 183050,
+   "type": "pacing",
+   "payload": {
+    "ms": 35705,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 222852,
+   "type": "finding",
+   "payload": {
+    "finding": "The contract defines the parties: Priya Raman Design (Studio) and Halden Coffee Roasters LLC, represented by owner Daniel Okafor.",
+    "significance": "Identifies who hired, approved, and paid for the work, and who later filed the chargeback.",
+    "citations": [
+     {
+      "doc_id": "CONTRACT",
+      "anchor": "§1"
+     }
+    ]
+   }
+  },
+  {
+   "t": 222852,
+   "type": "finding",
+   "payload": {
+    "finding": "The agreed scope (§2) required a primary logo, secondary mark, color palette and typography system.",
+    "significance": "Sets the baseline of what the client expected as the core brand identity.",
+    "citations": [
+     {
+      "doc_id": "CONTRACT",
+      "anchor": "§2"
+     }
+    ]
+   }
+  },
+  {
+   "t": 222852,
+   "type": "finding",
+   "payload": {
+    "finding": "The Final Asset Package (as per §3.2) must contain a Web & Social pack (PNG/JPG), master vector files (AI, SVG, EPS), a print‑ready PDF brand guide, and a signed Assignment of Copyright letter.",
+    "significance": "Specifies the complete, professional brand package the client claims was missing.",
+    "citations": [
+     {
+      "doc_id": "CONTRACT",
+      "anchor": "§3.2"
+     }
+    ]
+   }
+  },
+  {
+   "t": 222852,
+   "type": "finding",
+   "payload": {
+    "finding": "Daniel emailed approval of the final design on 2026‑06‑29 (E4) and requested the invoice.",
+    "significance": "Triggers the contract’s acceptance clause (§5.1) and makes the fee non‑refundable under §8, assuming delivery occurred.",
+    "citations": [
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E4"
+     }
+    ]
+   }
+  },
+  {
+   "t": 222852,
+   "type": "finding",
+   "payload": {
+    "finding": "Priya sent the invoice (INV‑2026‑0042) on 2026‑06‑29 (E5) and confirmed delivery of the Final Asset Package via two download links on 2026‑07‑01 (E6).",
+    "significance": "Shows the freelancer fulfilled the delivery method required by §7.1.",
+    "citations": [
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E5"
+     },
+     {
+      "doc_id": "EMAILS",
+      "anchor": "E6"
+     }
+    ]
+   }
+  },
+  {
+   "t": 222852,
+   "type": "finding",
+   "payload": {
+    "finding": "Delivery log shows the Web & Social pack was downloaded twice (2026‑07‑01 and 2026‑07‑09) but the Master Vectors & Copyright zip was never downloaded before the link expired (L5).",
+    "significance": "The client received only the web assets; the vector source files required for printers and vendors were never accessed, undermining the claim of non‑delivery.",
     "citations": [
      {
       "doc_id": "DELIVERY-LOG",
@@ -545,57 +610,39 @@
    }
   },
   {
-   "t": 278786,
+   "t": 222852,
    "type": "finding",
    "payload": {
-    "finding": "On September 22 the client emailed (via the website contact form) that a sign‑company could only use the logo for screens and could not cut the sign, and asked whether the designer still owned the logo.",
-    "significance": "Provides direct evidence the client tried to use the assets, found them unsuitable for print, and raised concerns about ownership.",
+    "finding": "Instagram post on 2026‑08‑14 (S1) shows Halden cups printed with the new logo, indicating the client was able to use the design for at least one vendor (cup printer).",
+    "significance": "Contradicts the claim that the assets were unusable by vendors; the client successfully printed merchandise.",
     "citations": [
      {
-      "doc_id": "CONTACT-FORM",
-      "anchor": "F1"
+      "doc_id": "SOCIAL",
+      "anchor": "S1"
      }
     ]
    }
   },
   {
-   "t": 278786,
+   "t": 222852,
    "type": "finding",
    "payload": {
-    "finding": "The contract’s refund clause states fees are non‑refundable after written approval of the final design, except when the studio fails to deliver the Final Asset Package.",
-    "significance": "Shows the client’s right to a refund hinges on non‑delivery; the studio did deliver a link, but the key vector files appear not to have been accessed.",
+    "finding": "Instagram post on 2026‑10‑02 (S2) mentions the store opening is delayed because the sign is still pending.",
+    "significance": "Suggests the missing or unused vector files may have contributed to a specific vendor issue (sign maker), but does not prove the freelancer failed to provide them.",
     "citations": [
      {
-      "doc_id": "CONTRACT",
-      "anchor": "§8"
+      "doc_id": "SOCIAL",
+      "anchor": "S2"
      }
     ]
    }
   },
   {
-   "t": 278786,
+   "t": 222852,
    "type": "finding",
    "payload": {
-    "finding": "The client gave written approval of the final design on June 29 (email E4) and the freelancer invoiced and received payment on July 1.",
-    "significance": "Triggers the acceptance condition and makes the fee non‑refundable under the contract, assuming delivery was complete.",
-    "citations": [
-     {
-      "doc_id": "EMAILS",
-      "anchor": "E4"
-     },
-     {
-      "doc_id": "PAYPAL-INVOICE",
-      "anchor": "I2"
-     }
-    ]
-   }
-  },
-  {
-   "t": 278786,
-   "type": "finding",
-   "payload": {
-    "finding": "The PayPal dispute was filed under the code “MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED” with a claim that the package cannot be used by vendors.",
-    "significance": "Shows the client’s formal reason focuses on the usability of the deliverables, not on non‑delivery per se.",
+    "finding": "The dispute filing (DISPUTE) lists the reason code MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED and repeats the client’s statement that the package is not fit for purpose.",
+    "significance": "Shows the formal claim but does not provide new factual evidence beyond the client’s opinion.",
     "citations": [
      {
       "doc_id": "DISPUTE",
@@ -609,45 +656,40 @@
    }
   },
   {
-   "t": 278786,
+   "t": 222852,
    "type": "finding",
    "payload": {
-    "finding": "The freelancer’s delivery link for the Master Vectors zip expired on July 31, after which the client could no longer retrieve those files.",
-    "significance": "If the client never downloaded before expiration, they effectively did not receive the required vector assets, constituting a delivery failure.",
+    "finding": "Contract §8 states fees are non‑refundable after written approval of the final design, except where the studio fails to deliver the Final Asset Package.",
+    "significance": "Because the client approved the design (E4) and the studio delivered at least one part of the package (E6, L3/L4), the contractual basis for a full refund is weak.",
     "citations": [
      {
-      "doc_id": "DELIVERY-LOG",
-      "anchor": "L5"
-     },
-     {
-      "doc_id": "DELIVERY-LOG",
-      "anchor": "L6"
+      "doc_id": "CONTRACT",
+      "anchor": "§8"
      }
     ]
    }
   },
   {
-   "t": 278786,
+   "t": 222852,
    "type": "stage",
    "payload": {
     "stage": "investigate",
     "status": "done",
     "data": {
-     "summary": "The client approved the design and the freelancer supplied a download link containing both web assets and a separate vector package, but the client never downloaded the vector files before the link expired, leaving them without the print‑ready assets they needed. Because the contract ties refund eligibility to delivery of the Final Asset Package, the dispute hinges on whether the unpaid vector files count as undelivered; the evidence shows a delivery attempt was made but the client did not retrieve the files, supporting the freelancer's position that delivery was fulfilled, though the client’s inability to use the assets gives them a partial merit claim.",
-     "findings": 8,
+     "summary": "The client approved the final design, paid $2,400, and received the web/social assets; however, they never downloaded the master vector files required for print vendors, which likely caused the sign‑production issue. While the client claims the package is unusable, evidence shows the coffee cups were printed successfully, weakening the claim of a non‑delivery breach and making a full refund contractually unlikely.",
+     "findings": 11,
      "opened": [
       "CONTRACT",
-      "EMAILS",
       "DISPUTE",
+      "EMAILS",
       "DELIVERY-LOG",
-      "CONTACT-FORM",
-      "PAYPAL-INVOICE"
+      "SOCIAL"
      ]
     }
    }
   },
   {
-   "t": 278787,
+   "t": 222852,
    "type": "stage",
    "payload": {
     "stage": "diagnose",
@@ -655,53 +697,194 @@
    }
   },
   {
-   "t": 278787,
+   "t": 222853,
    "type": "pacing",
    "payload": {
-    "ms": 18420,
+    "ms": 22710,
     "reason": "free-tier token budget"
    }
   },
   {
-   "t": 300288,
+   "t": 246267,
+   "type": "pacing",
+   "payload": {
+    "ms": 1000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 247268,
+   "type": "pacing",
+   "payload": {
+    "ms": 4267,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 258441,
    "type": "stage",
    "payload": {
     "stage": "diagnose",
     "status": "done",
     "data": {
-     "hypotheses": [
+     "client_concerns": [
       {
-       "label": "Client never downloaded required vectors",
-       "explanation": "The freelancer supplied the correct master vector zip, but the client never downloaded it before the 30‑day link expired, leaving them without the assets they need for production.",
-       "supporting": [
+       "concern": "The design work delivered was not what was agreed in the contract.",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§3.2"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E6"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§5.1"
+        }
+       ],
+       "answer": "The contract (§3.2) explicitly defines the Final Asset Package and the email on 2026‑07‑01 (E6) confirms both the Web & Social pack and the Master Vectors zip were provided via the download links. The client’s written approval on 2026‑06‑29 (E4) triggers the acceptance clause (§5.1). Therefore the work delivered matches the contractual description. If the payment were reversed, the client would lose the license and ownership of those assets."
+      },
+      {
+       "concern": "What we received cannot be used by our vendors and is not fit for purpose for our business.",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
         {
          "doc_id": "DELIVERY-LOG",
          "anchor": "L5"
         },
         {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L6"
+         "doc_id": "SOCIAL",
+         "anchor": "S1"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§3.2"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§7.1"
+        }
+       ],
+       "answer": "Vendor‑ready assets are the master vector files (AI/SVG/EPS) listed in §3.2. The delivery log shows that the Master Vectors zip was never downloaded before the link expired (L5). However, the Instagram post on 2026‑08‑14 (S1) demonstrates that the client successfully printed cups, indicating that usable files were available. The mismatch stems from the client not retrieving the vector files, not from a missing delivery. A reversed payment would nullify the transfer of copyright but would not automatically supply the missing files."
+      },
+      {
+       "concern": "We were promised a complete, professional brand package.",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§3.2"
         },
         {
          "doc_id": "EMAILS",
          "anchor": "E6"
         }
        ],
-       "contradicting": [
-        {
-         "doc_id": "CONTACT-FORM",
-         "anchor": "F1"
-        }
-       ],
-       "likelihood": 45
+       "answer": "The contract’s §3.2 defines a complete professional brand package. The freelancer’s email on 2026‑07‑01 (E6) confirms that both required zip files were sent, satisfying the completeness requirement. Reversing the payment would invalidate the transfer of the complete package and the associated rights."
       },
       {
-       "label": "Literal non‑delivery/unsuitable assets",
-       "explanation": "The client believes the freelancer failed to provide the required master vector files, so the brand package cannot be used for print or signage as promised.",
+       "concern": "We are requesting a full refund of $2,400.",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§8"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E6"
+        }
+       ],
+       "answer": "Clause 8 states that fees are non‑refundable after the client’s written approval of the final design, except when the studio fails to deliver the Final Asset Package. The client approved the design (E4) and the studio delivered the package (E6). Therefore, under the contract, a full refund is not justified. If the payment were reversed, the client would lose the contractual right to the delivered assets."
+      }
+     ],
+     "freelancer_weaknesses": [
+      {
+       "issue": "The freelancer did not verify that the client actually downloaded the Master Vectors zip and did not proactively offer a re‑issue before the link expired, leaving the client without the files they later claimed were unusable.",
+       "citations": [
+        {
+         "doc_id": "DELIVERY-LOG",
+         "anchor": "L5"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§7.2"
+        }
+       ]
+      }
+     ],
+     "hypotheses": [
+      {
+       "label": "Client failed to download or request re‑issue of vectors",
+       "explanation": "The studio delivered both zip files as required; the client simply never downloaded the master vectors and did not request a re‑issue, leading to the perception of non‑delivery.",
        "supporting": [
         {
-         "doc_id": "CONTACT-FORM",
-         "anchor": "F1"
+         "doc_id": "EMAILS",
+         "anchor": "E6"
+        },
+        {
+         "doc_id": "DELIVERY-LOG",
+         "anchor": "L3"
+        },
+        {
+         "doc_id": "DELIVERY-LOG",
+         "anchor": "L4"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§7.2"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        },
+        {
+         "doc_id": "SOCIAL",
+         "anchor": "S2"
+        }
+       ],
+       "likelihood": 55
+      },
+      {
+       "label": "Missing vector files not delivered",
+       "explanation": "The client believes the studio failed to provide the master vector source files required for print and signage, so the package is incomplete.",
+       "supporting": [
+        {
+         "doc_id": "DELIVERY-LOG",
+         "anchor": "L5"
         },
         {
          "doc_id": "DISPUTE",
@@ -710,23 +893,23 @@
        ],
        "contradicting": [
         {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L5"
-        },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L6"
-        }
-       ],
-       "likelihood": 35
-      },
-      {
-       "label": "Insufficient communication about download requirements",
-       "explanation": "The freelancer delivered both packs in one email but did not clearly emphasize that the second zip contained the essential print‑ready files, leading the client to assume only the first zip was needed.",
-       "supporting": [
-        {
          "doc_id": "EMAILS",
          "anchor": "E6"
+        },
+        {
+         "doc_id": "SOCIAL",
+         "anchor": "S1"
+        }
+       ],
+       "likelihood": 30
+      },
+      {
+       "label": "Partial delivery caused specific sign issue",
+       "explanation": "The client could use the web assets for cups but lacked the vector files needed for signage, causing a delay in store opening and prompting the refund demand.",
+       "supporting": [
+        {
+         "doc_id": "SOCIAL",
+         "anchor": "S2"
         },
         {
          "doc_id": "DELIVERY-LOG",
@@ -735,66 +918,29 @@
        ],
        "contradicting": [
         {
-         "doc_id": "CONTACT-FORM",
-         "anchor": "F1"
-        }
-       ],
-       "likelihood": 20
-      }
-     ],
-     "real_complaint": {
-      "summary": "The client cannot use the brand package because they never obtained the master vector files needed for print and signage; the delivery link expired before they downloaded them, and the freelancer did not follow up to ensure receipt.",
-      "what_the_client_actually_needs": "Access to the master vector source files (AI/SVG/EPS) and the print‑ready PDF brand guide, or a re‑issued download link so they can obtain those assets.",
-      "confidence": 90
-     },
-     "why_this_reason_code": "The buyer selected MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED because the assets they have are only screen‑ready PNG/JPG files, making the package appear unusable for their vendors, which is a clearer claim than \"I never downloaded the files\" when disputing the charge.",
-     "freelancer_weaknesses": [
-      {
-       "issue": "No reminder or follow‑up to ensure the client downloaded the Master Vectors zip before the 30‑day expiration",
-       "citations": [
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L5"
+         "doc_id": "SOCIAL",
+         "anchor": "S1"
         },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L6"
-        }
-       ]
-      },
-      {
-       "issue": "Delivery link expired without offering an immediate re‑issue, despite contract allowing a re‑issue within 12 months",
-       "citations": [
-        {
-         "doc_id": "CONTRACT",
-         "anchor": "§7.2"
-        },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L6"
-        }
-       ]
-      },
-      {
-       "issue": "Email did not explicitly highlight that the second zip contained the essential print‑ready files, leading to client confusion",
-       "citations": [
         {
          "doc_id": "EMAILS",
          "anchor": "E6"
-        },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L5"
         }
-       ]
+       ],
+       "likelihood": 15
       }
-     ]
+     ],
+     "real_complaint": {
+      "summary": "The client’s underlying problem is that they never retrieved the master vector files included in the Final Asset Package, which left them unable to produce certain branded materials (e.g., signage), leading them to deem the package unfit and to seek a refund despite the contract being fulfilled.",
+      "what_the_client_actually_needs": "Access to the missing master vector source files (or a re‑issued download link) so they can complete signage and other print work.",
+      "confidence": 70
+     },
+     "why_this_reason_code": "The client chose MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED because it is the standard chargeback code for \"product not as described\" and best matches their claim that the delivered brand package does not meet the specifications they expected, even though the contract’s description was met."
     },
-    "thinking": "We need to output JSON in diagnosis schema with fields: hypotheses (array), real_complaint (object), why_this_reason_code (string), freelancer_weaknesses (array). Provide 2-4 hypotheses.\n\nWe must cite evidence via doc_id/anchor pairs.\n\nWe must determine real complaint: likely that client didn't download master vector files, so they claim unusable but actually they never accessed them; also link expired, so they could not get them. The real complaint is that they couldn't obtain the required print-ready files because they didn't download before expiration (or weren't aware), leading to claim of \"not as described\". Also perhaps confusion about ownership.\n\nFreelancer weaknesses: delivery link expiry (no reminder), no follow-up to ensure client downloaded required assets, possibly not providin…"
+    "thinking": "We need to produce JSON matching schema diagnosis. Must include fields: client_concerns (array of objects with concern, said_in (array of doc_id/anchor), answered_by (array of doc_id/anchor), answer string), freelancer_weaknesses (array objects with issue, citations), hypotheses (array with label, explanation, supporting (array of doc_id/anchor), contradicting (array), likelihood integer), real_complaint (summary, what_the_client_actually_needs, confidence integer), why_this_reason_code (string).\n\nWe need to parse the evidence.\n\nClient concerns in their own words:\n\nFrom DISPUTE MSG1: \"The design work delivered was not what was agreed in the contract.\" \"We were promised a complete, professional brand package.\" \"What we received cannot be used by our vendors and is not fit for purpose for ou…"
    }
   },
   {
-   "t": 300289,
+   "t": 258441,
    "type": "stage",
    "payload": {
     "stage": "strategy",
@@ -802,44 +948,56 @@
    }
   },
   {
-   "t": 300289,
+   "t": 258442,
    "type": "pacing",
    "payload": {
-    "ms": 24511,
+    "ms": 25492,
     "reason": "free-tier token budget"
    }
   },
   {
-   "t": 325322,
+   "t": 284452,
    "type": "pacing",
    "payload": {
-    "ms": 2000,
+    "ms": 6000,
     "reason": "rate limit"
    }
   },
   {
-   "t": 331228,
+   "t": 290457,
+   "type": "pacing",
+   "payload": {
+    "ms": 260,
+    "reason": "free-tier token budget"
+   }
+  },
+  {
+   "t": 293814,
    "type": "stage",
    "payload": {
     "stage": "strategy",
     "status": "done",
     "data": {
      "decision": "CONTEST_AND_RESOLVE",
-     "rationale": "The contract explicitly defines the Final Asset Package to include master vector source files and a print‑ready PDF (§3.2). The freelancer delivered a download link containing both the web/social pack and the master vectors zip (E6, L1). The client gave written approval of the final design on June 29 (E4, §5.1), which satisfies the acceptance condition. However, the delivery logs show zero downloads of the master vectors zip (L5) and the link expired without a re‑issue, leaving the client unable to use the brand assets. The client’s real problem is missing access to the master files, not a dispute over design quality. The contract also obligates the freelancer to re‑issue the package within 12 months on request (§7.2). Because the fee is non‑refundable after approval unless the Final Asset Package is not delivered, and the package was technically delivered (link sent), a full refund is not justified. Instead, we will contest the chargeback and immediately re‑issue the master files, satisfying the contract and fixing the client’s actual need.",
+     "rationale": "The contract clearly defines the deliverables (a Web & Social pack and master vector source files) and the client approved the final design on 2026‑06‑29. The freelancer sent a download link containing both required zip files on 2026‑07‑01, satisfying the contractual description. Delivery logs confirm the Web & Social pack was downloaded; the master vector zip was never downloaded before the link expired, which is why the client cannot use it for signage. The contract also obligates the freelancer to re‑issue the Final Asset Package free of charge for 12 months. Therefore the chargeback is unjustified, but the real issue is the missing master files, which can be resolved by re‑issuing the zip. No refund is owed under the non‑refundable fee clause.",
      "proof_plan": [
       {
-       "point": "Service description includes master vector files and print‑ready PDF",
-       "answers": "STATED_REASON",
+       "point": "The service was described in the contract as a complete brand identity package including master vector source files",
+       "answers": "BOTH",
        "evidence": [
         {
          "doc_id": "CONTRACT",
          "anchor": "§3.2"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§2"
         }
        ],
        "strength": "STRONG"
       },
       {
-       "point": "Final Asset Package was delivered via secure link containing both zip files",
+       "point": "The freelancer delivered the Final Asset Package exactly as described in the contract",
        "answers": "STATED_REASON",
        "evidence": [
         {
@@ -847,14 +1005,18 @@
          "anchor": "E6"
         },
         {
+         "doc_id": "CONTRACT",
+         "anchor": "§7.1"
+        },
+        {
          "doc_id": "DELIVERY-LOG",
-         "anchor": "L1"
+         "anchor": "L5"
         }
        ],
        "strength": "STRONG"
       },
       {
-       "point": "Client gave written approval of the final design, satisfying acceptance clause",
+       "point": "The client provided written approval of the final design, triggering acceptance under the contract",
        "answers": "STATED_REASON",
        "evidence": [
         {
@@ -869,30 +1031,42 @@
        "strength": "STRONG"
       },
       {
-       "point": "Master vector zip was never downloaded; client therefore could not use the assets",
+       "point": "The client never downloaded the master vector files, which is why they claim the package is unusable for signage",
        "answers": "REAL_COMPLAINT",
        "evidence": [
         {
          "doc_id": "DELIVERY-LOG",
          "anchor": "L5"
-        }
-       ],
-       "strength": "STRONG"
-      },
-      {
-       "point": "Client reported inability to use logo files for signage and raised ownership concerns",
-       "answers": "REAL_COMPLAINT",
-       "evidence": [
+        },
         {
-         "doc_id": "CONTACT-FORM",
-         "anchor": "F1"
+         "doc_id": "SOCIAL",
+         "anchor": "S2"
         }
        ],
        "strength": "MODERATE"
       },
       {
-       "point": "Freelancer is contractually obligated to re‑issue the Final Asset Package within 12 months at no charge",
-       "answers": "BOTH",
+       "point": "Fees are non‑refundable after written approval, except when the Final Asset Package is not delivered; delivery was completed, so a refund is not justified",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§8"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E6"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "The contract obligates the freelancer to re‑issue the Final Asset Package within 2 business days upon request for 12 months after delivery",
+       "answers": "REAL_COMPLAINT",
        "evidence": [
         {
          "doc_id": "CONTRACT",
@@ -900,31 +1074,16 @@
         }
        ],
        "strength": "STRONG"
-      },
-      {
-       "point": "Fee is non‑refundable after approval unless the Final Asset Package is not delivered; delivery was made (link sent) but essential files were inaccessible, which can be remedied by re‑issue rather than refund",
-       "answers": "BOTH",
-       "evidence": [
-        {
-         "doc_id": "CONTRACT",
-         "anchor": "§8"
-        },
-        {
-         "doc_id": "DISPUTE",
-         "anchor": "REASON"
-        }
-       ],
-       "strength": "MODERATE"
       }
      ],
      "refund_amount": "0.00",
-     "resolution_action": "Re‑issue a new secure download link containing the Halden_Master_Vectors_and_Copyright.zip (AI, SVG, EPS files) and the print‑ready PDF brand guide within 2 business days, notify the client by email, and confirm receipt."
+     "resolution_action": "Re‑issue the missing master vector source files (Halden_Master_Vectors_and_Copyright.zip) to the client via a new secure download link within 2 business days, as required by §7.2 of the contract."
     },
-    "thinking": "We need to output JSON per strategy schema. Determine decision, rationale, proof_plan, refund_amount, resolution_action.\n\nWe have filed reason MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED. Need to answer reviewer tests: description, match, acceptance, use.\n\nEvidence: contract sections define scope and final asset includes master vectors, print-ready PDF. Delivery logs show master zip never downloaded. Acceptance email (E4) indicates client approved final design (June 29) before delivery. So client accepted design (acceptance) per §5.1. But they never got master files, so cannot use brand. That is r…"
+    "thinking": "We need to output JSON with fields: decision, rationale, proof_plan (array), refund_amount, resolution_action.\n\nWe must decide strategy: Considering evidence, client approved, package delivered except master vector zip not downloaded, but client needs those. Freelancer can re-issue per §7.2 within 12 months. So we should contest the chargeback (since contract fulfilled) but also resolve real issue by re-issuing master vectors. No refund needed. So decision: CONTEST_AND_RESOLVE.\n\nRefund amount: \"0.00\".\n\nResolution action: Re-issue master vector zip to client within 2 business days, per contract…"
    }
   },
   {
-   "t": 331228,
+   "t": 293814,
    "type": "stage",
    "payload": {
     "stage": "draft",
@@ -932,27 +1091,35 @@
    }
   },
   {
-   "t": 331228,
+   "t": 293814,
    "type": "pacing",
    "payload": {
-    "ms": 30158,
+    "ms": 25216,
     "reason": "free-tier token budget"
    }
   },
   {
-   "t": 373896,
+   "t": 319596,
+   "type": "pacing",
+   "payload": {
+    "ms": 6000,
+    "reason": "rate limit"
+   }
+  },
+  {
+   "t": 331831,
    "type": "stage",
    "payload": {
     "stage": "draft",
     "status": "done",
     "data": {
-     "response_title": "Response to Chargeback – Re‑issue of Final Asset Package",
+     "response_title": "Response to Chargeback – Delivery Fulfilled and Re‑issue Offered",
      "claims": 8
     }
    }
   },
   {
-   "t": 373896,
+   "t": 331831,
    "type": "stage",
    "payload": {
     "stage": "verify",
@@ -960,7 +1127,7 @@
    }
   },
   {
-   "t": 373898,
+   "t": 331832,
    "type": "stage",
    "payload": {
     "stage": "verify",
@@ -970,12 +1137,12 @@
      "total": 8,
      "repaired": 0,
      "removed": [],
-     "citations": 15
+     "citations": 10
     }
    }
   },
   {
-   "t": 373902,
+   "t": 331837,
    "type": "stage",
    "payload": {
     "stage": "package",
@@ -993,7 +1160,7 @@
          "evidences": [
           {
            "evidence_type": "COPY_OF_CONTRACT",
-           "notes": "The Agreement defines the Final Asset Package to include master vector source files and a print‑ready PDF. [1]\n\nThe client gave written approval of the final design on June 29, which meets the acceptance condition in the contract. [2][3]\n\nOn July 1, Priya sent a secure download link containing both the Web & Social pack and the Master Vectors zip, with a 30‑day expiration as stipulated. [4][5]\n\nDownload records show the Web & Social pack was downloaded on July 1 and July 9, but the Master Vectors zip recorded zero downloads before the link expired. [6][7][8][9]\n\nBecause the master vector files were never accessed, the client could not use the brand assets for print and signage, which is the actual problem reported. [10][8]\n\nThe contract obligates the studio to re‑issue the Final Asset Package at no charge within two business days upon request for up to twelve months after delivery. [11]\n\nFees are non‑refundable after written approval unless the studio fails to deliver the Final Asset Package; delivery was performed via the secure link, so a refund is not warranted. [12][5]\n\nWe are contesting the chargeback and will re‑issue a new secure download link with the master vector files and PDF within two business days, fulfilling the contractual re‑issue obligation. [11]",
+           "notes": "The contract defines the Final Asset Package as containing master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise. [1]\n\nClient’s written approval on June 29 triggered acceptance under the agreement. [2][3]\n\nAfter payment was received, the freelancer sent a Final Asset Package email on July 1 listing both required zip files. [4]\n\nDelivery logs show the Web & Social pack was downloaded on July 1, while the Master Vectors zip recorded zero downloads before the link expired. [5][6]\n\nThe agreement obligates the studio to re‑issue the Final Asset Package, free of charge, within two business days of a request for twelve months after delivery. [7]\n\nAccordingly, the missing Master Vectors zip will be re‑issued via a new secure download link within the next two business days. [7]\n\nFees are non‑refundable after written approval of the final design, and the studio has fulfilled delivery, so no refund is owed. [8]\n\nIf the chargeback were upheld, the client would lose the transferred copyright and the right to use the assets, contrary to the IP transfer clause. [9]",
            "documents": [
             {
              "name": "response-letter.pdf"
@@ -1010,13 +1177,13 @@
           "field": "evidence-file",
           "name": "response-letter.pdf",
           "type": "application/pdf",
-          "size": 7704
+          "size": 6476
          },
          {
           "field": "evidence-file",
           "name": "evidence-appendix.pdf",
           "type": "application/pdf",
-          "size": 4850
+          "size": 3713
          }
         ]
        },
@@ -1026,7 +1193,7 @@
         "to": "daniel@haldencoffee.com",
         "note": "PayPal messaging is closed in the chargeback stage, so this goes by email.",
         "body": {
-         "message": "Hi Daniel, I’m sorry you didn’t get the master files you need. I’ve just created a new secure link that includes the AI, SVG, EPS files and the print‑ready PDF, and you’ll receive it by email within the next few hours. Please let me know as soon as you’ve downloaded them or if anything else is missing. I’m here to make sure the brand assets work for your signage and vendors."
+         "message": "Hi Daniel, I see the master vector files you need for signage were never downloaded. I’m sending you a new secure link with the Halden_Master_Vectors_and_Copyright.zip within the next two business days. Please let me know once you’ve got them and I’ll gladly help with any questions."
         }
        }
       ],
@@ -1034,12 +1201,7 @@
        {
         "doc_id": "CONTRACT",
         "anchor": "§3.2",
-        "quote": "Final Asset Package: On completion Studio delivers a Final Asset Package containing: (a) a Web & Social pack of PNG and JPG files; (b) master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise; (c) a print‑ready PDF brand guide; and (d) a signed Assignment of Copyright letter."
-       },
-       {
-        "doc_id": "EMAILS",
-        "anchor": "E4",
-        "quote": "Approval: This is it. Honestly better than I imagined. Approved, let's make it official. Send over the invoice and the final files!"
+        "quote": "Final Asset Package: On completion Studio delivers a Final Asset Package containing: (a) a Web & Social pack of PNG and JPG files; (b) master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise; (c) a print-ready PDF brand guide; and (d) a signed Assignment of Copyright letter."
        },
        {
         "doc_id": "CONTRACT",
@@ -1048,13 +1210,13 @@
        },
        {
         "doc_id": "EMAILS",
-        "anchor": "E6",
-        "quote": "Your Final Asset Package is ready as two downloads: (1) Halden_Web_Social_Pack.zip for your website, Instagram and menus, and (2) Halden_Master_Vectors_and_Copyright.zip with the AI/SVG/EPS master files for printers, sign makers and merch, the print brand guide, and your signed Assignment of Copyright. Please download both. Links stay active for 30 days."
+        "anchor": "E4",
+        "quote": "Jun 29 - Daniel to Priya: Approval: This is it. Honestly better than I imagined. Approved, let's make it official. Send over the invoice and the final files!"
        },
        {
-        "doc_id": "DELIVERY-LOG",
-        "anchor": "L1",
-        "quote": "Transfer created: 2026-07-01 16:58 UTC - Transfer #TR-88213 created by hello@priyaraman.design. Recipient: daniel@haldencoffee.com. Files: Halden_Web_Social_Pack.zip (48 MB), Halden_Master_Vectors_and_Copyright.zip (212 MB). Expiry: 2026-07-31."
+        "doc_id": "EMAILS",
+        "anchor": "E6",
+        "quote": "Jul 1 - Priya to Daniel: Final Asset Package: Payment received, thank you! Your Final Asset Package is ready as two downloads: (1) Halden_Web_Social_Pack.zip for your website, Instagram and menus, and (2) Halden_Master_Vectors_and_Copyright.zip with the AI/SVG/EPS master files for printers, sign makers and merch, the print brand guide, and your signed Assignment of Copyright. Please download both. Links stay active for 30 days."
        },
        {
         "doc_id": "DELIVERY-LOG",
@@ -1063,23 +1225,8 @@
        },
        {
         "doc_id": "DELIVERY-LOG",
-        "anchor": "L4",
-        "quote": "Download: 2026-07-09 14:21 UTC - Halden_Web_Social_Pack.zip downloaded by recipient (IP region: Portland, OR)."
-       },
-       {
-        "doc_id": "DELIVERY-LOG",
         "anchor": "L5",
         "quote": "No activity: Halden_Master_Vectors_and_Copyright.zip - 0 downloads during the life of the transfer."
-       },
-       {
-        "doc_id": "DELIVERY-LOG",
-        "anchor": "L6",
-        "quote": "Transfer expired: 2026-07-31 00:00 UTC - Transfer #TR-88213 expired. Files no longer downloadable from this link."
-       },
-       {
-        "doc_id": "CONTACT-FORM",
-        "anchor": "F1",
-        "quote": "Hi Priya, the sign company doing our Elm St storefront says the logo files we have are only good for screens. They need the 'real' logo to cut the sign and they can't do anything with what we sent them. Opening is Oct 15."
        },
        {
         "doc_id": "CONTRACT",
@@ -1090,24 +1237,44 @@
         "doc_id": "CONTRACT",
         "anchor": "§8",
         "quote": "Fees and refunds: Total fee: $2,400, invoiced on approval of the final design. Fees are non-refundable after written approval of the final design, except where Studio fails to deliver the Final Asset Package."
+       },
+       {
+        "doc_id": "CONTRACT",
+        "anchor": "§6.1",
+        "quote": "Intellectual property: Copyright in the final selected designs transfers from Studio to Client upon Studio's receipt of full payment. Until full payment is received and retained, all rights remain with Studio."
        }
       ],
       "letter": [
-       "The Agreement defines the Final Asset Package to include master vector source files and a print‑ready PDF. [1]",
-       "The client gave written approval of the final design on June 29, which meets the acceptance condition in the contract. [2][3]",
-       "On July 1, Priya sent a secure download link containing both the Web & Social pack and the Master Vectors zip, with a 30‑day expiration as stipulated. [4][5]",
-       "Download records show the Web & Social pack was downloaded on July 1 and July 9, but the Master Vectors zip recorded zero downloads before the link expired. [6][7][8][9]",
-       "Because the master vector files were never accessed, the client could not use the brand assets for print and signage, which is the actual problem reported. [10][8]",
-       "The contract obligates the studio to re‑issue the Final Asset Package at no charge within two business days upon request for up to twelve months after delivery. [11]",
-       "Fees are non‑refundable after written approval unless the studio fails to deliver the Final Asset Package; delivery was performed via the secure link, so a refund is not warranted. [12][5]",
-       "We are contesting the chargeback and will re‑issue a new secure download link with the master vector files and PDF within two business days, fulfilling the contractual re‑issue obligation. [11]"
+       "The contract defines the Final Asset Package as containing master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise. [1]",
+       "Client’s written approval on June 29 triggered acceptance under the agreement. [2][3]",
+       "After payment was received, the freelancer sent a Final Asset Package email on July 1 listing both required zip files. [4]",
+       "Delivery logs show the Web & Social pack was downloaded on July 1, while the Master Vectors zip recorded zero downloads before the link expired. [5][6]",
+       "The agreement obligates the studio to re‑issue the Final Asset Package, free of charge, within two business days of a request for twelve months after delivery. [7]",
+       "Accordingly, the missing Master Vectors zip will be re‑issued via a new secure download link within the next two business days. [7]",
+       "Fees are non‑refundable after written approval of the final design, and the studio has fulfilled delivery, so no refund is owed. [8]",
+       "If the chargeback were upheld, the client would lose the transferred copyright and the right to use the assets, contrary to the IP transfer clause. [9]"
       ],
-      "clientMessage": "Hi Daniel, I’m sorry you didn’t get the master files you need. I’ve just created a new secure link that includes the AI, SVG, EPS files and the print‑ready PDF, and you’ll receive it by email within the next few hours. Please let me know as soon as you’ve downloaded them or if anything else is missing. I’m here to make sure the brand assets work for your signage and vendors.",
+      "clientMessage": "Hi Daniel, I see the master vector files you need for signage were never downloaded. I’m sending you a new secure link with the Halden_Master_Vectors_and_Copyright.zip within the next two business days. Please let me know once you’ve got them and I’ll gladly help with any questions.",
       "evidencePackage": [
        {
         "doc_id": "CONTRACT",
         "evidence_type": "COPY_OF_CONTRACT",
-        "why": "Shows contract terms for asset package contents, acceptance, non‑refund, and re‑issue obligations."
+        "why": "Shows deliverable definition, acceptance clause, non‑refund clause, and re‑issue obligation."
+       },
+       {
+        "doc_id": "EMAILS",
+        "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+        "why": "Email confirming delivery of both required zip files on July 1."
+       },
+       {
+        "doc_id": "DELIVERY-LOG",
+        "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+        "why": "Download logs prove web pack was accessed and master vector zip was not downloaded."
+       },
+       {
+        "doc_id": "DISPUTE",
+        "evidence_type": "ITEM_DESCRIPTION",
+        "why": "Original chargeback reason filed by the client."
        }
       ],
       "_files": [
@@ -1115,13 +1282,13 @@
         "field": "evidence-file",
         "name": "response-letter.pdf",
         "type": "application/pdf",
-        "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUiA3IDAgUl0gL0NvdW50IDIgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQzNjMgPj4Kc3RyZWFtCkJUIC9GMiAxNSBUZiA1NiA3MzYgVGQgKFJlc3BvbnNlIHRvIENoYXJnZWJhY2sgLSBSZS1pc3N1ZSBvZiBGaW5hbCBBc3NldCBQYWNrYWdlKSBUaiBFVApCVCAvRjEgMTAgVGYgNTYgNzEzIFRkIChEaXNwdXRlIFBQLUQtMjcxNDAtSEFMREVOIC0gTm90IGFzIGRlc2NyaWJlZCAtIDI0MDAuMDAgVVNEKSBUaiBFVApCVCAvRjEgMTAgVGYgNTYgNjk5IFRkIChTdWJtaXR0ZWQgYnkgUHJpeWEgUmFtYW4sIFByaXlhIFJhbWFuIERlc2lnbiBcKGhlbGxvQHByaXlhcmFtYW4uZGVzaWduXCkpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA2NzcgVGQgKFRoZSBBZ3JlZW1lbnQgZGVmaW5lcyB0aGUgRmluYWwgQXNzZXQgUGFja2FnZSB0byBpbmNsdWRlIG1hc3RlciB2ZWN0b3Igc291cmNlIGZpbGVzIGFuZCBhKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjYyIFRkIChwcmludC1yZWFkeSBQREYuIFsxXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDYzOSBUZCAoVGhlIGNsaWVudCBnYXZlIHdyaXR0ZW4gYXBwcm92YWwgb2YgdGhlIGZpbmFsIGRlc2lnbiBvbiBKdW5lIDI5LCB3aGljaCBtZWV0cyB0aGUpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA2MjQgVGQgKGFjY2VwdGFuY2UgY29uZGl0aW9uIGluIHRoZSBjb250cmFjdC4gWzJdWzNdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjAxIFRkIChPbiBKdWx5IDEsIFByaXlhIHNlbnQgYSBzZWN1cmUgZG93bmxvYWQgbGluayBjb250YWluaW5nIGJvdGggdGhlIFdlYiAmIFNvY2lhbCBwYWNrIGFuZCB0aGUpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1ODYgVGQgKE1hc3RlciBWZWN0b3JzIHppcCwgd2l0aCBhIDMwLWRheSBleHBpcmF0aW9uIGFzIHN0aXB1bGF0ZWQuIFs0XVs1XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU2MyBUZCAoRG93bmxvYWQgcmVjb3JkcyBzaG93IHRoZSBXZWIgJiBTb2NpYWwgcGFjayB3YXMgZG93bmxvYWRlZCBvbiBKdWx5IDEgYW5kIEp1bHkgOSwgYnV0IHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU0OCBUZCAoTWFzdGVyIFZlY3RvcnMgemlwIHJlY29yZGVkIHplcm8gZG93bmxvYWRzIGJlZm9yZSB0aGUgbGluayBleHBpcmVkLiBbNl1bN11bOF1bOV0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1MjUgVGQgKEJlY2F1c2UgdGhlIG1hc3RlciB2ZWN0b3IgZmlsZXMgd2VyZSBuZXZlciBhY2Nlc3NlZCwgdGhlIGNsaWVudCBjb3VsZCBub3QgdXNlIHRoZSBicmFuZCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDUxMCBUZCAoYXNzZXRzIGZvciBwcmludCBhbmQgc2lnbmFnZSwgd2hpY2ggaXMgdGhlIGFjdHVhbCBwcm9ibGVtIHJlcG9ydGVkLiBbMTBdWzhdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDg3IFRkIChUaGUgY29udHJhY3Qgb2JsaWdhdGVzIHRoZSBzdHVkaW8gdG8gcmUtaXNzdWUgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2UgYXQgbm8gY2hhcmdlIHdpdGhpbikgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQ3MiBUZCAodHdvIGJ1c2luZXNzIGRheXMgdXBvbiByZXF1ZXN0IGZvciB1cCB0byB0d2VsdmUgbW9udGhzIGFmdGVyIGRlbGl2ZXJ5LiBbMTFdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDQ5IFRkIChGZWVzIGFyZSBub24tcmVmdW5kYWJsZSBhZnRlciB3cml0dGVuIGFwcHJvdmFsIHVubGVzcyB0aGUgc3R1ZGlvIGZhaWxzIHRvIGRlbGl2ZXIgdGhlKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDM0IFRkIChGaW5hbCBBc3NldCBQYWNrYWdlOyBkZWxpdmVyeSB3YXMgcGVyZm9ybWVkIHZpYSB0aGUgc2VjdXJlIGxpbmssIHNvIGEgcmVmdW5kIGlzIG5vdCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQxOSBUZCAod2FycmFudGVkLiBbMTJdWzVdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMzk2IFRkIChXZSBhcmUgY29udGVzdGluZyB0aGUgY2hhcmdlYmFjayBhbmQgd2lsbCByZS1pc3N1ZSBhIG5ldyBzZWN1cmUgZG93bmxvYWQgbGluayB3aXRoIHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDM4MSBUZCAobWFzdGVyIHZlY3RvciBmaWxlcyBhbmQgUERGIHdpdGhpbiB0d28gYnVzaW5lc3MgZGF5cywgZnVsZmlsbGluZyB0aGUgY29udHJhY3R1YWwgcmUtaXNzdWUpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAzNjYgVGQgKG9ibGlnYXRpb24uIFsxMV0pIFRqIEVUCkJUIC9GMiAxMiBUZiA1NiAzMzUgVGQgKFNvdXJjZXMpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDMxNiBUZCAoWzFdIEJyYW5kIElkZW50aXR5IFNlcnZpY2VzIEFncmVlbWVudCBcKHNpZ25lZCBieSBib3RoIHBhcnRpZXNcKSwgpzMuMiBcKFNpZ25lZCBQREYsIGZyZWVsYW5jZXIncyBmaWxlc1wpOiAiRmluYWwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDMwMiBUZCAoQXNzZXQgUGFja2FnZTogT24gY29tcGxldGlvbiBTdHVkaW8gZGVsaXZlcnMgYSBGaW5hbCBBc3NldCBQYWNrYWdlIGNvbnRhaW5pbmc6IFwoYVwpIGEgV2ViICYgU29jaWFsIHBhY2sgb2YgUE5HKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyODggVGQgKGFuZCBKUEcgZmlsZXM7IFwoYlwpIG1hc3RlciB2ZWN0b3Igc291cmNlIGZpbGVzIGluIEFJLCBTVkcgYW5kIEVQUyBmb3JtYXRzIHN1aXRhYmxlIGZvciBwcmludCwgc2lnbmFnZSBhbmQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI3NCBUZCAobWVyY2hhbmRpc2U7IFwoY1wpIGEgcHJpbnQtcmVhZHkgUERGIGJyYW5kIGd1aWRlOyBhbmQgXChkXCkgYSBzaWduZWQgQXNzaWdubWVudCBvZiBDb3B5cmlnaHQgbGV0dGVyLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI1NyBUZCAoWzJdIEVtYWlsIHRocmVhZDogUHJpeWEgPC0+IERhbmllbCwgRTQgXChGcmVlbGFuY2VyJ3MgR21haWwgZXhwb3J0XCk6ICJBcHByb3ZhbDogVGhpcyBpcyBpdC4gSG9uZXN0bHkgYmV0dGVyIHRoYW4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI0MyBUZCAoSSBpbWFnaW5lZC4gQXBwcm92ZWQsIGxldCdzIG1ha2UgaXQgb2ZmaWNpYWwuIFNlbmQgb3ZlciB0aGUgaW52b2ljZSBhbmQgdGhlIGZpbmFsIGZpbGVzISIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDIyNiBUZCAoWzNdIEJyYW5kIElkZW50aXR5IFNlcnZpY2VzIEFncmVlbWVudCBcKHNpZ25lZCBieSBib3RoIHBhcnRpZXNcKSwgpzUuMSBcKFNpZ25lZCBQREYsIGZyZWVsYW5jZXIncyBmaWxlc1wpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjEyIFRkICgiQWNjZXB0YW5jZTogQ2xpZW50J3Mgd3JpdHRlbiBhcHByb3ZhbCBvZiB0aGUgZmluYWwgZGVzaWduIFwoZW1haWwgaXMgc3VmZmljaWVudFwpIGNvbnN0aXR1dGVzIGFjY2VwdGFuY2Ugb2YgdGhlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxOTggVGQgKGRlc2lnbiB3b3JrLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE4MSBUZCAoWzRdIEVtYWlsIHRocmVhZDogUHJpeWEgPC0+IERhbmllbCwgRTYgXChGcmVlbGFuY2VyJ3MgR21haWwgZXhwb3J0XCk6ICJZb3VyIEZpbmFsIEFzc2V0IFBhY2thZ2UgaXMgcmVhZHkgYXMgdHdvKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNjcgVGQgKGRvd25sb2FkczogXCgxXCkgSGFsZGVuX1dlYl9Tb2NpYWxfUGFjay56aXAgZm9yIHlvdXIgd2Vic2l0ZSwgSW5zdGFncmFtIGFuZCBtZW51cywgYW5kIFwoMlwpKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNTMgVGQgKEhhbGRlbl9NYXN0ZXJfVmVjdG9yc19hbmRfQ29weXJpZ2h0LnppcCB3aXRoIHRoZSBBSS9TVkcvRVBTIG1hc3RlciBmaWxlcyBmb3IgcHJpbnRlcnMsIHNpZ24gbWFrZXJzIGFuZCBtZXJjaCwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDEzOSBUZCAodGhlIHByaW50IGJyYW5kIGd1aWRlLCBhbmQgeW91ciBzaWduZWQgQXNzaWdubWVudCBvZiBDb3B5cmlnaHQuIFBsZWFzZSBkb3dubG9hZCBib3RoLiBMaW5rcyBzdGF5IGFjdGl2ZSBmb3IgMzApIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDEyNSBUZCAoZGF5cy4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMDggVGQgKFs1XSBGaWxlIHRyYW5zZmVyIGFjY2VzcyBsb2cgXChzZWN1cmUgZG93bmxvYWQgc2VydmljZVwpLCBMMSBcKEV4cG9ydCBmcm9tIGZyZWVsYW5jZXIncyBmaWxlLXRyYW5zZmVyIHNlcnZpY2VcKTopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDk0IFRkICgiVHJhbnNmZXIgY3JlYXRlZDogMjAyNi0wNy0wMSAxNjo1OCBVVEMgLSBUcmFuc2ZlciAjVFItODgyMTMgY3JlYXRlZCBieSBoZWxsb0Bwcml5YXJhbWFuLmRlc2lnbi4gUmVjaXBpZW50OikgVGogRVQKQlQgL0YxIDkgVGYgNTYgODAgVGQgKGRhbmllbEBoYWxkZW5jb2ZmZWUuY29tLiBGaWxlczogSGFsZGVuX1dlYl9Tb2NpYWxfUGFjay56aXAgXCg0OCBNQlwpLCBIYWxkZW5fTWFzdGVyX1ZlY3RvcnNfYW5kX0NvcHlyaWdodC56aXApIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY2IFRkIChcKDIxMiBNQlwpLiBFeHBpcnk6IDIwMjYtMDctMzEuIikgVGogRVQKZW5kc3RyZWFtCmVuZG9iago3IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA4IDAgUiA+PgplbmRvYmoKOCAwIG9iago8PCAvTGVuZ3RoIDI0MDEgPj4Kc3RyZWFtCkJUIC9GMSA5IFRmIDU2IDczNiBUZCAoWzZdIEZpbGUgdHJhbnNmZXIgYWNjZXNzIGxvZyBcKHNlY3VyZSBkb3dubG9hZCBzZXJ2aWNlXCksIEwzIFwoRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzIGZpbGUtdHJhbnNmZXIgc2VydmljZVwpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNzIyIFRkICgiRG93bmxvYWQ6IDIwMjYtMDctMDEgMTc6MDYgVVRDIC0gSGFsZGVuX1dlYl9Tb2NpYWxfUGFjay56aXAgZG93bmxvYWRlZCBieSByZWNpcGllbnQgXChJUCByZWdpb246IFBvcnRsYW5kLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNzA4IFRkIChPUlwpLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY5MSBUZCAoWzddIEZpbGUgdHJhbnNmZXIgYWNjZXNzIGxvZyBcKHNlY3VyZSBkb3dubG9hZCBzZXJ2aWNlXCksIEw0IFwoRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzIGZpbGUtdHJhbnNmZXIgc2VydmljZVwpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjc3IFRkICgiRG93bmxvYWQ6IDIwMjYtMDctMDkgMTQ6MjEgVVRDIC0gSGFsZGVuX1dlYl9Tb2NpYWxfUGFjay56aXAgZG93bmxvYWRlZCBieSByZWNpcGllbnQgXChJUCByZWdpb246IFBvcnRsYW5kLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjYzIFRkIChPUlwpLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0NiBUZCAoWzhdIEZpbGUgdHJhbnNmZXIgYWNjZXNzIGxvZyBcKHNlY3VyZSBkb3dubG9hZCBzZXJ2aWNlXCksIEw1IFwoRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzIGZpbGUtdHJhbnNmZXIgc2VydmljZVwpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjMyIFRkICgiTm8gYWN0aXZpdHk6IEhhbGRlbl9NYXN0ZXJfVmVjdG9yc19hbmRfQ29weXJpZ2h0LnppcCAtIDAgZG93bmxvYWRzIGR1cmluZyB0aGUgbGlmZSBvZiB0aGUgdHJhbnNmZXIuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjE1IFRkIChbOV0gRmlsZSB0cmFuc2ZlciBhY2Nlc3MgbG9nIFwoc2VjdXJlIGRvd25sb2FkIHNlcnZpY2VcKSwgTDYgXChFeHBvcnQgZnJvbSBmcmVlbGFuY2VyJ3MgZmlsZS10cmFuc2ZlciBzZXJ2aWNlXCk6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MDEgVGQgKCJUcmFuc2ZlciBleHBpcmVkOiAyMDI2LTA3LTMxIDAwOjAwIFVUQyAtIFRyYW5zZmVyICNUUi04ODIxMyBleHBpcmVkLiBGaWxlcyBubyBsb25nZXIgZG93bmxvYWRhYmxlIGZyb20gdGhpcykgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTg3IFRkIChsaW5rLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU3MCBUZCAoWzEwXSBXZWJzaXRlIGNvbnRhY3QgZm9ybTogc3VibWlzc2lvbnMgYW5kIHNldHRpbmdzLCBGMSBcKEV4cG9ydCBmcm9tIGZyZWVsYW5jZXIncyB3ZWJzaXRlIGJ1aWxkZXJcKTogIkhpIFByaXlhLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTU2IFRkICh0aGUgc2lnbiBjb21wYW55IGRvaW5nIG91ciBFbG0gU3Qgc3RvcmVmcm9udCBzYXlzIHRoZSBsb2dvIGZpbGVzIHdlIGhhdmUgYXJlIG9ubHkgZ29vZCBmb3Igc2NyZWVucy4gVGhleSBuZWVkKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1NDIgVGQgKHRoZSAncmVhbCcgbG9nbyB0byBjdXQgdGhlIHNpZ24gYW5kIHRoZXkgY2FuJ3QgZG8gYW55dGhpbmcgd2l0aCB3aGF0IHdlIHNlbnQgdGhlbS4gT3BlbmluZyBpcyBPY3QgMTUuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTI1IFRkIChbMTFdIEJyYW5kIElkZW50aXR5IFNlcnZpY2VzIEFncmVlbWVudCBcKHNpZ25lZCBieSBib3RoIHBhcnRpZXNcKSwgpzcuMiBcKFNpZ25lZCBQREYsIGZyZWVsYW5jZXIncyBmaWxlc1wpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTExIFRkICgiUmUtaXNzdWU6IEZvciAxMiBtb250aHMgYWZ0ZXIgZGVsaXZlcnksIFN0dWRpbyB3aWxsIHJlLWlzc3VlIHRoZSBGaW5hbCBBc3NldCBQYWNrYWdlIG9uIHJlcXVlc3QgYXQgbm8gY2hhcmdlLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDk3IFRkICh3aXRoaW4gMiBidXNpbmVzcyBkYXlzIG9mIHRoZSByZXF1ZXN0LiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ4MCBUZCAoWzEyXSBCcmFuZCBJZGVudGl0eSBTZXJ2aWNlcyBBZ3JlZW1lbnQgXChzaWduZWQgYnkgYm90aCBwYXJ0aWVzXCksIKc4IFwoU2lnbmVkIFBERiwgZnJlZWxhbmNlcidzIGZpbGVzXCk6ICJGZWVzIGFuZCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDY2IFRkIChyZWZ1bmRzOiBUb3RhbCBmZWU6ICQyLDQwMCwgaW52b2ljZWQgb24gYXBwcm92YWwgb2YgdGhlIGZpbmFsIGRlc2lnbi4gRmVlcyBhcmUgbm9uLXJlZnVuZGFibGUgYWZ0ZXIgd3JpdHRlbikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDUyIFRkIChhcHByb3ZhbCBvZiB0aGUgZmluYWwgZGVzaWduLCBleGNlcHQgd2hlcmUgU3R1ZGlvIGZhaWxzIHRvIGRlbGl2ZXIgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2UuIikgVGogRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTIxIDAwMDAwIG4gCjAwMDAwMDAyMTggMDAwMDAgbiAKMDAwMDAwMDMyMCAwMDAwMCBuIAowMDAwMDAwNDU2IDAwMDAwIG4gCjAwMDAwMDQ4NzEgMDAwMDAgbiAKMDAwMDAwNTAwNyAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDkgL1Jvb3QgMSAwIFIgPj4Kc3RhcnR4cmVmCjc0NjAKJSVFT0YK"
+        "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUiA3IDAgUl0gL0NvdW50IDIgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQzNzQgPj4Kc3RyZWFtCkJUIC9GMiAxNSBUZiA1NiA3MzYgVGQgKFJlc3BvbnNlIHRvIENoYXJnZWJhY2sgLSBEZWxpdmVyeSBGdWxmaWxsZWQgYW5kIFJlLWlzc3VlIE9mZmVyZWQpIFRqIEVUCkJUIC9GMSAxMCBUZiA1NiA3MTMgVGQgKERpc3B1dGUgUFAtRC0yNzE0MC1IQUxERU4gLSBOb3QgYXMgZGVzY3JpYmVkIC0gMjQwMC4wMCBVU0QpIFRqIEVUCkJUIC9GMSAxMCBUZiA1NiA2OTkgVGQgKFN1Ym1pdHRlZCBieSBQcml5YSBSYW1hbiwgUHJpeWEgUmFtYW4gRGVzaWduIFwoaGVsbG9AcHJpeWFyYW1hbi5kZXNpZ25cKSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDY3NyBUZCAoVGhlIGNvbnRyYWN0IGRlZmluZXMgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2UgYXMgY29udGFpbmluZyBtYXN0ZXIgdmVjdG9yIHNvdXJjZSBmaWxlcyBpbikgVGogRVQKQlQgL0YxIDExIFRmIDU2IDY2MiBUZCAoQUksIFNWRyBhbmQgRVBTIGZvcm1hdHMgc3VpdGFibGUgZm9yIHByaW50LCBzaWduYWdlIGFuZCBtZXJjaGFuZGlzZS4gWzFdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjM5IFRkIChDbGllbnQncyB3cml0dGVuIGFwcHJvdmFsIG9uIEp1bmUgMjkgdHJpZ2dlcmVkIGFjY2VwdGFuY2UgdW5kZXIgdGhlIGFncmVlbWVudC4gWzJdWzNdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjE2IFRkIChBZnRlciBwYXltZW50IHdhcyByZWNlaXZlZCwgdGhlIGZyZWVsYW5jZXIgc2VudCBhIEZpbmFsIEFzc2V0IFBhY2thZ2UgZW1haWwgb24gSnVseSAxKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjAxIFRkIChsaXN0aW5nIGJvdGggcmVxdWlyZWQgemlwIGZpbGVzLiBbNF0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1NzggVGQgKERlbGl2ZXJ5IGxvZ3Mgc2hvdyB0aGUgV2ViICYgU29jaWFsIHBhY2sgd2FzIGRvd25sb2FkZWQgb24gSnVseSAxLCB3aGlsZSB0aGUgTWFzdGVyKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNTYzIFRkIChWZWN0b3JzIHppcCByZWNvcmRlZCB6ZXJvIGRvd25sb2FkcyBiZWZvcmUgdGhlIGxpbmsgZXhwaXJlZC4gWzVdWzZdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNTQwIFRkIChUaGUgYWdyZWVtZW50IG9ibGlnYXRlcyB0aGUgc3R1ZGlvIHRvIHJlLWlzc3VlIHRoZSBGaW5hbCBBc3NldCBQYWNrYWdlLCBmcmVlIG9mIGNoYXJnZSwpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1MjUgVGQgKHdpdGhpbiB0d28gYnVzaW5lc3MgZGF5cyBvZiBhIHJlcXVlc3QgZm9yIHR3ZWx2ZSBtb250aHMgYWZ0ZXIgZGVsaXZlcnkuIFs3XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDUwMiBUZCAoQWNjb3JkaW5nbHksIHRoZSBtaXNzaW5nIE1hc3RlciBWZWN0b3JzIHppcCB3aWxsIGJlIHJlLWlzc3VlZCB2aWEgYSBuZXcgc2VjdXJlIGRvd25sb2FkKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDg3IFRkIChsaW5rIHdpdGhpbiB0aGUgbmV4dCB0d28gYnVzaW5lc3MgZGF5cy4gWzddKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDY0IFRkIChGZWVzIGFyZSBub24tcmVmdW5kYWJsZSBhZnRlciB3cml0dGVuIGFwcHJvdmFsIG9mIHRoZSBmaW5hbCBkZXNpZ24sIGFuZCB0aGUgc3R1ZGlvIGhhcykgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQ0OSBUZCAoZnVsZmlsbGVkIGRlbGl2ZXJ5LCBzbyBubyByZWZ1bmQgaXMgb3dlZC4gWzhdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDI2IFRkIChJZiB0aGUgY2hhcmdlYmFjayB3ZXJlIHVwaGVsZCwgdGhlIGNsaWVudCB3b3VsZCBsb3NlIHRoZSB0cmFuc2ZlcnJlZCBjb3B5cmlnaHQgYW5kIHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQxMSBUZCAocmlnaHQgdG8gdXNlIHRoZSBhc3NldHMsIGNvbnRyYXJ5IHRvIHRoZSBJUCB0cmFuc2ZlciBjbGF1c2UuIFs5XSkgVGogRVQKQlQgL0YyIDEyIFRmIDU2IDM4MCBUZCAoU291cmNlcykgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzYxIFRkIChbMV0gQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpLCCnMy4yIFwoU2lnbmVkIFBERiwgZnJlZWxhbmNlcidzIGZpbGVzXCk6ICJGaW5hbCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzQ3IFRkIChBc3NldCBQYWNrYWdlOiBPbiBjb21wbGV0aW9uIFN0dWRpbyBkZWxpdmVycyBhIEZpbmFsIEFzc2V0IFBhY2thZ2UgY29udGFpbmluZzogXChhXCkgYSBXZWIgJiBTb2NpYWwgcGFjayBvZiBQTkcpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDMzMyBUZCAoYW5kIEpQRyBmaWxlczsgXChiXCkgbWFzdGVyIHZlY3RvciBzb3VyY2UgZmlsZXMgaW4gQUksIFNWRyBhbmQgRVBTIGZvcm1hdHMgc3VpdGFibGUgZm9yIHByaW50LCBzaWduYWdlIGFuZCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzE5IFRkIChtZXJjaGFuZGlzZTsgXChjXCkgYSBwcmludC1yZWFkeSBQREYgYnJhbmQgZ3VpZGU7IGFuZCBcKGRcKSBhIHNpZ25lZCBBc3NpZ25tZW50IG9mIENvcHlyaWdodCBsZXR0ZXIuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzAyIFRkIChbMl0gQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpLCCnNS4xIFwoU2lnbmVkIFBERiwgZnJlZWxhbmNlcidzIGZpbGVzXCk6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyODggVGQgKCJBY2NlcHRhbmNlOiBDbGllbnQncyB3cml0dGVuIGFwcHJvdmFsIG9mIHRoZSBmaW5hbCBkZXNpZ24gXChlbWFpbCBpcyBzdWZmaWNpZW50XCkgY29uc3RpdHV0ZXMgYWNjZXB0YW5jZSBvZiB0aGUpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI3NCBUZCAoZGVzaWduIHdvcmsuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjU3IFRkIChbM10gRW1haWwgdGhyZWFkOiBQcml5YSA8LT4gRGFuaWVsLCBFNCBcKEZyZWVsYW5jZXIncyBHbWFpbCBleHBvcnRcKTogIkp1biAyOSAtIERhbmllbCB0byBQcml5YTogQXBwcm92YWw6IFRoaXMpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI0MyBUZCAoaXMgaXQuIEhvbmVzdGx5IGJldHRlciB0aGFuIEkgaW1hZ2luZWQuIEFwcHJvdmVkLCBsZXQncyBtYWtlIGl0IG9mZmljaWFsLiBTZW5kIG92ZXIgdGhlIGludm9pY2UgYW5kIHRoZSBmaW5hbCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjI5IFRkIChmaWxlcyEiKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyMTIgVGQgKFs0XSBFbWFpbCB0aHJlYWQ6IFByaXlhIDwtPiBEYW5pZWwsIEU2IFwoRnJlZWxhbmNlcidzIEdtYWlsIGV4cG9ydFwpOiAiSnVsIDEgLSBQcml5YSB0byBEYW5pZWw6IEZpbmFsIEFzc2V0KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxOTggVGQgKFBhY2thZ2U6IFBheW1lbnQgcmVjZWl2ZWQsIHRoYW5rIHlvdSEgWW91ciBGaW5hbCBBc3NldCBQYWNrYWdlIGlzIHJlYWR5IGFzIHR3byBkb3dubG9hZHM6IFwoMVwpKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxODQgVGQgKEhhbGRlbl9XZWJfU29jaWFsX1BhY2suemlwIGZvciB5b3VyIHdlYnNpdGUsIEluc3RhZ3JhbSBhbmQgbWVudXMsIGFuZCBcKDJcKSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTcwIFRkIChIYWxkZW5fTWFzdGVyX1ZlY3RvcnNfYW5kX0NvcHlyaWdodC56aXAgd2l0aCB0aGUgQUkvU1ZHL0VQUyBtYXN0ZXIgZmlsZXMgZm9yIHByaW50ZXJzLCBzaWduIG1ha2VycyBhbmQgbWVyY2gsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNTYgVGQgKHRoZSBwcmludCBicmFuZCBndWlkZSwgYW5kIHlvdXIgc2lnbmVkIEFzc2lnbm1lbnQgb2YgQ29weXJpZ2h0LiBQbGVhc2UgZG93bmxvYWQgYm90aC4gTGlua3Mgc3RheSBhY3RpdmUgZm9yIDMwKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNDIgVGQgKGRheXMuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTI1IFRkIChbNV0gRmlsZSB0cmFuc2ZlciBhY2Nlc3MgbG9nIFwoc2VjdXJlIGRvd25sb2FkIHNlcnZpY2VcKSwgTDMgXChFeHBvcnQgZnJvbSBmcmVlbGFuY2VyJ3MgZmlsZS10cmFuc2ZlciBzZXJ2aWNlXCk6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMTEgVGQgKCJEb3dubG9hZDogMjAyNi0wNy0wMSAxNzowNiBVVEMgLSBIYWxkZW5fV2ViX1NvY2lhbF9QYWNrLnppcCBkb3dubG9hZGVkIGJ5IHJlY2lwaWVudCBcKElQIHJlZ2lvbjogUG9ydGxhbmQsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA5NyBUZCAoT1JcKS4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA4MCBUZCAoWzZdIEZpbGUgdHJhbnNmZXIgYWNjZXNzIGxvZyBcKHNlY3VyZSBkb3dubG9hZCBzZXJ2aWNlXCksIEw1IFwoRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzIGZpbGUtdHJhbnNmZXIgc2VydmljZVwpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjYgVGQgKCJObyBhY3Rpdml0eTogSGFsZGVuX01hc3Rlcl9WZWN0b3JzX2FuZF9Db3B5cmlnaHQuemlwIC0gMCBkb3dubG9hZHMgZHVyaW5nIHRoZSBsaWZlIG9mIHRoZSB0cmFuc2Zlci4iKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCjcgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSAzIDAgUiAvRjIgNCAwIFIgPj4gPj4gL0NvbnRlbnRzIDggMCBSID4+CmVuZG9iago4IDAgb2JqCjw8IC9MZW5ndGggMTE2MiA+PgpzdHJlYW0KQlQgL0YxIDkgVGYgNTYgNzM2IFRkIChbN10gQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpLCCnNy4yIFwoU2lnbmVkIFBERiwgZnJlZWxhbmNlcidzIGZpbGVzXCk6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA3MjIgVGQgKCJSZS1pc3N1ZTogRm9yIDEyIG1vbnRocyBhZnRlciBkZWxpdmVyeSwgU3R1ZGlvIHdpbGwgcmUtaXNzdWUgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2Ugb24gcmVxdWVzdCBhdCBubyBjaGFyZ2UsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA3MDggVGQgKHdpdGhpbiAyIGJ1c2luZXNzIGRheXMgb2YgdGhlIHJlcXVlc3QuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjkxIFRkIChbOF0gQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpLCCnOCBcKFNpZ25lZCBQREYsIGZyZWVsYW5jZXIncyBmaWxlc1wpOiAiRmVlcyBhbmQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY3NyBUZCAocmVmdW5kczogVG90YWwgZmVlOiAkMiw0MDAsIGludm9pY2VkIG9uIGFwcHJvdmFsIG9mIHRoZSBmaW5hbCBkZXNpZ24uIEZlZXMgYXJlIG5vbi1yZWZ1bmRhYmxlIGFmdGVyIHdyaXR0ZW4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY2MyBUZCAoYXBwcm92YWwgb2YgdGhlIGZpbmFsIGRlc2lnbiwgZXhjZXB0IHdoZXJlIFN0dWRpbyBmYWlscyB0byBkZWxpdmVyIHRoZSBGaW5hbCBBc3NldCBQYWNrYWdlLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0NiBUZCAoWzldIEJyYW5kIElkZW50aXR5IFNlcnZpY2VzIEFncmVlbWVudCBcKHNpZ25lZCBieSBib3RoIHBhcnRpZXNcKSwgpzYuMSBcKFNpZ25lZCBQREYsIGZyZWVsYW5jZXIncyBmaWxlc1wpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjMyIFRkICgiSW50ZWxsZWN0dWFsIHByb3BlcnR5OiBDb3B5cmlnaHQgaW4gdGhlIGZpbmFsIHNlbGVjdGVkIGRlc2lnbnMgdHJhbnNmZXJzIGZyb20gU3R1ZGlvIHRvIENsaWVudCB1cG9uIFN0dWRpbydzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTggVGQgKHJlY2VpcHQgb2YgZnVsbCBwYXltZW50LiBVbnRpbCBmdWxsIHBheW1lbnQgaXMgcmVjZWl2ZWQgYW5kIHJldGFpbmVkLCBhbGwgcmlnaHRzIHJlbWFpbiB3aXRoIFN0dWRpby4iKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMjEgMDAwMDAgbiAKMDAwMDAwMDIxOCAwMDAwMCBuIAowMDAwMDAwMzIwIDAwMDAwIG4gCjAwMDAwMDA0NTYgMDAwMDAgbiAKMDAwMDAwNDg4MiAwMDAwMCBuIAowMDAwMDA1MDE4IDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgOSAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNjIzMgolJUVPRgo="
        },
        {
         "field": "evidence-file",
         "name": "evidence-appendix.pdf",
         "type": "application/pdf",
-        "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQxNDQgPj4Kc3RyZWFtCkJUIC9GMiAxNCBUZiA1NiA3MzYgVGQgKEV2aWRlbmNlIGFwcGVuZGl4OiBmdWxsIHRleHQgb2YgZXZlcnkgY2l0ZWQgc2VjdGlvbikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDcwNiBUZCAoQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpIC0gc291cmNlOiBTaWduZWQgUERGLCkgVGogRVQKQlQgL0YyIDExIFRmIDU2IDY5MSBUZCAoZnJlZWxhbmNlcidzIGZpbGVzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NzMgVGQgKKczLjIgRmluYWwgQXNzZXQgUGFja2FnZTogT24gY29tcGxldGlvbiBTdHVkaW8gZGVsaXZlcnMgYSBGaW5hbCBBc3NldCBQYWNrYWdlIGNvbnRhaW5pbmc6IFwoYVwpIGEgV2ViICYgU29jaWFsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NTkgVGQgKHBhY2sgb2YgUE5HIGFuZCBKUEcgZmlsZXM7IFwoYlwpIG1hc3RlciB2ZWN0b3Igc291cmNlIGZpbGVzIGluIEFJLCBTVkcgYW5kIEVQUyBmb3JtYXRzIHN1aXRhYmxlIGZvciBwcmludCwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0NSBUZCAoc2lnbmFnZSBhbmQgbWVyY2hhbmRpc2U7IFwoY1wpIGEgcHJpbnQtcmVhZHkgUERGIGJyYW5kIGd1aWRlOyBhbmQgXChkXCkgYSBzaWduZWQgQXNzaWdubWVudCBvZiBDb3B5cmlnaHQgbGV0dGVyLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjI4IFRkICinNS4xIEFjY2VwdGFuY2U6IENsaWVudCdzIHdyaXR0ZW4gYXBwcm92YWwgb2YgdGhlIGZpbmFsIGRlc2lnbiBcKGVtYWlsIGlzIHN1ZmZpY2llbnRcKSBjb25zdGl0dXRlcyBhY2NlcHRhbmNlIG9mKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTQgVGQgKHRoZSBkZXNpZ24gd29yay4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU5NyBUZCAopzcuMiBSZS1pc3N1ZTogRm9yIDEyIG1vbnRocyBhZnRlciBkZWxpdmVyeSwgU3R1ZGlvIHdpbGwgcmUtaXNzdWUgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2Ugb24gcmVxdWVzdCBhdCBubykgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTgzIFRkIChjaGFyZ2UsIHdpdGhpbiAyIGJ1c2luZXNzIGRheXMgb2YgdGhlIHJlcXVlc3QuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1NjYgVGQgKKc4IEZlZXMgYW5kIHJlZnVuZHM6IFRvdGFsIGZlZTogJDIsNDAwLCBpbnZvaWNlZCBvbiBhcHByb3ZhbCBvZiB0aGUgZmluYWwgZGVzaWduLiBGZWVzIGFyZSBub24tcmVmdW5kYWJsZSBhZnRlcikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTUyIFRkICh3cml0dGVuIGFwcHJvdmFsIG9mIHRoZSBmaW5hbCBkZXNpZ24sIGV4Y2VwdCB3aGVyZSBTdHVkaW8gZmFpbHMgdG8gZGVsaXZlciB0aGUgRmluYWwgQXNzZXQgUGFja2FnZS4pIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiA1MjYgVGQgKEVtYWlsIHRocmVhZDogUHJpeWEgPC0+IERhbmllbCAtIHNvdXJjZTogRnJlZWxhbmNlcidzIEdtYWlsIGV4cG9ydCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTA4IFRkIChFNCBKdW4gMjkgLSBEYW5pZWwgdG8gUHJpeWE6IEFwcHJvdmFsOiBUaGlzIGlzIGl0LiBIb25lc3RseSBiZXR0ZXIgdGhhbiBJIGltYWdpbmVkLiBBcHByb3ZlZCwgbGV0J3MgbWFrZSBpdCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDk0IFRkIChvZmZpY2lhbC4gU2VuZCBvdmVyIHRoZSBpbnZvaWNlIGFuZCB0aGUgZmluYWwgZmlsZXMhKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NzcgVGQgKEU2IEp1bCAxIC0gUHJpeWEgdG8gRGFuaWVsOiBGaW5hbCBBc3NldCBQYWNrYWdlOiBQYXltZW50IHJlY2VpdmVkLCB0aGFuayB5b3UhIFlvdXIgRmluYWwgQXNzZXQgUGFja2FnZSBpcyByZWFkeSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDYzIFRkIChhcyB0d28gZG93bmxvYWRzOiBcKDFcKSBIYWxkZW5fV2ViX1NvY2lhbF9QYWNrLnppcCBmb3IgeW91ciB3ZWJzaXRlLCBJbnN0YWdyYW0gYW5kIG1lbnVzLCBhbmQgXCgyXCkpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ0OSBUZCAoSGFsZGVuX01hc3Rlcl9WZWN0b3JzX2FuZF9Db3B5cmlnaHQuemlwIHdpdGggdGhlIEFJL1NWRy9FUFMgbWFzdGVyIGZpbGVzIGZvciBwcmludGVycywgc2lnbiBtYWtlcnMgYW5kIG1lcmNoLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDM1IFRkICh0aGUgcHJpbnQgYnJhbmQgZ3VpZGUsIGFuZCB5b3VyIHNpZ25lZCBBc3NpZ25tZW50IG9mIENvcHlyaWdodC4gUGxlYXNlIGRvd25sb2FkIGJvdGguIExpbmtzIHN0YXkgYWN0aXZlIGZvciAzMCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDIxIFRkIChkYXlzLikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDM5NSBUZCAoRmlsZSB0cmFuc2ZlciBhY2Nlc3MgbG9nIFwoc2VjdXJlIGRvd25sb2FkIHNlcnZpY2VcKSAtIHNvdXJjZTogRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgMzgwIFRkIChmaWxlLXRyYW5zZmVyIHNlcnZpY2UpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDM2MiBUZCAoTDEgVHJhbnNmZXIgY3JlYXRlZDogMjAyNi0wNy0wMSAxNjo1OCBVVEMgLSBUcmFuc2ZlciAjVFItODgyMTMgY3JlYXRlZCBieSBoZWxsb0Bwcml5YXJhbWFuLmRlc2lnbi4gUmVjaXBpZW50OikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzQ4IFRkIChkYW5pZWxAaGFsZGVuY29mZmVlLmNvbS4gRmlsZXM6IEhhbGRlbl9XZWJfU29jaWFsX1BhY2suemlwIFwoNDggTUJcKSwgSGFsZGVuX01hc3Rlcl9WZWN0b3JzX2FuZF9Db3B5cmlnaHQuemlwKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMzQgVGQgKFwoMjEyIE1CXCkuIEV4cGlyeTogMjAyNi0wNy0zMS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDMxNyBUZCAoTDMgRG93bmxvYWQ6IDIwMjYtMDctMDEgMTc6MDYgVVRDIC0gSGFsZGVuX1dlYl9Tb2NpYWxfUGFjay56aXAgZG93bmxvYWRlZCBieSByZWNpcGllbnQgXChJUCByZWdpb246IFBvcnRsYW5kLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzAzIFRkIChPUlwpLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjg2IFRkIChMNCBEb3dubG9hZDogMjAyNi0wNy0wOSAxNDoyMSBVVEMgLSBIYWxkZW5fV2ViX1NvY2lhbF9QYWNrLnppcCBkb3dubG9hZGVkIGJ5IHJlY2lwaWVudCBcKElQIHJlZ2lvbjogUG9ydGxhbmQsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyNzIgVGQgKE9SXCkuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyNTUgVGQgKEw1IE5vIGFjdGl2aXR5OiBIYWxkZW5fTWFzdGVyX1ZlY3RvcnNfYW5kX0NvcHlyaWdodC56aXAgLSAwIGRvd25sb2FkcyBkdXJpbmcgdGhlIGxpZmUgb2YgdGhlIHRyYW5zZmVyLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjM4IFRkIChMNiBUcmFuc2ZlciBleHBpcmVkOiAyMDI2LTA3LTMxIDAwOjAwIFVUQyAtIFRyYW5zZmVyICNUUi04ODIxMyBleHBpcmVkLiBGaWxlcyBubyBsb25nZXIgZG93bmxvYWRhYmxlIGZyb20gdGhpcykgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjI0IFRkIChsaW5rLikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDE5OCBUZCAoV2Vic2l0ZSBjb250YWN0IGZvcm06IHN1Ym1pc3Npb25zIGFuZCBzZXR0aW5ncyAtIHNvdXJjZTogRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzIHdlYnNpdGUpIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAxODMgVGQgKGJ1aWxkZXIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE2NSBUZCAoRjEgU3VibWlzc2lvbiBcKFNlcCAyMiwgMDk6MTRcKTogRnJvbTogRGFuaWVsIE9rYWZvciBcKEhhbGRlbiBDb2ZmZWVcKS4gIkhpIFByaXlhLCB0aGUgc2lnbiBjb21wYW55IGRvaW5nIG91ciBFbG0pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE1MSBUZCAoU3Qgc3RvcmVmcm9udCBzYXlzIHRoZSBsb2dvIGZpbGVzIHdlIGhhdmUgYXJlIG9ubHkgZ29vZCBmb3Igc2NyZWVucy4gVGhleSBuZWVkIHRoZSAncmVhbCcgbG9nbyB0byBjdXQgdGhlIHNpZ24pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDEzNyBUZCAoYW5kIHRoZXkgY2FuJ3QgZG8gYW55dGhpbmcgd2l0aCB3aGF0IHdlIHNlbnQgdGhlbS4gT3BlbmluZyBpcyBPY3QgMTUuIEFsc28sIG15IGxhbmRsb3JkIHNhaWQgdGhhdCB1bmxlc3MgSSBoYXZlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMjMgVGQgKHBhcGVyd29yaywgdGhlIGRlc2lnbmVyIG1pZ2h0IHN0aWxsIG93biB0aGUgbG9nbz8/IFBsZWFzZSBjYWxsIG1lLCB0aGlzIGlzIHVyZ2VudC4iIFN0YXR1czogdW5yZWFkLikgVGogRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNwowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMTIgMDAwMDAgbiAKMDAwMDAwMDMxNCAwMDAwMCBuIAowMDAwMDAwNDUwIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNyAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNDY0NgolJUVPRgo="
+        "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDMwMDcgPj4Kc3RyZWFtCkJUIC9GMiAxNCBUZiA1NiA3MzYgVGQgKEV2aWRlbmNlIGFwcGVuZGl4OiBmdWxsIHRleHQgb2YgZXZlcnkgY2l0ZWQgc2VjdGlvbikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDcwNiBUZCAoQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpIC0gc291cmNlOiBTaWduZWQgUERGLCkgVGogRVQKQlQgL0YyIDExIFRmIDU2IDY5MSBUZCAoZnJlZWxhbmNlcidzIGZpbGVzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NzMgVGQgKKczLjIgRmluYWwgQXNzZXQgUGFja2FnZTogT24gY29tcGxldGlvbiBTdHVkaW8gZGVsaXZlcnMgYSBGaW5hbCBBc3NldCBQYWNrYWdlIGNvbnRhaW5pbmc6IFwoYVwpIGEgV2ViICYgU29jaWFsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NTkgVGQgKHBhY2sgb2YgUE5HIGFuZCBKUEcgZmlsZXM7IFwoYlwpIG1hc3RlciB2ZWN0b3Igc291cmNlIGZpbGVzIGluIEFJLCBTVkcgYW5kIEVQUyBmb3JtYXRzIHN1aXRhYmxlIGZvciBwcmludCwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0NSBUZCAoc2lnbmFnZSBhbmQgbWVyY2hhbmRpc2U7IFwoY1wpIGEgcHJpbnQtcmVhZHkgUERGIGJyYW5kIGd1aWRlOyBhbmQgXChkXCkgYSBzaWduZWQgQXNzaWdubWVudCBvZiBDb3B5cmlnaHQgbGV0dGVyLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjI4IFRkICinNS4xIEFjY2VwdGFuY2U6IENsaWVudCdzIHdyaXR0ZW4gYXBwcm92YWwgb2YgdGhlIGZpbmFsIGRlc2lnbiBcKGVtYWlsIGlzIHN1ZmZpY2llbnRcKSBjb25zdGl0dXRlcyBhY2NlcHRhbmNlIG9mKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTQgVGQgKHRoZSBkZXNpZ24gd29yay4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU5NyBUZCAopzcuMiBSZS1pc3N1ZTogRm9yIDEyIG1vbnRocyBhZnRlciBkZWxpdmVyeSwgU3R1ZGlvIHdpbGwgcmUtaXNzdWUgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2Ugb24gcmVxdWVzdCBhdCBubykgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTgzIFRkIChjaGFyZ2UsIHdpdGhpbiAyIGJ1c2luZXNzIGRheXMgb2YgdGhlIHJlcXVlc3QuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1NjYgVGQgKKc4IEZlZXMgYW5kIHJlZnVuZHM6IFRvdGFsIGZlZTogJDIsNDAwLCBpbnZvaWNlZCBvbiBhcHByb3ZhbCBvZiB0aGUgZmluYWwgZGVzaWduLiBGZWVzIGFyZSBub24tcmVmdW5kYWJsZSBhZnRlcikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTUyIFRkICh3cml0dGVuIGFwcHJvdmFsIG9mIHRoZSBmaW5hbCBkZXNpZ24sIGV4Y2VwdCB3aGVyZSBTdHVkaW8gZmFpbHMgdG8gZGVsaXZlciB0aGUgRmluYWwgQXNzZXQgUGFja2FnZS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDUzNSBUZCAopzYuMSBJbnRlbGxlY3R1YWwgcHJvcGVydHk6IENvcHlyaWdodCBpbiB0aGUgZmluYWwgc2VsZWN0ZWQgZGVzaWducyB0cmFuc2ZlcnMgZnJvbSBTdHVkaW8gdG8gQ2xpZW50IHVwb24pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDUyMSBUZCAoU3R1ZGlvJ3MgcmVjZWlwdCBvZiBmdWxsIHBheW1lbnQuIFVudGlsIGZ1bGwgcGF5bWVudCBpcyByZWNlaXZlZCBhbmQgcmV0YWluZWQsIGFsbCByaWdodHMgcmVtYWluIHdpdGggU3R1ZGlvLikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDQ5NSBUZCAoRW1haWwgdGhyZWFkOiBQcml5YSA8LT4gRGFuaWVsIC0gc291cmNlOiBGcmVlbGFuY2VyJ3MgR21haWwgZXhwb3J0KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NzcgVGQgKEU0IEp1biAyOSAtIERhbmllbCB0byBQcml5YTogQXBwcm92YWw6IFRoaXMgaXMgaXQuIEhvbmVzdGx5IGJldHRlciB0aGFuIEkgaW1hZ2luZWQuIEFwcHJvdmVkLCBsZXQncyBtYWtlIGl0KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NjMgVGQgKG9mZmljaWFsLiBTZW5kIG92ZXIgdGhlIGludm9pY2UgYW5kIHRoZSBmaW5hbCBmaWxlcyEpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ0NiBUZCAoRTYgSnVsIDEgLSBQcml5YSB0byBEYW5pZWw6IEZpbmFsIEFzc2V0IFBhY2thZ2U6IFBheW1lbnQgcmVjZWl2ZWQsIHRoYW5rIHlvdSEgWW91ciBGaW5hbCBBc3NldCBQYWNrYWdlIGlzIHJlYWR5KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0MzIgVGQgKGFzIHR3byBkb3dubG9hZHM6IFwoMVwpIEhhbGRlbl9XZWJfU29jaWFsX1BhY2suemlwIGZvciB5b3VyIHdlYnNpdGUsIEluc3RhZ3JhbSBhbmQgbWVudXMsIGFuZCBcKDJcKSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDE4IFRkIChIYWxkZW5fTWFzdGVyX1ZlY3RvcnNfYW5kX0NvcHlyaWdodC56aXAgd2l0aCB0aGUgQUkvU1ZHL0VQUyBtYXN0ZXIgZmlsZXMgZm9yIHByaW50ZXJzLCBzaWduIG1ha2VycyBhbmQgbWVyY2gsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0MDQgVGQgKHRoZSBwcmludCBicmFuZCBndWlkZSwgYW5kIHlvdXIgc2lnbmVkIEFzc2lnbm1lbnQgb2YgQ29weXJpZ2h0LiBQbGVhc2UgZG93bmxvYWQgYm90aC4gTGlua3Mgc3RheSBhY3RpdmUgZm9yIDMwKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzOTAgVGQgKGRheXMuKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgMzY0IFRkIChGaWxlIHRyYW5zZmVyIGFjY2VzcyBsb2cgXChzZWN1cmUgZG93bmxvYWQgc2VydmljZVwpIC0gc291cmNlOiBFeHBvcnQgZnJvbSBmcmVlbGFuY2VyJ3MpIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAzNDkgVGQgKGZpbGUtdHJhbnNmZXIgc2VydmljZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzMxIFRkIChMMyBEb3dubG9hZDogMjAyNi0wNy0wMSAxNzowNiBVVEMgLSBIYWxkZW5fV2ViX1NvY2lhbF9QYWNrLnppcCBkb3dubG9hZGVkIGJ5IHJlY2lwaWVudCBcKElQIHJlZ2lvbjogUG9ydGxhbmQsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMTcgVGQgKE9SXCkuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMDAgVGQgKEw1IE5vIGFjdGl2aXR5OiBIYWxkZW5fTWFzdGVyX1ZlY3RvcnNfYW5kX0NvcHlyaWdodC56aXAgLSAwIGRvd25sb2FkcyBkdXJpbmcgdGhlIGxpZmUgb2YgdGhlIHRyYW5zZmVyLikgVGogRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNwowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMTIgMDAwMDAgbiAKMDAwMDAwMDMxNCAwMDAwMCBuIAowMDAwMDAwNDUwIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNyAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKMzUwOQolJUVPRgo="
        }
       ]
      }
@@ -1129,81 +1296,81 @@
    }
   },
   {
-   "t": 373902,
+   "t": 331838,
    "type": "result",
    "payload": {
     "read": {
      "stated_complaint": "The design work delivered was not what was agreed in the contract. We were promised a complete, professional brand package. What we received cannot be used by our vendors and is not fit for purpose for our business. We are requesting a full refund of $2,400.",
      "literal_claims": [
       {
-       "claim": "Delivered design work does not match contract agreement",
+       "claim": "The design work delivered was not what was agreed in the contract.",
        "quote": "The design work delivered was not what was agreed in the contract."
       },
       {
-       "claim": "Client was promised a complete, professional brand package",
+       "claim": "We were promised a complete, professional brand package.",
        "quote": "We were promised a complete, professional brand package."
       },
       {
-       "claim": "Client requests full refund of $2,400",
+       "claim": "What we received cannot be used by our vendors.",
+       "quote": "What we received cannot be used by our vendors"
+      },
+      {
+       "claim": "The work is not fit for purpose for our business.",
+       "quote": "is not fit for purpose for our business"
+      },
+      {
+       "claim": "We are requesting a full refund of $2,400.",
        "quote": "We are requesting a full refund of $2,400."
       }
      ],
      "vague_phrases": [
       {
-       "phrase": "not what was agreed in the contract",
-       "could_mean": [
-        "Missing deliverables listed in scope",
-        "Different design style than specified",
-        "Incomplete file formats",
-        "Lower quality than expected"
-       ]
-      },
-      {
        "phrase": "complete, professional brand package",
        "could_mean": [
-        "Logo, color palette, typography, brand guidelines",
-        "Print‑ready assets for packaging",
-        "Digital assets for web and social media",
-        "All files delivered in editable source format"
+        "logo files in multiple formats (AI, EPS, PNG, SVG)",
+        "brand style guide with color palette and typography",
+        "stationery templates (business cards, letterhead)",
+        "social media kit and usage guidelines"
        ]
       },
       {
        "phrase": "cannot be used by our vendors",
        "could_mean": [
-        "Wrong file types (e.g., PNG instead of AI)",
-        "Insufficient resolution for print",
-        "Missing required specifications (bleed, color profiles)",
-        "Licensing restrictions preventing commercial use"
+        "files delivered in wrong format or low resolution",
+        "missing source files needed for print production",
+        "incorrect color profiles causing print errors",
+        "lack of licensing or usage rights for commercial use"
        ]
       },
       {
        "phrase": "not fit for purpose for our business",
        "could_mean": [
-        "Design does not align with brand positioning",
-        "Colors/fonts clash with existing brand assets",
-        "Layout unsuitable for packaging size",
-        "Concept fails to meet target market expectations"
+        "brand identity does not match target market aesthetics",
+        "messaging and tone are inconsistent with coffee brand",
+        "design elements conflict with existing packaging constraints",
+        "assets fail to meet regulatory or label requirements"
        ]
       }
      ],
      "reviewer_tests": [
-      "Identify the exact service description in the contract, invoice, or scope document.",
-      "Compare the delivered deliverables to the described service.",
-      "Determine whether the client formally accepted or approved any of the work.",
-      "Check for evidence that the client has used or attempted to use the work (e.g., vendor communications, production files)."
+      "What exactly was the service described as in the contract, invoice, or scope of work?",
+      "Did the delivered materials match that description in content, format, and quality?",
+      "Did the client formally accept or approve any of the delivered work?",
+      "Has the client actually used the delivered work in any channel, indicating it was fit for purpose?"
      ],
      "open_questions": [
-      "What specific items were listed in the contract as part of the 'complete, professional brand package'?",
-      "Did the freelancer provide all deliverables in the file formats and resolutions required by the client’s vendors?",
-      "Was there any written approval, sign‑off, or feedback from the client on any version of the work?",
-      "Has the client attempted to use the assets with their vendors, and if so, what issues were reported?",
-      "Did the freelancer respond to any client concerns or requests for revisions after delivery?"
+      "What specific deliverables were listed in the agreed scope (e.g., logo variations, brand guidelines, file formats)?",
+      "Did Priya provide all deliverables in the formats required by Halden Coffee's vendors?",
+      "Was there any documented client feedback or approval of interim drafts or final assets?",
+      "Has Halden Coffee used any of the delivered assets in marketing, packaging, or online presence?",
+      "Were there any requests for revisions and how were they handled?",
+      "Who on the client side authorized the original contract and who filed the chargeback?"
      ]
     },
     "findings": [
      {
-      "finding": "The contract obligates the freelancer to deliver a Final Asset Package that includes master vector source files (AI, SVG, EPS) and a print‑ready PDF brand guide.",
-      "significance": "Establishes the expected deliverables that the client claims are missing.",
+      "finding": "The agreement specifies the Final Asset Package must include a Web & Social pack (PNG/JPG) and master vector source files (AI, SVG, EPS), a print‑ready PDF brand guide, and a signed copyright assignment.",
+      "significance": "Defines the exact deliverables the client expected; later we can check if each was provided.",
       "citations": [
        {
         "doc_id": "CONTRACT",
@@ -1211,27 +1378,67 @@
        },
        {
         "doc_id": "CONTRACT",
-        "anchor": "§7.1"
+        "anchor": "§2"
        }
       ]
      },
      {
-      "finding": "The freelancer sent two download links on July 1: one containing web/social PNG/JPG assets and another containing the master vector files and brand guide.",
-      "significance": "Shows that the freelancer attempted to deliver all contract‑specified items.",
+      "finding": "The contract defines the parties: Priya Raman Design (Studio) and Halden Coffee Roasters LLC, represented by owner Daniel Okafor.",
+      "significance": "Identifies who hired, approved, and paid for the work, and who later filed the chargeback.",
+      "citations": [
+       {
+        "doc_id": "CONTRACT",
+        "anchor": "§1"
+       }
+      ]
+     },
+     {
+      "finding": "The agreed scope (§2) required a primary logo, secondary mark, color palette and typography system.",
+      "significance": "Sets the baseline of what the client expected as the core brand identity.",
+      "citations": [
+       {
+        "doc_id": "CONTRACT",
+        "anchor": "§2"
+       }
+      ]
+     },
+     {
+      "finding": "The Final Asset Package (as per §3.2) must contain a Web & Social pack (PNG/JPG), master vector files (AI, SVG, EPS), a print‑ready PDF brand guide, and a signed Assignment of Copyright letter.",
+      "significance": "Specifies the complete, professional brand package the client claims was missing.",
+      "citations": [
+       {
+        "doc_id": "CONTRACT",
+        "anchor": "§3.2"
+       }
+      ]
+     },
+     {
+      "finding": "Daniel emailed approval of the final design on 2026‑06‑29 (E4) and requested the invoice.",
+      "significance": "Triggers the contract’s acceptance clause (§5.1) and makes the fee non‑refundable under §8, assuming delivery occurred.",
       "citations": [
        {
         "doc_id": "EMAILS",
-        "anchor": "E6"
-       },
-       {
-        "doc_id": "DELIVERY-LOG",
-        "anchor": "L1"
+        "anchor": "E4"
        }
       ]
      },
      {
-      "finding": "The client downloaded the Web & Social pack on July 1 and again on July 9, but never downloaded the Master Vectors & Copyright zip.",
-      "significance": "Indicates the client may not have actually received the vector source files required for print production.",
+      "finding": "Priya sent the invoice (INV‑2026‑0042) on 2026‑06‑29 (E5) and confirmed delivery of the Final Asset Package via two download links on 2026‑07‑01 (E6).",
+      "significance": "Shows the freelancer fulfilled the delivery method required by §7.1.",
+      "citations": [
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E5"
+       },
+       {
+        "doc_id": "EMAILS",
+        "anchor": "E6"
+       }
+      ]
+     },
+     {
+      "finding": "Delivery log shows the Web & Social pack was downloaded twice (2026‑07‑01 and 2026‑07‑09) but the Master Vectors & Copyright zip was never downloaded before the link expired (L5).",
+      "significance": "The client received only the web assets; the vector source files required for printers and vendors were never accessed, undermining the claim of non‑delivery.",
       "citations": [
        {
         "doc_id": "DELIVERY-LOG",
@@ -1248,42 +1455,28 @@
       ]
      },
      {
-      "finding": "On September 22 the client emailed (via the website contact form) that a sign‑company could only use the logo for screens and could not cut the sign, and asked whether the designer still owned the logo.",
-      "significance": "Provides direct evidence the client tried to use the assets, found them unsuitable for print, and raised concerns about ownership.",
+      "finding": "Instagram post on 2026‑08‑14 (S1) shows Halden cups printed with the new logo, indicating the client was able to use the design for at least one vendor (cup printer).",
+      "significance": "Contradicts the claim that the assets were unusable by vendors; the client successfully printed merchandise.",
       "citations": [
        {
-        "doc_id": "CONTACT-FORM",
-        "anchor": "F1"
+        "doc_id": "SOCIAL",
+        "anchor": "S1"
        }
       ]
      },
      {
-      "finding": "The contract’s refund clause states fees are non‑refundable after written approval of the final design, except when the studio fails to deliver the Final Asset Package.",
-      "significance": "Shows the client’s right to a refund hinges on non‑delivery; the studio did deliver a link, but the key vector files appear not to have been accessed.",
+      "finding": "Instagram post on 2026‑10‑02 (S2) mentions the store opening is delayed because the sign is still pending.",
+      "significance": "Suggests the missing or unused vector files may have contributed to a specific vendor issue (sign maker), but does not prove the freelancer failed to provide them.",
       "citations": [
        {
-        "doc_id": "CONTRACT",
-        "anchor": "§8"
+        "doc_id": "SOCIAL",
+        "anchor": "S2"
        }
       ]
      },
      {
-      "finding": "The client gave written approval of the final design on June 29 (email E4) and the freelancer invoiced and received payment on July 1.",
-      "significance": "Triggers the acceptance condition and makes the fee non‑refundable under the contract, assuming delivery was complete.",
-      "citations": [
-       {
-        "doc_id": "EMAILS",
-        "anchor": "E4"
-       },
-       {
-        "doc_id": "PAYPAL-INVOICE",
-        "anchor": "I2"
-       }
-      ]
-     },
-     {
-      "finding": "The PayPal dispute was filed under the code “MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED” with a claim that the package cannot be used by vendors.",
-      "significance": "Shows the client’s formal reason focuses on the usability of the deliverables, not on non‑delivery per se.",
+      "finding": "The dispute filing (DISPUTE) lists the reason code MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED and repeats the client’s statement that the package is not fit for purpose.",
+      "significance": "Shows the formal claim but does not provide new factual evidence beyond the client’s opinion.",
       "citations": [
        {
         "doc_id": "DISPUTE",
@@ -1296,54 +1489,175 @@
       ]
      },
      {
-      "finding": "The freelancer’s delivery link for the Master Vectors zip expired on July 31, after which the client could no longer retrieve those files.",
-      "significance": "If the client never downloaded before expiration, they effectively did not receive the required vector assets, constituting a delivery failure.",
+      "finding": "Contract §8 states fees are non‑refundable after written approval of the final design, except where the studio fails to deliver the Final Asset Package.",
+      "significance": "Because the client approved the design (E4) and the studio delivered at least one part of the package (E6, L3/L4), the contractual basis for a full refund is weak.",
       "citations": [
        {
-        "doc_id": "DELIVERY-LOG",
-        "anchor": "L5"
-       },
-       {
-        "doc_id": "DELIVERY-LOG",
-        "anchor": "L6"
+        "doc_id": "CONTRACT",
+        "anchor": "§8"
        }
       ]
      }
     ],
     "diagnosis": {
-     "hypotheses": [
+     "client_concerns": [
       {
-       "label": "Client never downloaded required vectors",
-       "explanation": "The freelancer supplied the correct master vector zip, but the client never downloaded it before the 30‑day link expired, leaving them without the assets they need for production.",
-       "supporting": [
+       "concern": "The design work delivered was not what was agreed in the contract.",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§3.2"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E6"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§5.1"
+        }
+       ],
+       "answer": "The contract (§3.2) explicitly defines the Final Asset Package and the email on 2026‑07‑01 (E6) confirms both the Web & Social pack and the Master Vectors zip were provided via the download links. The client’s written approval on 2026‑06‑29 (E4) triggers the acceptance clause (§5.1). Therefore the work delivered matches the contractual description. If the payment were reversed, the client would lose the license and ownership of those assets."
+      },
+      {
+       "concern": "What we received cannot be used by our vendors and is not fit for purpose for our business.",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
         {
          "doc_id": "DELIVERY-LOG",
          "anchor": "L5"
         },
         {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L6"
+         "doc_id": "SOCIAL",
+         "anchor": "S1"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§3.2"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§7.1"
+        }
+       ],
+       "answer": "Vendor‑ready assets are the master vector files (AI/SVG/EPS) listed in §3.2. The delivery log shows that the Master Vectors zip was never downloaded before the link expired (L5). However, the Instagram post on 2026‑08‑14 (S1) demonstrates that the client successfully printed cups, indicating that usable files were available. The mismatch stems from the client not retrieving the vector files, not from a missing delivery. A reversed payment would nullify the transfer of copyright but would not automatically supply the missing files."
+      },
+      {
+       "concern": "We were promised a complete, professional brand package.",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§3.2"
         },
         {
          "doc_id": "EMAILS",
          "anchor": "E6"
         }
        ],
-       "contradicting": [
-        {
-         "doc_id": "CONTACT-FORM",
-         "anchor": "F1"
-        }
-       ],
-       "likelihood": 45
+       "answer": "The contract’s §3.2 defines a complete professional brand package. The freelancer’s email on 2026‑07‑01 (E6) confirms that both required zip files were sent, satisfying the completeness requirement. Reversing the payment would invalidate the transfer of the complete package and the associated rights."
       },
       {
-       "label": "Literal non‑delivery/unsuitable assets",
-       "explanation": "The client believes the freelancer failed to provide the required master vector files, so the brand package cannot be used for print or signage as promised.",
+       "concern": "We are requesting a full refund of $2,400.",
+       "said_in": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        }
+       ],
+       "answered_by": [
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§8"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E6"
+        }
+       ],
+       "answer": "Clause 8 states that fees are non‑refundable after the client’s written approval of the final design, except when the studio fails to deliver the Final Asset Package. The client approved the design (E4) and the studio delivered the package (E6). Therefore, under the contract, a full refund is not justified. If the payment were reversed, the client would lose the contractual right to the delivered assets."
+      }
+     ],
+     "freelancer_weaknesses": [
+      {
+       "issue": "The freelancer did not verify that the client actually downloaded the Master Vectors zip and did not proactively offer a re‑issue before the link expired, leaving the client without the files they later claimed were unusable.",
+       "citations": [
+        {
+         "doc_id": "DELIVERY-LOG",
+         "anchor": "L5"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§7.2"
+        }
+       ]
+      }
+     ],
+     "hypotheses": [
+      {
+       "label": "Client failed to download or request re‑issue of vectors",
+       "explanation": "The studio delivered both zip files as required; the client simply never downloaded the master vectors and did not request a re‑issue, leading to the perception of non‑delivery.",
        "supporting": [
         {
-         "doc_id": "CONTACT-FORM",
-         "anchor": "F1"
+         "doc_id": "EMAILS",
+         "anchor": "E6"
+        },
+        {
+         "doc_id": "DELIVERY-LOG",
+         "anchor": "L3"
+        },
+        {
+         "doc_id": "DELIVERY-LOG",
+         "anchor": "L4"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§7.2"
+        }
+       ],
+       "contradicting": [
+        {
+         "doc_id": "DISPUTE",
+         "anchor": "MSG1"
+        },
+        {
+         "doc_id": "SOCIAL",
+         "anchor": "S2"
+        }
+       ],
+       "likelihood": 55
+      },
+      {
+       "label": "Missing vector files not delivered",
+       "explanation": "The client believes the studio failed to provide the master vector source files required for print and signage, so the package is incomplete.",
+       "supporting": [
+        {
+         "doc_id": "DELIVERY-LOG",
+         "anchor": "L5"
         },
         {
          "doc_id": "DISPUTE",
@@ -1352,23 +1666,23 @@
        ],
        "contradicting": [
         {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L5"
-        },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L6"
-        }
-       ],
-       "likelihood": 35
-      },
-      {
-       "label": "Insufficient communication about download requirements",
-       "explanation": "The freelancer delivered both packs in one email but did not clearly emphasize that the second zip contained the essential print‑ready files, leading the client to assume only the first zip was needed.",
-       "supporting": [
-        {
          "doc_id": "EMAILS",
          "anchor": "E6"
+        },
+        {
+         "doc_id": "SOCIAL",
+         "anchor": "S1"
+        }
+       ],
+       "likelihood": 30
+      },
+      {
+       "label": "Partial delivery caused specific sign issue",
+       "explanation": "The client could use the web assets for cups but lacked the vector files needed for signage, causing a delay in store opening and prompting the refund demand.",
+       "supporting": [
+        {
+         "doc_id": "SOCIAL",
+         "anchor": "S2"
         },
         {
          "doc_id": "DELIVERY-LOG",
@@ -1377,78 +1691,45 @@
        ],
        "contradicting": [
         {
-         "doc_id": "CONTACT-FORM",
-         "anchor": "F1"
-        }
-       ],
-       "likelihood": 20
-      }
-     ],
-     "real_complaint": {
-      "summary": "The client cannot use the brand package because they never obtained the master vector files needed for print and signage; the delivery link expired before they downloaded them, and the freelancer did not follow up to ensure receipt.",
-      "what_the_client_actually_needs": "Access to the master vector source files (AI/SVG/EPS) and the print‑ready PDF brand guide, or a re‑issued download link so they can obtain those assets.",
-      "confidence": 90
-     },
-     "why_this_reason_code": "The buyer selected MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED because the assets they have are only screen‑ready PNG/JPG files, making the package appear unusable for their vendors, which is a clearer claim than \"I never downloaded the files\" when disputing the charge.",
-     "freelancer_weaknesses": [
-      {
-       "issue": "No reminder or follow‑up to ensure the client downloaded the Master Vectors zip before the 30‑day expiration",
-       "citations": [
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L5"
+         "doc_id": "SOCIAL",
+         "anchor": "S1"
         },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L6"
-        }
-       ]
-      },
-      {
-       "issue": "Delivery link expired without offering an immediate re‑issue, despite contract allowing a re‑issue within 12 months",
-       "citations": [
-        {
-         "doc_id": "CONTRACT",
-         "anchor": "§7.2"
-        },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L6"
-        }
-       ]
-      },
-      {
-       "issue": "Email did not explicitly highlight that the second zip contained the essential print‑ready files, leading to client confusion",
-       "citations": [
         {
          "doc_id": "EMAILS",
          "anchor": "E6"
-        },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L5"
         }
-       ]
+       ],
+       "likelihood": 15
       }
-     ]
+     ],
+     "real_complaint": {
+      "summary": "The client’s underlying problem is that they never retrieved the master vector files included in the Final Asset Package, which left them unable to produce certain branded materials (e.g., signage), leading them to deem the package unfit and to seek a refund despite the contract being fulfilled.",
+      "what_the_client_actually_needs": "Access to the missing master vector source files (or a re‑issued download link) so they can complete signage and other print work.",
+      "confidence": 70
+     },
+     "why_this_reason_code": "The client chose MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED because it is the standard chargeback code for \"product not as described\" and best matches their claim that the delivered brand package does not meet the specifications they expected, even though the contract’s description was met."
     },
     "strategy": {
      "decision": "CONTEST_AND_RESOLVE",
-     "rationale": "The contract explicitly defines the Final Asset Package to include master vector source files and a print‑ready PDF (§3.2). The freelancer delivered a download link containing both the web/social pack and the master vectors zip (E6, L1). The client gave written approval of the final design on June 29 (E4, §5.1), which satisfies the acceptance condition. However, the delivery logs show zero downloads of the master vectors zip (L5) and the link expired without a re‑issue, leaving the client unable to use the brand assets. The client’s real problem is missing access to the master files, not a dispute over design quality. The contract also obligates the freelancer to re‑issue the package within 12 months on request (§7.2). Because the fee is non‑refundable after approval unless the Final Asset Package is not delivered, and the package was technically delivered (link sent), a full refund is not justified. Instead, we will contest the chargeback and immediately re‑issue the master files, satisfying the contract and fixing the client’s actual need.",
+     "rationale": "The contract clearly defines the deliverables (a Web & Social pack and master vector source files) and the client approved the final design on 2026‑06‑29. The freelancer sent a download link containing both required zip files on 2026‑07‑01, satisfying the contractual description. Delivery logs confirm the Web & Social pack was downloaded; the master vector zip was never downloaded before the link expired, which is why the client cannot use it for signage. The contract also obligates the freelancer to re‑issue the Final Asset Package free of charge for 12 months. Therefore the chargeback is unjustified, but the real issue is the missing master files, which can be resolved by re‑issuing the zip. No refund is owed under the non‑refundable fee clause.",
      "proof_plan": [
       {
-       "point": "Service description includes master vector files and print‑ready PDF",
-       "answers": "STATED_REASON",
+       "point": "The service was described in the contract as a complete brand identity package including master vector source files",
+       "answers": "BOTH",
        "evidence": [
         {
          "doc_id": "CONTRACT",
          "anchor": "§3.2"
+        },
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§2"
         }
        ],
        "strength": "STRONG"
       },
       {
-       "point": "Final Asset Package was delivered via secure link containing both zip files",
+       "point": "The freelancer delivered the Final Asset Package exactly as described in the contract",
        "answers": "STATED_REASON",
        "evidence": [
         {
@@ -1456,14 +1737,18 @@
          "anchor": "E6"
         },
         {
+         "doc_id": "CONTRACT",
+         "anchor": "§7.1"
+        },
+        {
          "doc_id": "DELIVERY-LOG",
-         "anchor": "L1"
+         "anchor": "L5"
         }
        ],
        "strength": "STRONG"
       },
       {
-       "point": "Client gave written approval of the final design, satisfying acceptance clause",
+       "point": "The client provided written approval of the final design, triggering acceptance under the contract",
        "answers": "STATED_REASON",
        "evidence": [
         {
@@ -1478,30 +1763,42 @@
        "strength": "STRONG"
       },
       {
-       "point": "Master vector zip was never downloaded; client therefore could not use the assets",
+       "point": "The client never downloaded the master vector files, which is why they claim the package is unusable for signage",
        "answers": "REAL_COMPLAINT",
        "evidence": [
         {
          "doc_id": "DELIVERY-LOG",
          "anchor": "L5"
-        }
-       ],
-       "strength": "STRONG"
-      },
-      {
-       "point": "Client reported inability to use logo files for signage and raised ownership concerns",
-       "answers": "REAL_COMPLAINT",
-       "evidence": [
+        },
         {
-         "doc_id": "CONTACT-FORM",
-         "anchor": "F1"
+         "doc_id": "SOCIAL",
+         "anchor": "S2"
         }
        ],
        "strength": "MODERATE"
       },
       {
-       "point": "Freelancer is contractually obligated to re‑issue the Final Asset Package within 12 months at no charge",
-       "answers": "BOTH",
+       "point": "Fees are non‑refundable after written approval, except when the Final Asset Package is not delivered; delivery was completed, so a refund is not justified",
+       "answers": "STATED_REASON",
+       "evidence": [
+        {
+         "doc_id": "CONTRACT",
+         "anchor": "§8"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4"
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E6"
+        }
+       ],
+       "strength": "STRONG"
+      },
+      {
+       "point": "The contract obligates the freelancer to re‑issue the Final Asset Package within 2 business days upon request for 12 months after delivery",
+       "answers": "REAL_COMPLAINT",
        "evidence": [
         {
          "doc_id": "CONTRACT",
@@ -1509,37 +1806,22 @@
         }
        ],
        "strength": "STRONG"
-      },
-      {
-       "point": "Fee is non‑refundable after approval unless the Final Asset Package is not delivered; delivery was made (link sent) but essential files were inaccessible, which can be remedied by re‑issue rather than refund",
-       "answers": "BOTH",
-       "evidence": [
-        {
-         "doc_id": "CONTRACT",
-         "anchor": "§8"
-        },
-        {
-         "doc_id": "DISPUTE",
-         "anchor": "REASON"
-        }
-       ],
-       "strength": "MODERATE"
       }
      ],
      "refund_amount": "0.00",
-     "resolution_action": "Re‑issue a new secure download link containing the Halden_Master_Vectors_and_Copyright.zip (AI, SVG, EPS files) and the print‑ready PDF brand guide within 2 business days, notify the client by email, and confirm receipt."
+     "resolution_action": "Re‑issue the missing master vector source files (Halden_Master_Vectors_and_Copyright.zip) to the client via a new secure download link within 2 business days, as required by §7.2 of the contract."
     },
     "draft": {
-     "response_title": "Response to Chargeback – Re‑issue of Final Asset Package",
+     "response_title": "Response to Chargeback – Delivery Fulfilled and Re‑issue Offered",
      "claims": [
       {
        "index": 0,
-       "text": "The Agreement defines the Final Asset Package to include master vector source files and a print‑ready PDF.",
+       "text": "The contract defines the Final Asset Package as containing master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise.",
        "citations": [
         {
          "doc_id": "CONTRACT",
          "anchor": "§3.2",
-         "quote": "Final Asset Package: On completion Studio delivers a Final Asset Package containing: (a) a Web & Social pack of PNG and JPG files; (b) master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise; (c) a print‑ready PDF brand guide; and (d) a signed Assignment of Copyright letter.",
+         "quote": "Final Asset Package: On completion Studio delivers a Final Asset Package containing: (a) a Web & Social pack of PNG and JPG files; (b) master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise; (c) a print-ready PDF brand guide; and (d) a signed Assignment of Copyright letter.",
          "ok": true
         }
        ],
@@ -1547,18 +1829,18 @@
       },
       {
        "index": 1,
-       "text": "The client gave written approval of the final design on June 29, which meets the acceptance condition in the contract.",
+       "text": "Client’s written approval on June 29 triggered acceptance under the agreement.",
        "citations": [
-        {
-         "doc_id": "EMAILS",
-         "anchor": "E4",
-         "quote": "Approval: This is it. Honestly better than I imagined. Approved, let's make it official. Send over the invoice and the final files!",
-         "ok": true
-        },
         {
          "doc_id": "CONTRACT",
          "anchor": "§5.1",
          "quote": "Acceptance: Client's written approval of the final design (email is sufficient) constitutes acceptance of the design work.",
+         "ok": true
+        },
+        {
+         "doc_id": "EMAILS",
+         "anchor": "E4",
+         "quote": "Jun 29 - Daniel to Priya: Approval: This is it. Honestly better than I imagined. Approved, let's make it official. Send over the invoice and the final files!",
          "ok": true
         }
        ],
@@ -1566,18 +1848,12 @@
       },
       {
        "index": 2,
-       "text": "On July 1, Priya sent a secure download link containing both the Web & Social pack and the Master Vectors zip, with a 30‑day expiration as stipulated.",
+       "text": "After payment was received, the freelancer sent a Final Asset Package email on July 1 listing both required zip files.",
        "citations": [
         {
          "doc_id": "EMAILS",
          "anchor": "E6",
-         "quote": "Your Final Asset Package is ready as two downloads: (1) Halden_Web_Social_Pack.zip for your website, Instagram and menus, and (2) Halden_Master_Vectors_and_Copyright.zip with the AI/SVG/EPS master files for printers, sign makers and merch, the print brand guide, and your signed Assignment of Copyright. Please download both. Links stay active for 30 days.",
-         "ok": true
-        },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L1",
-         "quote": "Transfer created: 2026-07-01 16:58 UTC - Transfer #TR-88213 created by hello@priyaraman.design. Recipient: daniel@haldencoffee.com. Files: Halden_Web_Social_Pack.zip (48 MB), Halden_Master_Vectors_and_Copyright.zip (212 MB). Expiry: 2026-07-31.",
+         "quote": "Jul 1 - Priya to Daniel: Final Asset Package: Payment received, thank you! Your Final Asset Package is ready as two downloads: (1) Halden_Web_Social_Pack.zip for your website, Instagram and menus, and (2) Halden_Master_Vectors_and_Copyright.zip with the AI/SVG/EPS master files for printers, sign makers and merch, the print brand guide, and your signed Assignment of Copyright. Please download both. Links stay active for 30 days.",
          "ok": true
         }
        ],
@@ -1585,7 +1861,7 @@
       },
       {
        "index": 3,
-       "text": "Download records show the Web & Social pack was downloaded on July 1 and July 9, but the Master Vectors zip recorded zero downloads before the link expired.",
+       "text": "Delivery logs show the Web & Social pack was downloaded on July 1, while the Master Vectors zip recorded zero downloads before the link expired.",
        "citations": [
         {
          "doc_id": "DELIVERY-LOG",
@@ -1595,20 +1871,8 @@
         },
         {
          "doc_id": "DELIVERY-LOG",
-         "anchor": "L4",
-         "quote": "Download: 2026-07-09 14:21 UTC - Halden_Web_Social_Pack.zip downloaded by recipient (IP region: Portland, OR).",
-         "ok": true
-        },
-        {
-         "doc_id": "DELIVERY-LOG",
          "anchor": "L5",
          "quote": "No activity: Halden_Master_Vectors_and_Copyright.zip - 0 downloads during the life of the transfer.",
-         "ok": true
-        },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L6",
-         "quote": "Transfer expired: 2026-07-31 00:00 UTC - Transfer #TR-88213 expired. Files no longer downloadable from this link.",
          "ok": true
         }
        ],
@@ -1616,18 +1880,12 @@
       },
       {
        "index": 4,
-       "text": "Because the master vector files were never accessed, the client could not use the brand assets for print and signage, which is the actual problem reported.",
+       "text": "The agreement obligates the studio to re‑issue the Final Asset Package, free of charge, within two business days of a request for twelve months after delivery.",
        "citations": [
         {
-         "doc_id": "CONTACT-FORM",
-         "anchor": "F1",
-         "quote": "Hi Priya, the sign company doing our Elm St storefront says the logo files we have are only good for screens. They need the 'real' logo to cut the sign and they can't do anything with what we sent them. Opening is Oct 15.",
-         "ok": true
-        },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L5",
-         "quote": "No activity: Halden_Master_Vectors_and_Copyright.zip - 0 downloads during the life of the transfer.",
+         "doc_id": "CONTRACT",
+         "anchor": "§7.2",
+         "quote": "Re-issue: For 12 months after delivery, Studio will re-issue the Final Asset Package on request at no charge, within 2 business days of the request.",
          "ok": true
         }
        ],
@@ -1635,7 +1893,7 @@
       },
       {
        "index": 5,
-       "text": "The contract obligates the studio to re‑issue the Final Asset Package at no charge within two business days upon request for up to twelve months after delivery.",
+       "text": "Accordingly, the missing Master Vectors zip will be re‑issued via a new secure download link within the next two business days.",
        "citations": [
         {
          "doc_id": "CONTRACT",
@@ -1648,18 +1906,12 @@
       },
       {
        "index": 6,
-       "text": "Fees are non‑refundable after written approval unless the studio fails to deliver the Final Asset Package; delivery was performed via the secure link, so a refund is not warranted.",
+       "text": "Fees are non‑refundable after written approval of the final design, and the studio has fulfilled delivery, so no refund is owed.",
        "citations": [
         {
          "doc_id": "CONTRACT",
          "anchor": "§8",
          "quote": "Fees and refunds: Total fee: $2,400, invoiced on approval of the final design. Fees are non-refundable after written approval of the final design, except where Studio fails to deliver the Final Asset Package.",
-         "ok": true
-        },
-        {
-         "doc_id": "DELIVERY-LOG",
-         "anchor": "L1",
-         "quote": "Transfer created: 2026-07-01 16:58 UTC - Transfer #TR-88213 created by hello@priyaraman.design. Recipient: daniel@haldencoffee.com. Files: Halden_Web_Social_Pack.zip (48 MB), Halden_Master_Vectors_and_Copyright.zip (212 MB). Expiry: 2026-07-31.",
          "ok": true
         }
        ],
@@ -1667,24 +1919,39 @@
       },
       {
        "index": 7,
-       "text": "We are contesting the chargeback and will re‑issue a new secure download link with the master vector files and PDF within two business days, fulfilling the contractual re‑issue obligation.",
+       "text": "If the chargeback were upheld, the client would lose the transferred copyright and the right to use the assets, contrary to the IP transfer clause.",
        "citations": [
         {
          "doc_id": "CONTRACT",
-         "anchor": "§7.2",
-         "quote": "Re-issue: For 12 months after delivery, Studio will re-issue the Final Asset Package on request at no charge, within 2 business days of the request.",
+         "anchor": "§6.1",
+         "quote": "Intellectual property: Copyright in the final selected designs transfers from Studio to Client upon Studio's receipt of full payment. Until full payment is received and retained, all rights remain with Studio.",
          "ok": true
         }
        ],
        "grounded": true
       }
      ],
-     "client_message": "Hi Daniel, I’m sorry you didn’t get the master files you need. I’ve just created a new secure link that includes the AI, SVG, EPS files and the print‑ready PDF, and you’ll receive it by email within the next few hours. Please let me know as soon as you’ve downloaded them or if anything else is missing. I’m here to make sure the brand assets work for your signage and vendors.",
+     "client_message": "Hi Daniel, I see the master vector files you need for signage were never downloaded. I’m sending you a new secure link with the Halden_Master_Vectors_and_Copyright.zip within the next two business days. Please let me know once you’ve got them and I’ll gladly help with any questions.",
      "evidence_package": [
       {
        "doc_id": "CONTRACT",
        "evidence_type": "COPY_OF_CONTRACT",
-       "why": "Shows contract terms for asset package contents, acceptance, non‑refund, and re‑issue obligations."
+       "why": "Shows deliverable definition, acceptance clause, non‑refund clause, and re‑issue obligation."
+      },
+      {
+       "doc_id": "EMAILS",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Email confirming delivery of both required zip files on July 1."
+      },
+      {
+       "doc_id": "DELIVERY-LOG",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Download logs prove web pack was accessed and master vector zip was not downloaded."
+      },
+      {
+       "doc_id": "DISPUTE",
+       "evidence_type": "ITEM_DESCRIPTION",
+       "why": "Original chargeback reason filed by the client."
       }
      ]
     },
@@ -1701,7 +1968,7 @@
         "evidences": [
          {
           "evidence_type": "COPY_OF_CONTRACT",
-          "notes": "The Agreement defines the Final Asset Package to include master vector source files and a print‑ready PDF. [1]\n\nThe client gave written approval of the final design on June 29, which meets the acceptance condition in the contract. [2][3]\n\nOn July 1, Priya sent a secure download link containing both the Web & Social pack and the Master Vectors zip, with a 30‑day expiration as stipulated. [4][5]\n\nDownload records show the Web & Social pack was downloaded on July 1 and July 9, but the Master Vectors zip recorded zero downloads before the link expired. [6][7][8][9]\n\nBecause the master vector files were never accessed, the client could not use the brand assets for print and signage, which is the actual problem reported. [10][8]\n\nThe contract obligates the studio to re‑issue the Final Asset Package at no charge within two business days upon request for up to twelve months after delivery. [11]\n\nFees are non‑refundable after written approval unless the studio fails to deliver the Final Asset Package; delivery was performed via the secure link, so a refund is not warranted. [12][5]\n\nWe are contesting the chargeback and will re‑issue a new secure download link with the master vector files and PDF within two business days, fulfilling the contractual re‑issue obligation. [11]",
+          "notes": "The contract defines the Final Asset Package as containing master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise. [1]\n\nClient’s written approval on June 29 triggered acceptance under the agreement. [2][3]\n\nAfter payment was received, the freelancer sent a Final Asset Package email on July 1 listing both required zip files. [4]\n\nDelivery logs show the Web & Social pack was downloaded on July 1, while the Master Vectors zip recorded zero downloads before the link expired. [5][6]\n\nThe agreement obligates the studio to re‑issue the Final Asset Package, free of charge, within two business days of a request for twelve months after delivery. [7]\n\nAccordingly, the missing Master Vectors zip will be re‑issued via a new secure download link within the next two business days. [7]\n\nFees are non‑refundable after written approval of the final design, and the studio has fulfilled delivery, so no refund is owed. [8]\n\nIf the chargeback were upheld, the client would lose the transferred copyright and the right to use the assets, contrary to the IP transfer clause. [9]",
           "documents": [
            {
             "name": "response-letter.pdf"
@@ -1718,13 +1985,13 @@
          "field": "evidence-file",
          "name": "response-letter.pdf",
          "type": "application/pdf",
-         "size": 7704
+         "size": 6476
         },
         {
          "field": "evidence-file",
          "name": "evidence-appendix.pdf",
          "type": "application/pdf",
-         "size": 4850
+         "size": 3713
         }
        ]
       },
@@ -1734,7 +2001,7 @@
        "to": "daniel@haldencoffee.com",
        "note": "PayPal messaging is closed in the chargeback stage, so this goes by email.",
        "body": {
-        "message": "Hi Daniel, I’m sorry you didn’t get the master files you need. I’ve just created a new secure link that includes the AI, SVG, EPS files and the print‑ready PDF, and you’ll receive it by email within the next few hours. Please let me know as soon as you’ve downloaded them or if anything else is missing. I’m here to make sure the brand assets work for your signage and vendors."
+        "message": "Hi Daniel, I see the master vector files you need for signage were never downloaded. I’m sending you a new secure link with the Halden_Master_Vectors_and_Copyright.zip within the next two business days. Please let me know once you’ve got them and I’ll gladly help with any questions."
        }
       }
      ],
@@ -1742,12 +2009,7 @@
       {
        "doc_id": "CONTRACT",
        "anchor": "§3.2",
-       "quote": "Final Asset Package: On completion Studio delivers a Final Asset Package containing: (a) a Web & Social pack of PNG and JPG files; (b) master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise; (c) a print‑ready PDF brand guide; and (d) a signed Assignment of Copyright letter."
-      },
-      {
-       "doc_id": "EMAILS",
-       "anchor": "E4",
-       "quote": "Approval: This is it. Honestly better than I imagined. Approved, let's make it official. Send over the invoice and the final files!"
+       "quote": "Final Asset Package: On completion Studio delivers a Final Asset Package containing: (a) a Web & Social pack of PNG and JPG files; (b) master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise; (c) a print-ready PDF brand guide; and (d) a signed Assignment of Copyright letter."
       },
       {
        "doc_id": "CONTRACT",
@@ -1756,13 +2018,13 @@
       },
       {
        "doc_id": "EMAILS",
-       "anchor": "E6",
-       "quote": "Your Final Asset Package is ready as two downloads: (1) Halden_Web_Social_Pack.zip for your website, Instagram and menus, and (2) Halden_Master_Vectors_and_Copyright.zip with the AI/SVG/EPS master files for printers, sign makers and merch, the print brand guide, and your signed Assignment of Copyright. Please download both. Links stay active for 30 days."
+       "anchor": "E4",
+       "quote": "Jun 29 - Daniel to Priya: Approval: This is it. Honestly better than I imagined. Approved, let's make it official. Send over the invoice and the final files!"
       },
       {
-       "doc_id": "DELIVERY-LOG",
-       "anchor": "L1",
-       "quote": "Transfer created: 2026-07-01 16:58 UTC - Transfer #TR-88213 created by hello@priyaraman.design. Recipient: daniel@haldencoffee.com. Files: Halden_Web_Social_Pack.zip (48 MB), Halden_Master_Vectors_and_Copyright.zip (212 MB). Expiry: 2026-07-31."
+       "doc_id": "EMAILS",
+       "anchor": "E6",
+       "quote": "Jul 1 - Priya to Daniel: Final Asset Package: Payment received, thank you! Your Final Asset Package is ready as two downloads: (1) Halden_Web_Social_Pack.zip for your website, Instagram and menus, and (2) Halden_Master_Vectors_and_Copyright.zip with the AI/SVG/EPS master files for printers, sign makers and merch, the print brand guide, and your signed Assignment of Copyright. Please download both. Links stay active for 30 days."
       },
       {
        "doc_id": "DELIVERY-LOG",
@@ -1771,23 +2033,8 @@
       },
       {
        "doc_id": "DELIVERY-LOG",
-       "anchor": "L4",
-       "quote": "Download: 2026-07-09 14:21 UTC - Halden_Web_Social_Pack.zip downloaded by recipient (IP region: Portland, OR)."
-      },
-      {
-       "doc_id": "DELIVERY-LOG",
        "anchor": "L5",
        "quote": "No activity: Halden_Master_Vectors_and_Copyright.zip - 0 downloads during the life of the transfer."
-      },
-      {
-       "doc_id": "DELIVERY-LOG",
-       "anchor": "L6",
-       "quote": "Transfer expired: 2026-07-31 00:00 UTC - Transfer #TR-88213 expired. Files no longer downloadable from this link."
-      },
-      {
-       "doc_id": "CONTACT-FORM",
-       "anchor": "F1",
-       "quote": "Hi Priya, the sign company doing our Elm St storefront says the logo files we have are only good for screens. They need the 'real' logo to cut the sign and they can't do anything with what we sent them. Opening is Oct 15."
       },
       {
        "doc_id": "CONTRACT",
@@ -1798,24 +2045,44 @@
        "doc_id": "CONTRACT",
        "anchor": "§8",
        "quote": "Fees and refunds: Total fee: $2,400, invoiced on approval of the final design. Fees are non-refundable after written approval of the final design, except where Studio fails to deliver the Final Asset Package."
+      },
+      {
+       "doc_id": "CONTRACT",
+       "anchor": "§6.1",
+       "quote": "Intellectual property: Copyright in the final selected designs transfers from Studio to Client upon Studio's receipt of full payment. Until full payment is received and retained, all rights remain with Studio."
       }
      ],
      "letter": [
-      "The Agreement defines the Final Asset Package to include master vector source files and a print‑ready PDF. [1]",
-      "The client gave written approval of the final design on June 29, which meets the acceptance condition in the contract. [2][3]",
-      "On July 1, Priya sent a secure download link containing both the Web & Social pack and the Master Vectors zip, with a 30‑day expiration as stipulated. [4][5]",
-      "Download records show the Web & Social pack was downloaded on July 1 and July 9, but the Master Vectors zip recorded zero downloads before the link expired. [6][7][8][9]",
-      "Because the master vector files were never accessed, the client could not use the brand assets for print and signage, which is the actual problem reported. [10][8]",
-      "The contract obligates the studio to re‑issue the Final Asset Package at no charge within two business days upon request for up to twelve months after delivery. [11]",
-      "Fees are non‑refundable after written approval unless the studio fails to deliver the Final Asset Package; delivery was performed via the secure link, so a refund is not warranted. [12][5]",
-      "We are contesting the chargeback and will re‑issue a new secure download link with the master vector files and PDF within two business days, fulfilling the contractual re‑issue obligation. [11]"
+      "The contract defines the Final Asset Package as containing master vector source files in AI, SVG and EPS formats suitable for print, signage and merchandise. [1]",
+      "Client’s written approval on June 29 triggered acceptance under the agreement. [2][3]",
+      "After payment was received, the freelancer sent a Final Asset Package email on July 1 listing both required zip files. [4]",
+      "Delivery logs show the Web & Social pack was downloaded on July 1, while the Master Vectors zip recorded zero downloads before the link expired. [5][6]",
+      "The agreement obligates the studio to re‑issue the Final Asset Package, free of charge, within two business days of a request for twelve months after delivery. [7]",
+      "Accordingly, the missing Master Vectors zip will be re‑issued via a new secure download link within the next two business days. [7]",
+      "Fees are non‑refundable after written approval of the final design, and the studio has fulfilled delivery, so no refund is owed. [8]",
+      "If the chargeback were upheld, the client would lose the transferred copyright and the right to use the assets, contrary to the IP transfer clause. [9]"
      ],
-     "clientMessage": "Hi Daniel, I’m sorry you didn’t get the master files you need. I’ve just created a new secure link that includes the AI, SVG, EPS files and the print‑ready PDF, and you’ll receive it by email within the next few hours. Please let me know as soon as you’ve downloaded them or if anything else is missing. I’m here to make sure the brand assets work for your signage and vendors.",
+     "clientMessage": "Hi Daniel, I see the master vector files you need for signage were never downloaded. I’m sending you a new secure link with the Halden_Master_Vectors_and_Copyright.zip within the next two business days. Please let me know once you’ve got them and I’ll gladly help with any questions.",
      "evidencePackage": [
       {
        "doc_id": "CONTRACT",
        "evidence_type": "COPY_OF_CONTRACT",
-       "why": "Shows contract terms for asset package contents, acceptance, non‑refund, and re‑issue obligations."
+       "why": "Shows deliverable definition, acceptance clause, non‑refund clause, and re‑issue obligation."
+      },
+      {
+       "doc_id": "EMAILS",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Email confirming delivery of both required zip files on July 1."
+      },
+      {
+       "doc_id": "DELIVERY-LOG",
+       "evidence_type": "PROOF_FOR_SOFTWARE_OR_SERVICE_DELIVERED",
+       "why": "Download logs prove web pack was accessed and master vector zip was not downloaded."
+      },
+      {
+       "doc_id": "DISPUTE",
+       "evidence_type": "ITEM_DESCRIPTION",
+       "why": "Original chargeback reason filed by the client."
       }
      ],
      "_files": [
@@ -1823,19 +2090,19 @@
        "field": "evidence-file",
        "name": "response-letter.pdf",
        "type": "application/pdf",
-       "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUiA3IDAgUl0gL0NvdW50IDIgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQzNjMgPj4Kc3RyZWFtCkJUIC9GMiAxNSBUZiA1NiA3MzYgVGQgKFJlc3BvbnNlIHRvIENoYXJnZWJhY2sgLSBSZS1pc3N1ZSBvZiBGaW5hbCBBc3NldCBQYWNrYWdlKSBUaiBFVApCVCAvRjEgMTAgVGYgNTYgNzEzIFRkIChEaXNwdXRlIFBQLUQtMjcxNDAtSEFMREVOIC0gTm90IGFzIGRlc2NyaWJlZCAtIDI0MDAuMDAgVVNEKSBUaiBFVApCVCAvRjEgMTAgVGYgNTYgNjk5IFRkIChTdWJtaXR0ZWQgYnkgUHJpeWEgUmFtYW4sIFByaXlhIFJhbWFuIERlc2lnbiBcKGhlbGxvQHByaXlhcmFtYW4uZGVzaWduXCkpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA2NzcgVGQgKFRoZSBBZ3JlZW1lbnQgZGVmaW5lcyB0aGUgRmluYWwgQXNzZXQgUGFja2FnZSB0byBpbmNsdWRlIG1hc3RlciB2ZWN0b3Igc291cmNlIGZpbGVzIGFuZCBhKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjYyIFRkIChwcmludC1yZWFkeSBQREYuIFsxXSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDYzOSBUZCAoVGhlIGNsaWVudCBnYXZlIHdyaXR0ZW4gYXBwcm92YWwgb2YgdGhlIGZpbmFsIGRlc2lnbiBvbiBKdW5lIDI5LCB3aGljaCBtZWV0cyB0aGUpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA2MjQgVGQgKGFjY2VwdGFuY2UgY29uZGl0aW9uIGluIHRoZSBjb250cmFjdC4gWzJdWzNdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjAxIFRkIChPbiBKdWx5IDEsIFByaXlhIHNlbnQgYSBzZWN1cmUgZG93bmxvYWQgbGluayBjb250YWluaW5nIGJvdGggdGhlIFdlYiAmIFNvY2lhbCBwYWNrIGFuZCB0aGUpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1ODYgVGQgKE1hc3RlciBWZWN0b3JzIHppcCwgd2l0aCBhIDMwLWRheSBleHBpcmF0aW9uIGFzIHN0aXB1bGF0ZWQuIFs0XVs1XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU2MyBUZCAoRG93bmxvYWQgcmVjb3JkcyBzaG93IHRoZSBXZWIgJiBTb2NpYWwgcGFjayB3YXMgZG93bmxvYWRlZCBvbiBKdWx5IDEgYW5kIEp1bHkgOSwgYnV0IHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDU0OCBUZCAoTWFzdGVyIFZlY3RvcnMgemlwIHJlY29yZGVkIHplcm8gZG93bmxvYWRzIGJlZm9yZSB0aGUgbGluayBleHBpcmVkLiBbNl1bN11bOF1bOV0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1MjUgVGQgKEJlY2F1c2UgdGhlIG1hc3RlciB2ZWN0b3IgZmlsZXMgd2VyZSBuZXZlciBhY2Nlc3NlZCwgdGhlIGNsaWVudCBjb3VsZCBub3QgdXNlIHRoZSBicmFuZCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDUxMCBUZCAoYXNzZXRzIGZvciBwcmludCBhbmQgc2lnbmFnZSwgd2hpY2ggaXMgdGhlIGFjdHVhbCBwcm9ibGVtIHJlcG9ydGVkLiBbMTBdWzhdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDg3IFRkIChUaGUgY29udHJhY3Qgb2JsaWdhdGVzIHRoZSBzdHVkaW8gdG8gcmUtaXNzdWUgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2UgYXQgbm8gY2hhcmdlIHdpdGhpbikgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQ3MiBUZCAodHdvIGJ1c2luZXNzIGRheXMgdXBvbiByZXF1ZXN0IGZvciB1cCB0byB0d2VsdmUgbW9udGhzIGFmdGVyIGRlbGl2ZXJ5LiBbMTFdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDQ5IFRkIChGZWVzIGFyZSBub24tcmVmdW5kYWJsZSBhZnRlciB3cml0dGVuIGFwcHJvdmFsIHVubGVzcyB0aGUgc3R1ZGlvIGZhaWxzIHRvIGRlbGl2ZXIgdGhlKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDM0IFRkIChGaW5hbCBBc3NldCBQYWNrYWdlOyBkZWxpdmVyeSB3YXMgcGVyZm9ybWVkIHZpYSB0aGUgc2VjdXJlIGxpbmssIHNvIGEgcmVmdW5kIGlzIG5vdCkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQxOSBUZCAod2FycmFudGVkLiBbMTJdWzVdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgMzk2IFRkIChXZSBhcmUgY29udGVzdGluZyB0aGUgY2hhcmdlYmFjayBhbmQgd2lsbCByZS1pc3N1ZSBhIG5ldyBzZWN1cmUgZG93bmxvYWQgbGluayB3aXRoIHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDM4MSBUZCAobWFzdGVyIHZlY3RvciBmaWxlcyBhbmQgUERGIHdpdGhpbiB0d28gYnVzaW5lc3MgZGF5cywgZnVsZmlsbGluZyB0aGUgY29udHJhY3R1YWwgcmUtaXNzdWUpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiAzNjYgVGQgKG9ibGlnYXRpb24uIFsxMV0pIFRqIEVUCkJUIC9GMiAxMiBUZiA1NiAzMzUgVGQgKFNvdXJjZXMpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDMxNiBUZCAoWzFdIEJyYW5kIElkZW50aXR5IFNlcnZpY2VzIEFncmVlbWVudCBcKHNpZ25lZCBieSBib3RoIHBhcnRpZXNcKSwgpzMuMiBcKFNpZ25lZCBQREYsIGZyZWVsYW5jZXIncyBmaWxlc1wpOiAiRmluYWwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDMwMiBUZCAoQXNzZXQgUGFja2FnZTogT24gY29tcGxldGlvbiBTdHVkaW8gZGVsaXZlcnMgYSBGaW5hbCBBc3NldCBQYWNrYWdlIGNvbnRhaW5pbmc6IFwoYVwpIGEgV2ViICYgU29jaWFsIHBhY2sgb2YgUE5HKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyODggVGQgKGFuZCBKUEcgZmlsZXM7IFwoYlwpIG1hc3RlciB2ZWN0b3Igc291cmNlIGZpbGVzIGluIEFJLCBTVkcgYW5kIEVQUyBmb3JtYXRzIHN1aXRhYmxlIGZvciBwcmludCwgc2lnbmFnZSBhbmQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI3NCBUZCAobWVyY2hhbmRpc2U7IFwoY1wpIGEgcHJpbnQtcmVhZHkgUERGIGJyYW5kIGd1aWRlOyBhbmQgXChkXCkgYSBzaWduZWQgQXNzaWdubWVudCBvZiBDb3B5cmlnaHQgbGV0dGVyLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI1NyBUZCAoWzJdIEVtYWlsIHRocmVhZDogUHJpeWEgPC0+IERhbmllbCwgRTQgXChGcmVlbGFuY2VyJ3MgR21haWwgZXhwb3J0XCk6ICJBcHByb3ZhbDogVGhpcyBpcyBpdC4gSG9uZXN0bHkgYmV0dGVyIHRoYW4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI0MyBUZCAoSSBpbWFnaW5lZC4gQXBwcm92ZWQsIGxldCdzIG1ha2UgaXQgb2ZmaWNpYWwuIFNlbmQgb3ZlciB0aGUgaW52b2ljZSBhbmQgdGhlIGZpbmFsIGZpbGVzISIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDIyNiBUZCAoWzNdIEJyYW5kIElkZW50aXR5IFNlcnZpY2VzIEFncmVlbWVudCBcKHNpZ25lZCBieSBib3RoIHBhcnRpZXNcKSwgpzUuMSBcKFNpZ25lZCBQREYsIGZyZWVsYW5jZXIncyBmaWxlc1wpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjEyIFRkICgiQWNjZXB0YW5jZTogQ2xpZW50J3Mgd3JpdHRlbiBhcHByb3ZhbCBvZiB0aGUgZmluYWwgZGVzaWduIFwoZW1haWwgaXMgc3VmZmljaWVudFwpIGNvbnN0aXR1dGVzIGFjY2VwdGFuY2Ugb2YgdGhlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxOTggVGQgKGRlc2lnbiB3b3JrLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE4MSBUZCAoWzRdIEVtYWlsIHRocmVhZDogUHJpeWEgPC0+IERhbmllbCwgRTYgXChGcmVlbGFuY2VyJ3MgR21haWwgZXhwb3J0XCk6ICJZb3VyIEZpbmFsIEFzc2V0IFBhY2thZ2UgaXMgcmVhZHkgYXMgdHdvKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNjcgVGQgKGRvd25sb2FkczogXCgxXCkgSGFsZGVuX1dlYl9Tb2NpYWxfUGFjay56aXAgZm9yIHlvdXIgd2Vic2l0ZSwgSW5zdGFncmFtIGFuZCBtZW51cywgYW5kIFwoMlwpKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNTMgVGQgKEhhbGRlbl9NYXN0ZXJfVmVjdG9yc19hbmRfQ29weXJpZ2h0LnppcCB3aXRoIHRoZSBBSS9TVkcvRVBTIG1hc3RlciBmaWxlcyBmb3IgcHJpbnRlcnMsIHNpZ24gbWFrZXJzIGFuZCBtZXJjaCwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDEzOSBUZCAodGhlIHByaW50IGJyYW5kIGd1aWRlLCBhbmQgeW91ciBzaWduZWQgQXNzaWdubWVudCBvZiBDb3B5cmlnaHQuIFBsZWFzZSBkb3dubG9hZCBib3RoLiBMaW5rcyBzdGF5IGFjdGl2ZSBmb3IgMzApIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDEyNSBUZCAoZGF5cy4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMDggVGQgKFs1XSBGaWxlIHRyYW5zZmVyIGFjY2VzcyBsb2cgXChzZWN1cmUgZG93bmxvYWQgc2VydmljZVwpLCBMMSBcKEV4cG9ydCBmcm9tIGZyZWVsYW5jZXIncyBmaWxlLXRyYW5zZmVyIHNlcnZpY2VcKTopIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDk0IFRkICgiVHJhbnNmZXIgY3JlYXRlZDogMjAyNi0wNy0wMSAxNjo1OCBVVEMgLSBUcmFuc2ZlciAjVFItODgyMTMgY3JlYXRlZCBieSBoZWxsb0Bwcml5YXJhbWFuLmRlc2lnbi4gUmVjaXBpZW50OikgVGogRVQKQlQgL0YxIDkgVGYgNTYgODAgVGQgKGRhbmllbEBoYWxkZW5jb2ZmZWUuY29tLiBGaWxlczogSGFsZGVuX1dlYl9Tb2NpYWxfUGFjay56aXAgXCg0OCBNQlwpLCBIYWxkZW5fTWFzdGVyX1ZlY3RvcnNfYW5kX0NvcHlyaWdodC56aXApIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY2IFRkIChcKDIxMiBNQlwpLiBFeHBpcnk6IDIwMjYtMDctMzEuIikgVGogRVQKZW5kc3RyZWFtCmVuZG9iago3IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA4IDAgUiA+PgplbmRvYmoKOCAwIG9iago8PCAvTGVuZ3RoIDI0MDEgPj4Kc3RyZWFtCkJUIC9GMSA5IFRmIDU2IDczNiBUZCAoWzZdIEZpbGUgdHJhbnNmZXIgYWNjZXNzIGxvZyBcKHNlY3VyZSBkb3dubG9hZCBzZXJ2aWNlXCksIEwzIFwoRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzIGZpbGUtdHJhbnNmZXIgc2VydmljZVwpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNzIyIFRkICgiRG93bmxvYWQ6IDIwMjYtMDctMDEgMTc6MDYgVVRDIC0gSGFsZGVuX1dlYl9Tb2NpYWxfUGFjay56aXAgZG93bmxvYWRlZCBieSByZWNpcGllbnQgXChJUCByZWdpb246IFBvcnRsYW5kLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNzA4IFRkIChPUlwpLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY5MSBUZCAoWzddIEZpbGUgdHJhbnNmZXIgYWNjZXNzIGxvZyBcKHNlY3VyZSBkb3dubG9hZCBzZXJ2aWNlXCksIEw0IFwoRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzIGZpbGUtdHJhbnNmZXIgc2VydmljZVwpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjc3IFRkICgiRG93bmxvYWQ6IDIwMjYtMDctMDkgMTQ6MjEgVVRDIC0gSGFsZGVuX1dlYl9Tb2NpYWxfUGFjay56aXAgZG93bmxvYWRlZCBieSByZWNpcGllbnQgXChJUCByZWdpb246IFBvcnRsYW5kLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjYzIFRkIChPUlwpLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0NiBUZCAoWzhdIEZpbGUgdHJhbnNmZXIgYWNjZXNzIGxvZyBcKHNlY3VyZSBkb3dubG9hZCBzZXJ2aWNlXCksIEw1IFwoRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzIGZpbGUtdHJhbnNmZXIgc2VydmljZVwpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjMyIFRkICgiTm8gYWN0aXZpdHk6IEhhbGRlbl9NYXN0ZXJfVmVjdG9yc19hbmRfQ29weXJpZ2h0LnppcCAtIDAgZG93bmxvYWRzIGR1cmluZyB0aGUgbGlmZSBvZiB0aGUgdHJhbnNmZXIuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjE1IFRkIChbOV0gRmlsZSB0cmFuc2ZlciBhY2Nlc3MgbG9nIFwoc2VjdXJlIGRvd25sb2FkIHNlcnZpY2VcKSwgTDYgXChFeHBvcnQgZnJvbSBmcmVlbGFuY2VyJ3MgZmlsZS10cmFuc2ZlciBzZXJ2aWNlXCk6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MDEgVGQgKCJUcmFuc2ZlciBleHBpcmVkOiAyMDI2LTA3LTMxIDAwOjAwIFVUQyAtIFRyYW5zZmVyICNUUi04ODIxMyBleHBpcmVkLiBGaWxlcyBubyBsb25nZXIgZG93bmxvYWRhYmxlIGZyb20gdGhpcykgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTg3IFRkIChsaW5rLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU3MCBUZCAoWzEwXSBXZWJzaXRlIGNvbnRhY3QgZm9ybTogc3VibWlzc2lvbnMgYW5kIHNldHRpbmdzLCBGMSBcKEV4cG9ydCBmcm9tIGZyZWVsYW5jZXIncyB3ZWJzaXRlIGJ1aWxkZXJcKTogIkhpIFByaXlhLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTU2IFRkICh0aGUgc2lnbiBjb21wYW55IGRvaW5nIG91ciBFbG0gU3Qgc3RvcmVmcm9udCBzYXlzIHRoZSBsb2dvIGZpbGVzIHdlIGhhdmUgYXJlIG9ubHkgZ29vZCBmb3Igc2NyZWVucy4gVGhleSBuZWVkKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1NDIgVGQgKHRoZSAncmVhbCcgbG9nbyB0byBjdXQgdGhlIHNpZ24gYW5kIHRoZXkgY2FuJ3QgZG8gYW55dGhpbmcgd2l0aCB3aGF0IHdlIHNlbnQgdGhlbS4gT3BlbmluZyBpcyBPY3QgMTUuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTI1IFRkIChbMTFdIEJyYW5kIElkZW50aXR5IFNlcnZpY2VzIEFncmVlbWVudCBcKHNpZ25lZCBieSBib3RoIHBhcnRpZXNcKSwgpzcuMiBcKFNpZ25lZCBQREYsIGZyZWVsYW5jZXIncyBmaWxlc1wpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTExIFRkICgiUmUtaXNzdWU6IEZvciAxMiBtb250aHMgYWZ0ZXIgZGVsaXZlcnksIFN0dWRpbyB3aWxsIHJlLWlzc3VlIHRoZSBGaW5hbCBBc3NldCBQYWNrYWdlIG9uIHJlcXVlc3QgYXQgbm8gY2hhcmdlLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDk3IFRkICh3aXRoaW4gMiBidXNpbmVzcyBkYXlzIG9mIHRoZSByZXF1ZXN0LiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ4MCBUZCAoWzEyXSBCcmFuZCBJZGVudGl0eSBTZXJ2aWNlcyBBZ3JlZW1lbnQgXChzaWduZWQgYnkgYm90aCBwYXJ0aWVzXCksIKc4IFwoU2lnbmVkIFBERiwgZnJlZWxhbmNlcidzIGZpbGVzXCk6ICJGZWVzIGFuZCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDY2IFRkIChyZWZ1bmRzOiBUb3RhbCBmZWU6ICQyLDQwMCwgaW52b2ljZWQgb24gYXBwcm92YWwgb2YgdGhlIGZpbmFsIGRlc2lnbi4gRmVlcyBhcmUgbm9uLXJlZnVuZGFibGUgYWZ0ZXIgd3JpdHRlbikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDUyIFRkIChhcHByb3ZhbCBvZiB0aGUgZmluYWwgZGVzaWduLCBleGNlcHQgd2hlcmUgU3R1ZGlvIGZhaWxzIHRvIGRlbGl2ZXIgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2UuIikgVGogRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTIxIDAwMDAwIG4gCjAwMDAwMDAyMTggMDAwMDAgbiAKMDAwMDAwMDMyMCAwMDAwMCBuIAowMDAwMDAwNDU2IDAwMDAwIG4gCjAwMDAwMDQ4NzEgMDAwMDAgbiAKMDAwMDAwNTAwNyAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDkgL1Jvb3QgMSAwIFIgPj4Kc3RhcnR4cmVmCjc0NjAKJSVFT0YK"
+       "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUiA3IDAgUl0gL0NvdW50IDIgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQzNzQgPj4Kc3RyZWFtCkJUIC9GMiAxNSBUZiA1NiA3MzYgVGQgKFJlc3BvbnNlIHRvIENoYXJnZWJhY2sgLSBEZWxpdmVyeSBGdWxmaWxsZWQgYW5kIFJlLWlzc3VlIE9mZmVyZWQpIFRqIEVUCkJUIC9GMSAxMCBUZiA1NiA3MTMgVGQgKERpc3B1dGUgUFAtRC0yNzE0MC1IQUxERU4gLSBOb3QgYXMgZGVzY3JpYmVkIC0gMjQwMC4wMCBVU0QpIFRqIEVUCkJUIC9GMSAxMCBUZiA1NiA2OTkgVGQgKFN1Ym1pdHRlZCBieSBQcml5YSBSYW1hbiwgUHJpeWEgUmFtYW4gRGVzaWduIFwoaGVsbG9AcHJpeWFyYW1hbi5kZXNpZ25cKSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDY3NyBUZCAoVGhlIGNvbnRyYWN0IGRlZmluZXMgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2UgYXMgY29udGFpbmluZyBtYXN0ZXIgdmVjdG9yIHNvdXJjZSBmaWxlcyBpbikgVGogRVQKQlQgL0YxIDExIFRmIDU2IDY2MiBUZCAoQUksIFNWRyBhbmQgRVBTIGZvcm1hdHMgc3VpdGFibGUgZm9yIHByaW50LCBzaWduYWdlIGFuZCBtZXJjaGFuZGlzZS4gWzFdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjM5IFRkIChDbGllbnQncyB3cml0dGVuIGFwcHJvdmFsIG9uIEp1bmUgMjkgdHJpZ2dlcmVkIGFjY2VwdGFuY2UgdW5kZXIgdGhlIGFncmVlbWVudC4gWzJdWzNdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjE2IFRkIChBZnRlciBwYXltZW50IHdhcyByZWNlaXZlZCwgdGhlIGZyZWVsYW5jZXIgc2VudCBhIEZpbmFsIEFzc2V0IFBhY2thZ2UgZW1haWwgb24gSnVseSAxKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNjAxIFRkIChsaXN0aW5nIGJvdGggcmVxdWlyZWQgemlwIGZpbGVzLiBbNF0pIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1NzggVGQgKERlbGl2ZXJ5IGxvZ3Mgc2hvdyB0aGUgV2ViICYgU29jaWFsIHBhY2sgd2FzIGRvd25sb2FkZWQgb24gSnVseSAxLCB3aGlsZSB0aGUgTWFzdGVyKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNTYzIFRkIChWZWN0b3JzIHppcCByZWNvcmRlZCB6ZXJvIGRvd25sb2FkcyBiZWZvcmUgdGhlIGxpbmsgZXhwaXJlZC4gWzVdWzZdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNTQwIFRkIChUaGUgYWdyZWVtZW50IG9ibGlnYXRlcyB0aGUgc3R1ZGlvIHRvIHJlLWlzc3VlIHRoZSBGaW5hbCBBc3NldCBQYWNrYWdlLCBmcmVlIG9mIGNoYXJnZSwpIFRqIEVUCkJUIC9GMSAxMSBUZiA1NiA1MjUgVGQgKHdpdGhpbiB0d28gYnVzaW5lc3MgZGF5cyBvZiBhIHJlcXVlc3QgZm9yIHR3ZWx2ZSBtb250aHMgYWZ0ZXIgZGVsaXZlcnkuIFs3XSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDUwMiBUZCAoQWNjb3JkaW5nbHksIHRoZSBtaXNzaW5nIE1hc3RlciBWZWN0b3JzIHppcCB3aWxsIGJlIHJlLWlzc3VlZCB2aWEgYSBuZXcgc2VjdXJlIGRvd25sb2FkKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDg3IFRkIChsaW5rIHdpdGhpbiB0aGUgbmV4dCB0d28gYnVzaW5lc3MgZGF5cy4gWzddKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDY0IFRkIChGZWVzIGFyZSBub24tcmVmdW5kYWJsZSBhZnRlciB3cml0dGVuIGFwcHJvdmFsIG9mIHRoZSBmaW5hbCBkZXNpZ24sIGFuZCB0aGUgc3R1ZGlvIGhhcykgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQ0OSBUZCAoZnVsZmlsbGVkIGRlbGl2ZXJ5LCBzbyBubyByZWZ1bmQgaXMgb3dlZC4gWzhdKSBUaiBFVApCVCAvRjEgMTEgVGYgNTYgNDI2IFRkIChJZiB0aGUgY2hhcmdlYmFjayB3ZXJlIHVwaGVsZCwgdGhlIGNsaWVudCB3b3VsZCBsb3NlIHRoZSB0cmFuc2ZlcnJlZCBjb3B5cmlnaHQgYW5kIHRoZSkgVGogRVQKQlQgL0YxIDExIFRmIDU2IDQxMSBUZCAocmlnaHQgdG8gdXNlIHRoZSBhc3NldHMsIGNvbnRyYXJ5IHRvIHRoZSBJUCB0cmFuc2ZlciBjbGF1c2UuIFs5XSkgVGogRVQKQlQgL0YyIDEyIFRmIDU2IDM4MCBUZCAoU291cmNlcykgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzYxIFRkIChbMV0gQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpLCCnMy4yIFwoU2lnbmVkIFBERiwgZnJlZWxhbmNlcidzIGZpbGVzXCk6ICJGaW5hbCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzQ3IFRkIChBc3NldCBQYWNrYWdlOiBPbiBjb21wbGV0aW9uIFN0dWRpbyBkZWxpdmVycyBhIEZpbmFsIEFzc2V0IFBhY2thZ2UgY29udGFpbmluZzogXChhXCkgYSBXZWIgJiBTb2NpYWwgcGFjayBvZiBQTkcpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDMzMyBUZCAoYW5kIEpQRyBmaWxlczsgXChiXCkgbWFzdGVyIHZlY3RvciBzb3VyY2UgZmlsZXMgaW4gQUksIFNWRyBhbmQgRVBTIGZvcm1hdHMgc3VpdGFibGUgZm9yIHByaW50LCBzaWduYWdlIGFuZCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzE5IFRkIChtZXJjaGFuZGlzZTsgXChjXCkgYSBwcmludC1yZWFkeSBQREYgYnJhbmQgZ3VpZGU7IGFuZCBcKGRcKSBhIHNpZ25lZCBBc3NpZ25tZW50IG9mIENvcHlyaWdodCBsZXR0ZXIuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzAyIFRkIChbMl0gQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpLCCnNS4xIFwoU2lnbmVkIFBERiwgZnJlZWxhbmNlcidzIGZpbGVzXCk6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyODggVGQgKCJBY2NlcHRhbmNlOiBDbGllbnQncyB3cml0dGVuIGFwcHJvdmFsIG9mIHRoZSBmaW5hbCBkZXNpZ24gXChlbWFpbCBpcyBzdWZmaWNpZW50XCkgY29uc3RpdHV0ZXMgYWNjZXB0YW5jZSBvZiB0aGUpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI3NCBUZCAoZGVzaWduIHdvcmsuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjU3IFRkIChbM10gRW1haWwgdGhyZWFkOiBQcml5YSA8LT4gRGFuaWVsLCBFNCBcKEZyZWVsYW5jZXIncyBHbWFpbCBleHBvcnRcKTogIkp1biAyOSAtIERhbmllbCB0byBQcml5YTogQXBwcm92YWw6IFRoaXMpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDI0MyBUZCAoaXMgaXQuIEhvbmVzdGx5IGJldHRlciB0aGFuIEkgaW1hZ2luZWQuIEFwcHJvdmVkLCBsZXQncyBtYWtlIGl0IG9mZmljaWFsLiBTZW5kIG92ZXIgdGhlIGludm9pY2UgYW5kIHRoZSBmaW5hbCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjI5IFRkIChmaWxlcyEiKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyMTIgVGQgKFs0XSBFbWFpbCB0aHJlYWQ6IFByaXlhIDwtPiBEYW5pZWwsIEU2IFwoRnJlZWxhbmNlcidzIEdtYWlsIGV4cG9ydFwpOiAiSnVsIDEgLSBQcml5YSB0byBEYW5pZWw6IEZpbmFsIEFzc2V0KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxOTggVGQgKFBhY2thZ2U6IFBheW1lbnQgcmVjZWl2ZWQsIHRoYW5rIHlvdSEgWW91ciBGaW5hbCBBc3NldCBQYWNrYWdlIGlzIHJlYWR5IGFzIHR3byBkb3dubG9hZHM6IFwoMVwpKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxODQgVGQgKEhhbGRlbl9XZWJfU29jaWFsX1BhY2suemlwIGZvciB5b3VyIHdlYnNpdGUsIEluc3RhZ3JhbSBhbmQgbWVudXMsIGFuZCBcKDJcKSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTcwIFRkIChIYWxkZW5fTWFzdGVyX1ZlY3RvcnNfYW5kX0NvcHlyaWdodC56aXAgd2l0aCB0aGUgQUkvU1ZHL0VQUyBtYXN0ZXIgZmlsZXMgZm9yIHByaW50ZXJzLCBzaWduIG1ha2VycyBhbmQgbWVyY2gsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNTYgVGQgKHRoZSBwcmludCBicmFuZCBndWlkZSwgYW5kIHlvdXIgc2lnbmVkIEFzc2lnbm1lbnQgb2YgQ29weXJpZ2h0LiBQbGVhc2UgZG93bmxvYWQgYm90aC4gTGlua3Mgc3RheSBhY3RpdmUgZm9yIDMwKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxNDIgVGQgKGRheXMuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMTI1IFRkIChbNV0gRmlsZSB0cmFuc2ZlciBhY2Nlc3MgbG9nIFwoc2VjdXJlIGRvd25sb2FkIHNlcnZpY2VcKSwgTDMgXChFeHBvcnQgZnJvbSBmcmVlbGFuY2VyJ3MgZmlsZS10cmFuc2ZlciBzZXJ2aWNlXCk6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMTEgVGQgKCJEb3dubG9hZDogMjAyNi0wNy0wMSAxNzowNiBVVEMgLSBIYWxkZW5fV2ViX1NvY2lhbF9QYWNrLnppcCBkb3dubG9hZGVkIGJ5IHJlY2lwaWVudCBcKElQIHJlZ2lvbjogUG9ydGxhbmQsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA5NyBUZCAoT1JcKS4iKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA4MCBUZCAoWzZdIEZpbGUgdHJhbnNmZXIgYWNjZXNzIGxvZyBcKHNlY3VyZSBkb3dubG9hZCBzZXJ2aWNlXCksIEw1IFwoRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzIGZpbGUtdHJhbnNmZXIgc2VydmljZVwpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjYgVGQgKCJObyBhY3Rpdml0eTogSGFsZGVuX01hc3Rlcl9WZWN0b3JzX2FuZF9Db3B5cmlnaHQuemlwIC0gMCBkb3dubG9hZHMgZHVyaW5nIHRoZSBsaWZlIG9mIHRoZSB0cmFuc2Zlci4iKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCjcgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSAzIDAgUiAvRjIgNCAwIFIgPj4gPj4gL0NvbnRlbnRzIDggMCBSID4+CmVuZG9iago4IDAgb2JqCjw8IC9MZW5ndGggMTE2MiA+PgpzdHJlYW0KQlQgL0YxIDkgVGYgNTYgNzM2IFRkIChbN10gQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpLCCnNy4yIFwoU2lnbmVkIFBERiwgZnJlZWxhbmNlcidzIGZpbGVzXCk6KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA3MjIgVGQgKCJSZS1pc3N1ZTogRm9yIDEyIG1vbnRocyBhZnRlciBkZWxpdmVyeSwgU3R1ZGlvIHdpbGwgcmUtaXNzdWUgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2Ugb24gcmVxdWVzdCBhdCBubyBjaGFyZ2UsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA3MDggVGQgKHdpdGhpbiAyIGJ1c2luZXNzIGRheXMgb2YgdGhlIHJlcXVlc3QuIikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjkxIFRkIChbOF0gQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpLCCnOCBcKFNpZ25lZCBQREYsIGZyZWVsYW5jZXIncyBmaWxlc1wpOiAiRmVlcyBhbmQpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY3NyBUZCAocmVmdW5kczogVG90YWwgZmVlOiAkMiw0MDAsIGludm9pY2VkIG9uIGFwcHJvdmFsIG9mIHRoZSBmaW5hbCBkZXNpZ24uIEZlZXMgYXJlIG5vbi1yZWZ1bmRhYmxlIGFmdGVyIHdyaXR0ZW4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY2MyBUZCAoYXBwcm92YWwgb2YgdGhlIGZpbmFsIGRlc2lnbiwgZXhjZXB0IHdoZXJlIFN0dWRpbyBmYWlscyB0byBkZWxpdmVyIHRoZSBGaW5hbCBBc3NldCBQYWNrYWdlLiIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0NiBUZCAoWzldIEJyYW5kIElkZW50aXR5IFNlcnZpY2VzIEFncmVlbWVudCBcKHNpZ25lZCBieSBib3RoIHBhcnRpZXNcKSwgpzYuMSBcKFNpZ25lZCBQREYsIGZyZWVsYW5jZXIncyBmaWxlc1wpOikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjMyIFRkICgiSW50ZWxsZWN0dWFsIHByb3BlcnR5OiBDb3B5cmlnaHQgaW4gdGhlIGZpbmFsIHNlbGVjdGVkIGRlc2lnbnMgdHJhbnNmZXJzIGZyb20gU3R1ZGlvIHRvIENsaWVudCB1cG9uIFN0dWRpbydzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTggVGQgKHJlY2VpcHQgb2YgZnVsbCBwYXltZW50LiBVbnRpbCBmdWxsIHBheW1lbnQgaXMgcmVjZWl2ZWQgYW5kIHJldGFpbmVkLCBhbGwgcmlnaHRzIHJlbWFpbiB3aXRoIFN0dWRpby4iKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMjEgMDAwMDAgbiAKMDAwMDAwMDIxOCAwMDAwMCBuIAowMDAwMDAwMzIwIDAwMDAwIG4gCjAwMDAwMDA0NTYgMDAwMDAgbiAKMDAwMDAwNDg4MiAwMDAwMCBuIAowMDAwMDA1MDE4IDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgOSAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNjIzMgolJUVPRgo="
       },
       {
        "field": "evidence-file",
        "name": "evidence-appendix.pdf",
        "type": "application/pdf",
-       "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDQxNDQgPj4Kc3RyZWFtCkJUIC9GMiAxNCBUZiA1NiA3MzYgVGQgKEV2aWRlbmNlIGFwcGVuZGl4OiBmdWxsIHRleHQgb2YgZXZlcnkgY2l0ZWQgc2VjdGlvbikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDcwNiBUZCAoQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpIC0gc291cmNlOiBTaWduZWQgUERGLCkgVGogRVQKQlQgL0YyIDExIFRmIDU2IDY5MSBUZCAoZnJlZWxhbmNlcidzIGZpbGVzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NzMgVGQgKKczLjIgRmluYWwgQXNzZXQgUGFja2FnZTogT24gY29tcGxldGlvbiBTdHVkaW8gZGVsaXZlcnMgYSBGaW5hbCBBc3NldCBQYWNrYWdlIGNvbnRhaW5pbmc6IFwoYVwpIGEgV2ViICYgU29jaWFsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NTkgVGQgKHBhY2sgb2YgUE5HIGFuZCBKUEcgZmlsZXM7IFwoYlwpIG1hc3RlciB2ZWN0b3Igc291cmNlIGZpbGVzIGluIEFJLCBTVkcgYW5kIEVQUyBmb3JtYXRzIHN1aXRhYmxlIGZvciBwcmludCwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0NSBUZCAoc2lnbmFnZSBhbmQgbWVyY2hhbmRpc2U7IFwoY1wpIGEgcHJpbnQtcmVhZHkgUERGIGJyYW5kIGd1aWRlOyBhbmQgXChkXCkgYSBzaWduZWQgQXNzaWdubWVudCBvZiBDb3B5cmlnaHQgbGV0dGVyLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjI4IFRkICinNS4xIEFjY2VwdGFuY2U6IENsaWVudCdzIHdyaXR0ZW4gYXBwcm92YWwgb2YgdGhlIGZpbmFsIGRlc2lnbiBcKGVtYWlsIGlzIHN1ZmZpY2llbnRcKSBjb25zdGl0dXRlcyBhY2NlcHRhbmNlIG9mKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTQgVGQgKHRoZSBkZXNpZ24gd29yay4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU5NyBUZCAopzcuMiBSZS1pc3N1ZTogRm9yIDEyIG1vbnRocyBhZnRlciBkZWxpdmVyeSwgU3R1ZGlvIHdpbGwgcmUtaXNzdWUgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2Ugb24gcmVxdWVzdCBhdCBubykgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTgzIFRkIChjaGFyZ2UsIHdpdGhpbiAyIGJ1c2luZXNzIGRheXMgb2YgdGhlIHJlcXVlc3QuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1NjYgVGQgKKc4IEZlZXMgYW5kIHJlZnVuZHM6IFRvdGFsIGZlZTogJDIsNDAwLCBpbnZvaWNlZCBvbiBhcHByb3ZhbCBvZiB0aGUgZmluYWwgZGVzaWduLiBGZWVzIGFyZSBub24tcmVmdW5kYWJsZSBhZnRlcikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTUyIFRkICh3cml0dGVuIGFwcHJvdmFsIG9mIHRoZSBmaW5hbCBkZXNpZ24sIGV4Y2VwdCB3aGVyZSBTdHVkaW8gZmFpbHMgdG8gZGVsaXZlciB0aGUgRmluYWwgQXNzZXQgUGFja2FnZS4pIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiA1MjYgVGQgKEVtYWlsIHRocmVhZDogUHJpeWEgPC0+IERhbmllbCAtIHNvdXJjZTogRnJlZWxhbmNlcidzIEdtYWlsIGV4cG9ydCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTA4IFRkIChFNCBKdW4gMjkgLSBEYW5pZWwgdG8gUHJpeWE6IEFwcHJvdmFsOiBUaGlzIGlzIGl0LiBIb25lc3RseSBiZXR0ZXIgdGhhbiBJIGltYWdpbmVkLiBBcHByb3ZlZCwgbGV0J3MgbWFrZSBpdCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDk0IFRkIChvZmZpY2lhbC4gU2VuZCBvdmVyIHRoZSBpbnZvaWNlIGFuZCB0aGUgZmluYWwgZmlsZXMhKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NzcgVGQgKEU2IEp1bCAxIC0gUHJpeWEgdG8gRGFuaWVsOiBGaW5hbCBBc3NldCBQYWNrYWdlOiBQYXltZW50IHJlY2VpdmVkLCB0aGFuayB5b3UhIFlvdXIgRmluYWwgQXNzZXQgUGFja2FnZSBpcyByZWFkeSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDYzIFRkIChhcyB0d28gZG93bmxvYWRzOiBcKDFcKSBIYWxkZW5fV2ViX1NvY2lhbF9QYWNrLnppcCBmb3IgeW91ciB3ZWJzaXRlLCBJbnN0YWdyYW0gYW5kIG1lbnVzLCBhbmQgXCgyXCkpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ0OSBUZCAoSGFsZGVuX01hc3Rlcl9WZWN0b3JzX2FuZF9Db3B5cmlnaHQuemlwIHdpdGggdGhlIEFJL1NWRy9FUFMgbWFzdGVyIGZpbGVzIGZvciBwcmludGVycywgc2lnbiBtYWtlcnMgYW5kIG1lcmNoLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDM1IFRkICh0aGUgcHJpbnQgYnJhbmQgZ3VpZGUsIGFuZCB5b3VyIHNpZ25lZCBBc3NpZ25tZW50IG9mIENvcHlyaWdodC4gUGxlYXNlIGRvd25sb2FkIGJvdGguIExpbmtzIHN0YXkgYWN0aXZlIGZvciAzMCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDIxIFRkIChkYXlzLikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDM5NSBUZCAoRmlsZSB0cmFuc2ZlciBhY2Nlc3MgbG9nIFwoc2VjdXJlIGRvd25sb2FkIHNlcnZpY2VcKSAtIHNvdXJjZTogRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgMzgwIFRkIChmaWxlLXRyYW5zZmVyIHNlcnZpY2UpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDM2MiBUZCAoTDEgVHJhbnNmZXIgY3JlYXRlZDogMjAyNi0wNy0wMSAxNjo1OCBVVEMgLSBUcmFuc2ZlciAjVFItODgyMTMgY3JlYXRlZCBieSBoZWxsb0Bwcml5YXJhbWFuLmRlc2lnbi4gUmVjaXBpZW50OikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzQ4IFRkIChkYW5pZWxAaGFsZGVuY29mZmVlLmNvbS4gRmlsZXM6IEhhbGRlbl9XZWJfU29jaWFsX1BhY2suemlwIFwoNDggTUJcKSwgSGFsZGVuX01hc3Rlcl9WZWN0b3JzX2FuZF9Db3B5cmlnaHQuemlwKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMzQgVGQgKFwoMjEyIE1CXCkuIEV4cGlyeTogMjAyNi0wNy0zMS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDMxNyBUZCAoTDMgRG93bmxvYWQ6IDIwMjYtMDctMDEgMTc6MDYgVVRDIC0gSGFsZGVuX1dlYl9Tb2NpYWxfUGFjay56aXAgZG93bmxvYWRlZCBieSByZWNpcGllbnQgXChJUCByZWdpb246IFBvcnRsYW5kLCkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzAzIFRkIChPUlwpLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjg2IFRkIChMNCBEb3dubG9hZDogMjAyNi0wNy0wOSAxNDoyMSBVVEMgLSBIYWxkZW5fV2ViX1NvY2lhbF9QYWNrLnppcCBkb3dubG9hZGVkIGJ5IHJlY2lwaWVudCBcKElQIHJlZ2lvbjogUG9ydGxhbmQsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyNzIgVGQgKE9SXCkuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAyNTUgVGQgKEw1IE5vIGFjdGl2aXR5OiBIYWxkZW5fTWFzdGVyX1ZlY3RvcnNfYW5kX0NvcHlyaWdodC56aXAgLSAwIGRvd25sb2FkcyBkdXJpbmcgdGhlIGxpZmUgb2YgdGhlIHRyYW5zZmVyLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjM4IFRkIChMNiBUcmFuc2ZlciBleHBpcmVkOiAyMDI2LTA3LTMxIDAwOjAwIFVUQyAtIFRyYW5zZmVyICNUUi04ODIxMyBleHBpcmVkLiBGaWxlcyBubyBsb25nZXIgZG93bmxvYWRhYmxlIGZyb20gdGhpcykgVGogRVQKQlQgL0YxIDkgVGYgNTYgMjI0IFRkIChsaW5rLikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDE5OCBUZCAoV2Vic2l0ZSBjb250YWN0IGZvcm06IHN1Ym1pc3Npb25zIGFuZCBzZXR0aW5ncyAtIHNvdXJjZTogRXhwb3J0IGZyb20gZnJlZWxhbmNlcidzIHdlYnNpdGUpIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAxODMgVGQgKGJ1aWxkZXIpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE2NSBUZCAoRjEgU3VibWlzc2lvbiBcKFNlcCAyMiwgMDk6MTRcKTogRnJvbTogRGFuaWVsIE9rYWZvciBcKEhhbGRlbiBDb2ZmZWVcKS4gIkhpIFByaXlhLCB0aGUgc2lnbiBjb21wYW55IGRvaW5nIG91ciBFbG0pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDE1MSBUZCAoU3Qgc3RvcmVmcm9udCBzYXlzIHRoZSBsb2dvIGZpbGVzIHdlIGhhdmUgYXJlIG9ubHkgZ29vZCBmb3Igc2NyZWVucy4gVGhleSBuZWVkIHRoZSAncmVhbCcgbG9nbyB0byBjdXQgdGhlIHNpZ24pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDEzNyBUZCAoYW5kIHRoZXkgY2FuJ3QgZG8gYW55dGhpbmcgd2l0aCB3aGF0IHdlIHNlbnQgdGhlbS4gT3BlbmluZyBpcyBPY3QgMTUuIEFsc28sIG15IGxhbmRsb3JkIHNhaWQgdGhhdCB1bmxlc3MgSSBoYXZlKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAxMjMgVGQgKHBhcGVyd29yaywgdGhlIGRlc2lnbmVyIG1pZ2h0IHN0aWxsIG93biB0aGUgbG9nbz8/IFBsZWFzZSBjYWxsIG1lLCB0aGlzIGlzIHVyZ2VudC4iIFN0YXR1czogdW5yZWFkLikgVGogRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNwowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMTIgMDAwMDAgbiAKMDAwMDAwMDMxNCAwMDAwMCBuIAowMDAwMDAwNDUwIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNyAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNDY0NgolJUVPRgo="
+       "bytes": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs1IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nID4+CmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgL0YyIDQgMCBSID4+ID4+IC9Db250ZW50cyA2IDAgUiA+PgplbmRvYmoKNiAwIG9iago8PCAvTGVuZ3RoIDMwMDcgPj4Kc3RyZWFtCkJUIC9GMiAxNCBUZiA1NiA3MzYgVGQgKEV2aWRlbmNlIGFwcGVuZGl4OiBmdWxsIHRleHQgb2YgZXZlcnkgY2l0ZWQgc2VjdGlvbikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDcwNiBUZCAoQnJhbmQgSWRlbnRpdHkgU2VydmljZXMgQWdyZWVtZW50IFwoc2lnbmVkIGJ5IGJvdGggcGFydGllc1wpIC0gc291cmNlOiBTaWduZWQgUERGLCkgVGogRVQKQlQgL0YyIDExIFRmIDU2IDY5MSBUZCAoZnJlZWxhbmNlcidzIGZpbGVzKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NzMgVGQgKKczLjIgRmluYWwgQXNzZXQgUGFja2FnZTogT24gY29tcGxldGlvbiBTdHVkaW8gZGVsaXZlcnMgYSBGaW5hbCBBc3NldCBQYWNrYWdlIGNvbnRhaW5pbmc6IFwoYVwpIGEgV2ViICYgU29jaWFsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2NTkgVGQgKHBhY2sgb2YgUE5HIGFuZCBKUEcgZmlsZXM7IFwoYlwpIG1hc3RlciB2ZWN0b3Igc291cmNlIGZpbGVzIGluIEFJLCBTVkcgYW5kIEVQUyBmb3JtYXRzIHN1aXRhYmxlIGZvciBwcmludCwpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDY0NSBUZCAoc2lnbmFnZSBhbmQgbWVyY2hhbmRpc2U7IFwoY1wpIGEgcHJpbnQtcmVhZHkgUERGIGJyYW5kIGd1aWRlOyBhbmQgXChkXCkgYSBzaWduZWQgQXNzaWdubWVudCBvZiBDb3B5cmlnaHQgbGV0dGVyLikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNjI4IFRkICinNS4xIEFjY2VwdGFuY2U6IENsaWVudCdzIHdyaXR0ZW4gYXBwcm92YWwgb2YgdGhlIGZpbmFsIGRlc2lnbiBcKGVtYWlsIGlzIHN1ZmZpY2llbnRcKSBjb25zdGl0dXRlcyBhY2NlcHRhbmNlIG9mKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA2MTQgVGQgKHRoZSBkZXNpZ24gd29yay4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDU5NyBUZCAopzcuMiBSZS1pc3N1ZTogRm9yIDEyIG1vbnRocyBhZnRlciBkZWxpdmVyeSwgU3R1ZGlvIHdpbGwgcmUtaXNzdWUgdGhlIEZpbmFsIEFzc2V0IFBhY2thZ2Ugb24gcmVxdWVzdCBhdCBubykgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTgzIFRkIChjaGFyZ2UsIHdpdGhpbiAyIGJ1c2luZXNzIGRheXMgb2YgdGhlIHJlcXVlc3QuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA1NjYgVGQgKKc4IEZlZXMgYW5kIHJlZnVuZHM6IFRvdGFsIGZlZTogJDIsNDAwLCBpbnZvaWNlZCBvbiBhcHByb3ZhbCBvZiB0aGUgZmluYWwgZGVzaWduLiBGZWVzIGFyZSBub24tcmVmdW5kYWJsZSBhZnRlcikgVGogRVQKQlQgL0YxIDkgVGYgNTYgNTUyIFRkICh3cml0dGVuIGFwcHJvdmFsIG9mIHRoZSBmaW5hbCBkZXNpZ24sIGV4Y2VwdCB3aGVyZSBTdHVkaW8gZmFpbHMgdG8gZGVsaXZlciB0aGUgRmluYWwgQXNzZXQgUGFja2FnZS4pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDUzNSBUZCAopzYuMSBJbnRlbGxlY3R1YWwgcHJvcGVydHk6IENvcHlyaWdodCBpbiB0aGUgZmluYWwgc2VsZWN0ZWQgZGVzaWducyB0cmFuc2ZlcnMgZnJvbSBTdHVkaW8gdG8gQ2xpZW50IHVwb24pIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDUyMSBUZCAoU3R1ZGlvJ3MgcmVjZWlwdCBvZiBmdWxsIHBheW1lbnQuIFVudGlsIGZ1bGwgcGF5bWVudCBpcyByZWNlaXZlZCBhbmQgcmV0YWluZWQsIGFsbCByaWdodHMgcmVtYWluIHdpdGggU3R1ZGlvLikgVGogRVQKQlQgL0YyIDExIFRmIDU2IDQ5NSBUZCAoRW1haWwgdGhyZWFkOiBQcml5YSA8LT4gRGFuaWVsIC0gc291cmNlOiBGcmVlbGFuY2VyJ3MgR21haWwgZXhwb3J0KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NzcgVGQgKEU0IEp1biAyOSAtIERhbmllbCB0byBQcml5YTogQXBwcm92YWw6IFRoaXMgaXMgaXQuIEhvbmVzdGx5IGJldHRlciB0aGFuIEkgaW1hZ2luZWQuIEFwcHJvdmVkLCBsZXQncyBtYWtlIGl0KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0NjMgVGQgKG9mZmljaWFsLiBTZW5kIG92ZXIgdGhlIGludm9pY2UgYW5kIHRoZSBmaW5hbCBmaWxlcyEpIFRqIEVUCkJUIC9GMSA5IFRmIDU2IDQ0NiBUZCAoRTYgSnVsIDEgLSBQcml5YSB0byBEYW5pZWw6IEZpbmFsIEFzc2V0IFBhY2thZ2U6IFBheW1lbnQgcmVjZWl2ZWQsIHRoYW5rIHlvdSEgWW91ciBGaW5hbCBBc3NldCBQYWNrYWdlIGlzIHJlYWR5KSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0MzIgVGQgKGFzIHR3byBkb3dubG9hZHM6IFwoMVwpIEhhbGRlbl9XZWJfU29jaWFsX1BhY2suemlwIGZvciB5b3VyIHdlYnNpdGUsIEluc3RhZ3JhbSBhbmQgbWVudXMsIGFuZCBcKDJcKSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgNDE4IFRkIChIYWxkZW5fTWFzdGVyX1ZlY3RvcnNfYW5kX0NvcHlyaWdodC56aXAgd2l0aCB0aGUgQUkvU1ZHL0VQUyBtYXN0ZXIgZmlsZXMgZm9yIHByaW50ZXJzLCBzaWduIG1ha2VycyBhbmQgbWVyY2gsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiA0MDQgVGQgKHRoZSBwcmludCBicmFuZCBndWlkZSwgYW5kIHlvdXIgc2lnbmVkIEFzc2lnbm1lbnQgb2YgQ29weXJpZ2h0LiBQbGVhc2UgZG93bmxvYWQgYm90aC4gTGlua3Mgc3RheSBhY3RpdmUgZm9yIDMwKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzOTAgVGQgKGRheXMuKSBUaiBFVApCVCAvRjIgMTEgVGYgNTYgMzY0IFRkIChGaWxlIHRyYW5zZmVyIGFjY2VzcyBsb2cgXChzZWN1cmUgZG93bmxvYWQgc2VydmljZVwpIC0gc291cmNlOiBFeHBvcnQgZnJvbSBmcmVlbGFuY2VyJ3MpIFRqIEVUCkJUIC9GMiAxMSBUZiA1NiAzNDkgVGQgKGZpbGUtdHJhbnNmZXIgc2VydmljZSkgVGogRVQKQlQgL0YxIDkgVGYgNTYgMzMxIFRkIChMMyBEb3dubG9hZDogMjAyNi0wNy0wMSAxNzowNiBVVEMgLSBIYWxkZW5fV2ViX1NvY2lhbF9QYWNrLnppcCBkb3dubG9hZGVkIGJ5IHJlY2lwaWVudCBcKElQIHJlZ2lvbjogUG9ydGxhbmQsKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMTcgVGQgKE9SXCkuKSBUaiBFVApCVCAvRjEgOSBUZiA1NiAzMDAgVGQgKEw1IE5vIGFjdGl2aXR5OiBIYWxkZW5fTWFzdGVyX1ZlY3RvcnNfYW5kX0NvcHlyaWdodC56aXAgLSAwIGRvd25sb2FkcyBkdXJpbmcgdGhlIGxpZmUgb2YgdGhlIHRyYW5zZmVyLikgVGogRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNwowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMTIgMDAwMDAgbiAKMDAwMDAwMDMxNCAwMDAwMCBuIAowMDAwMDAwNDUwIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNyAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKMzUwOQolJUVPRgo="
       }
      ]
     },
     "usage": {
-     "prompt": 40267,
-     "completion": 10331,
+     "prompt": 43991,
+     "completion": 11010,
      "calls": 13
     }
    }
