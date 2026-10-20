@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Freelancer Defender · Concept 3: The Split</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" />
+<style>
+  :root { --navy: #0b1b3f; --blue: #1d4ed8; --white: #fbfbf8; --mute: #8592ad; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--white); color: var(--navy); font-family: 'Plus Jakarta Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  nav { position: fixed; inset: 0 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 22px clamp(20px, 5vw, 64px); z-index: 20; mix-blend-mode: difference; color: #fff; }
+  nav b { font-weight: 800; }
+  nav a { color: #fff; font-weight: 700; text-decoration: none; }
+
+  /* 1 · Drag to reveal what they meant */
+  .split { position: relative; height: 100vh; overflow: hidden; user-select: none; touch-action: pan-y; cursor: ew-resize; }
+  .layer { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 clamp(20px, 6vw, 96px); }
+  .layer .k { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 20px; }
+  .layer h1 { font-family: 'Space Grotesk'; font-weight: 700; font-size: clamp(48px, 8.5vw, 140px); line-height: .95; letter-spacing: -.045em; margin: 0; max-width: 12ch; }
+  .meant { background: var(--navy); color: var(--white); }
+  .meant .k { color: #8fd8ff; }
+  .meant h1 { color: #8fd8ff; }
+  .said { background: var(--white); color: var(--navy); clip-path: inset(0 0 0 var(--x, 100%)); align-items: flex-end; text-align: right; }
+  .said .k { color: var(--mute); }
+  .handle { position: absolute; top: 0; bottom: 0; left: var(--x, 100%); width: 2px; background: var(--blue); z-index: 5; }
+  .handle span { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 20px; box-shadow: 0 10px 30px rgba(29,78,216,.45); }
+  .hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 6; background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 999px; font-weight: 700; font-size: 14px; pointer-events: none; transition: opacity .4s; }
+  .cases { position: absolute; top: 90px; right: clamp(20px, 5vw, 64px); z-index: 6; display: flex; gap: 6px; }
+  .cases button { border: 1px solid rgba(11,27,63,.2); font: inherit; font-weight: 700; font-size: 13px; padding: 8px 14px; border-radius: 999px; background: #fff; color: var(--navy); cursor: pointer; }
+  .cases button.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .who { font-size: 16px; font-weight: 600; margin-top: 22px; }
+  .said .who { color: var(--mute); }
+  .meant .who { color: #9fb2d6; }
+
+  /* 2 · Typography does the maths */
+  .nums { padding: 18vh clamp(20px, 6vw, 96px) 12vh; }
+  .n { display: flex; align-items: baseline; gap: 2vw; border-top: 2px solid var(--navy); padding: 14px 0 0; margin-bottom: 4vh; opacity: 0; transform: translateY(30px); transition: all .9s cubic-bezier(.2,.8,.2,1); }
+  .n b { font-family: 'Space Grotesk'; font-weight: 700; letter-spacing: -.06em; line-height: .8; }
+  .n span { font-size: clamp(16px, 1.6vw, 22px); font-weight: 700; color: var(--mute); }
+  .n1 b { font-size: clamp(120px, 24vw, 360px); }
+  .n2 b { font-size: clamp(64px, 11vw, 170px); }
+  .n3 b { font-size: clamp(28px, 3.5vw, 52px); color: var(--blue); }
+  .n3 span { color: var(--blue); }
+  .nums.in .n { opacity: 1; transform: none; }
+  .nums.in .n2 { transition-delay: .2s; }
+  .nums.in .n3 { transition-delay: .4s; }
+  .nums p { font-family: 'Space Grotesk'; font-weight: 700; font-size: clamp(32px, 4.6vw, 70px); letter-spacing: -.03em; margin: 8vh 0 0; }
+
+  .end { background: var(--navy); color: var(--white); padding: 16vh clamp(20px, 6vw, 96px); display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap; gap: 30px; }
+  .end h2 { font-family: 'Space Grotesk'; font-size: clamp(40px, 6vw, 96px); line-height: .95; letter-spacing: -.04em; margin: 0; max-width: 11ch; }
+  .end h2 span { color: #8fd8ff; }
+  .cta { display: inline-flex; padding: 16px 26px; border-radius: 999px; background: var(--white); color: var(--navy); font-weight: 800; text-decoration: none; margin-left: 8px; transition: transform .2s; }
+  .cta:hover { transform: translateY(-2px); }
+  .cta.pp { background: #ffc439; color: #003087; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<nav><b>Freelancer Defender</b><a href="/#/disputes">Demo →</a></nav>
+
+<section class="split" id="split" aria-label="Drag to see what the client meant">
+  <div class="layer meant"><span class="k">What they meant</span><h1 id="meant">“I never got the print files.”</h1><div class="who" id="who2">A designer's client · $2,400</div></div>
+  <div class="layer said"><span class="k">What they told the bank</span><h1 id="said">“Not as described.”</h1><div class="who" id="who1">A designer's client · $2,400</div></div>
+  <div class="handle" id="handle"><span>⇆</span></div>
+  <div class="cases" id="cases"><button class="on">Designer</button><button>Developer</button><button>Writer</button></div>
+  <div class="hint" id="hint">Drag to read between the lines</div>
+</section>
+
+<section class="nums" id="nums">
+  <div class="n n1"><b>180</b><span>days your client has to file</span></div>
+  <div class="n n2"><b>75</b><span>days their bank has to decide</span></div>
+  <div class="n n3"><b>10</b><span>days you get. That's it.</span></div>
+  <p>We do the reading. You keep the money.</p>
+</section>
+
+<section class="end">
+  <h2>You did the work. <span>Keep the money.</span></h2>
+  <div><a class="cta" href="/#/disputes">Try the demo →</a><a class="cta pp" href="/auth/paypal">Log in with PayPal</a></div>
+</section>
+
+<script>
+const CASES = [
+  ['“Not as described.”', '“I never got the print files.”', "A designer's client · $2,400"],
+  ['“I didn’t authorize this.”', '“I didn’t know my co-founder hired you.”', "A developer's client · $4,500"],
+  ['“Low quality work.”', '“One article never arrived.”', "A writer's client · $1,500"],
+];
+const split = document.getElementById('split');
+const set = (pct) => split.style.setProperty('--x', `${Math.max(0, Math.min(100, pct))}%`);
+let dragging = false, touched = false;
+const move = (x) => { const r = split.getBoundingClientRect(); set(((x - r.left) / r.width) * 100); };
+split.addEventListener('pointerdown', (e) => { dragging = true; touched = true; document.getElementById('hint').style.opacity = 0; move(e.clientX); });
+addEventListener('pointermove', (e) => dragging && move(e.clientX));
+addEventListener('pointerup', () => (dragging = false));
+split.addEventListener('keydown', (e) => { const cur = parseFloat(getComputedStyle(split).getPropertyValue('--x')) || 100; if (e.key === 'ArrowLeft') set(cur - 5); if (e.key === 'ArrowRight') set(cur + 5); });
+split.tabIndex = 0;
+// A one-time hint: the divider sweeps in to show the trick, then rests halfway.
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const t0 = performance.now();
+  (function sweep(now) {
+    if (touched) return;
+    const p = Math.min(1, (now - t0 - 700) / 1600);
+    if (p > 0) set(100 - 55 * (1 - (1 - p) ** 3));
+    if (p < 1) requestAnimationFrame(sweep);
+  })(t0);
+} else set(45);
+document.querySelectorAll('#cases button').forEach((b, i) => b.addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.querySelectorAll('#cases button').forEach((x) => x.classList.toggle('on', x === b));
+  const [s, m, w] = CASES[i];
+  document.getElementById('said').textContent = s; document.getElementById('meant').textContent = m;
+  document.getElementById('who1').textContent = w; document.getElementById('who2').textContent = w;
+}));
+document.getElementById('cases').addEventListener('pointerdown', (e) => e.stopPropagation());
+new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: .25 }).observe(document.getElementById('nums'));
+</script>
+</body>
+</html>

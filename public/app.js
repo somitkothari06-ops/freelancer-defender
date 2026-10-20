@@ -148,15 +148,22 @@ function openHome() {
     e.preventDefault();
     $('#hx-race').scrollIntoView({ behavior: 'smooth' });
   };
+  // The spotlight background follows the pointer.
+  const hx = $('.hx');
+  hx.onpointermove = (e) => {
+    const r = hx.getBoundingClientRect();
+    hx.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
+    hx.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
+  };
   startDecoder();
   revealOnScroll();
 }
 
 // The front page's hero: what a client told their bank "decodes" into what they meant.
 const DECODE = [
-  ['“Not as described.”', 'They never got the print files.'],
-  ['“I didn’t authorize this.”', 'The person who hired you left.'],
-  ['“Low quality work.”', 'One article is missing. Just one.'],
+  { said: '“Not as described.”', meant: '“I never got the print files.”', who: "A designer's client · $2,400" },
+  { said: '“I didn’t authorize this.”', meant: '“I didn’t know my co-founder hired you.”', who: "A developer's client · $4,500" },
+  { said: '“Low quality work.”', meant: '“One article never arrived.”', who: "A writer's client · $1,500" },
 ];
 const GLYPHS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789#%&*+=?';
 
@@ -189,35 +196,53 @@ async function startDecoder() {
   state.decoderStop = false;
   const line = $('#hx-line');
   const label = $('#hx-label');
+  const who = $('#hx-who');
   const stage = $('.hx-stage');
   const dots = [...$('#hx-dots').children];
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   let i = 0;
-  line.textContent = DECODE[0][0];
   while (!state.decoderStop) {
-    const [said, meant] = DECODE[i];
-    dots.forEach((d, n) => d.classList.toggle('on', n === i));
-    await wait(1900);
-    if (state.decoderStop) break;
-    stage.classList.add('scanning');
-    label.textContent = 'What they actually meant';
-    stage.classList.add('meant');
-    if (calm) line.textContent = meant;
-    else await scramble(line, meant, 1000);
-    stage.classList.remove('scanning');
-    await wait(2800);
-    if (state.decoderStop) break;
-    i = (i + 1) % DECODE.length;
-    label.textContent = 'What they told the bank';
+    const { said, meant, who: whoText } = DECODE[i];
+    // A new case fades in: who it is, and what they told their bank.
     stage.classList.remove('meant');
-    if (calm) line.textContent = DECODE[i][0];
-    else await scramble(line, DECODE[i][0], 600);
+    label.textContent = 'What the client told their bank';
+    who.textContent = whoText;
+    line.textContent = said;
+    dots.forEach((d, n) => d.classList.toggle('on', n === i));
+    stage.classList.remove('fade');
+    await wait(2200);
+    if (state.decoderStop) break;
+    // Then it decodes into what they actually meant.
+    stage.classList.add('scanning', 'meant');
+    label.textContent = 'What they actually meant';
+    if (calm) line.textContent = meant;
+    else await scramble(line, meant, 1100);
+    stage.classList.remove('scanning');
+    await wait(3000);
+    if (state.decoderStop) break;
+    stage.classList.add('fade');
+    await wait(450);
+    i = (i + 1) % DECODE.length;
   }
 }
 
 function revealOnScroll() {
-  const io = new IntersectionObserver((entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: 0.35 });
+  const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (!e.isIntersecting || e.target.classList.contains('in')) return;
+    e.target.classList.add('in');
+    // Count the day numbers up as the bars grow.
+    e.target.querySelectorAll('[data-to]').forEach((b) => {
+      const to = Number(b.dataset.to);
+      const t0 = performance.now();
+      const tick = (now) => {
+        const p = Math.min(1, (now - t0) / 1600);
+        b.textContent = Math.round(to * (1 - (1 - p) ** 3));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  }), { threshold: 0.35 });
   document.querySelectorAll('.hx-race, .hx-proof').forEach((el) => io.observe(el));
 }
 

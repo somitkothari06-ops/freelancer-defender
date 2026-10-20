@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Freelancer Defender · Concept 1: The Decoder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" />
+<style>
+  :root { --ink: #050d22; --paper: #f2f5fb; --mute: #7f90b3; --cyan: #8fd8ff; --line: rgba(255,255,255,.12); }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--ink); color: var(--paper); font-family: 'Plus Jakarta Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .mono { font-family: 'Space Grotesk', monospace; }
+
+  nav { position: fixed; inset: 0 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 22px clamp(20px, 5vw, 64px); z-index: 10; mix-blend-mode: difference; }
+  nav b { font-weight: 800; letter-spacing: -.01em; }
+  nav a { text-decoration: none; font-weight: 700; font-size: 15px; }
+
+  /* 1 · The decode */
+  .hero { min-height: 100vh; display: grid; grid-template-rows: 1fr auto; padding: 120px clamp(20px, 5vw, 64px) 40px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(60% 50% at 20% 60%, rgba(37,99,235,.35), transparent 70%); pointer-events: none; }
+  .stage { align-self: center; position: relative; }
+  .meta { display: flex; gap: 18px; align-items: baseline; font-size: 15px; color: var(--mute); }
+  .meta .tag { color: var(--ink); background: var(--paper); font-weight: 800; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; padding: 7px 12px; border-radius: 4px; transition: background .4s; }
+  .meant .meta .tag { background: var(--cyan); }
+  .line { font-family: 'Space Grotesk'; font-weight: 700; font-size: clamp(48px, 9vw, 150px); line-height: .95; letter-spacing: -.045em; margin: 24px 0 0; min-height: 2em; transition: color .5s; }
+  .meant .line { color: var(--cyan); }
+  .stage.fade { opacity: 0; transition: opacity .4s; }
+  .stage { transition: opacity .4s; }
+  .foot { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 22px; }
+  .foot p { margin: 0; font-size: clamp(18px, 1.8vw, 24px); font-weight: 700; }
+  .foot p span { color: var(--mute); }
+  .cta { display: inline-flex; gap: 10px; align-items: center; padding: 16px 26px; border-radius: 999px; background: var(--paper); color: var(--ink); font-weight: 800; text-decoration: none; transition: transform .2s; }
+  .cta:hover { transform: translateY(-2px); }
+  .cta.pp { background: #ffc439; color: #003087; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* 2 · The ruler: 180 day ticks, precise, no glow */
+  .ruler-sec { padding: 22vh clamp(20px, 5vw, 64px); }
+  .big { font-family: 'Space Grotesk'; font-weight: 700; font-size: clamp(36px, 5.5vw, 84px); letter-spacing: -.035em; line-height: 1; margin: 0 0 8vh; max-width: 14ch; }
+  .big span { color: var(--mute); }
+  .ruler { position: relative; display: grid; grid-template-columns: repeat(180, 1fr); align-items: end; height: 120px; gap: 0; }
+  .ruler i { display: block; border-left: 1px solid rgba(255,255,255,.35); height: 22px; transform: scaleY(0); transform-origin: bottom; transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+  .ruler i:nth-child(10n+1) { height: 44px; }
+  .ruler i.bank { border-color: rgba(255,255,255,.7); }
+  .ruler i.you { border-color: var(--cyan); height: 70px; }
+  .in .ruler i { transform: none; }
+  .marks { position: relative; height: 90px; margin-top: 14px; font-size: 15px; color: var(--mute); }
+  .marks div { position: absolute; top: 0; border-left: 1px solid var(--line); padding-left: 10px; }
+  .marks b { display: block; font-family: 'Space Grotesk'; font-size: 34px; color: var(--paper); letter-spacing: -.02em; }
+  .marks .you b { color: var(--cyan); }
+
+  /* 3 · Proof */
+  .proof { padding: 18vh clamp(20px, 5vw, 64px) 22vh; display: grid; grid-template-columns: 1.1fr 1fr; gap: 6vw; align-items: center; }
+  .sentence { font-size: clamp(26px, 3vw, 42px); font-weight: 700; line-height: 1.25; margin: 0; }
+  .sentence u { text-decoration: none; background: linear-gradient(var(--cyan), var(--cyan)) 0 100% / 0 3px no-repeat; transition: background-size 1s .3s; }
+  .in .sentence u { background-size: 100% 3px; }
+  .doc { background: var(--paper); color: var(--ink); border-radius: 6px; padding: 26px 28px; font-size: 18px; line-height: 1.5; transform: translateY(30px) rotate(2deg); opacity: 0; transition: all .9s cubic-bezier(.2,.8,.2,1) .5s; box-shadow: 0 40px 80px rgba(0,0,0,.4); }
+  .doc small { display: block; font-family: 'Space Grotesk'; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #6a7894; margin-bottom: 10px; }
+  .doc mark { background: #bfe6ff; padding: 0 3px; }
+  .in .doc { transform: rotate(-1deg); opacity: 1; }
+  .end { text-align: center; padding: 0 20px 18vh; }
+  @media (max-width: 800px) { .proof { grid-template-columns: 1fr; } .marks b { font-size: 24px; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<nav><b>Freelancer Defender</b><a href="/#/disputes">Demo →</a></nav>
+
+<section class="hero">
+  <div class="stage" id="stage">
+    <div class="meta"><span class="tag mono" id="tag">What they told the bank</span><span id="who">A designer's client · $2,400</span></div>
+    <h1 class="line" id="line">“Not as described.”</h1>
+  </div>
+  <div class="foot">
+    <p>We hear what they meant.<br /><span>Then we prove your side.</span></p>
+    <div class="ctas"><a class="cta" href="/#/disputes">Try the demo →</a><a class="cta pp" href="/auth/paypal">Log in with PayPal</a></div>
+  </div>
+</section>
+
+<section class="ruler-sec" id="ruler-sec">
+  <h2 class="big">180 days for them. <span>10 for you.</span></h2>
+  <div class="ruler" id="ruler" aria-hidden="true"></div>
+  <div class="marks">
+    <div style="left:0"><b>180</b>days to file</div>
+    <div style="left:58.3%"><b>75</b>to decide</div>
+    <div class="you" style="left:94.4%"><b>10</b>to respond</div>
+  </div>
+</section>
+
+<section class="proof" id="proof">
+  <p class="sentence">“The client <u>approved the final design</u> on June&nbsp;29.”</p>
+  <div class="doc"><small>Email · Jun 29 · Daniel → Priya</small>“This is it. <mark>Approved</mark>, let's make it official.”</div>
+</section>
+<div class="end"><h2 class="big" style="margin:0 auto 40px">Every sentence, <span>proven.</span></h2><a class="cta" href="/#/disputes">See it work →</a></div>
+
+<script>
+const CASES = [
+  ['“Not as described.”', '“I never got the print files.”', "A designer's client · $2,400"],
+  ['“I didn’t authorize this.”', '“I didn’t know my co-founder hired you.”', "A developer's client · $4,500"],
+  ['“Low quality work.”', '“One article never arrived.”', "A writer's client · $1,500"],
+];
+const G = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789';
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function scramble(el, to, ms) {
+  const from = el.textContent, len = Math.max(from.length, to.length);
+  const at = [...Array(len)].map((_, i) => (i / len) * .6 + Math.random() * .4), t0 = performance.now();
+  return new Promise((done) => (function f(now) {
+    const p = Math.min(1, (now - t0) / ms);
+    el.textContent = [...Array(len)].map((_, i) => p >= at[i] ? (to[i] ?? '') : p > at[i] - .35 ? (to[i] === ' ' ? ' ' : G[Math.random() * G.length | 0]) : (from[i] ?? '')).join('');
+    p < 1 ? requestAnimationFrame(f) : (el.textContent = to, done());
+  })(t0));
+}
+(async () => {
+  const stage = document.getElementById('stage'), line = document.getElementById('line'), tag = document.getElementById('tag'), who = document.getElementById('who');
+  for (let i = 0; ; i = (i + 1) % CASES.length) {
+    const [said, meant, w] = CASES[i];
+    stage.classList.remove('meant', 'fade'); tag.textContent = 'What they told the bank'; who.textContent = w; line.textContent = said;
+    await wait(2200);
+    stage.classList.add('meant'); tag.textContent = 'What they meant';
+    calm ? (line.textContent = meant) : await scramble(line, meant, 1100);
+    await wait(3000);
+    stage.classList.add('fade'); await wait(420);
+  }
+})();
+// The ruler: one tick per day the client has to file; the last 10 belong to you.
+const ruler = document.getElementById('ruler');
+for (let d = 0; d < 180; d++) {
+  const t = document.createElement('i');
+  if (d >= 105) t.className = 'bank';
+  if (d >= 170) t.className = 'you';
+  t.style.transitionDelay = `${d * 6}ms`;
+  ruler.appendChild(t);
+}
+new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: .3 })
+  .observe(document.getElementById('ruler-sec'));
+new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: .3 })
+  .observe(document.getElementById('proof'));
+</script>
+</body>
+</html>

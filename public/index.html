@@ -30,11 +30,11 @@
 
   <!-- ===== Front page ===== -->
   <main id="view-home" class="home hidden">
-    <section class="hx">
+    <section class="hx" data-bg="a">
       <div class="hx-glow" aria-hidden="true"></div>
       <div id="login-banner"></div>
       <div class="hx-stage" aria-live="polite">
-        <span class="hx-label" id="hx-label">What they told the bank</span>
+        <div class="hx-top"><span class="hx-label" id="hx-label">What the client told their bank</span><span class="hx-who" id="hx-who">A designer's client · $2,400</span></div>
         <h1 class="hx-line" id="hx-line">&ldquo;Not as described.&rdquo;</h1>
         <div class="hx-scan" aria-hidden="true"></div>
         <div class="hx-dots" id="hx-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
@@ -49,10 +49,11 @@
       <a class="hx-down" href="#hx-race" aria-label="Scroll down">↓</a>
     </section>
 
-    <section class="hx-race" id="hx-race">
-      <div class="race-row"><span class="race-who">Your client</span><div class="race-bar"><i style="--w:100%"></i></div><b class="num">180 days</b></div>
-      <div class="race-row"><span class="race-who">Their bank</span><div class="race-bar"><i style="--w:41.7%"></i></div><b class="num">75 days</b></div>
-      <div class="race-row you"><span class="race-who">You</span><div class="race-bar"><i style="--w:5.6%"></i></div><b class="num">10 days</b></div>
+    <section class="hx-race" id="hx-race" data-bars="1">
+      <span class="race-k">How long everyone gets</span>
+      <div class="race-row"><div class="race-bar"><i style="--w:100%"><span>Your client, to file</span></i></div><b class="num" data-to="180">0</b><em>days</em></div>
+      <div class="race-row"><div class="race-bar"><i style="--w:41.7%"><span>Their bank, to decide</span></i></div><b class="num" data-to="75">0</b><em>days</em></div>
+      <div class="race-row you"><div class="race-bar"><i style="--w:5.6%"></i><span class="you-tag">You, to respond</span></div><b class="num" data-to="10">0</b><em>days</em></div>
       <p class="race-say">Not fair. <span>So we're fast.</span></p>
     </section>
 

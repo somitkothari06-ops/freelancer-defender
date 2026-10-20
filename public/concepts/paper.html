@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Freelancer Defender · Concept 2: The Paper Trail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+<style>
+  :root { --paper: #f4f0e8; --ink: #14213d; --mute: #6e7487; --red: #c8341f; --blue: #1d4ed8; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'Plus Jakarta Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; pointer-events: none; opacity: .35; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0 0.2 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  main, nav { position: relative; z-index: 1; }
+  .serif { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 22px clamp(20px, 5vw, 64px); }
+  nav b { font-weight: 800; }
+  nav a { color: var(--ink); font-weight: 700; text-decoration: none; }
+
+  /* 1 · The form */
+  .hero { min-height: calc(100vh - 70px); display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center; padding: 0 clamp(20px, 5vw, 64px) 6vh; }
+  h1 { font-size: clamp(56px, 8vw, 128px); line-height: .92; letter-spacing: -.02em; margin: 0 0 28px; }
+  h1 em { color: var(--blue); }
+  .lede { font-size: 20px; color: var(--mute); margin: 0 0 30px; max-width: 24ch; line-height: 1.4; }
+  .cta { display: inline-flex; padding: 16px 26px; border-radius: 999px; background: var(--ink); color: var(--paper); font-weight: 800; text-decoration: none; margin-right: 8px; transition: transform .2s; }
+  .cta:hover { transform: translateY(-2px); }
+  .cta.pp { background: #ffc439; color: #003087; }
+
+  .form { position: relative; background: #fffdf8; border: 1px solid #e3dccd; border-radius: 4px; padding: 30px 34px 40px; box-shadow: 0 1px 0 #e3dccd, 0 30px 60px -20px rgba(40,30,10,.25); transform: rotate(1.5deg); }
+  .form .head { display: flex; justify-content: space-between; font-size: 12px; color: var(--mute); border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 18px; letter-spacing: .06em; text-transform: uppercase; }
+  .row { display: grid; grid-template-columns: 150px 1fr; gap: 10px; padding: 9px 0; border-bottom: 1px dashed #ddd5c4; font-size: 15px; }
+  .row span:first-child { color: var(--mute); font-size: 13px; text-transform: uppercase; letter-spacing: .05em; padding-top: 2px; }
+  .complaint { position: relative; font-family: 'Instrument Serif'; font-size: 34px; line-height: 1.1; padding: 18px 0 6px; }
+  .strike { position: absolute; left: -4px; top: 52%; height: 4px; width: 0; background: var(--red); border-radius: 3px; transform: rotate(-2deg); transition: width .7s cubic-bezier(.6,0,.3,1); }
+  .note { position: absolute; right: -10px; bottom: -64px; font-family: 'Caveat'; font-weight: 700; font-size: 34px; color: var(--red); transform: rotate(-4deg); opacity: 0; transition: opacity .5s .6s; max-width: 330px; line-height: 1; }
+  .note::before { content: '↖'; position: absolute; left: -26px; top: -18px; font-size: 30px; }
+  .form.marked .strike { width: 104%; }
+  .form.marked .note { opacity: 1; }
+  .stamp { position: absolute; top: 64px; right: 34px; border: 3px solid var(--red); color: var(--red); font-weight: 800; padding: 4px 10px; border-radius: 4px; transform: rotate(8deg); letter-spacing: .1em; font-size: 13px; opacity: .85; }
+
+  /* 2 · A calendar strip: 180 days, 10 of them yours */
+  .cal { padding: 16vh clamp(20px, 5vw, 64px); }
+  .cal h2, .ev h2, .end h2 { font-size: clamp(44px, 6vw, 96px); line-height: .95; margin: 0 0 6vh; letter-spacing: -.02em; }
+  .cal h2 em, .ev h2 em, .end h2 em { color: var(--blue); }
+  .days { display: grid; grid-template-columns: repeat(30, 1fr); gap: 5px; max-width: 1000px; }
+  .days i { aspect-ratio: 1; border-radius: 3px; background: #e5ded0; transform: scale(.4); opacity: 0; transition: all .35s; }
+  .days i.y { background: var(--ink); }
+  .cal.in .days i { transform: none; opacity: 1; }
+  .legend { display: flex; gap: 28px; margin-top: 22px; font-size: 15px; color: var(--mute); }
+  .legend b { color: var(--ink); }
+
+  /* 3 · Evidence fanning in */
+  .ev { padding: 12vh clamp(20px, 5vw, 64px) 16vh; }
+  .cards { position: relative; height: 380px; max-width: 1000px; }
+  .card { position: absolute; width: min(360px, 80vw); background: #fffdf8; border: 1px solid #e3dccd; border-radius: 4px; padding: 20px 22px; box-shadow: 0 24px 50px -20px rgba(40,30,10,.3); font-size: 16px; line-height: 1.45; opacity: 0; transition: all .8s cubic-bezier(.2,.8,.2,1); }
+  .card small { display: block; font-family: 'IBM Plex Mono'; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--mute); margin-bottom: 8px; }
+  .card mark { background: #fde68a; padding: 0 2px; }
+  .card:nth-child(1) { left: 0; top: 40px; transform: translateY(60px) rotate(-6deg); }
+  .card:nth-child(2) { left: 30%; top: 0; transform: translateY(60px) rotate(3deg); transition-delay: .15s; }
+  .card:nth-child(3) { left: 60%; top: 70px; transform: translateY(60px) rotate(-2deg); transition-delay: .3s; }
+  .ev.in .card:nth-child(1) { opacity: 1; transform: rotate(-4deg); }
+  .ev.in .card:nth-child(2) { opacity: 1; transform: rotate(2deg); }
+  .ev.in .card:nth-child(3) { opacity: 1; transform: rotate(-1deg); }
+  .end { text-align: center; padding: 6vh 20px 18vh; }
+  @media (max-width: 860px) { .hero { grid-template-columns: 1fr; padding-top: 4vh; } .cards { height: auto; } .card { position: relative; left: auto !important; top: auto !important; margin-bottom: 16px; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<nav><b>Freelancer Defender</b><a href="/#/disputes">Demo →</a></nav>
+<main>
+  <section class="hero">
+    <div>
+      <h1 class="serif">They filed a form.<br /><em>We read between the lines.</em></h1>
+      <p class="lede">Your client's bank took back money you earned. We find the real problem and prove your side.</p>
+      <a class="cta" href="/#/disputes">Try the demo →</a><a class="cta pp" href="/auth/paypal">Log in with PayPal</a>
+    </div>
+    <div class="form" id="form">
+      <span class="stamp mono">DISPUTED</span>
+      <div class="head mono"><span>Chargeback notice</span><span>Case 27140</span></div>
+      <div class="row"><span>Amount</span><span>$2,400.00</span></div>
+      <div class="row"><span>Reason</span><span>Not as described</span></div>
+      <div class="row"><span>Client statement</span><span></span></div>
+      <div class="complaint">“What we received can’t be used by our vendors.”<i class="strike"></i>
+        <span class="note">They never opened the link with the print files.</span></div>
+    </div>
+  </section>
+
+  <section class="cal" id="cal">
+    <h2 class="serif">Six months to complain.<br /><em>Ten days to answer.</em></h2>
+    <div class="days" id="days" aria-hidden="true"></div>
+    <div class="legend"><span><b>180</b> days your client can file</span><span><b>10</b> days you get, shown in dark</span></div>
+  </section>
+
+  <section class="ev" id="ev">
+    <h2 class="serif">Your proof is already <em>in your inbox.</em></h2>
+    <div class="cards">
+      <div class="card"><small>Contract · Section 5.1</small>Client's <mark>written approval</mark> of the final design constitutes acceptance.</div>
+      <div class="card"><small>Email · Jun 29</small>“This is it. <mark>Approved</mark>, let's make it official.”</div>
+      <div class="card"><small>Download log</small>Master_Vectors.zip · <mark>0 downloads</mark> before the link expired.</div>
+    </div>
+  </section>
+
+  <section class="end">
+    <h2 class="serif">Every sentence <em>backed by a page.</em></h2>
+    <a class="cta" href="/#/disputes">See it work →</a>
+  </section>
+</main>
+<script>
+const days = document.getElementById('days');
+for (let d = 0; d < 180; d++) {
+  const i = document.createElement('i');
+  if (d >= 170) i.className = 'y';
+  i.style.transitionDelay = `${d * 5}ms`;
+  days.appendChild(i);
+}
+const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: .3 });
+['cal', 'ev'].forEach((id) => io.observe(document.getElementById(id)));
+// The red pen marks the form shortly after it appears, then repeats.
+const form = document.getElementById('form');
+(function loop() { setTimeout(() => { form.classList.add('marked'); setTimeout(() => { form.classList.remove('marked'); loop(); }, 5200); }, 1400); })();
+</script>
+</body>
+</html>
