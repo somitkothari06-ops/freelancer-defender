@@ -747,20 +747,32 @@ function renderResult(r) {
       <h3>${esc(r.draft.response_title)}</h3>
       <div class="lmeta">From ${esc(c.freelancer.name)}. Every sentence links to the document it comes from.</div>
     </div>`);
-  r.draft.claims.forEach((cl) => {
+  // Short by default: the first few points, the rest behind "Read the full letter".
+  const SHOW = 3;
+  const rest = h('<div class="hidden"></div>');
+  r.draft.claims.forEach((cl, i) => {
     const p = h(`<p>${esc(cl.text)}</p>`);
+    // One chip per document, even when a sentence quotes it several times.
     const seen = new Set();
     cl.citations.forEach((x) => {
-      const n = notes.findIndex((f) => key(f) === key(x)) + 1;
-      if (seen.has(n)) return;
-      seen.add(n);
+      if (seen.has(x.doc_id)) return;
+      seen.add(x.doc_id);
       const b = h(`<button class="fn" title="${esc(docName(x.doc_id) + ' ' + x.anchor)}">${esc(docName(x.doc_id))}</button>`);
       b.onclick = () => openDrawer(x.doc_id, x.anchor, x.quote);
       p.appendChild(b);
     });
-    letter.appendChild(p);
+    (i < SHOW ? letter : rest).appendChild(p);
   });
-  (r.removed || []).forEach((cl) => letter.appendChild(h(`<p class="removed" title="Removed: no source supported it">${esc(cl.text)}</p>`)));
+  (r.removed || []).forEach((cl) => rest.appendChild(h(`<p class="removed" title="Removed: no source supported it">${esc(cl.text)}</p>`)));
+  if (rest.children.length) {
+    const more = h(`<button class="linkbtn">Read the full letter (${r.draft.claims.length} points)</button>`);
+    more.onclick = () => {
+      rest.classList.toggle('hidden');
+      more.textContent = rest.classList.contains('hidden') ? `Read the full letter (${r.draft.claims.length} points)` : 'Show less';
+      letter.appendChild(more); // keep the toggle below the text
+    };
+    letter.append(rest, more);
+  }
   letter.appendChild(
     h(`<div class="files"><a href="/api/cases/${encodeURIComponent(c.id)}/files/response-letter.pdf" target="_blank">Download letter (PDF)</a><a href="/api/cases/${encodeURIComponent(c.id)}/files/evidence-appendix.pdf" target="_blank">Download evidence appendix (PDF)</a></div>`)
   );
@@ -899,6 +911,9 @@ async function openDrawer(docId, anchor, quote) {
   $('#drawer-title').textContent = doc.title;
   const body = $('#drawer-body');
   body.innerHTML = '';
+  // Opened from a citation: show only the passage that backs it, the rest on request.
+  const focus = anchor && doc.sections.some((s) => s.anchor === anchor);
+  if (focus) body.appendChild(h('<div class="drawer-why">This is the part of the document your response relies on.</div>'));
   let target = null;
   for (const s of doc.sections) {
     let text = esc(s.text);
@@ -908,9 +923,18 @@ async function openDrawer(docId, anchor, quote) {
         text = text.replace(new RegExp(safe, 'i'), (m) => `<mark>${m}</mark>`);
       }
     }
-    const el = h(`<div class="sec ${s.anchor === anchor ? 'hl' : ''}"><div class="sh">${esc(s.anchor)} · ${esc(s.heading)}</div><div class="st">${text}</div></div>`);
+    const el = h(`<div class="sec ${s.anchor === anchor ? 'hl' : ''} ${focus && s.anchor !== anchor ? 'hidden other' : ''}"><div class="sh">${esc(s.anchor)} · ${esc(s.heading)}</div><div class="st">${text}</div></div>`);
     if (s.anchor === anchor) target = el;
     body.appendChild(el);
+  }
+  if (focus && doc.sections.length > 1) {
+    const all = h(`<button class="linkbtn">Show the whole document (${doc.sections.length} sections)</button>`);
+    all.onclick = () => {
+      body.querySelectorAll('.sec.other').forEach((el) => el.classList.remove('hidden'));
+      all.remove();
+      target.scrollIntoView({ block: 'center' });
+    };
+    body.appendChild(all);
   }
   $('#drawer').classList.add('open');
   $('#scrim').classList.add('open');

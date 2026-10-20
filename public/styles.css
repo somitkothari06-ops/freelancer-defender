@@ -306,3 +306,8 @@ pre.req { width: 100%; margin: 6px 0 0; padding: 12px; border-radius: 10px; back
   .q-head h1 { font-size: 34px; }
   .vague, .hyp, .plan-row { grid-template-columns: 1fr; }
 }
+
+/* Short-by-default letter and focused source drawer */
+.letter > .linkbtn { display: block; margin: 2px 0 14px; }
+.drawer-why { font-size: 14px; color: var(--muted, #475569); }
+.drawer-body > .linkbtn { align-self: flex-start; margin-top: 4px; }
