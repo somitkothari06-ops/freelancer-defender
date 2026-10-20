@@ -400,3 +400,4 @@ details.sandbox[open] > summary { width: 100%; }
 .tour-tip h4 { margin: 6px 0 6px; font-size: 18px; color: var(--navy); }
 .tour-tip p { margin: 0 0 14px; color: var(--muted); line-height: 1.45; }
 .tour-btns { display: flex; justify-content: space-between; align-items: center; }
+.big-btn { padding: 13px 20px; font-size: 15px; }

@@ -3,7 +3,8 @@
 //   GET  /api/status                      what's configured (PayPal, Groq), who is signed in
 //   GET  /auth/paypal                     "Log in with PayPal" (then /auth/paypal/callback)
 //   POST /auth/logout                     sign out
-//   GET  /api/cases                       the dispute queue (live sandbox disputes + seeded demo disputes)
+//   GET  /api/cases?mine=ID,ID            the dispute queue (your typed-in cases + live sandbox + seeded demo disputes)
+//   POST /api/custom-cases                "Try your own case": create a dispute from what you type in
 //   GET  /api/cases/:id                   one dispute with its evidence locker index
 //   GET  /api/cases/:id/run?mode=live     run the agent; streams the reasoning trail (Server-Sent Events)
 //   GET  /api/cases/:id/run?mode=replay   play back a recorded run (for demos / when rate-limited)
@@ -23,6 +24,7 @@ const { runDefender } = require('./src/agent/defender');
 const disputesApi = require('./src/paypal/disputes');
 const uploads = require('./src/evidence/uploads');
 const login = require('./src/paypal/login');
+const customCases = require('./src/custom-cases');
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
@@ -84,10 +86,16 @@ function replaySummary(id) {
 }
 
 app.get('/api/cases', wrap(async (req, res) => {
-  const data = await cases.listCases();
+  const mine = String(req.query.mine || '').split(',').filter((id) => customCases.isCustom(id) && /^[A-Za-z0-9-]{1,64}$/.test(id)).slice(0, 20);
+  const data = await cases.listCases({ mine });
   data.cases.forEach((c) => Object.assign(c, { has_replay: hasReplay(c.dispute_id) }, replaySummary(c.dispute_id)));
   data.scenarios = cases.scenarios.map((s) => ({ id: s.id, title: s.title, freelancer: s.freelancer.name }));
   res.json(data);
+}));
+
+app.post('/api/custom-cases', wrap(async (req, res) => {
+  const c = customCases.create(req.body || {});
+  res.json({ ok: true, id: c.id });
 }));
 
 app.get('/api/cases/:id', wrap(async (req, res) => {
@@ -96,6 +104,7 @@ app.get('/api/cases/:id', wrap(async (req, res) => {
   const { dispute, freelancer, client, title } = c.scenario;
   res.json({
     live: c.live,
+    yours: Boolean(c.yours),
     title,
     fresh: Boolean(c.scenario.fresh),
     evidence_kinds: Object.fromEntries(Object.entries(uploads.KINDS).map(([k, v]) => [k, v.label])),

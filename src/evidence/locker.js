@@ -57,11 +57,13 @@ function disputeDocument(dispute) {
     },
   ];
   sections.push(...statementParts(dispute));
+  // Cases typed in through "Try your own case" (ids starting MY-) didn't come from PayPal.
+  const typed = String(dispute.dispute_id).startsWith('MY-');
   return {
     id: 'DISPUTE',
-    title: `PayPal dispute ${dispute.dispute_id}`,
-    kind: 'paypal_record',
-    source: 'PayPal Disputes API',
+    title: typed ? 'The dispute, as you typed it in' : `PayPal dispute ${dispute.dispute_id}`,
+    kind: typed ? 'other' : 'paypal_record',
+    source: typed ? 'Typed in by you' : 'PayPal Disputes API',
     summary: 'The dispute as filed: reason code, disputed transaction and the client\'s own statement.',
     sections,
   };
@@ -198,7 +200,8 @@ class Locker {
 function buildLocker(scenario, { transactions, transactionsSource }) {
   return new Locker([
     disputeDocument(scenario.dispute),
-    transactionsDocument(transactions, transactionsSource),
+    // No payment history (e.g. a typed-in case): leave the empty document out.
+    ...(transactions?.length ? [transactionsDocument(transactions, transactionsSource)] : []),
     ...scenario.documents,
   ]);
 }

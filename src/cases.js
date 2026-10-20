@@ -8,13 +8,15 @@
 //             dispute can be linked to a demo scenario's evidence locker; otherwise it starts
 //             as a fresh case with only PayPal's records. Submissions really go to PayPal.
 //
-// On any case, the freelancer can add their own evidence (src/evidence/uploads.js).
+// On any case, the freelancer can add their own evidence (src/evidence/uploads.js), and
+// anyone can type in a dispute of their own (src/custom-cases.js).
 const fs = require('fs');
 const path = require('path');
 const config = require('./config');
 const disputesApi = require('./paypal/disputes');
 const transactionsApi = require('./paypal/transactions');
 const uploads = require('./evidence/uploads');
+const custom = require('./custom-cases');
 
 const SCENARIO_DIR = path.join(__dirname, '..', 'data', 'scenarios');
 const HOUR = 60 * 60 * 1000;
@@ -107,7 +109,14 @@ async function listLive() {
   }
 }
 
-async function listCases() {
+// A visitor's own typed-in cases (ids remembered by their browser), as list rows.
+function customRows(ids = []) {
+  return ids.map((id) => custom.get(id)).filter(Boolean).map((c) =>
+    summary(c.dispute, { source: 'yours', scenario_id: c.id, freelancer: c.freelancer.name, client: c.client.name, title: c.title })
+  );
+}
+
+async function listCases({ mine = [] } = {}) {
   const seeded = scenarios.map((s) =>
     summary(s.dispute, {
       source: 'seeded',
@@ -119,7 +128,7 @@ async function listCases() {
     })
   );
   const live = await listLive();
-  return { cases: [...live.items, ...seeded], paypal: { enabled: config.paypal.enabled, env: config.paypal.env, error: live.error } };
+  return { cases: [...customRows(mine), ...live.items, ...seeded], paypal: { enabled: config.paypal.enabled, env: config.paypal.env, error: live.error } };
 }
 
 /**
@@ -127,6 +136,18 @@ async function listCases() {
  * swapped in if this is a live case), the payment history, and where each piece came from.
  */
 async function loadCase(disputeId) {
+  if (custom.isCustom(disputeId)) {
+    const c = custom.get(disputeId);
+    if (!c) throw Object.assign(new Error('We could not find that case (cases you type in are cleared when the server restarts).'), { status: 404 });
+    return {
+      live: false,
+      yours: true,
+      scenario: withUploads({ ...c, paypal_transactions: [], documents: [] }, disputeId),
+      transactions: [],
+      sources: { dispute: 'Typed in by you (not from PayPal)', transactions: 'None: this case is not from PayPal' },
+    };
+  }
+
   const seeded = scenarios.find((s) => s.dispute.dispute_id === disputeId);
   if (seeded) {
     return {

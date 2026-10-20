@@ -90,6 +90,104 @@ function toast(msg) {
 // PayPal's monogram, for "Log in with PayPal".
 const PAYPAL_LOGO = '<svg class="pp-logo" viewBox="0 0 24 24" aria-hidden="true"><path fill="#003087" d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106z"/><path fill="#009cde" d="M21.222 6.917a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg>';
 
+const SOURCE_TAGS = { live: ['PayPal live', 'green'], yours: ['Yours', 'blue'], seeded: ['Demo', ''] };
+
+// ---------- "Try your own case" -------------------------------------------------------
+// Cases typed in here are unlisted on the server; this browser remembers their ids.
+const MY_CASES = 'fd-my-cases';
+function myCases() {
+  try {
+    return JSON.parse(localStorage.getItem(MY_CASES) || '[]');
+  } catch {
+    return [];
+  }
+}
+function rememberCase(id) {
+  try {
+    localStorage.setItem(MY_CASES, JSON.stringify([id, ...myCases().filter((x) => x !== id)].slice(0, 20)));
+  } catch { /* the case still works for this visit */ }
+}
+
+// An example to try in two clicks: a video editor's client disputes after asking for extra work.
+const EXAMPLE_CASE = {
+  client: 'Northpeak Fitness',
+  work: 'Launch promo video (60 seconds)',
+  amount: '900',
+  reason: 'MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED',
+  statement: 'The video we received is not what we ordered and we could not use it for our launch campaign.',
+  freelancer: 'Sam Rivera',
+  evidence: [
+    { kind: 'contract', title: 'Video production agreement', text: '1. Parties\nThis agreement is between Sam Rivera ("Editor") and Northpeak Fitness ("Client").\n\n2. Deliverables\nOne 60-second promotional video, delivered in 16:9 (YouTube) and 9:16 (Reels) formats.\n\n3. Revisions\nTwo rounds of revisions are included. Further changes or new cuts are quoted separately.\n\n4. Acceptance\nClient approval by email counts as acceptance of the final video.\n\n5. Payment\n$900, paid in full on acceptance.' },
+    { kind: 'messages', title: 'Emails with Northpeak', text: 'Sep 2, Sam: Here is version 2 with your revision notes, in both formats.\n\nSep 3, Dana (Northpeak): Perfect, approved! Paying the invoice now.\n\nSep 9, Dana: Our ads agency says we also need a 15-second version for Instagram Stories. Can you send that over this week? Launch is on the 15th.\n\nSep 9, Sam: Happy to! A 15-second cut is a new deliverable, so it would be $250 extra. I can have it by Friday if you want it.\n\nSep 12, Sam: Just checking in on the 15-second version, do you want me to go ahead?' },
+  ],
+};
+
+function openNewCase() {
+  $('#drawer-kicker').textContent = 'Try your own case';
+  $('#drawer-title').textContent = 'What happened?';
+  const body = $('#drawer-body');
+  body.innerHTML = `
+    <form class="ev-form" id="nc-form">
+      <button type="button" class="linkbtn" id="nc-example" style="align-self:flex-start">Fill in an example</button>
+      <label>Your client
+        <input name="client" required maxlength="80" placeholder="e.g. Northpeak Fitness" />
+      </label>
+      <label>What was the work?
+        <input name="work" maxlength="120" placeholder="e.g. Launch promo video" />
+      </label>
+      <label>Amount they're disputing (USD)
+        <input name="amount" required inputmode="decimal" placeholder="e.g. 900" />
+      </label>
+      <label>What did they tell their bank?
+        <select name="reason">
+          <option value="MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED">Not as described</option>
+          <option value="MERCHANDISE_OR_SERVICE_NOT_RECEIVED">They never received it</option>
+          <option value="UNAUTHORISED">They didn't authorize the payment</option>
+          <option value="OTHER">Something else</option>
+        </select>
+      </label>
+      <label>Their words
+        <textarea name="statement" rows="4" required maxlength="2000" placeholder="Paste what the client wrote in the dispute."></textarea>
+      </label>
+      <label>Your name (optional)
+        <input name="freelancer" maxlength="80" placeholder="e.g. Sam Rivera" />
+      </label>
+      <p class="faint" style="font-size:13px;margin:0">Next, add your contract and emails, then let the agent investigate. Your case is private to this browser and isn't sent to PayPal.</p>
+      <div style="display:flex;gap:8px"><button class="btn primary" type="submit">Create my case</button><button class="btn" type="button" id="nc-cancel">Cancel</button></div>
+    </form>`;
+  const form = $('#nc-form');
+  let example = false;
+  $('#nc-cancel').onclick = closeDrawer;
+  $('#nc-example').onclick = () => {
+    example = true;
+    for (const k of ['client', 'work', 'amount', 'reason', 'statement', 'freelancer']) form[k].value = EXAMPLE_CASE[k];
+  };
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const btn = $('button[type=submit]', form);
+    btn.disabled = true;
+    try {
+      const data = Object.fromEntries(['client', 'work', 'amount', 'reason', 'statement', 'freelancer'].map((k) => [k, form[k].value]));
+      const { id } = await api('/api/custom-cases', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      rememberCase(id);
+      // The example comes with its paperwork, so it can be run straight away.
+      if (example) {
+        for (const ev of EXAMPLE_CASE.evidence) {
+          await api(`/api/cases/${encodeURIComponent(id)}/evidence`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ev) });
+        }
+      }
+      closeDrawer();
+      location.hash = `#/case/${encodeURIComponent(id)}`;
+      toast(example ? 'Example case created with its contract and emails. Press "Find out what\'s really going on".' : 'Case created. Add your contract and emails, then run the agent.');
+    } catch (err) {
+      btn.disabled = false;
+      toast(err.message);
+    }
+  };
+  showDrawer();
+  setTimeout(() => form.client.focus(), 200);
+}
+
 // ---------- app state -------------------------------------------------------------
 
 const state = {
@@ -160,7 +258,8 @@ function renderStatus() {
 async function openQueue() {
   document.title = 'Freelancer Defender';
 
-  const data = await api('/api/cases');
+  const data = await api(`/api/cases?mine=${encodeURIComponent(myCases().join(','))}`);
+  $('#new-case').onclick = openNewCase;
   state.queue = data;
   const rows = data.cases;
 
@@ -332,8 +431,8 @@ function renderGrid(rows) {
       headerName: 'Source',
       field: 'source',
       width: 125,
-      getQuickFilterText: (p) => (p.value === 'live' ? 'PayPal live' : 'Demo'),
-      cellRenderer: (p) => (p.node.rowPinned ? '' : p.value === 'live' ? '<span class="tag green">PayPal live</span>' : '<span class="tag">Demo</span>'),
+      getQuickFilterText: (p) => SOURCE_TAGS[p.value]?.[0] || 'Demo',
+      cellRenderer: (p) => (p.node.rowPinned ? '' : `<span class="tag ${SOURCE_TAGS[p.value]?.[1] || ''}">${SOURCE_TAGS[p.value]?.[0] || 'Demo'}</span>`),
     },
   ];
 
@@ -466,10 +565,10 @@ function renderHero(c) {
     <div class="tags">
       <span class="tag red">${d.dispute_channel === 'EXTERNAL' ? 'Bank chargeback' : 'PayPal dispute'}</span>
       <span class="tag">${esc(c.client.company)}</span>
-      ${c.live ? '<span class="tag green">Live from PayPal sandbox</span>' : '<span class="tag">Demo dispute</span>'}
+      ${c.live ? '<span class="tag green">Live from PayPal sandbox</span>' : c.yours ? '<span class="tag blue">Your case</span>' : '<span class="tag">Demo dispute</span>'}
     </div>
     <h1 class="amount num">${fmtMoney(Number(d.dispute_amount?.value || 0), d.dispute_amount?.currency_code)}</h1>
-    <p class="lede">${c.fresh ? 'Add your contract, emails and delivery records, and we\'ll' : `${esc(first)}, let's protect what you earned. We'll`} go through your evidence and build your response with you, step by step.</p>
+    <p class="lede">${c.fresh || c.yours ? 'Add your contract, emails and delivery records, and we\'ll' : `${esc(first)}, let's protect what you earned. We'll`} go through your evidence and build your response with you, step by step.</p>
     <span class="who">${esc(c.freelancer.business)} · ${esc(c.title)}</span>`;
 }
 

@@ -8,3 +8,6 @@ build/
 
 # Evidence added through the dashboard
 data/uploads/
+
+# Cases typed in through "Try your own case"
+data/custom/
