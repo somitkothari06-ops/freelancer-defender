@@ -69,8 +69,10 @@ async function chat(body, { onWait } = {}) {
       const retryAfter = Number(res.headers.get('retry-after'));
       const wait = retryAfter ? retryAfter * 1000 : Math.min(30000, 2000 * 2 ** attempt);
       // A long wait means the daily token quota is used up: fail fast with a clear message
-      // instead of leaving the dashboard hanging for many minutes.
-      if (wait > 90_000) {
+      // instead of leaving the dashboard hanging for many minutes. Unattended recording
+      // (scripts/run-one.js with GROQ_WAIT_FOR_DAILY=1) waits it out instead, so a run that
+      // hits the limit halfway doesn't waste the tokens it already used.
+      if (wait > 90_000 && !process.env.GROQ_WAIT_FOR_DAILY) {
         const body = await res.json().catch(() => ({}));
         const err = new Error(
           `Groq's free-tier daily token limit is used up (${body?.error?.message?.match(/Limit \d+/)?.[0] || 'tokens per day'}). ` +
