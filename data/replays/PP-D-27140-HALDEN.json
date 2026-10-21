@@ -2104,7 +2104,14 @@
      "prompt": 43991,
      "completion": 11010,
      "calls": 13
-    }
+    },
+    "plainExplanation": [
+     "You gave the client everything the contract promised, including the master vector files, and they even approved the work on June 29.",
+     "The delivery email on July 1 listed two zip files, and the client only downloaded the web pack; the master vectors zip was never downloaded before the link expired.",
+     "Your agreement says you’ll re‑send any missing files for free within two days, which you’ll do now.",
+     "Because the client already approved the final design, the contract says fees aren’t refundable, so you don’t owe a refund.",
+     "If the chargeback goes through, the client would lose the copyright and usage rights they already received."
+    ]
    }
   }
  ]

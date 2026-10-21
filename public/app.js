@@ -1145,14 +1145,24 @@ function renderResult(r) {
     </div>`);
 
   // "Explain this to me": an on-demand, plain-English rewrite of the same (already
-  // verified) points, for the freelancer reading their own letter, not the bank.
-  const explainBox = h('<div class="panel hidden explain"></div>');
-  const explainBtn = h('<button class="linkbtn explain-toggle">Explain this to me in plain English</button>');
+  // verified) points, for the freelancer reading their own letter, not the bank. A
+  // recorded run can ship with this baked in (r.plainExplanation) so it shows at once,
+  // already open, with no click and no live Groq call needed.
+  const baked = r.plainExplanation;
+  const SHOW_TXT = '💬 Explain this to me in plain English';
+  const HIDE_TXT = '💬 Hide the plain-English version';
+  const explainBox = h(`<div class="panel explain${baked ? '' : ' hidden'}"></div>`);
+  const explainBtn = h(`<button class="btn explain-toggle">${baked ? HIDE_TXT : SHOW_TXT}</button>`);
+  if (baked) {
+    explainBox.innerHTML = baked.map((p) => `<p>${esc(p)}</p>`).join('');
+    explainBox.dataset.loaded = '1';
+  }
   explainBtn.onclick = async () => {
     const open = explainBox.classList.toggle('hidden') === false;
-    explainBtn.textContent = open ? 'Hide the plain-English version' : 'Explain this to me in plain English';
+    explainBtn.textContent = open ? HIDE_TXT : SHOW_TXT;
     // Only fetch the first time it's opened; a click while already loading, or after it
-    // loaded or failed, just toggles visibility (retry a failure by closing and reopening).
+    // loaded (live or baked) or failed, just toggles visibility (retry a failure by
+    // closing and reopening).
     if (!open || explainBox.dataset.loaded || explainBox.dataset.loading) return;
     explainBox.dataset.loading = '1';
     explainBox.innerHTML = '<div class="pacing"><span class="spin"></span>Putting this in plain words…</div>';
@@ -1162,10 +1172,10 @@ function renderResult(r) {
         headers: { 'Content-Type': 'application/json' },
         body: '{}',
       });
-      explainBox.innerHTML = paragraphs.map((p) => `<p style="margin:0">${esc(p)}</p>`).join('');
+      explainBox.innerHTML = paragraphs.map((p) => `<p>${esc(p)}</p>`).join('');
       explainBox.dataset.loaded = '1';
     } catch (err) {
-      explainBox.innerHTML = `<p class="faint" style="margin:0">${esc(err.message)}</p>`;
+      explainBox.innerHTML = `<p class="faint">${esc(err.message)}</p>`;
     } finally {
       delete explainBox.dataset.loading;
     }
@@ -1230,7 +1240,7 @@ function renderResult(r) {
     </div>`);
   out.appendChild(cta);
   $('#to-top', cta).onclick = () => $('#trail').scrollIntoView({ behavior: 'smooth' });
-  $('#send', cta).onclick = () => doSubmit($('#send', cta), actions);
+  $('#send', cta).onclick = () => doSubmit(cta, actions);
   out.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -1376,7 +1386,22 @@ function evidenceMatrix(r) {
   };
 }
 
-async function doSubmit(btn, actionsCard) {
+// What actually happened, in the one headline everybody actually reads. "email" isn't a
+// PayPal outcome (the freelancer sends that one themselves), so it's left out here.
+function submitOutcome(res) {
+  const real = res.results.filter((r) => r.kind !== 'email');
+  const failed = real.filter((r) => !r.ok && !r.skipped);
+  const skipped = real.filter((r) => r.skipped);
+  const sent = real.filter((r) => r.ok && !r.simulated);
+  if (failed.length) return { t: "Something didn't go through", s: "One or more actions hit an error — see \"Show the exact API request\" on each one below.", cls: 'bad' };
+  if (!real.length) return { t: 'Nothing for PayPal here', s: 'This response had nothing for PayPal to receive — just the message below, which you send yourself.', cls: 'warn' };
+  if (!res.live) return { t: 'Simulated: nothing was actually sent', s: "This demo dispute doesn't exist inside PayPal, so there was nothing real to send it to. Each item below shows the exact request that would have gone out — click \"Show the exact API request\" to see it.", cls: 'ok' };
+  if (skipped.length) return { t: sent.length ? 'Partially sent to PayPal' : 'Not sent yet', s: "PayPal isn't ready for one or more of these actions at this dispute's current stage — see below for which, and why.", cls: 'warn' };
+  return { t: 'Sent to PayPal', s: "Your response was submitted for real, through PayPal's own Disputes API.", cls: 'ok' };
+}
+
+async function doSubmit(cta, actionsCard) {
+  const btn = $('#send', cta);
   btn.disabled = true;
   btn.textContent = 'Sending…';
   try {
@@ -1404,8 +1429,15 @@ async function doSubmit(btn, actionsCard) {
         row.append(t, pre);
       }
     }
-    btn.textContent = res.live ? 'Sent to PayPal ✓' : 'Simulated ✓';
-    toast(res.live ? 'Your response was sent to the PayPal sandbox.' : 'Simulated: the exact requests are shown under "What gets sent".');
+    // The headline itself now says what happened, not what was about to happen - that's
+    // the one piece of text on this page everyone actually reads.
+    const outcome = submitOutcome(res);
+    cta.classList.add('sent', outcome.cls);
+    $('.t', cta).textContent = outcome.t;
+    $('.s', cta).textContent = outcome.s;
+    btn.textContent = outcome.cls === 'bad' ? 'Try again' : outcome.t;
+    btn.disabled = outcome.cls !== 'bad';
+    toast(outcome.t);
   } catch (err) {
     btn.disabled = false;
     btn.textContent = 'Try again';

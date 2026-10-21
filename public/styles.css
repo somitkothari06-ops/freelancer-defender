@@ -249,8 +249,11 @@ mark { background: #fde68a; color: inherit; border-radius: 3px; padding: 0 2px; 
 .pp-row.live .pp-src { color: var(--ok); font-weight: 600; }
 
 /* Explain this to me (plain-English letter) */
-.explain-toggle { margin-top: -4px; }
-.explain { margin: 8px 0 14px; border: 1px dashed var(--line); font-size: 15px; line-height: 1.55; }
+/* A real button, not a small text link - this is a genuine feature (plain language for the
+   freelancer, not the bank), not a footnote, so it needs to actually be seen. */
+.explain-toggle { margin: 2px 0 4px; align-self: flex-start; background: var(--blue-soft); border-color: var(--blue-soft); color: var(--blue-text); font-size: 14px; padding: 10px 16px; }
+.explain-toggle:hover { background: #dbe4ff; }
+.explain { margin: 4px 0 14px; border: 1px dashed var(--blue); background: var(--blue-soft); font-size: 15px; line-height: 1.55; }
 .explain p + p { margin-top: 10px; }
 
 .evidence { position: sticky; top: 76px; display: flex; flex-direction: column; gap: 6px; }
@@ -285,6 +288,17 @@ pre.req { width: 100%; margin: 6px 0 0; padding: 12px; border-radius: 10px; back
 .cta .t { font-size: 20px; font-weight: 800; }
 .cta .s { font-size: 14px; color: var(--sky); }
 .cta .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+/* After sending, the bar itself shows the real outcome - colour plus an icon, not just text. */
+.cta.sent .t::before { margin-right: 8px; }
+.cta.sent.ok { background: #065f46; }
+.cta.sent.ok .t::before { content: '✓'; }
+.cta.sent.ok .s { color: #a7f3d0; }
+.cta.sent.warn { background: var(--amber, #92400e); }
+.cta.sent.warn .t::before { content: '⚠'; }
+.cta.sent.warn .s { color: #fde68a; }
+.cta.sent.bad { background: var(--danger, #b42318); }
+.cta.sent.bad .t::before { content: '✗'; }
+.cta.sent.bad .s { color: #fecaca; }
 
 /* ---------- drawer ---------- */
 .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(520px, 100vw); z-index: 40; background: var(--card); border-left: 1px solid var(--line); transform: translateX(100%); transition: transform .2s ease-out; display: flex; flex-direction: column; }
