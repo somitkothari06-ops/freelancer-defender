@@ -438,6 +438,36 @@ Section text:
 ${citedText}`;
 }
 
+// ---- On-demand: explain the response in plain English, for the freelancer -----
+// Only reached if the freelancer clicks for it, and only rephrases claims that
+// already passed citation verification, so it can't introduce a new unverified fact.
+
+const explainSchema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['paragraphs'],
+  properties: {
+    paragraphs: {
+      type: 'array',
+      description: '3-5 short sentences or short paragraphs, plain spoken English.',
+      items: { type: 'string' },
+    },
+  },
+};
+
+function explainPrompt({ claims, realComplaint }) {
+  return `A freelancer is about to read their own formal response to a bank dispute reviewer. Explain it to them directly, the way a friend would, so they understand what you did and why they're protected. Do not add any new fact: only explain what is already below.
+
+Rules: plain spoken words, second person ("you"), no legal phrasing, no citation brackets like [1], no document names or section numbers, no reason codes. Short sentences.
+
+What's really going on: ${realComplaint}
+
+The formal response, point by point:
+${claims.map((c, i) => `${i + 1}. ${c.text}`).join('\n')}
+
+Write 3-5 short sentences.`;
+}
+
 module.exports = {
   SYSTEM,
   readSchema,
@@ -454,4 +484,6 @@ module.exports = {
   draftPrompt,
   repairSchema,
   repairPrompt,
+  explainSchema,
+  explainPrompt,
 };

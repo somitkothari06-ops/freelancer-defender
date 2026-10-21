@@ -198,7 +198,14 @@ const state = {
   current: null, // the dispute being viewed
   stream: null, // active EventSource
   clockTimer: null,
+  judgeMode: false, // arrived via /app#/judge: one-shot, consumed by the next openCase()
+  keepStagesOpen: false, // true only while showing the judge-mode case's own run
+  judgeAutoplayTimer: null,
 };
+
+// A link anyone can send a judge: opens the hero case and plays its recorded run with no
+// clicking required, and keeps the reasoning (not just the one-line summary) on screen.
+const JUDGE_CASE_ID = 'PP-D-27140-HALDEN';
 
 // ---------- routing -------------------------------------------------------------
 
@@ -213,12 +220,18 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 function route() {
+  if (location.hash === '#/judge') {
+    state.judgeMode = true;
+    location.hash = `#/case/${JUDGE_CASE_ID}`; // re-enters route() via hashchange, flag already set
+    return;
+  }
   const m = location.hash.match(/^#\/case\/(.+)$/);
   if (state.stream) {
     state.stream.close();
     state.stream = null;
   }
   clearInterval(state.clockTimer);
+  clearTimeout(state.judgeAutoplayTimer);
   const page = m ? 'case' : 'queue';
   if (page !== 'queue' && state.scheduler) {
     state.scheduler.destroy();
@@ -503,7 +516,22 @@ async function openCase(id) {
   renderLocker(c);
   renderControls(c);
   renderTrailSkeleton();
-  maybeTour();
+
+  // Judge mode is one-shot: it only auto-plays the single case it was meant to show,
+  // never a later case the person (or a stray timer) happens to open afterward.
+  const judgeAutoplay = state.judgeMode && id === JUDGE_CASE_ID;
+  state.judgeMode = false;
+  state.keepStagesOpen = judgeAutoplay;
+  if (judgeAutoplay) {
+    try { localStorage.setItem('fd-tour-done', '1'); } catch { /* ignore */ }
+    toast('Judge mode: playing a recorded run of the agent on a real dispute.');
+    clearTimeout(state.judgeAutoplayTimer);
+    state.judgeAutoplayTimer = setTimeout(() => {
+      if (state.current?.id === id && !state.stream) startRun('replay');
+    }, 500);
+  } else {
+    maybeTour();
+  }
 }
 
 // ---------- first-visit tour -------------------------------------------------------
@@ -829,7 +857,10 @@ function setStage(key, status) {
   if (key === 'package' && status !== 'start') el.classList.add('final');
   if (status === 'start') el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   // A finished step folds down to its one-line summary; "Details" opens it again.
-  if (status !== 'start' && key !== 'package') setTimeout(() => el.classList.add('collapsed'), 1500);
+  // In judge mode, the two stages that carry the actual reasoning stay open so nobody
+  // has to click to see them.
+  const keepOpen = state.keepStagesOpen && (key === 'diagnose' || key === 'verify');
+  if (status !== 'start' && key !== 'package' && !keepOpen) setTimeout(() => el.classList.add('collapsed'), 1500);
 }
 
 // Clicking a step's title opens or folds its details.
@@ -858,6 +889,7 @@ function chips(list, kind) {
 }
 
 function startRun(mode) {
+  clearTimeout(state.judgeAutoplayTimer); // a manual click always wins over the pending auto-play
   if (state.stream) state.stream.close();
   renderTrailSkeleton();
   renderThree(state.current);
@@ -955,6 +987,18 @@ function renderStageDone(stage, data, thinking) {
 
   if (stage === 'intake') {
     stageSum('intake', `${data.documents.length} documents, ${data.documents.reduce((n, d) => n + d.sections, 0)} quotable sections`);
+    // Shows which of this run's facts came from a real, live PayPal API call just now,
+    // versus a seeded demo record or something typed in - so "PayPal is in the data" isn't
+    // just a claim in the README.
+    const real = (s) => /\(sandbox, live\)/.test(s || '');
+    const row = (label, src) =>
+      `<div class="pp-row ${real(src) ? 'live' : ''}"><span class="pp-dot"></span><b>${esc(label)}</b><span class="pp-src">${esc(src || 'Not used for this case')}</span></div>`;
+    body.appendChild(
+      h(`<div class="panel"><h4>PayPal APIs used for this case</h4>
+          ${row('Disputes API', data.sources?.dispute)}
+          ${row('Transaction Search API', data.sources?.transactions)}
+        </div>`)
+    );
   }
 
   if (stage === 'read') {
@@ -1099,6 +1143,35 @@ function renderResult(r) {
       <h3>${esc(r.draft.response_title)}</h3>
       <div class="lmeta">From ${esc(c.freelancer.name)}. Every sentence links to the document it comes from.</div>
     </div>`);
+
+  // "Explain this to me": an on-demand, plain-English rewrite of the same (already
+  // verified) points, for the freelancer reading their own letter, not the bank.
+  const explainBox = h('<div class="panel hidden explain"></div>');
+  const explainBtn = h('<button class="linkbtn explain-toggle">Explain this to me in plain English</button>');
+  explainBtn.onclick = async () => {
+    const open = explainBox.classList.toggle('hidden') === false;
+    explainBtn.textContent = open ? 'Hide the plain-English version' : 'Explain this to me in plain English';
+    // Only fetch the first time it's opened; a click while already loading, or after it
+    // loaded or failed, just toggles visibility (retry a failure by closing and reopening).
+    if (!open || explainBox.dataset.loaded || explainBox.dataset.loading) return;
+    explainBox.dataset.loading = '1';
+    explainBox.innerHTML = '<div class="pacing"><span class="spin"></span>Putting this in plain words…</div>';
+    try {
+      const { paragraphs } = await api(`/api/cases/${encodeURIComponent(c.id)}/explain`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      explainBox.innerHTML = paragraphs.map((p) => `<p style="margin:0">${esc(p)}</p>`).join('');
+      explainBox.dataset.loaded = '1';
+    } catch (err) {
+      explainBox.innerHTML = `<p class="faint" style="margin:0">${esc(err.message)}</p>`;
+    } finally {
+      delete explainBox.dataset.loading;
+    }
+  };
+  letter.append(explainBtn, explainBox);
+
   // Short by default: the first few points, the rest behind "Read the full letter".
   const SHOW = 3;
   const rest = h('<div class="hidden"></div>');

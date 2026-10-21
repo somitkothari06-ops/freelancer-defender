@@ -240,6 +240,19 @@ mark { background: #fde68a; color: inherit; border-radius: 3px; padding: 0 2px; 
 .pacing { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--faint); }
 .pacing .spin { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--blue); animation: spin .8s linear infinite; }
 
+/* PayPal APIs used this run (intake stage) */
+.pp-row { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 2px 0; }
+.pp-row b { font-weight: 700; min-width: 170px; }
+.pp-row .pp-src { color: var(--muted); }
+.pp-row .pp-dot { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; flex: none; }
+.pp-row.live .pp-dot { background: var(--ok); }
+.pp-row.live .pp-src { color: var(--ok); font-weight: 600; }
+
+/* Explain this to me (plain-English letter) */
+.explain-toggle { margin-top: -4px; }
+.explain { margin: 8px 0 14px; border: 1px dashed var(--line); font-size: 15px; line-height: 1.55; }
+.explain p + p { margin-top: 10px; }
+
 .evidence { position: sticky; top: 76px; display: flex; flex-direction: column; gap: 6px; }
 .doc { display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; cursor: pointer; border: 0; background: none; text-align: left; width: 100%; color: inherit; }
 .doc:hover { background: var(--bg); }

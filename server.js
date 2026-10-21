@@ -25,6 +25,8 @@ const disputesApi = require('./src/paypal/disputes');
 const uploads = require('./src/evidence/uploads');
 const login = require('./src/paypal/login');
 const customCases = require('./src/custom-cases');
+const groq = require('./src/ai/groq');
+const P = require('./src/agent/prompts');
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
@@ -202,6 +204,41 @@ app.get('/api/cases/:id/run', async (req, res) => {
     res.end();
   }
 });
+
+// ---- Explain the response in plain English, for the freelancer (on demand) -------
+
+// Dispute id -> in-flight explain request. A double click, or reopening the drawer while
+// the first call is still running, shares the one call already in flight instead of
+// spending Groq's scarce free-tier budget on duplicates.
+const explainPending = new Map();
+
+app.post('/api/cases/:id/explain', wrap(async (req, res) => {
+  const id = req.params.id;
+  const run = lastRun.get(id);
+  if (!run) return res.status(400).json({ error: 'Run the agent first.' });
+  if (run.plainExplanation) return res.json({ paragraphs: run.plainExplanation, cached: true });
+  if (!explainPending.has(id)) {
+    explainPending.set(
+      id,
+      groq
+        .chatJSON({
+          name: 'explain',
+          schema: P.explainSchema,
+          messages: [
+            { role: 'system', content: P.SYSTEM },
+            { role: 'user', content: P.explainPrompt({ claims: run.draft.claims, realComplaint: run.diagnosis.real_complaint.summary }) },
+          ],
+          maxTokens: 700,
+          reasoningEffort: 'low',
+        })
+        .then(({ data }) => data.paragraphs)
+        .finally(() => explainPending.delete(id))
+    );
+  }
+  const paragraphs = await explainPending.get(id);
+  run.plainExplanation = paragraphs; // cache on the run that was current when this call started
+  res.json({ paragraphs });
+}));
 
 // ---- Generated files --------------------------------------------------------------
 
