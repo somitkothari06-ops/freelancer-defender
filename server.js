@@ -34,7 +34,7 @@ app.set('trust proxy', true); // Render terminates TLS in front of the app
 // studio.js is still actively changing; a stale cached copy silently re-sends old,
 // already-fixed bugs to Groq and is very easy to mistake for a real regression (it cost
 // real debugging time once already). Small file, no real cost to never caching it.
-app.use('/studio.js', (req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
+app.use(['/studio.js', '/studio-demo.js'], (req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] })); // / is the landing page, /app the app
 
 const REPLAY_DIR = path.join(__dirname, 'data', 'replays');

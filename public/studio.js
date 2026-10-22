@@ -397,4 +397,62 @@ function groqAdapter() {
   };
 }
 
-window.freelancerDefenderStudio = { groqAdapter };
+// ---- A scripted adapter for a guaranteed-reliable demo question --------------------
+//
+// The live model (Groq's free-tier gpt-oss-120b) handles Studio's full tool schema
+// correctly most of the time, but not every time - acceptable in general use, not
+// acceptable for a live demo in front of judges. This adapter plays a pre-written
+// script of tool calls instead of asking a model what to call: each step is either a
+// fixed message, or a function of the live request (so it can react to what Studio's
+// OWN query engine actually computed - the real dispute data - rather than guessing
+// numbers in advance). Everything downstream of "what tool call to make" - running the
+// query, rendering the result - is still the real Studio engine; nothing here is faked.
+function lastToolResult(request) {
+  for (let i = request.input.length - 1; i >= 0; i--) {
+    const item = request.input[i];
+    if (item.type === 'function_call_output') {
+      if (typeof item.output !== 'string') return item.output;
+      try { return JSON.parse(item.output); } catch { return item.output; }
+    }
+  }
+  return null;
+}
+
+// `fallback` (a real groqAdapter(), lazily constructed since it's only needed once the
+// script runs out) takes over once the scripted conversation ends, so the same Studio
+// instance can play the guaranteed demo and then answer a real follow-up question live.
+function replayAdapter(script, fallback) {
+  let step = 0;
+  return {
+    executeTurn(request, options) {
+      if (step >= script.length) return fallback().executeTurn(request, options);
+      let resolveComplete;
+      let rejectComplete;
+      const complete = new Promise((resolve, reject) => {
+        resolveComplete = resolve;
+        rejectComplete = reject;
+      });
+      complete.catch(() => {});
+
+      async function* run() {
+        try {
+          const next = script[step++];
+          const message = typeof next === 'function' ? next(request) : next;
+          await new Promise((r) => setTimeout(r, 500 + Math.random() * 400)); // feels like real latency
+          const { output, events } = decodeToResponseAndEvents(message);
+          for (const ev of events) yield ev;
+          resolveComplete({ id: nextId('resp'), createdAt: Date.now(), status: 'completed', output });
+        } catch (err) {
+          const e = err instanceof Error ? err : new Error(String(err));
+          rejectComplete(e);
+          throw e;
+        }
+      }
+
+      const iterator = run();
+      return { stream: { [Symbol.asyncIterator]: () => iterator }, complete };
+    },
+  };
+}
+
+window.freelancerDefenderStudio = { groqAdapter, replayAdapter, lastToolResult };

@@ -53,9 +53,12 @@
     <section class="card">
       <div class="card-head">
         <h2>Ask about your disputes</h2>
-        <button class="btn" id="studio-toggle">Ask a question →</button>
+        <div style="display:flex; gap:8px">
+          <button class="btn" id="studio-demo">▶ Watch an example</button>
+          <button class="btn" id="studio-toggle">Ask a question →</button>
+        </div>
       </div>
-      <p class="muted" id="studio-hint" style="margin:0 0 4px">"Which dispute has the weakest evidence?" "How much have I protected this month?" - type a question and watch an AI agent build the answer as a live chart or table, powered by AG Studio.</p>
+      <p class="muted" id="studio-hint" style="margin:0 0 4px">"Which dispute has the weakest evidence?" "How much have I protected this month?" - type a question and watch an AI agent build the answer as a live chart or table, powered by AG Studio. Not sure what to ask? Watch a guaranteed example first.</p>
       <div id="studio-panel" class="hidden"></div>
     </section>
   </main>
@@ -105,6 +108,7 @@
   <!-- AG Studio: "Ask about your disputes", built on the same dispute data as the queue above -->
   <script src="https://cdn.jsdelivr.net/npm/ag-studio@3.0.0/dist/umd/ag-studio.min.js"></script>
   <script src="/studio.js"></script>
+  <script src="/studio-demo.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

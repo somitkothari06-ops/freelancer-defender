@@ -302,26 +302,72 @@ async function openQueue() {
 // lifetime - Studio's init cost and trial-license watermark aren't worth paying
 // unless someone actually opens it, and re-navigating to the queue shouldn't
 // recreate (and lose) an already-open conversation.
+//
+// "Watch an example" plays a scripted, guaranteed-reliable conversation (see
+// studio-demo.js) instead of asking the live model, then falls through to the same
+// live adapter for any follow-up question typed afterward - so there's no live-demo
+// risk for the first interaction, and nothing lost for later ones.
 let studioCreated = false;
+let studioPanel = null;
 function setupStudioToggle(rows) {
-  const btn = $('#studio-toggle');
+  const toggleBtn = $('#studio-toggle');
+  const demoBtn = $('#studio-demo');
   const panel = $('#studio-panel');
-  btn.onclick = () => {
-    const opening = panel.classList.toggle('hidden') === false;
-    btn.textContent = opening ? 'Hide' : 'Ask a question →';
-    if (!opening || studioCreated) return;
+
+  function ensureOpen() {
+    panel.classList.remove('hidden');
+    toggleBtn.textContent = 'Hide';
+  }
+
+  function ensureCreated(adapter) {
+    if (studioCreated) return true;
     studioCreated = true;
     const createFn = window.agStudio?.createStudioWithAi;
     if (!createFn || !window.freelancerDefenderStudio) {
       panel.innerHTML = '<p class="faint">AG Studio did not load — check your connection and reload.</p>';
-      return;
+      return false;
     }
-    createFn(panel, {
-      data: { sources: [{ id: 'disputes', data: rows }] },
-      mode: 'edit',
-      ai: ({ api }) => window.agStudio.createAiHarness(api, { adapter: window.freelancerDefenderStudio.groqAdapter() }),
-    });
+    createFn(panel, { data: { sources: [{ id: 'disputes', data: rows }] }, mode: 'edit', ai: ({ api }) => window.agStudio.createAiHarness(api, { adapter }) });
+    studioPanel = panel;
+    return true;
+  }
+
+  toggleBtn.onclick = () => {
+    const opening = panel.classList.toggle('hidden') === false;
+    toggleBtn.textContent = opening ? 'Hide' : 'Ask a question →';
+    if (opening) ensureCreated(window.freelancerDefenderStudio.groqAdapter());
   };
+
+  demoBtn.onclick = () => {
+    ensureOpen();
+    // If Studio already existed (e.g. the user asked their own question first), there's no
+    // way to retroactively hand it a scripted adapter - just ask the demo question live.
+    ensureCreated(buildDemoAdapter());
+    if (studioPanel) askStudio(studioPanel, window.freelancerDefenderStudioDemo.question);
+  };
+}
+
+function buildDemoAdapter() {
+  const studio = window.freelancerDefenderStudio;
+  const demo = window.freelancerDefenderStudioDemo;
+  if (!studio || !demo) return studio?.groqAdapter();
+  return studio.replayAdapter(demo.buildScript(studio), () => studio.groqAdapter());
+}
+
+// Types the given question into Studio's own chat input and submits it, the same way a
+// person would - Studio owns that UI, this just drives it, same as a user's keystrokes would.
+// On first creation Studio renders asynchronously, so the input isn't there yet; poll briefly.
+function askStudio(panel, question, attemptsLeft = 20) {
+  const textarea = panel.querySelector('textarea');
+  if (!textarea) {
+    if (attemptsLeft > 0) setTimeout(() => askStudio(panel, question, attemptsLeft - 1), 250);
+    return;
+  }
+  const setValue = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+  setValue.call(textarea, question);
+  textarea.dispatchEvent(new Event('input', { bubbles: true }));
+  textarea.focus();
+  textarea.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true }));
 }
 
 // Deadline timeline (Bryntum Scheduler): one row per dispute, a bar from when it was
