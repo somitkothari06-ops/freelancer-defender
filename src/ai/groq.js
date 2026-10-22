@@ -42,7 +42,7 @@ async function chat(body, { onWait } = {}) {
   const budget = budgetFor(request.model);
   const needed = estimateTokens(request);
 
-  for (let attempt = 1; attempt <= 5; attempt++) {
+  for (let attempt = 1; attempt <= 6; attempt++) {
     // Wait just long enough for the per-minute token budget to refill if this call won't fit.
     const want = Math.min(needed, budget.limit);
     if (want > available(budget)) {
@@ -91,9 +91,11 @@ async function chat(body, { onWait } = {}) {
     }
 
     const data = await res.json();
-    // gpt-oss occasionally produces a tool call Groq can't parse; simply asking again fixes it.
+    // gpt-oss occasionally produces a tool call Groq can't parse, or (on AG Studio's larger,
+    // more complex tool schemas) one with the wrong shape entirely; simply asking again -
+    // a fresh resample, not a replan - fixes it often enough to be worth several tries.
     const flaky = ['output_parse_failed', 'tool_use_failed'].includes(data?.error?.code);
-    if (flaky && attempt < 3) {
+    if (flaky && attempt < 6) {
       onWait?.(500, 'model output glitch, retrying');
       continue;
     }

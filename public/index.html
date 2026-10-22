@@ -41,8 +41,14 @@
   .said .who { color: #4a5675; }
   .said { background: var(--white); color: var(--navy); clip-path: inset(0 0 0 var(--x, 100%)); align-items: flex-end; text-align: right; }
   .said .k { color: #fff; background: var(--navy); }
-  /* The handle stays fully on screen even when the divider is parked at an edge. */
-  .handle { position: absolute; z-index: 5; top: 0; bottom: 0; left: clamp(50px, var(--x, 100%), calc(100% - 50px)); width: 2px; background: var(--blue); }
+  /* The handle stays fully on screen even when the divider is parked at an edge, but the
+     line itself shouldn't: once the knob is clamped away from the true split position
+     there's nothing left to divide, and a full-height line floating over one uniform
+     panel looks like a stray artifact rather than a divider. So the line is its own layer
+     (::before), faded out via --line-opacity (set in JS, where the clamp's px threshold
+     is easy to compare against the current width) while the knob stays fully visible. */
+  .handle { position: absolute; z-index: 5; top: 0; bottom: 0; left: clamp(50px, var(--x, 100%), calc(100% - 50px)); width: 2px; }
+  .handle::before { content: ''; position: absolute; inset: 0; background: var(--blue); opacity: var(--line-opacity, 1); transition: opacity .2s; }
   .knob { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 72px; height: 72px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; box-shadow: 0 12px 30px rgba(29,78,216,.4); transition: transform .15s; }
   .dragging .knob { transform: translate(-50%, -50%) scale(1.08); }
   .knob svg { width: 30px; height: 30px; }
@@ -178,7 +184,14 @@ const split = $('split');
 const tabs = [...document.querySelectorAll('#cases button')];
 const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let x = 100;
-const set = (pct) => { x = Math.max(0, Math.min(100, pct)); split.style.setProperty('--x', `${x}%`); };
+const set = (pct) => {
+  x = Math.max(0, Math.min(100, pct));
+  split.style.setProperty('--x', `${x}%`);
+  // Fade the divider line out once the 50px knob-clamp has pulled it away from the true
+  // split position - past that point it's a stray line over one uniform panel, not a divider.
+  const edgePct = (50 / split.getBoundingClientRect().width) * 100;
+  split.style.setProperty('--line-opacity', x < edgePct || x > 100 - edgePct ? 0 : 1);
+};
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const ease = (p) => 1 - (1 - p) ** 3;
 
