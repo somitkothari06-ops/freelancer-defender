@@ -8,6 +8,7 @@ const config = {
   groq: {
     apiKey: process.env.GROQ_API_KEY || '',
     model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
+    studioModel: process.env.GROQ_STUDIO_MODEL || '',
     baseUrl: 'https://api.groq.com/openai/v1',
   },
 

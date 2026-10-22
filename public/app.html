@@ -50,6 +50,14 @@
       <div class="card-head"><h2>All disputes</h2><input id="grid-search" class="search" type="search" placeholder="Search clients, complaints, plans…" aria-label="Search disputes" /></div>
       <div id="grid" class="ag-theme-quartz grid"></div>
     </section>
+    <section class="card">
+      <div class="card-head">
+        <h2>Ask about your disputes</h2>
+        <button class="btn" id="studio-toggle">Ask a question →</button>
+      </div>
+      <p class="muted" id="studio-hint" style="margin:0 0 4px">"Which dispute has the weakest evidence?" "How much have I protected this month?" - type a question and watch an AI agent build the answer as a live chart or table, powered by AG Studio.</p>
+      <div id="studio-panel" class="hidden"></div>
+    </section>
   </main>
 
   <!-- ===== One dispute ===== -->
@@ -94,6 +102,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/dist/ag-grid-community.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@bryntum/scheduler-trial@7.3.7/scheduler.umd.js"></script>
+  <!-- AG Studio: "Ask about your disputes", built on the same dispute data as the queue above -->
+  <script src="https://cdn.jsdelivr.net/npm/ag-studio@3.0.0/dist/umd/ag-studio.min.js"></script>
+  <script src="/studio.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

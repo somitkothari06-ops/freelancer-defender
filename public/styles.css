@@ -104,6 +104,8 @@ button { font: inherit; }
 #timeline { height: 280px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
 .tl-fallback { font-size: 14px; color: var(--muted); padding: 12px 0; }
 
+#studio-panel:not(.hidden) { height: 560px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+
 /* AG Grid: light quartz theme in our colors */
 .grid { width: 100%; }
 .grid.ag-theme-quartz {

@@ -294,6 +294,34 @@ async function openQueue() {
 
   renderTimeline(rows);
   renderGrid(rows);
+  setupStudioToggle(rows);
+}
+
+// "Ask about your disputes" (AG Studio): a natural-language panel over the same
+// rows shown in the grid above. Created lazily on first open, once per page
+// lifetime - Studio's init cost and trial-license watermark aren't worth paying
+// unless someone actually opens it, and re-navigating to the queue shouldn't
+// recreate (and lose) an already-open conversation.
+let studioCreated = false;
+function setupStudioToggle(rows) {
+  const btn = $('#studio-toggle');
+  const panel = $('#studio-panel');
+  btn.onclick = () => {
+    const opening = panel.classList.toggle('hidden') === false;
+    btn.textContent = opening ? 'Hide' : 'Ask a question →';
+    if (!opening || studioCreated) return;
+    studioCreated = true;
+    const createFn = window.agStudio?.createStudioWithAi;
+    if (!createFn || !window.freelancerDefenderStudio) {
+      panel.innerHTML = '<p class="faint">AG Studio did not load — check your connection and reload.</p>';
+      return;
+    }
+    createFn(panel, {
+      data: { sources: [{ id: 'disputes', data: rows }] },
+      mode: 'edit',
+      ai: ({ api }) => window.agStudio.createAiHarness(api, { adapter: window.freelancerDefenderStudio.groqAdapter() }),
+    });
+  };
 }
 
 // Deadline timeline (Bryntum Scheduler): one row per dispute, a bar from when it was

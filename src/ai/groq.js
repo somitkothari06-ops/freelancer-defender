@@ -6,16 +6,18 @@
 // crashing into 429 errors in the middle of a demo.
 const config = require('../config');
 
-// Rate-limit state learned from Groq's response headers.
+// Rate-limit state learned from Groq's response headers, kept per model: different models
+// have different tokens-per-minute budgets, and a single shared tracker would apply one
+// model's learned pacing to another, either waiting too long or not long enough.
 // Groq's tokens-per-minute budget refills continuously (limit / 60 seconds per second).
-const budget = {
-  limit: Infinity, // tokens per minute
-  remaining: Infinity, // tokens left when we last heard from Groq
-  seenAt: 0, // when we last heard from Groq
-};
+const budgets = new Map();
+function budgetFor(model) {
+  if (!budgets.has(model)) budgets.set(model, { limit: Infinity, remaining: Infinity, seenAt: 0 });
+  return budgets.get(model);
+}
 
 // How many tokens are probably available right now.
-function available() {
+function available(budget) {
   const refilled = ((Date.now() - budget.seenAt) / 60000) * budget.limit;
   return Math.min(budget.limit, budget.remaining + refilled);
 }
@@ -37,13 +39,14 @@ function estimateTokens(body) {
  */
 async function chat(body, { onWait } = {}) {
   const request = { model: config.groq.model, ...body };
+  const budget = budgetFor(request.model);
   const needed = estimateTokens(request);
 
   for (let attempt = 1; attempt <= 5; attempt++) {
     // Wait just long enough for the per-minute token budget to refill if this call won't fit.
     const want = Math.min(needed, budget.limit);
-    if (want > available()) {
-      const wait = Math.ceil(((want - available()) / budget.limit) * 60000) + 250;
+    if (want > available(budget)) {
+      const wait = Math.ceil(((want - available(budget)) / budget.limit) * 60000) + 250;
       onWait?.(wait, 'free-tier token budget');
       await sleep(wait);
     }

@@ -31,6 +31,10 @@ const P = require('./src/agent/prompts');
 const app = express();
 app.use(express.json({ limit: '1mb' }));
 app.set('trust proxy', true); // Render terminates TLS in front of the app
+// studio.js is still actively changing; a stale cached copy silently re-sends old,
+// already-fixed bugs to Groq and is very easy to mistake for a real regression (it cost
+// real debugging time once already). Small file, no real cost to never caching it.
+app.use('/studio.js', (req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] })); // / is the landing page, /app the app
 
 const REPLAY_DIR = path.join(__dirname, 'data', 'replays');
@@ -68,6 +72,25 @@ app.get('/api/status', wrap(async (req, res) => {
     liveRunBusy,
     user: login.currentUser(req),
   });
+}));
+
+// ---- AG Studio: the "Ask about your disputes" dashboard agent ---------------------
+// Studio's AI adapter runs in the browser and calls this proxy instead of Groq
+// directly, so the API key stays server-side and every call gets our existing
+// rate-limit pacing and retry handling (src/ai/groq.js) for free. The Studio <->
+// OpenAI-chat-shape translation happens in public/studio.js; this endpoint is a
+// thin, mostly-passthrough forward to Groq.
+app.post('/api/studio/chat', wrap(async (req, res) => {
+  const { messages, tools, tool_choice, response_format, max_completion_tokens } = req.body || {};
+  if (!Array.isArray(messages) || !messages.length) return res.status(400).json({ error: 'messages required' });
+  const body = { model: config.groq.studioModel || config.groq.model, messages, max_completion_tokens: max_completion_tokens || 3000 };
+  if (Array.isArray(tools) && tools.length) {
+    body.tools = tools;
+    body.tool_choice = tool_choice || 'auto';
+  }
+  if (response_format) body.response_format = response_format;
+  const { message, usage } = await groq.chat(body);
+  res.json({ message, usage });
 }));
 
 app.get('/auth/paypal', login.start);
