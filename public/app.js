@@ -9,6 +9,10 @@
 // ---------- helpers -------------------------------------------------------------
 
 const $ = (sel, root = document) => root.querySelector(sel);
+$('.skip-link')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  $('main.view:not(.hidden)')?.focus();
+});
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const h = (html) => {
   const t = document.createElement('template');
@@ -274,19 +278,40 @@ function renderStatus() {
 async function openQueue() {
   document.title = 'Freelancer Defender';
 
-  const data = await api(`/api/cases?mine=${encodeURIComponent(myCases().join(','))}`);
   $('#new-case').onclick = openNewCase;
+  $('#queue-error').classList.add('hidden');
+  const queueView = $('#view-queue');
+  queueView.setAttribute('aria-busy', 'true');
+  if (!state.queue) {
+    queueView.classList.add('queue-awaiting');
+    $('#queue-stats').innerHTML = Array.from({ length: 3 }, () => '<div class="stat stat-loading" aria-hidden="true"><span></span><b></b><span></span></div>').join('');
+  }
+  let data;
+  try {
+    data = await api(`/api/cases?mine=${encodeURIComponent(myCases().join(','))}`);
+  } catch (err) {
+    if (!state.queue) $('#queue-stats').innerHTML = '';
+    const box = $('#queue-error');
+    box.classList.remove('hidden');
+    box.innerHTML = `<div class="banner warn queue-failure"><div><b>We couldn’t load your cases.</b><br>${esc(err.message)}</div><button class="btn" id="queue-retry">Try again</button></div>`;
+    $('#queue-retry').onclick = openQueue;
+    return;
+  } finally { queueView.setAttribute('aria-busy', 'false'); }
+  queueView.classList.remove('queue-awaiting');
   state.queue = data;
   const rows = data.cases;
+  $('#queue-count').textContent = rows.length;
 
   const open = rows.filter((r) => r.status !== 'RESOLVED');
   const atRisk = open.reduce((n, r) => n + r.amount, 0);
-  const next = rows.filter((r) => r.due).sort((a, b) => new Date(a.due) - new Date(b.due))[0];
+  const next = open.filter((r) => r.due).sort((a, b) => new Date(a.due) - new Date(b.due))[0];
   const ready = rows.filter((r) => r.has_replay).length;
+  const currencies = [...new Set(open.map((r) => r.currency))];
+  const includesDemo = rows.some((r) => r.source === 'seeded');
   $('#queue-stats').innerHTML = `
-    <div class="stat navy"><span class="label">Earned money at risk</span><span class="value">${fmtMoney(atRisk)}</span><span class="sub">across ${open.length} open dispute${open.length === 1 ? '' : 's'}</span></div>
-    <div class="stat red"><span class="label">Next deadline</span><span class="value">${next ? esc(timeLeft(next.due).short) : '—'}</span><span class="sub">${next ? esc(next.client.split(',').pop().trim()) : 'Nothing due'}</span></div>
-    <div class="stat"><span class="label">Responses ready</span><span class="value">${ready} of ${rows.length}</span><span class="sub">worked out by the agent, waiting for you</span></div>`;
+    <div class="stat navy"><span class="label">${currencies.length > 1 ? 'Open disputes' : 'Open disputed amount'}</span><span class="value">${currencies.length > 1 ? open.length : fmtMoney(atRisk, currencies[0])}</span><span class="sub">${currencies.length > 1 ? 'Multiple currencies · see case amounts' : `${open.length} open case${open.length === 1 ? '' : 's'}${includesDemo ? ' · includes demo data' : ''}`}</span></div>
+    <div class="stat red"><span class="label">Next response deadline</span><span class="value">${next ? esc(timeLeft(next.due).short) : '—'}</span><span class="sub">${next ? esc(next.client.split(',').pop().trim()) : 'No response deadlines'}</span></div>
+    <div class="stat"><span class="label">Recorded investigations</span><span class="value">${ready}<span class="stat-unit"> available</span></span><span class="sub">Explore the reasoning, step by step</span></div>`;
 
   const pp = data.paypal;
   $('#paypal-banner').innerHTML = pp.error
@@ -425,6 +450,7 @@ function renderTimeline(rows) {
     events,
     listeners: { eventClick: ({ eventRecord }) => (location.hash = `#/case/${encodeURIComponent(eventRecord.id)}`) },
   });
+  if (el.parentElement?.classList.contains('timeline-scroll')) el.parentElement.onscroll = () => requestAnimationFrame(placeNowMarker);
   placeNowMarker();
 }
 
@@ -433,18 +459,23 @@ function placeNowMarker() {
   const sch = state.scheduler;
   const box = $('#timeline');
   if (!sch || !box) return;
+  const card = box.closest('.deadline-card') || box.parentElement;
   let m = $('#now-marker');
   if (!m) {
     m = h('<div id="now-marker" class="now-marker" aria-hidden="true"></div>');
-    box.after(m);
+    card.appendChild(m);
   }
   const axis = sch.timeAxisSubGrid?.element;
   const x = sch.getCoordinateFromDate(new Date());
   if (!axis || x == null || x < 0) return m.classList.add('hidden');
-  const left = axis.getBoundingClientRect().left - box.parentElement.getBoundingClientRect().left + x;
+  const coordinate = axis.getBoundingClientRect().left + x;
+  const visible = box.parentElement.getBoundingClientRect();
+  if (coordinate < visible.left || coordinate > visible.right) return m.classList.add('hidden');
+  const left = coordinate - card.getBoundingClientRect().left;
   m.classList.remove('hidden');
-  m.style.left = `${left}px`;
   m.textContent = `▲ Now · ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+  const edge = m.offsetWidth / 2 + 12;
+  m.style.left = `${Math.max(edge, Math.min(left, card.clientWidth - edge))}px`;
 }
 window.addEventListener('resize', () => requestAnimationFrame(placeNowMarker));
 setInterval(placeNowMarker, 60000);
@@ -485,7 +516,7 @@ function renderGrid(rows) {
       cellRenderer: (p) => (p.node.rowPinned ? '' : `<span class="tag">${esc(REASONS[p.value] || p.value)}</span>`),
     },
     {
-      headerName: "What's actually going on",
+      headerName: 'Investigation summary',
       field: 'real_summary',
       flex: 1.6,
       minWidth: 220,
@@ -498,9 +529,9 @@ function renderGrid(rows) {
     {
       headerName: 'Amount',
       field: 'amount',
-      width: 110,
+      width: 125,
       type: 'rightAligned',
-      cellRenderer: (p) => `<span class="amt">${fmtMoney(p.value, p.data.currency)}</span>`,
+      cellRenderer: (p) => `<span class="amt">${p.value === null ? '—' : fmtMoney(p.value, p.data.currency)}</span>`,
       cellStyle: { justifyContent: 'flex-end' },
     },
     {
@@ -529,21 +560,27 @@ function renderGrid(rows) {
   // A total row pinned under the table: what's at stake across every dispute shown.
   const total = (shown) => [{
     client: `Total · ${shown.length} dispute${shown.length === 1 ? '' : 's'}`,
-    amount: shown.reduce((a, r) => a + r.amount, 0),
+    amount: new Set(shown.map((r) => r.currency)).size > 1 ? null : shown.reduce((a, r) => a + r.amount, 0),
     currency: shown[0]?.currency || 'USD',
-    real_summary: `${shown.filter((r) => r.real_summary).length} worked out, ${shown.filter((r) => !r.real_summary).length} still to do`,
+    real_summary: new Set(shown.map((r) => r.currency)).size > 1 ? 'Multiple currencies · amounts shown per case' : `${shown.filter((r) => r.has_replay).length} recording${shown.filter((r) => r.has_replay).length === 1 ? '' : 's'} · ${shown.length} case${shown.length === 1 ? '' : 's'} shown`,
   }];
   const shownRows = () => {
     const out = [];
     state.grid?.forEachNodeAfterFilter((n) => out.push(n.data));
     return out;
   };
+  const syncFilterState = () => {
+    if (!state.grid) return;
+    state.grid.setGridOption('pinnedBottomRowData', total(shownRows()));
+    if (state.grid.getDisplayedRowCount() === 0) state.grid.showNoRowsOverlay();
+    else state.grid.hideOverlay();
+  };
 
   if (state.grid) {
     state.grid.setGridOption('rowData', rows);
     // Row heights measured while the list was hidden are wrong; measure again now it's visible.
     requestAnimationFrame(() => state.grid.resetRowHeights());
-    state.grid.setGridOption('pinnedBottomRowData', total(shownRows()));
+    syncFilterState();
     return;
   }
   state.grid = agGrid.createGrid($('#grid'), {
@@ -555,10 +592,10 @@ function renderGrid(rows) {
     animateRows: true,
     pinnedBottomRowData: total(rows),
     // The total follows the search box and column filters.
-    onFilterChanged: () => state.grid.setGridOption('pinnedBottomRowData', total(shownRows())),
+    onFilterChanged: syncFilterState,
     onRowClicked: (e) => !e.node.rowPinned && (location.hash = `#/case/${encodeURIComponent(e.data.dispute_id)}`),
     onCellKeyDown: (e) => e.event.key === 'Enter' && !e.node.rowPinned && (location.hash = `#/case/${encodeURIComponent(e.data.dispute_id)}`),
-    overlayNoRowsTemplate: '<span class="muted">No open disputes. Every payment you earned is safe.</span>',
+    overlayNoRowsTemplate: '<div class="grid-empty" role="status"><b>No matching cases</b><span>Clear the search or column filters to see your cases.</span></div>',
   });
   setInterval(() => state.grid?.refreshCells({ columns: ['due'], force: true }), 30000);
   $('#grid-search').oninput = (e) => state.grid.setGridOption('quickFilterText', e.target.value);
@@ -569,6 +606,7 @@ function renderGrid(rows) {
 // ================================================================================
 
 async function openCase(id) {
+  $('#case-label').textContent = 'Case workspace';
   $('#result').classList.add('hidden');
   $('#result').innerHTML = '';
   window.scrollTo(0, 0);
@@ -585,6 +623,7 @@ async function openCase(id) {
     return;
   }
   state.current = { id, ...c };
+  $('#case-label').textContent = c.client.company || c.client.name || 'Case workspace';
   document.title = `${c.client.company} · Freelancer Defender`;
 
   renderHero(c);
@@ -672,6 +711,7 @@ function renderHero(c) {
       <span class="tag">${esc(c.client.company)}</span>
       ${c.live ? '<span class="tag green">Live from PayPal sandbox</span>' : c.yours ? '<span class="tag blue">Your case</span>' : '<span class="tag">Demo dispute</span>'}
     </div>
+    <span class="kicker amount-label">Amount disputed</span>
     <h1 class="amount num">${fmtMoney(Number(d.dispute_amount?.value || 0), d.dispute_amount?.currency_code)}</h1>
     <p class="lede">${c.fresh || c.yours ? 'Add your contract, emails and delivery records, and we\'ll' : `${esc(first)}, let's protect what you earned. We'll`} go through your evidence and build your response with you, step by step.</p>
     <span class="who">${esc(c.freelancer.business)} · ${esc(c.title)}</span>`;
@@ -746,11 +786,11 @@ function renderThree(c) {
       <span class="note">Filed as "${esc(REASONS[c.dispute.reason] || c.dispute.reason)}"</span>
     </div>
     <div class="waiting" id="card-real">
-      <span class="kicker">2 · What's actually going on</span>
+      <span class="kicker">2 · What the evidence suggests</span>
       <p class="big">We haven't looked yet. Run the agent and it will read your evidence to find out.</p>
     </div>
     <div class="waiting" id="card-plan">
-      <span class="kicker">3 · What we'll do about it</span>
+      <span class="kicker">3 · Proposed next step</span>
       <p class="big">A plan appears here once we know what's really wrong.</p>
     </div>`;
 }
@@ -863,9 +903,9 @@ function markDoc(docId, cls) {
 function renderControls(c) {
   const ctl = $('#controls');
   ctl.innerHTML = `
-    <button class="btn primary" id="run-live">Find out what's really going on</button>
+    <button class="btn primary" id="run-live">Investigate this case <span aria-hidden="true">→</span></button>
     <button class="btn" id="run-replay" ${c.has_replay ? '' : 'disabled title="No recorded run yet"'}>Watch a recorded run</button>
-    <span class="hint">The agent reads your contract, emails and logs. A live run takes a few minutes; the recording plays in about one.</span>`;
+    <span class="hint">Live investigation: a few minutes.<br>Recorded example: about one minute.</span>`;
   $('#run-live').onclick = () => startRun('live');
   $('#run-replay').onclick = () => startRun('replay');
 
@@ -1146,6 +1186,7 @@ function renderStageDone(stage, data, thinking) {
     stageSum(stage, 'Waiting for evidence');
     body.appendChild(h('<div class="panel">Paused until you add the requested records. No response or refund has been prepared.</div>'));
     stageEl(stage)?.classList.add('collapsed');
+    stageEl(stage)?.classList.add('awaiting');
     return;
   }
 
@@ -1183,17 +1224,25 @@ function renderStageDone(stage, data, thinking) {
   }
 
   if (stage === 'diagnose') {
-    stageSum('diagnose', `${data.real_complaint.confidence}% sure`);
+    stageSum('diagnose', `${data.real_complaint.confidence}% model estimate`);
     // Fill card 2 at the top of the page.
     const real = $('#card-real');
     // The "aha" moment: the card pops, rings gold once, and the finding appears word by word.
-    real.className = 'real reveal';
+    const expandable = data.real_complaint.summary.length + data.real_complaint.what_the_client_actually_needs.length > 260;
+    real.className = `real reveal${expandable ? ' summary-clipped' : ''}`;
     const words = say(data.real_complaint.summary).split(' ').map((w, i) => `<span class="w" style="--i:${i}">${w}</span>`).join(' ');
     real.innerHTML = `
-      <span class="kicker">2 · What's actually going on</span>
+      <span class="kicker">2 · What the evidence suggests</span>
       <p class="big">${words}</p>
-      <div class="meter"><span class="track"><i></i></span>${data.real_complaint.confidence}% sure</div>
-      <span class="note">What they need: ${say(data.real_complaint.what_the_client_actually_needs)}</span>`;
+      <div class="meter"><span class="track"><i></i></span>${data.real_complaint.confidence}% model estimate</div>
+      <span class="note">What they need: ${say(data.real_complaint.what_the_client_actually_needs)}</span>
+      ${expandable ? '<button class="summary-more" aria-expanded="false">Read full finding</button>' : ''}`;
+    const more = $('.summary-more', real);
+    if (more) more.onclick = () => {
+      const expanded = real.classList.toggle('expanded');
+      more.setAttribute('aria-expanded', String(expanded));
+      more.textContent = expanded ? 'Show less' : 'Read full finding';
+    };
     requestAnimationFrame(() => ($('.meter i', real).style.width = `${data.real_complaint.confidence}%`));
 
     // Older recordings predate this field.
@@ -1239,7 +1288,7 @@ function renderStageDone(stage, data, thinking) {
     const plan = $('#card-plan');
     plan.className = '';
     plan.innerHTML = `
-      <span class="kicker">3 · What we'll do about it</span>
+      <span class="kicker">3 · Proposed next step</span>
       <p class="big">${esc(d.long)}</p>
       ${data.resolution_action && data.resolution_action !== 'none' ? `<span class="note">${esc(clipSentence(data.resolution_action, 190))}</span>` : ''}
       ${refundOf(data) > 0 ? `<span class="tag amber" style="align-self:flex-start">Refund ${fmtMoney(refundOf(data), state.current.dispute.dispute_amount?.currency_code)}</span>` : ''}`;

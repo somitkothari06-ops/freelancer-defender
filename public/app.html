@@ -17,67 +17,76 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cpath d='M13 2 3 6v7c0 6 4.3 10 10 11 5.7-1 10-5 10-11V6z' fill='%231D4ED8'/%3E%3C/svg%3E" />
 </head>
 <body>
+  <a class="skip-link" href="#workspace">Skip to workspace</a>
   <header class="topbar">
     <div class="topbar-left">
       <a class="brand" href="/">
         <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 2 3 6v7c0 6 4.3 10 10 11 5.7-1 10-5 10-11V6z" fill="#1D4ED8"></path><path d="m8.5 13 3 3 6-6.5" stroke="#FFFFFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-        Freelancer Defender
+        <span>Freelancer Defender</span>
       </a>
       <nav class="nav">
         <a href="#/disputes" id="nav-disputes">Disputes</a>
-        <a href="#/judge" id="nav-judge" title="Opens the hero case and plays a recorded run automatically, no clicking needed">Judge? Watch it run →</a>
+        <a href="#/judge" id="nav-judge" title="Watch a recorded investigation, with each step explained">Watch demo <span aria-hidden="true">↗</span></a>
       </nav>
     </div>
     <div class="topbar-right" id="status"></div>
   </header>
 
   <!-- ===== All disputes ===== -->
-  <main id="view-queue" class="view hidden">
+  <div id="workspace" tabindex="-1"></div>
+  <main id="view-queue" class="view hidden" aria-label="Dispute overview" tabindex="-1">
     <section class="q-head">
       <div>
-        <h1>Payments we're protecting</h1>
-        <p>Every one of these is money you already earned. We'll help you keep it.</p>
+        <span class="kicker page-kicker">Your workspace</span>
+        <h1>Every case, a clear next step.</h1>
+        <p>Your evidence, deadlines and responses. All in one place.</p>
       </div>
-      <button class="btn primary big-btn" id="new-case">+ Try your own case</button>
+      <button class="btn primary big-btn" id="new-case"><span aria-hidden="true">＋</span> Try your own case</button>
     </section>
+    <div id="queue-error" role="alert" class="hidden"></div>
     <section class="stats" id="queue-stats"></section>
     <div id="paypal-banner"></div>
-    <section class="card">
-      <div class="card-head"><h2>Response deadlines</h2><div class="tl-legend"><span><i class="chip-dot"></i>Due within 2 days</span><span><i class="chip"></i>Response ready</span><span><i class="chip hollow"></i>Not worked out yet</span></div></div>
-      <div id="timeline"></div>
-    </section>
-    <section class="card">
-      <div class="card-head"><h2>All disputes</h2><input id="grid-search" class="search" type="search" placeholder="Search clients, complaints, plans…" aria-label="Search disputes" /></div>
+    <section class="card queue-card">
+      <div class="card-head">
+        <div><div class="section-title"><h2>Your cases</h2><span class="section-count" id="queue-count"></span></div><p class="section-description">Start with the nearest deadline. Open a case to review the evidence.</p></div>
+        <label class="search-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input id="grid-search" class="search" type="search" placeholder="Search your cases…" aria-label="Search disputes" /></label>
+      </div>
+      <p class="table-hint">Scroll across the table to see every column.</p>
       <div id="grid" class="ag-theme-quartz grid"></div>
     </section>
-    <section class="card">
+    <section class="card deadline-card">
+      <div class="card-head"><div><h2>Your response window</h2><p class="section-description">Time remaining for each case with a response deadline.</p></div><div class="tl-legend"><span><i class="chip-dot"></i>Due within 2 days</span><span><i class="chip"></i>Recording available</span><span><i class="chip hollow"></i>No recording</span></div></div>
+      <div class="timeline-scroll"><div id="timeline"></div></div>
+    </section>
+    <section class="card studio-card">
       <div class="card-head">
-        <h2>Ask about your disputes</h2>
-        <div style="display:flex; gap:8px">
-          <button class="btn" id="studio-demo">▶ Watch an example</button>
+        <div><span class="kicker">Explore your case data</span><h2>Ask about your disputes</h2></div>
+        <div class="studio-actions">
+          <button class="btn" id="studio-demo"><span aria-hidden="true">▷</span> Watch an example</button>
           <button class="btn" id="studio-toggle">Ask a question →</button>
         </div>
       </div>
-      <p class="muted" id="studio-hint" style="margin:0 0 4px">"Which dispute has the weakest evidence?" "How much have I protected this month?" - type a question and watch an AI agent build the answer as a live chart or table, powered by AG Studio. Not sure what to ask? Watch a guaranteed example first.</p>
+      <p class="muted" id="studio-hint">Which case has the largest amount? Which deadlines come first? Explore the data with AG Studio, or start with the guided example.</p>
       <div id="studio-panel" class="hidden"></div>
     </section>
   </main>
 
   <!-- ===== One dispute ===== -->
-  <main id="view-case" class="view hidden">
+  <main id="view-case" class="view hidden" aria-label="Case workspace" tabindex="-1">
+    <nav class="case-nav" aria-label="Case navigation"><a href="#/disputes"><span aria-hidden="true">←</span> All cases</a><span class="case-nav-divider" aria-hidden="true">/</span><span id="case-label">Case workspace</span><span class="case-nav-note">Review first. Send when you’re ready.</span></nav>
     <section class="hero">
       <div class="hero-main" id="case-head"></div>
       <div class="clock" id="clock"></div>
     </section>
 
-    <section class="three" id="three"></section>
-
     <section class="runbar" id="controls"></section>
     <div id="mode-banner"></div>
 
+    <section class="three" id="three"></section>
+
     <section class="work">
       <div class="card">
-        <div class="card-head"><h2>How the agent works it out</h2><span class="faint" style="font-size:13px" id="trail-note"></span></div>
+        <div class="card-head"><div><span class="kicker">The investigation</span><h2>Follow the evidence</h2></div><span class="faint" style="font-size:13px" id="trail-note"></span></div>
         <ol class="trail" id="trail"></ol>
       </div>
       <aside class="card evidence">

@@ -8,6 +8,27 @@ you're an AI agent picking this project up fresh, read
 
 ## Oct 23, 2026: AG Studio panel, judge-mode narration, landing redesign
 
+### Workspace UI polish
+
+- Refined the dashboard and case workspace: consistent spacing, calmer typography,
+  smaller card corners, clearer section descriptions and a case breadcrumb. Cases
+  now come before the deadline chart; case investigation controls appear before
+  the summary so they remain easy to find.
+- Stats now identify recordings as recordings, exclude resolved cases from the
+  next-deadline card and avoid adding unlike currencies. Filtered table totals
+  follow the same rule. Search has a real no-results state; initial loading and
+  a failed case-list request have loading placeholders and a working Retry action.
+- Findings are short by default with an accessible full-text toggle; confidence
+  is labelled as a model estimate. Missing-evidence steps have an amber waiting
+  state. Existing quotations, investigation results and submission actions are
+  preserved.
+- Improved phone navigation, touch targets, evidence drawers, keyboard focus,
+  skip navigation and reduced-motion behavior. The timeline scrolls within its
+  card on narrow screens; its current-time marker stays contained.
+- Browser checks cover 320/360/390px dashboard widths and a 1280px case layout,
+  search/filter totals, the source drawer, the recorded response and recovery
+  from a simulated local HTTP 503. No live AI calls are needed for this pass.
+
 ### Evaluation and evidence guidance follow-up
 
 - Added ten synthetic development cases and `npm run benchmark`: offline planning
