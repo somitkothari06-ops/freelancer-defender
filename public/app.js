@@ -220,6 +220,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 function route() {
+  endStageNarration();
+  state.keepStagesOpen = false;
   if (location.hash === '#/judge') {
     state.judgeMode = true;
     location.hash = `#/case/${JUDGE_CASE_ID}`; // re-enters route() via hashchange, flag already set
@@ -905,6 +907,80 @@ const STAGES = [
   ['package', 'Get it ready to send through PayPal'],
 ];
 
+const STAGE_EXPLANATIONS = {
+  intake: "Pulling the real dispute record from PayPal's sandbox API: the complaint, the amount, and the deadline.",
+  read: "Reading exactly what the client told the bank, word for word, straight from PayPal's own record.",
+  investigate: "Searching the freelancer's own evidence — contracts, emails, and delivery logs — for anything relevant to this dispute.",
+  diagnose: "The key step: working out what's actually going on, which can differ from the client's claim, and explaining how confident it is.",
+  strategy: 'Deciding how to respond — refund, fight, or something in between — based on what the evidence shows.',
+  draft: 'Writing the response letter, citing a specific piece of evidence for every claim it makes.',
+  verify: 'Checking every quote in the draft against its cited source, word for word. Nothing gets through unverified.',
+  package: 'Packaging the verified response, ready to send back through PayPal.',
+};
+
+// Separate from the first-visit tour: automatic, repeatable, and never blocks clicks.
+let stageNarrationCleanup = null;
+function endStageNarration() {
+  stageNarrationCleanup?.();
+  stageNarrationCleanup = null;
+  $('#stage-narration')?.remove();
+}
+
+function showStageNarration(key) {
+  endStageNarration();
+  if (!state.keepStagesOpen) return;
+  const target = stageEl(key);
+  const index = STAGES.findIndex(([stage]) => stage === key);
+  if (!target || index < 0) return;
+  const box = h(`<div id="stage-narration" class="stage-narration" role="status" aria-live="polite" aria-atomic="true">
+    <div class="stage-narration-spot" aria-hidden="true"></div>
+    <div class="stage-narration-tip"><span class="kicker">Step ${index + 1} of ${STAGES.length} · Happening now</span>
+      <h4>${esc(STAGES[index][1])}</h4><p>${esc(STAGE_EXPLANATIONS[key])}</p></div>
+  </div>`);
+  document.body.appendChild(box);
+  const spot = $('.stage-narration-spot', box);
+  const tip = $('.stage-narration-tip', box);
+  // Leave room for the fixed top bar and, on narrow screens, the explanation.
+  const sideFits = () => target.getBoundingClientRect().right + 24 + tip.offsetWidth <= innerWidth - 16;
+  const topSpace = () => sideFits() ? 96 : 96 + tip.offsetHeight + 24;
+  window.scrollBy({ top: target.getBoundingClientRect().top - topSpace(), behavior: 'instant' });
+  const place = () => {
+    if (!target.isConnected || !state.keepStagesOpen) return endStageNarration();
+    const r = target.getBoundingClientRect();
+    // Streamed findings can make a stage taller than the viewport. Highlight its
+    // visible portion rather than putting the spotlight's edges off screen.
+    const top = Math.max(80, r.top - 8);
+    const bottom = Math.min(innerHeight - 8, r.bottom + 8);
+    spot.hidden = bottom <= top;
+    Object.assign(spot.style, { top: `${top}px`, left: `${r.left - 8}px`, width: `${r.width + 16}px`, height: `${Math.max(0, bottom - top)}px` });
+    const beside = sideFits();
+    const tipTop = beside ? r.top : r.top - tip.offsetHeight - 24;
+    tip.style.top = `${Math.max(80, Math.min(tipTop, innerHeight - tip.offsetHeight - 16))}px`;
+    tip.style.left = `${beside ? r.right + 24 : Math.max(16, Math.min(r.left, innerWidth - tip.offsetWidth - 16))}px`;
+  };
+  const reflow = () => {
+    // A preceding stage folding can move this heading above the card or viewport.
+    const r = target.getBoundingClientRect();
+    if (r.top < topSpace() || r.top > innerHeight - 80) {
+      window.scrollBy({ top: r.top - topSpace(), behavior: 'instant' });
+    }
+    place();
+  };
+  window.addEventListener('resize', reflow);
+  window.addEventListener('scroll', place, true);
+  // Earlier stages collapse on a timer; new evidence also changes stage height.
+  const observer = new ResizeObserver(reflow);
+  observer.observe($('#trail'));
+  observer.observe(target);
+  observer.observe(tip);
+  stageNarrationCleanup = () => {
+    window.removeEventListener('resize', reflow);
+    window.removeEventListener('scroll', place, true);
+    observer.disconnect();
+  };
+  place();
+}
+
 function renderTrailSkeleton() {
   const ol = $('#trail');
   ol.innerHTML = '';
@@ -929,7 +1005,10 @@ function setStage(key, status) {
   el.classList.remove('pending', 'running', 'done');
   el.classList.add(status === 'start' ? 'running' : 'done');
   if (key === 'package' && status !== 'start') el.classList.add('final');
-  if (status === 'start') el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (status === 'start') {
+    if (state.keepStagesOpen) showStageNarration(key);
+    else el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else if (key === 'package') endStageNarration();
   // A finished step folds down to its one-line summary; "Details" opens it again.
   // In judge mode, the two stages that carry the actual reasoning stay open so nobody
   // has to click to see them.
@@ -963,6 +1042,8 @@ function chips(list, kind) {
 }
 
 function startRun(mode) {
+  endStageNarration();
+  if (mode !== 'replay') state.keepStagesOpen = false;
   clearTimeout(state.judgeAutoplayTimer); // a manual click always wins over the pending auto-play
   if (state.stream) state.stream.close();
   renderTrailSkeleton();
@@ -1032,6 +1113,8 @@ function startRun(mode) {
   es.onerror = () => finish();
 
   function finish() {
+    endStageNarration();
+    state.keepStagesOpen = false;
     es.close();
     state.stream = null;
     $('#run-live').disabled = false;

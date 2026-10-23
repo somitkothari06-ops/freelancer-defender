@@ -429,4 +429,10 @@ details.sandbox[open] > summary { width: 100%; }
 .tour-tip h4 { margin: 6px 0 6px; font-size: 18px; color: var(--navy); }
 .tour-tip p { margin: 0 0 14px; color: var(--muted); line-height: 1.45; }
 .tour-btns { display: flex; justify-content: space-between; align-items: center; }
+/* Automatic judge-mode stage explanations, independent of the first-visit tour. */
+.stage-narration { position: fixed; inset: 0; z-index: 79; pointer-events: none; }
+.stage-narration-spot { position: fixed; border-radius: 18px; box-shadow: 0 0 0 9999px rgba(5,13,34,.62); }
+.stage-narration-tip { position: fixed; width: min(340px, calc(100vw - 32px)); max-height: calc(100dvh - 96px); overflow: auto; pointer-events: auto; background: #fff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 24px 60px rgba(5,13,34,.35); }
+.stage-narration-tip h4 { margin: 6px 0; font-size: 18px; color: var(--navy); }
+.stage-narration-tip p { margin: 0; color: var(--muted); line-height: 1.45; }
 .big-btn { padding: 13px 20px; font-size: 15px; }
