@@ -158,6 +158,26 @@ main:focus { outline: none; }
   --ag-header-height: 44px;
   --ag-cell-horizontal-padding: 16px;
 }
+/* Use SVGs for common grid controls instead of private-use icon-font glyphs.
+   Some browser/font combinations render those glyphs as filled squares. */
+.grid .ag-icon-filter::before,
+.grid .ag-icon-asc::before,
+.grid .ag-icon-desc::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: transparent center / 16px 16px no-repeat;
+}
+.grid .ag-icon-filter::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M2 4h12M4 8h8M6.5 12h3'/%3E%3C/svg%3E");
+}
+.grid .ag-icon-asc::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m3 7 5-5 5 5M8 2v12'/%3E%3C/svg%3E");
+}
+.grid .ag-icon-desc::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m3 9 5 5 5-5M8 2v12'/%3E%3C/svg%3E");
+}
 .grid .ag-header-cell-text { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
 .grid .ag-row { cursor: pointer; }
 .grid .ag-cell { display: flex; align-items: center; line-height: 1.4; }
