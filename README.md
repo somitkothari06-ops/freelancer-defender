@@ -36,9 +36,13 @@ Pull dispute from PayPal → Read the complaint → Investigate (agent opens doc
 → Draft response → Verify every citation → Send through PayPal
 ```
 
-### Every claim is citation-grounded and machine-checked
+### Source quotations are machine-checked
 
-Each sentence in the response cites a specific document section (`CONTRACT §7.2`, `DELIVERY-LOG L5`, `PAYPAL-TXN 7HL40…`) **with an exact quote**. A deterministic checker (plain code, not AI) confirms that each quote really appears in that section. Claims that fail get one repair attempt; if they still fail, they're removed and shown struck through. The model can't slip an invented fact into a legal-ish document.
+Each claim in the response cites a specific document section (`CONTRACT §7.2`, `DELIVERY-LOG L5`, `PAYPAL-TXN 7HL40…`) **with an exact quote**. A deterministic checker (plain code, not AI) confirms that each quote appears in that section after normalizing typography and spacing. Claims whose citations fail get one repair attempt; if they still fail, they're removed and shown struck through. This verifies the quotation, not whether the claim correctly interprets it. The freelancer reviews each claim against its linked source before sending.
+
+### Ask for evidence before guessing
+
+A complaint and payment record alone cannot establish what happened. If there are no supporting documents, the app asks for the agreed scope, delivery records and relevant approvals before making any AI calls. The agent can also choose **Need more evidence** during an investigation, with targeted questions and a list of records to look for. In either case it prepares no letter, client message or refund action, and submission is blocked until a new investigation produces a response.
 
 ### It's honest
 
@@ -99,7 +103,11 @@ npm run paypal:check                  # verify sandbox credentials and API acces
 npm run paypal:seed -- halden-brand   # send a real sandbox invoice for a scenario (see NOTES.md)
 npm run run-one -- PP-D-27140-HALDEN --save   # run the agent in the terminal and record a replay
 npm run eval                          # score recorded runs against each scenario's answer key
+npm run benchmark                     # offline plan: 10 new synthetic cases + recorded token usage
+npm run benchmark -- --run --case duplicate-capture --max-tokens 65000
 ```
+
+See [docs/EVALUATION.md](docs/EVALUATION.md) for the comparison method, quota limits and manual review rubric. Benchmark execution is explicit, uses one configured key, saves partial runs, and never calls PayPal.
 
 ## Deploy (Render)
 

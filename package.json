@@ -9,6 +9,7 @@
     "dev": "node --watch server.js",
     "test": "node --test test/*.test.js",
     "eval": "node scripts/eval.js",
+    "benchmark": "node scripts/benchmark.js",
     "run-one": "node scripts/run-one.js",
     "paypal:check": "node scripts/paypal-check.js",
     "paypal:seed": "node scripts/paypal-seed.js"
@@ -19,6 +20,6 @@
   "license": "MIT",
   "dependencies": {
     "dotenv": "16.4.5",
-    "express": "4.21.2"
+    "express": "4.22.3"
   }
 }

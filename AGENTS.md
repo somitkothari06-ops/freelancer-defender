@@ -67,9 +67,10 @@ standing instructions that apply to **all** future work on this repo:
 npm install
 npm start                             # http://localhost:3000
 npm run dev                           # same, with --watch (auto-restart)
-npm test                              # node --test test/*.test.js — 18 tests, keep green
+npm test                              # node --test test/*.test.js — keep green
 node --test scripts/test-studio-adapter.js   # AG Studio schema-transform tests (not in npm test)
 npm run eval                          # score recorded replays against each scenario's answer key
+npm run benchmark                     # offline: 10 synthetic cases + recorded token usage; see docs/EVALUATION.md
 npm run run-one -- PP-D-27140-HALDEN --save   # run the agent in the terminal, record a replay
 npm run paypal:check                  # verify PayPal sandbox credentials/access
 npm run paypal:seed -- halden-brand   # send a real sandbox invoice (see NOTES.md for the full flow)
@@ -156,6 +157,15 @@ to do focused implementation work), the pattern that worked well:
    (you, or a human) that can.
 
 ## Known, accepted limitations (not bugs to "fix" reflexively)
+
+- Citation checks establish that quoted words appear in a source, not that the
+  associated claim follows from those words. Keep UI and pitch wording precise.
+- `REQUEST_MORE_EVIDENCE` is a real strategy: it produces no submission actions
+  or PDFs. Cases with only complaint/payment records take this path before any
+  AI calls. Older replays predate this field and must keep working.
+- Groq quotas apply per organization. Do not pool or rotate accounts to exceed
+  limits. The benchmark uses one key, saves partial results, and has local
+  token/request guards. See `docs/EVALUATION.md` for limits and first results.
 
 - The live (non-scripted) AG Studio "Ask about your disputes" panel runs on
   Groq's free-tier `openai/gpt-oss-120b`, which can occasionally fail to

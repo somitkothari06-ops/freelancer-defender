@@ -6,8 +6,13 @@
 const { makePdf } = require('./pdf');
 const { REASON_LABELS } = require('../evidence/locker');
 const playbookFor = require('./playbook');
+const { evidenceRequests } = require('./evidence-gaps');
 
 function buildPackage({ scenario, locker, draft, strategy }) {
+  if (strategy.decision === 'REQUEST_MORE_EVIDENCE') {
+    return { needsEvidence: true, evidenceRequests: strategy.evidence_requests?.length ? strategy.evidence_requests : evidenceRequests(scenario.dispute.reason), actions: [],
+      footnotes: [], letter: [], clientMessage: '', evidencePackage: [], _files: [] };
+  }
   const { dispute, freelancer, client } = scenario;
   const currency = dispute.dispute_amount?.currency_code || 'USD';
 

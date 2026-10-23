@@ -279,6 +279,7 @@ app.post('/api/cases/:id/submit', wrap(async (req, res) => {
   const run = lastRun.get(id);
   if (!run) return res.status(400).json({ error: 'Run the agent first.' });
   const wanted = new Set(req.body.actions || run.package.actions.map((a) => a.kind));
+  if (run.package.needsEvidence) return res.status(409).json({ error: 'Add the requested evidence and run the investigation again before submitting.', code: 'MORE_EVIDENCE_REQUIRED' });
   const c = await cases.loadCase(id);
   const results = [];
   if (c.live && !canActLive(req)) return liveActionRefused(res);

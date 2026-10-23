@@ -31,7 +31,9 @@ The Freelancer Defender pulls a dispute from PayPal, reads the freelancer's evid
 2. **What's actually going on**, e.g. the client never downloaded the second link with the print files and the copyright letter, the link expired, and their sign maker can't cut a storefront sign from web images. They're also worried they don't legally own the logo. Under the contract, ownership transfers only once payment is kept, so winning the chargeback would actually cost them the logo.
 3. **What we'll do about it**: contest the reversal *and* fix the real problem (re-send the files and the copyright letter).
 
-Then it writes the response to the bank and a friendly message to the client. **Every sentence in the response cites an exact quote from a specific document**, and plain code (not AI) checks each quote word for word. Anything unsupported is removed. Finally it builds the real PayPal API calls (provide evidence with a generated PDF letter and evidence appendix, send message, make offer) and sends them.
+Then it writes the response to the bank and a friendly message to the client. **Each claim in the response cites a quote from a specific document**, and plain code (not AI) checks that the quoted words appear in the source. Claims whose citations still fail after a repair attempt are removed. Quote matching does not prove that a claim correctly interprets its source; the freelancer can inspect each source before sending. Finally it builds the PayPal API calls (provide evidence with a generated PDF letter and evidence appendix, send message, make offer), which the freelancer reviews and submits.
+
+If supporting documents are absent, it asks for evidence before making any AI calls. The agent can also pause an investigation to ask targeted questions when essential facts remain unknown. A paused case cannot submit a response or refund.
 
 The agent is honest. It lists the freelancer's own weak points, and in one demo case it recommends a partial refund because part of the work really wasn't delivered.
 
@@ -40,7 +42,7 @@ Freelancers can add their own evidence to any dispute (paste or upload a contrac
 ## How we built it
 
 - **PayPal APIs (sandbox):** Disputes API (list, details, provide-evidence with multipart PDFs, send-message, make-offer, accept-claim, plus the sandbox lifecycle calls), Transaction Search (the client's payment history as evidence) and Invoicing (to create real sandbox payments that a sandbox buyer then disputes). We took a real sandbox dispute through its whole lifecycle: payment → dispute → escalation → evidence submitted and accepted.
-- **AI:** Groq running `openai/gpt-oss-120b`. The agent works in stages: read the complaint, investigate with tools (open documents, search, record findings), weigh competing hypotheses, choose a strategy, then draft. Each stage returns strict JSON so the next one can't invent facts.
+- **AI:** Groq running `openai/gpt-oss-120b`. The agent works in stages: read the complaint, investigate with tools (open documents, search, record findings), weigh competing hypotheses, choose a strategy, then draft. Structured JSON makes stage outputs inspectable; it does not eliminate incorrect inferences.
 - **Citation verifier:** deterministic code that checks every quote against its source section, with one AI repair pass for failures.
 - **AG Grid:** the dispute list (sortable by deadline, live countdown cells) and the evidence ledger (one row per citation: claim, source, section, exact quote, verified or not), which lets anyone audit what the response rests on.
 - **Bryntum Scheduler:** the deadline timeline, one bar per dispute from now until its response deadline.
