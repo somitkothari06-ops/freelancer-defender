@@ -1190,7 +1190,7 @@ function startRun(mode) {
       <div><b>Recorded investigation</b><span id="demo-position" aria-live="polite"></span></div>
       <div class="demo-playback-buttons"><button class="btn" id="demo-back" aria-label="Previous demo step">← Back</button>
       <button class="btn" id="demo-pause">Pause</button><button class="btn primary" id="demo-next" aria-label="Next demo step">Next →</button></div>
-      <small>12 seconds per step. Back or Next pauses playback so you can read freely.</small></section>`);
+      </section>`);
     $('#controls').after(bar);
     function show(index, manual = false) {
       clearTimeout(player.timer);
