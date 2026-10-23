@@ -6,6 +6,8 @@ Built for the PayPal AI Hackathon 2026. **Live: https://freelancer-defender.onre
 
 **Start here:** [NOTES.md](NOTES.md) (what's built, what's real vs. demo, to-do list) · [docs/SUBMISSION.md](docs/SUBMISSION.md) (Devpost text) · [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) (video script) · [docs/RESEARCH.md](docs/RESEARCH.md) (real freelancer stories and numbers)
 
+**An AI coding agent picking this up fresh should read [AGENTS.md](AGENTS.md) first.**
+
 ## The problem
 
 A freelancer finishes approved work and gets paid. Months later the client's bank reverses the charge. The client could file up to **180 days** after paying, and their card company can take up to **75 days** to decide. The freelancer gets about **10 days** to respond ([PayPal Help](https://www.paypal.com/us/cshelp/article/what-is-a-chargeback-and-why-did-i-get-one-help607)), with months-old evidence scattered across email, contracts and file-sharing logs.

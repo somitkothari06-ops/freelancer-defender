@@ -1,13 +1,59 @@
 # Build notes: what's built, what's real, what's open
 
-Status as of Oct 20, 2026. Written for the two of us; judges should read the README.
+Status as of Oct 23, 2026 (last updated below; most of this doc is still the
+Oct 20 pass and is still accurate — only the "Oct 23" section and this line
+are new). Written for the two of us; judges should read the README. **If
+you're an AI agent picking this project up fresh, read
+[AGENTS.md](AGENTS.md) first**, not this file directly.
+
+## Oct 23, 2026: AG Studio panel, judge-mode narration, landing redesign
+
+Added since the Oct 20 pass below (all live on production, all pushed):
+
+- **"Ask about your disputes" panel** (`public/studio.js`, `server.js`'s
+  `/api/studio/chat`): a natural-language query/chart panel on the dispute
+  queue, built on **AG Grid's AG Studio** product (a second, separate AG
+  Grid integration beyond the queue/evidence-ledger grids already in the
+  Stack section below — strengthens the AG Grid sponsor-prize pitch).
+  Required building a JSON-Schema-2020-12 → Groq-strict-tool-schema
+  translation layer and fixing several real bugs along the way (dropped
+  system instructions, a shared rate-limit budget across models, a
+  required-but-silently-missing `artifacts` field). Full technical writeup,
+  for anyone touching this code: **[docs/AG_STUDIO_TECHNICAL_NOTES.md](docs/AG_STUDIO_TECHNICAL_NOTES.md)**.
+- **"▶ Watch an example" button** next to the panel's "Ask a question"
+  toggle: a scripted, guaranteed-reliable demo conversation
+  (`public/studio-demo.js`) for judges, so the panel has a zero-risk path
+  alongside the live, model-driven one. The query it runs and the numbers
+  it reports are real (pulled from Studio's real query engine); only the
+  choice of which tool to call next is pre-scripted. See the technical
+  notes doc for why.
+- **Judge-mode real-time stage narration** (`public/app.js`,
+  `public/styles.css`): in the `#/judge` auto-play, a spotlight-and-card
+  explanation now appears automatically as each of the 8 reasoning stages
+  starts, explaining in plain language what that stage is doing — same
+  visual language as the first-visit tour, but automatic/repeatable and
+  gated to judge mode only. Added because a judge watching the recording
+  shouldn't have to infer what e.g. "Work out what's really wrong" means
+  from the stage title alone.
+- **Landing page "how it works" section redesigned** (`public/index.html`):
+  the 3 steps are now a connected vertical timeline with filled color-coded
+  nodes and card-style text, replacing a flatter numbered-divider list.
+- Two correctness fixes worth knowing about even outside AG Studio: Groq's
+  rate-limit budget tracker (`src/ai/groq.js`) now keys its state per model
+  name instead of one shared tracker (was silently wrong the moment a
+  second model name was ever used anywhere); the retry budget for Groq's
+  flaky tool-call-parsing errors was raised from 3 to 6 attempts.
+- **Operational note:** Render's `autoDeploy: yes` has repeatedly not fired
+  reliably on a push to `main` this session. The reliable pattern is
+  `git push` then `render deploys create srv-dbbihntg1s2s7393u3dg --confirm`
+  — don't assume a push alone means the live site updated; verify.
 
 ## Your to-do before submitting (deadline Nov 12, 2026, 12:00 pm Pacific)
 
 1. **Record the demo video** (under 3 min, YouTube, no copyrighted music). Script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 2. **Fill in Devpost** from [docs/SUBMISSION.md](docs/SUBMISSION.md); enter AG Grid as the sponsor prize.
 3. **Make the GitHub repo public** and check the MIT license shows in the repo's About box.
-4. **Rotate secrets that were shared in chat:** create a new PayPal sandbox secret (developer.paypal.com → your app → Secret key, then update it in Render → Environment), delete the Render API key used for setup (Render → Account settings → API Keys), and optionally regenerate the Groq key (then update it in Render too).
+4. **Rotate secrets that were shared in chat:** create a new PayPal sandbox secret (developer.paypal.com → your app → Secret key, then update it in Render → Environment), delete the Render API key used for setup (Render → Account settings → API Keys), and **regenerate the Groq key** (then update it in Render too — multiple Groq keys were pasted into chat sessions on Oct 20 and Oct 23, so this one is not optional).
 5. **Optional:** add a card in Render Billing and switch the service to Starter so it never sleeps during judging (Dec 1–15). The $50 credit covers it.
 
 ## What's built
