@@ -8,6 +8,16 @@ you're an AI agent picking this project up fresh, read
 
 ## Oct 23, 2026: AG Studio panel, judge-mode narration, landing redesign
 
+### Judge demo playback controls
+
+- Watch demo now presents eight recorded stage snapshots with a 12-second reading
+  interval, persistent Back/Next arrows and Pause/Play. Manual navigation pauses
+  autoplay; earlier snapshots hide later findings and the final response.
+- Guided recordings stream without artificial server waits, then play locally.
+  Ordinary replay and live investigation retain their existing behavior.
+- Browser checks cover all eight steps, reverse navigation and final-result
+  visibility; no Groq calls are used.
+
 ### Workspace UI polish
 
 - Refined the dashboard and case workspace: consistent spacing, calmer typography,

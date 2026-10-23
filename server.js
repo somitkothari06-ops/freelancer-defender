@@ -193,7 +193,7 @@ app.get('/api/cases/:id/run', async (req, res) => {
         if (closed) return;
         if (ev.type === 'pacing') continue; // rate-limit waits aren't worth replaying
         // Keep the original rhythm, compressed so a replay takes about a minute.
-        await new Promise((r) => setTimeout(r, Math.min(1400, Math.max(250, (ev.t - prev) / 6))));
+        if (req.query.guided !== '1') await new Promise((r) => setTimeout(r, Math.min(1400, Math.max(250, (ev.t - prev) / 6))));
         prev = ev.t;
         // Marked as a replay so it can't be submitted to a real PayPal dispute.
         if (ev.type === 'result') lastRun.set(id, { ...ev.payload, _replay: true });

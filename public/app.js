@@ -225,6 +225,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 function route() {
+  stopGuidedReplay();
   endStageNarration();
   state.keepStagesOpen = false;
   if (location.hash === '#/judge') {
@@ -955,7 +956,7 @@ const STAGE_EXPLANATIONS = {
   diagnose: "The key step: working out what's actually going on, which can differ from the client's claim, and explaining how confident it is.",
   strategy: 'Deciding how to respond — refund, fight, or something in between — based on what the evidence shows.',
   draft: 'Writing the response letter, citing a specific piece of evidence for every claim it makes.',
-  verify: 'Checking every quote in the draft against its cited source, word for word. Nothing gets through unverified.',
+  verify: 'Checking every quote in the draft against its cited source, word for word. This checks the quoted words, not whether the claim follows from them.',
   package: 'Packaging the verified response, ready to send back through PayPal.',
 };
 
@@ -975,7 +976,7 @@ function showStageNarration(key) {
   if (!target || index < 0) return;
   const box = h(`<div id="stage-narration" class="stage-narration" role="status" aria-live="polite" aria-atomic="true">
     <div class="stage-narration-spot" aria-hidden="true"></div>
-    <div class="stage-narration-tip"><span class="kicker">Step ${index + 1} of ${STAGES.length} · Happening now</span>
+    <div class="stage-narration-tip"><span class="kicker">Step ${index + 1} of ${STAGES.length} · ${guidedReplay ? 'Recorded walkthrough' : 'Happening now'}</span>
       <h4>${esc(STAGES[index][1])}</h4><p>${esc(STAGE_EXPLANATIONS[key])}</p></div>
   </div>`);
   document.body.appendChild(box);
@@ -983,20 +984,21 @@ function showStageNarration(key) {
   const tip = $('.stage-narration-tip', box);
   // Leave room for the fixed top bar and, on narrow screens, the explanation.
   const sideFits = () => target.getBoundingClientRect().right + 24 + tip.offsetWidth <= innerWidth - 16;
-  const topSpace = () => sideFits() ? 96 : 96 + tip.offsetHeight + 24;
+  const safeTop = () => Math.max(96, ($('#demo-playback')?.getBoundingClientRect().bottom || 76) + 20);
+  const topSpace = () => sideFits() ? safeTop() : safeTop() + tip.offsetHeight + 24;
   window.scrollBy({ top: target.getBoundingClientRect().top - topSpace(), behavior: 'instant' });
   const place = () => {
     if (!target.isConnected || !state.keepStagesOpen) return endStageNarration();
     const r = target.getBoundingClientRect();
     // Streamed findings can make a stage taller than the viewport. Highlight its
     // visible portion rather than putting the spotlight's edges off screen.
-    const top = Math.max(80, r.top - 8);
+    const top = Math.max(safeTop() - 8, r.top - 8);
     const bottom = Math.min(innerHeight - 8, r.bottom + 8);
     spot.hidden = bottom <= top;
     Object.assign(spot.style, { top: `${top}px`, left: `${r.left - 8}px`, width: `${r.width + 16}px`, height: `${Math.max(0, bottom - top)}px` });
     const beside = sideFits();
     const tipTop = beside ? r.top : r.top - tip.offsetHeight - 24;
-    tip.style.top = `${Math.max(80, Math.min(tipTop, innerHeight - tip.offsetHeight - 16))}px`;
+    tip.style.top = `${Math.max(safeTop(), Math.min(tipTop, innerHeight - tip.offsetHeight - 16))}px`;
     tip.style.left = `${beside ? r.right + 24 : Math.max(16, Math.min(r.left, innerWidth - tip.offsetWidth - 16))}px`;
   };
   const reflow = () => {
@@ -1049,12 +1051,12 @@ function setStage(key, status) {
   if (status === 'start') {
     if (state.keepStagesOpen) showStageNarration(key);
     else el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  } else if (key === 'package') endStageNarration();
+  } else if (key === 'package' && !guidedReplay) endStageNarration();
   // A finished step folds down to its one-line summary; "Details" opens it again.
   // In judge mode, the two stages that carry the actual reasoning stay open so nobody
   // has to click to see them.
   const keepOpen = state.keepStagesOpen && (key === 'diagnose' || key === 'verify');
-  if (status !== 'start' && key !== 'package' && !keepOpen) setTimeout(() => el.classList.add('collapsed'), 1500);
+  if (!guidedReplay && status !== 'start' && key !== 'package' && !keepOpen) setTimeout(() => el.classList.add('collapsed'), 1500);
 }
 
 // Clicking a step's title opens or folds its details.
@@ -1082,7 +1084,16 @@ function chips(list, kind) {
   return wrap;
 }
 
+let guidedReplay = null;
+function stopGuidedReplay() {
+  clearTimeout(guidedReplay?.timer);
+  guidedReplay = null;
+  $('#demo-playback')?.remove();
+}
+
 function startRun(mode) {
+  stopGuidedReplay();
+  const guided = mode === 'replay' && state.keepStagesOpen;
   endStageNarration();
   if (mode !== 'replay') state.keepStagesOpen = false;
   clearTimeout(state.judgeAutoplayTimer); // a manual click always wins over the pending auto-play
@@ -1098,9 +1109,22 @@ function startRun(mode) {
   let opened = 0;
   let found = 0;
 
-  const es = new EventSource(`/api/cases/${encodeURIComponent(state.current.id)}/run?mode=${mode}`);
+  const handlers = {};
+  const recording = [];
+  const es = new EventSource(`/api/cases/${encodeURIComponent(state.current.id)}/run?mode=${mode}${guided ? '&guided=1' : ''}`);
   state.stream = es;
-  const on = (type, fn) => es.addEventListener(type, (e) => fn(JSON.parse(e.data)));
+  const on = (type, fn) => {
+    handlers[type] = fn;
+    es.addEventListener(type, (e) => {
+      const payload = JSON.parse(e.data);
+      if (!guided || type === 'fatal') return fn(payload);
+      if (type === 'end') {
+        es.close();
+        state.stream = null;
+        beginGuidedReplay();
+      } else recording.push({ type, payload });
+    });
+  };
 
   on('mode', (p) => {
     $('#trail-note').textContent =
@@ -1152,6 +1176,68 @@ function startRun(mode) {
   });
   on('end', finish);
   es.onerror = () => finish();
+
+  function beginGuidedReplay() {
+    const seen = new Set();
+    const starts = recording.flatMap((ev, i) => {
+      if (ev.type !== 'stage' || seen.has(ev.payload.stage)) return [];
+      seen.add(ev.payload.stage);
+      return [i];
+    });
+    if (!starts.length) return finish();
+    const player = guidedReplay = { index: 0, playing: true, timer: null };
+    const bar = h(`<section id="demo-playback" class="demo-playback" aria-label="Demo playback">
+      <div><b>Recorded investigation</b><span id="demo-position" aria-live="polite"></span></div>
+      <div class="demo-playback-buttons"><button class="btn" id="demo-back" aria-label="Previous demo step">← Back</button>
+      <button class="btn" id="demo-pause">Pause</button><button class="btn primary" id="demo-next" aria-label="Next demo step">Next →</button></div>
+      <small>12 seconds per step. Back or Next pauses playback so you can read freely.</small></section>`);
+    $('#controls').after(bar);
+    function show(index, manual = false) {
+      clearTimeout(player.timer);
+      if (guidedReplay !== player) return;
+      player.index = Math.max(0, Math.min(index, starts.length - 1));
+      if (manual) player.playing = false;
+      endStageNarration();
+      renderTrailSkeleton();
+      renderThree(state.current);
+      $('#result').innerHTML = '';
+      $('#result').classList.add('hidden');
+      $('#locker').querySelectorAll('.doc').forEach(d => d.classList.remove('opened', 'cited'));
+      opened = 0;
+      found = 0;
+      const end = starts[player.index + 1] ?? recording.length;
+      // Rebuild a deterministic snapshot, without replaying scroll/spotlight effects.
+      state.keepStagesOpen = false;
+      for (const ev of recording.slice(0, end)) {
+        if (ev.type === 'stage') {
+          const el = stageEl(ev.payload.stage);
+          el.classList.remove('pending', 'running');
+          el.classList.add('done');
+          if (ev.payload.status === 'done') renderStageDone(ev.payload.stage, ev.payload.data || {}, ev.payload.thinking);
+        } else handlers[ev.type]?.(ev.payload);
+      }
+      state.keepStagesOpen = true;
+      const key = recording[starts[player.index]].payload.stage;
+      document.querySelectorAll('#trail .stage').forEach(el => el.classList.toggle('collapsed', el.dataset.stage !== key));
+      $('#trail-note').textContent = 'Recorded run · guided playback';
+      $('#demo-position').textContent = `Step ${player.index + 1} of ${starts.length} · ${STAGES.find(([k]) => k === key)?.[1] || key}`;
+      $('#demo-back').disabled = player.index === 0;
+      $('#demo-next').disabled = player.index === starts.length - 1;
+      if (player.index === starts.length - 1) player.playing = false;
+      $('#demo-pause').textContent = player.playing ? 'Pause' : 'Play';
+      showStageNarration(key);
+      if (player.playing) player.timer = setTimeout(() => show(player.index + 1), 12000);
+    }
+    $('#demo-back').onclick = () => show(player.index - 1, true);
+    $('#demo-next').onclick = () => show(player.index + 1, true);
+    $('#demo-pause').onclick = () => {
+      player.playing = !player.playing;
+      show(player.playing && player.index === starts.length - 1 ? 0 : player.index);
+    };
+    $('#run-live').disabled = false;
+    $('#run-replay').disabled = false;
+    show(0);
+  }
 
   function finish() {
     endStageNarration();

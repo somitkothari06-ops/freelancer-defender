@@ -554,3 +554,11 @@ details.sandbox[open] > summary { width: 100%; }
 .stage-narration-tip h4 { margin: 6px 0; font-size: 18px; color: var(--navy); }
 .stage-narration-tip p { margin: 0; color: var(--muted); line-height: 1.45; }
 .big-btn { padding: 13px 20px; font-size: 15px; }
+
+.demo-playback { position: sticky; top: 76px; z-index: 80; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 16px 20px; border: 1px solid var(--line); border-radius: 12px; background: white; box-shadow: 0 4px 16px #0b1b3f12; }
+.demo-playback > div:first-child { flex: 1; min-width: 180px; }
+.demo-playback span { display: block; font-size: 13px; color: var(--muted); }
+.demo-playback-buttons { display: flex; gap: 8px; }
+.demo-playback small { flex-basis: 100%; color: var(--muted); }
+.demo-playback .btn { min-height: 44px; }
+@media(max-width: 600px) { .demo-playback { top: 112px; padding: 12px; } .demo-playback-buttons { width: 100%; } .demo-playback-buttons .btn { flex: 1; padding: 8px; } }
