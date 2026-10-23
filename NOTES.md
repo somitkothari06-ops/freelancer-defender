@@ -8,6 +8,30 @@ you're an AI agent picking this project up fresh, read
 
 ## Oct 23, 2026: AG Studio panel, judge-mode narration, landing redesign
 
+### Evaluation and evidence guidance follow-up
+
+- Added ten synthetic development cases and `npm run benchmark`: offline planning
+  is the default, and explicit live comparisons use one configured Groq key with
+  local estimated token/request/time guards. Results and partial failures are saved
+  under gitignored `data/benchmark-runs/`; judge replays are left intact.
+- One live baseline test recommended a refund without supporting evidence and
+  incorrectly claimed it was already processed. Added `REQUEST_MORE_EVIDENCE`:
+  cases with no freelancer records ask specific questions before using AI; an
+  investigation can also pause after strategy. Paused cases generate no action
+  package, PDFs or client message, and the server rejects submission.
+- The UI and README now distinguish matched source quotations from proven claims.
+  A correct quotation can still be attached to an incorrect interpretation.
+- System instructions now treat documents as untrusted evidence and distinguish
+  proposed remedies from completed actions. These are model instructions, not a
+  guarantee of semantic correctness.
+- Updated Express within version 4 to 4.22.3; the dependency audit reports zero
+  known vulnerabilities after installation (October 23 check).
+- Evaluation method, measured usage, incomplete experiments and next feature
+  priorities are in [docs/EVALUATION.md](docs/EVALUATION.md). The development suite
+  is not evidence of a recovery rate or a win over a single-prompt baseline.
+- The no-evidence branch and submission refusal were verified locally. Deployment
+  verification is recorded in the accompanying change report.
+
 Added since the Oct 20 pass below (all live on production, all pushed):
 
 - **"Ask about your disputes" panel** (`public/studio.js`, `server.js`'s

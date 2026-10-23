@@ -45,6 +45,7 @@ const DECISIONS = {
   CONTEST_AND_RESOLVE: { short: 'Fight + fix', long: 'Fight the reversal, and fix what is really bothering your client.' },
   PARTIAL_REFUND_AND_CONTEST: { short: 'Refund part', long: 'Refund the part you genuinely owe, and fight for the rest.' },
   ACCEPT_AND_REFUND: { short: 'Refund', long: 'Your client has a point here. Refund and move on.' },
+  REQUEST_MORE_EVIDENCE: { short: 'Need evidence', long: 'Gather the missing evidence before deciding how to respond.' },
 };
 
 // Friendly names for documents, so citations read "Contract · §7.2" not "CONTRACT · §7.2".
@@ -1141,6 +1142,12 @@ function addRawNotes(stage, text) {
 
 function renderStageDone(stage, data, thinking) {
   const body = stageBody(stage);
+  if (data.needs_evidence) {
+    stageSum(stage, 'Waiting for evidence');
+    body.appendChild(h('<div class="panel">Paused until you add the requested records. No response or refund has been prepared.</div>'));
+    stageEl(stage)?.classList.add('collapsed');
+    return;
+  }
 
   if (stage === 'intake') {
     stageSum('intake', `${data.documents.length} documents, ${data.documents.reduce((n, d) => n + d.sections, 0)} quotable sections`);
@@ -1254,7 +1261,7 @@ function renderStageDone(stage, data, thinking) {
     body.appendChild(
       h(`<div class="panel" style="flex-direction:row;align-items:center;gap:14px;flex-wrap:wrap">
           <span class="verify-big">${data.grounded}/${data.total}</span>
-          <span>statements verified. Every quote was checked against the exact document it cites (by plain code, not AI)${data.repaired ? `; ${data.repaired} fixed along the way` : ''}${data.removed.length ? `; <b style="color:var(--danger)">${data.removed.length} removed</b> because no source supported them` : ''}.</span>
+          <span>statements have matching source quotes. This checks the quoted words, not whether the claim correctly interprets them${data.repaired ? `; ${data.repaired} fixed along the way` : ''}${data.removed.length ? `; <b style="color:var(--danger)">${data.removed.length} removed</b> because their citations did not pass` : ''}.</span>
         </div>`)
     );
   }
@@ -1280,6 +1287,28 @@ function renderResult(r) {
   const pkg = r.package;
   const c = state.current;
   c.result = r;
+  if (pkg.needsEvidence) {
+    stageSum('package', 'More evidence needed');
+    $('#trail-note').textContent = 'Waiting for evidence';
+    const out = $('#result');
+    out.classList.remove('hidden');
+    out.innerHTML = '';
+    const card = h('<div class="card evidence-gaps"><span class="kicker">Before we decide</span><h2>Let’s fill the gaps in your evidence</h2><p>The available records do not support a decision yet. Add the documents below, then run the investigation again.</p></div>');
+    const requests = pkg.evidenceRequests || [];
+    requests.forEach((request) => {
+      card.appendChild(h(`<div class="panel"><h3>${esc(request.question)}</h3><p>${esc(request.why_it_matters)}</p><p class="faint">Look for: ${request.documents_needed.map(esc).join(' · ')}</p></div>`));
+    });
+    if (!requests.length) card.appendChild(h(`<p>${esc(r.strategy.rationale)}</p>`));
+    const add = h('<button class="btn primary">Add evidence</button>');
+    add.onclick = openAddEvidence;
+    card.appendChild(add);
+    card.appendChild(h('<p class="faint">No response, message or refund is ready to send. Your response deadline still applies.</p>'));
+    out.appendChild(card);
+    $('#card-real').innerHTML = '<span class="kicker">2 · What we can establish</span><p class="big">We need more evidence to determine what happened.</p>';
+    $('#card-plan').innerHTML = '<span class="kicker">3 · What we’ll do next</span><p class="big">Gather the missing records, then investigate again.</p>';
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
   stageSum('package', 'Ready');
   setStage('package', 'done');
 
@@ -1295,10 +1324,10 @@ function renderResult(r) {
   const letter = h(`<div class="card letter">
       <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
         <span class="kicker">Your response to the bank</span>
-        <span class="tag green">${r.draft.claims.length} of ${r.draft.claims.length + (r.removed || []).length} statements verified</span>
+        <span class="tag green">${r.draft.claims.length} of ${r.draft.claims.length + (r.removed || []).length} statements have matching quotes</span>
       </div>
       <h3>${esc(r.draft.response_title)}</h3>
-      <div class="lmeta">From ${esc(c.freelancer.name)}. Every sentence links to the document it comes from.</div>
+      <div class="lmeta">From ${esc(c.freelancer.name)}. Review each claim against its linked source before sending.</div>
     </div>`);
 
   // "Explain this to me": an on-demand, plain-English rewrite of the same (already
@@ -1466,8 +1495,8 @@ function renderLedger(r, notes, key) {
         headerName: 'Check',
         field: 'verified',
         width: 120,
-        valueFormatter: (p) => (p.value ? 'verified' : 'removed'),
-        cellRenderer: (p) => (p.value ? '<span class="ok">✓ Verified</span>' : '<span class="bad">✗ Removed</span>'),
+        valueFormatter: (p) => (p.value ? 'quote matched' : 'removed'),
+        cellRenderer: (p) => (p.value ? '<span class="ok">✓ Quote matched</span>' : '<span class="bad">✗ Removed</span>'),
       },
     ],
     onRowClicked: (e) => e.data.doc_id && openDrawer(e.data.doc_id, e.data.anchor, e.data.quote),

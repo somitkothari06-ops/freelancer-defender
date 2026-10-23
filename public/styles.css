@@ -207,6 +207,12 @@ mark { background: #fde68a; color: inherit; border-radius: 3px; padding: 0 2px; 
 
 .panel { border-radius: 16px; background: var(--bg); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
 .panel h4 { margin: 0; font-size: 13px; font-weight: 800; color: var(--muted); }
+.evidence-gaps { display: grid; gap: 16px; scroll-margin-top: 88px; }
+.evidence-gaps p { margin: 0; line-height: 1.6; }
+.evidence-gaps .panel { padding: 16px; gap: 8px; }
+.evidence-gaps .panel h3 { margin: 0; font-size: 16px; }
+.evidence-gaps > .btn { justify-self: start; }
+@media (max-width: 720px) { .evidence-gaps { scroll-margin-top: 200px; } }
 .step-line { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
 .step-line b { color: var(--text); font-weight: 600; }
 .finding { border-radius: 14px; background: var(--bg); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }

@@ -15,6 +15,7 @@ const playbookFor = require('./playbook');
 const { verifyClaims } = require('./citations');
 const { buildPackage } = require('./package');
 const { statementParts } = require('../evidence/locker');
+const { hasFreelancerEvidence, evidenceOnlyResult } = require('./evidence-gaps');
 
 const MAX_INVESTIGATION_TURNS = 8;
 
@@ -77,6 +78,18 @@ async function runDefender({ scenario, locker, sources }, emit) {
       documents: locker.index(),
     },
   });
+
+  // A complaint/payment alone cannot justify a financial decision. This guard is
+  // deterministic and costs no AI quota; it also keeps an empty case out of the tool loop.
+  if (!hasFreelancerEvidence(locker)) {
+    const result = evidenceOnlyResult(scenario);
+    result.package = buildPackage({ scenario, locker, draft: result.draft, strategy: result.strategy });
+    for (const stage of ['read', 'investigate', 'diagnose', 'strategy', 'draft', 'verify', 'package']) {
+      emit('stage', { stage, status: 'done', data: { needs_evidence: true } });
+    }
+    emit('result', result);
+    return result;
+  }
 
   // ---- 2. Read the complaint ----------------------------------------------------
   emit('stage', { stage: 'read', status: 'start' });
@@ -260,8 +273,18 @@ async function runDefender({ scenario, locker, sources }, emit) {
   );
   track(stratRes.usage);
   const strategy = stratRes.data;
+  if (strategy.decision === 'REQUEST_MORE_EVIDENCE') strategy.refund_amount = '0.00';
   strategy.proof_plan = strategy.proof_plan.map((p) => ({ ...p, evidence: realRefs(p.evidence) }));
   emit('stage', { stage: 'strategy', status: 'done', data: strategy, thinking: clip(stratRes.reasoning, 600) });
+
+  if (strategy.decision === 'REQUEST_MORE_EVIDENCE') {
+    const draft = { response_title: 'More evidence needed', claims: [], client_message: '', evidence_package: [] };
+    const pkg = buildPackage({ scenario, locker, draft, strategy });
+    const result = { read, findings, diagnosis, strategy, draft, removed: [], package: pkg, usage };
+    for (const stage of ['draft', 'verify', 'package']) emit('stage', { stage, status: 'done', data: { needs_evidence: true } });
+    emit('result', result);
+    return result;
+  }
 
   // ---- 6. Draft ---------------------------------------------------------------
   emit('stage', { stage: 'draft', status: 'start' });
