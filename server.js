@@ -221,7 +221,7 @@ app.get('/api/cases/:id/run', limit('run', 8, 24 * 60 * 60 * 1000), async (req, 
   const send = (type, payload) => res.write(`event: ${type}\ndata: ${JSON.stringify(payload ?? {})}\n\n`);
   const keepAlive = setInterval(() => res.write(': keep-alive\n\n'), 15000);
   let closed = false;
-  req.on('close', () => {
+  res.on('close', () => {
     closed = true;
     clearInterval(keepAlive);
   });
