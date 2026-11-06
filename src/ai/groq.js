@@ -41,6 +41,7 @@ async function chat(body, { onWait } = {}) {
   const request = { model: config.groq.model, ...body };
   const budget = budgetFor(request.model);
   const needed = estimateTokens(request);
+  let networkTimeouts = 0;
 
   for (let attempt = 1; attempt <= 6; attempt++) {
     // Wait just long enough for the per-minute token budget to refill if this call won't fit.
@@ -54,11 +55,21 @@ async function chat(body, { onWait } = {}) {
     const headers = { 'Content-Type': 'application/json' };
     if (config.groq.apiKey) headers.Authorization = `Bearer ${config.groq.apiKey}`;
 
-    const res = await fetch(`${config.groq.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(request),
-    });
+    let res;
+    try {
+      res = await fetch(`${config.groq.baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(request),
+        signal: AbortSignal.timeout(45_000),
+      });
+    } catch (err) {
+      if (!['TimeoutError', 'AbortError'].includes(err.name)) throw err;
+      if (++networkTimeouts >= 3) throw new Error('The AI service timed out three times. Use the recorded replay or try again later.');
+      onWait?.(1500, 'AI request timed out, retrying');
+      await sleep(1500);
+      continue;
+    }
 
     const limit = Number(res.headers.get('x-ratelimit-limit-tokens'));
     const remaining = Number(res.headers.get('x-ratelimit-remaining-tokens'));
