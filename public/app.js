@@ -636,12 +636,14 @@ async function openCase(id) {
 
   // Judge mode is one-shot: it only auto-plays the single case it was meant to show,
   // never a later case the person (or a stray timer) happens to open afterward.
-  const judgeAutoplay = state.judgeMode && id === JUDGE_CASE_ID;
+  const requestedReplay = new URLSearchParams(location.search).get('replay') === id && c.has_replay;
+  if (requestedReplay) history.replaceState(null, '', location.pathname + location.hash);
+  const judgeAutoplay = (state.judgeMode && id === JUDGE_CASE_ID) || requestedReplay;
   state.judgeMode = false;
   state.keepStagesOpen = judgeAutoplay;
   if (judgeAutoplay) {
     try { localStorage.setItem('fd-tour-done', '1'); } catch { /* ignore */ }
-    toast('Judge mode: playing a recorded run of the agent on a real dispute.');
+    toast('Playing a recorded investigation.');
     clearTimeout(state.judgeAutoplayTimer);
     state.judgeAutoplayTimer = setTimeout(() => {
       if (state.current?.id === id && !state.stream) startRun('replay');

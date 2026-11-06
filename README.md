@@ -2,7 +2,7 @@
 
 **An AI agent that fights on a freelancer's side when a client's bank reverses a payment they already earned.**
 
-Built for the PayPal AI Hackathon 2026. **Live: https://freelancer-defender.onrender.com** (landing page) · **https://freelancer-defender.onrender.com/app** (the app)
+Built for the PayPal AI Hackathon 2026. **Live: https://freelancer-defender.onrender.com** (landing page) · **https://freelancer-defender.onrender.com/desk** (personal desktop) · **https://freelancer-defender.onrender.com/app** (full investigation workbench)
 
 **Start here:** [NOTES.md](NOTES.md) (what's built, what's real vs. demo, to-do list) · [docs/SUBMISSION.md](docs/SUBMISSION.md) (Devpost text) · [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) (video script) · [docs/RESEARCH.md](docs/RESEARCH.md) (real freelancer stories and numbers)
 
@@ -133,6 +133,7 @@ data/scenarios/*.json     4 demo disputes with their evidence lockers
 data/replays/*.json       recordings of real agent runs
 public/index.html         the landing page (/)
 public/app.html, app.js   the dashboard (/app): dispute list, case pages; plain HTML/CSS/JS
+public/desk.html, desk-live.js   the desktop (/desk): case switcher, exact source reader, private notes and follow-ups; opens /app for recorded and live investigations
 ```
 
 See [NOTES.md](NOTES.md) for what's real vs. mocked and open items.
