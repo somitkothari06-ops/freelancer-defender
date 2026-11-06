@@ -222,6 +222,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   state.status = await api('/api/status').catch(() => null);
   renderStatus();
   route();
+  if (new URLSearchParams(location.search).get('new') === '1') {
+    history.replaceState(null, '', location.pathname + location.hash);
+    openNewCase();
+  }
 });
 
 function route() {
@@ -257,15 +261,16 @@ function renderStatus() {
   if (!s) return;
   const initials = (n) => n.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
   $('#status').innerHTML = `
-    <span class="pill ${s.paypal.enabled ? 'on' : ''}">${s.paypal.enabled ? `PayPal ${esc(s.paypal.env)} connected` : 'PayPal not connected'}</span>
+    <span class="pill ${s.paypal.live_access ? 'on' : ''}">${s.paypal.live_access ? `PayPal ${esc(s.paypal.env)} access` : s.paypal.enabled ? 'Seeded demo · sandbox access restricted' : 'Seeded demo · PayPal not configured'}</span>
     ${s.user
       ? `<span class="who-signed" title="${esc(s.user.email)}"><span class="avatar">${esc(initials(s.user.name))}</span><span class="who-name">${esc(s.user.name)}</span></span><button class="linkbtn" id="logout">Sign out</button>`
-      : `<a class="btn small pp-btn" href="/auth/paypal">${PAYPAL_LOGO}Log in with PayPal</a>`}`;
+      : `<a class="btn small pp-btn" href="/auth/paypal" title="Authorized sandbox accounts only">${PAYPAL_LOGO}Sandbox sign-in</a>`}`;
   const out = $('#logout');
   if (out) {
     out.onclick = async () => {
       await api('/auth/logout', { method: 'POST' }).catch(() => {});
       state.status.user = null;
+      state.status.paypal.live_access = false;
       renderStatus();
       toast('Signed out.');
     };
@@ -739,8 +744,8 @@ function renderClock(c) {
   if (!d.seller_response_due_date) {
     $('#clock').innerHTML = `
       <span class="label">Time left to respond</span>
-      <div style="font-size:30px;font-weight:800">No deadline right now</div>
-      <div style="color:#bfdbfe;font-size:14px">PayPal is reviewing this dispute (${esc(String(d.status || 'in review').toLowerCase().replace(/_/g, ' '))}). We'll show the clock as soon as they need something from you.</div>
+      <div style="font-size:30px;font-weight:800">${c.yours ? 'No PayPal deadline for this example' : 'No deadline right now'}</div>
+      <div style="color:#bfdbfe;font-size:14px">${c.yours ? 'This case was entered by you. Check your actual PayPal case for a response deadline.' : `PayPal is reviewing this dispute (${esc(String(d.status || 'in review').toLowerCase().replace(/_/g, ' '))}). We will show the clock if the case record includes a new response deadline.`}</div>
       ${sources}`;
     return;
   }
@@ -830,9 +835,13 @@ function renderLocker(c) {
     }
     box.appendChild(b);
   }
-  const add = h('<button class="btn add-ev">+ Add evidence</button>');
-  add.onclick = openAddEvidence;
-  box.appendChild(add);
+  if (c.yours || c.live) {
+    const add = h('<button class="btn add-ev">+ Add evidence</button>');
+    add.onclick = openAddEvidence;
+    box.appendChild(add);
+  } else {
+    box.appendChild(h('<div class="nudge">Shared demo files are read-only. Create your own case to add evidence.</div>'));
+  }
 }
 
 async function reloadEvidence() {
@@ -1589,7 +1598,7 @@ function renderLedger(r, notes, key) {
 
   const n = rows.filter((x) => x.verified).length;
   const wrapEl = h(`<div class="card">
-      <div class="card-head" style="margin-bottom:0"><h2>Your evidence, checked</h2><button class="btn" id="ledger-toggle">Show details</button></div>
+      <div class="card-head" style="margin-bottom:0"><h2>Source excerpts found</h2><button class="btn" id="ledger-toggle">Show details</button></div>
       <div class="ev-body hidden">
         <div class="tabs" role="tablist">
           <button class="tab on" role="tab" data-tab="docs">What each document proves</button>
@@ -1724,6 +1733,7 @@ function submitOutcome(res) {
 }
 
 async function doSubmit(cta, actionsCard) {
+  if (state.current.live && !confirm('Send the reviewed response to the PayPal sandbox now? This may submit evidence or make a financial offer for this dispute.')) return;
   const btn = $('#send', cta);
   btn.disabled = true;
   btn.textContent = 'Sending…';
@@ -1731,7 +1741,7 @@ async function doSubmit(cta, actionsCard) {
     const res = await api(`/api/cases/${encodeURIComponent(state.current.id)}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({}),
+      body: JSON.stringify({ confirm_live: Boolean(state.current.live) }),
     });
     for (const r of res.results) {
       const row = $(`.action[data-kind="${CSS.escape(r.kind)}"]`, actionsCard);

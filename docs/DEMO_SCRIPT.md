@@ -1,49 +1,40 @@
-# Demo video script (target 2:40, hard limit 3:00)
+# Judge demo script (target 2:40; submission limit 3:00)
 
-**Before you record**
-- Open https://freelancer-defender.onrender.com a minute early so the free server is awake.
-- Use **Watch a recorded run** in the video. A live run takes several minutes and uses the daily AI allowance.
-- Browser full screen, zoom 100%, no other tabs visible. Record with QuickTime (Mac: File → New Screen Recording) or OBS.
-- Read the voice-over slowly. No music (the rules forbid copyrighted music; silence is fine).
-- Upload to YouTube as **Public** or **Unlisted** (the rules say public, so Public is safest).
+Record the deployed site. Use the seeded Halden case and the recorded agent run so the video is repeatable. Say “seeded” and “recorded” on screen. The contact-form source is present in the desktop evidence map, but the current Halden agent replay does **not** reliably surface it in its diagnosis; do not narrate that the agent found it. Never describe zero recorded downloads as proof that the client never received the files.
 
----
+## 0:00–0:20 — The problem
 
-### 0:00–0:20 · The problem (landing page)
-**Show:** the landing page. Let auto mode play one example: "Not as described." sweeps open to "I never got the print files." Then drag the divider yourself once. Scroll to the 180 / 75 / 10 line, then click **Try the demo**.
+**Show:** Landing page contrast, then **Open the desktop**.
 
-**Say:** "When a client asks their bank to take back a payment, the bank only hears the complaint: 'not as described'. What the client actually meant is usually somewhere else: in an email, a download log, a Slack message. And the freelancer has ten days to prove it, while the client had a hundred and eighty. This is the Freelancer Defender: an AI agent that reads between the lines and fights for the person who did the work."
+**Say:** “A freelancer can have the contract, delivery email, and payment record and still face a chargeback. The bank sees a reason code. The client may have a more specific problem. Freelancer Defender connects both to the evidence and shows what remains unknown.”
 
-### 0:20–0:35 · AG Grid and Bryntum (dispute list)
-**Show:** sort the "All disputes" table by Time left, then point at the "What's actually going on" column.
+## 0:20–1:15 — The proof map
 
-**Say:** "Every dispute comes from PayPal's Disputes API. The table is AG Grid: sort by deadline, and see at a glance what each client filed versus what's actually going on. The timeline is Bryntum: each bar is the time left to respond."
+**Show:** Open Halden’s **Case** window. Point to the two tracks. Click **Master package access is unproven**, then show `DELIVERY-LOG L5`. Return to the case. Click **The client reports a sign-maker problem**, then show `CONTACT-FORM F1`.
 
-### 0:35–0:55 · Open the hero case
-**Show:** click **Halden Coffee Roasters**. Pause on the countdown and card 1.
+**Say:** “This is a seeded demo case. The agreement includes print-ready masters. The email records two links being sent. The transfer service recorded no download of the master package before expiry. A later contact-form entry reports a sign-maker problem, but that account has not been independently verified. Each point opens the exact source.”
 
-**Say:** "Priya designed a brand for a coffee roaster. Paid $2,400. Now the bank says 'not as described: what we received can't be used by our vendors.' A normal dispute bot would argue the design matched the brief. That would lose."
+## 1:15–1:35 — The review question
 
-### 0:55–1:40 · The agent works it out
-**Show:** click **Watch a recorded run**. Let the steps fill in. Point at the evidence dots lighting up on the right. When "Work out what's really wrong" finishes, click its title to open it and show the client's worries.
+**Show:** The **Review question**. Click **Add to my follow-ups** and show it in **Follow-ups**.
 
-**Say:** "The agent reads the complaint, then investigates like a dispute specialist: it opens the contract, the emails, the file-download log, and the client's message on Priya's website. It finds that the client never downloaded the second link, the one with the print-quality logo files and the copyright letter. The link expired. Their sign maker can't cut a storefront sign from web images. And they're worried they don't own the logo. Under the contract, ownership only transfers once payment is kept, so winning this chargeback would actually cost them their logo."
+**Say:** “The critical question is which files reached the sign maker. A transfer log cannot answer that on its own. One click turns the gap into a follow-up the freelancer can actually pursue.”
 
-### 1:40–2:10 · Verified response
-**Show:** the three cards filled in, then scroll to the letter. Click one blue source tag; the side panel shows the exact passage. Close it. Click **Show all sources** to show the AG Grid evidence ledger.
+## 1:35–2:15 — The AI investigation
 
-**Say:** "So the plan is: contest the reversal, and fix the real problem by re-sending the files. Every sentence in the response points to an exact quote, and plain code, not AI, checks every quote word for word. Anything it can't back up gets removed. The ledger, also AG Grid, lists every source the response rests on."
+**Show:** Return to the case, click **Watch recorded run**. Show the staged reasoning and one source in the response. If needed, edit the replay pacing in the video so this section fits without concealing that it is a recording.
 
-### 2:10–2:30 · Send through PayPal
-**Show:** click **Send response →**. Open "Show the exact API request" for a second.
+**Say:** “The recorded Groq agent investigates documents, weighs competing explanations, and prepares a response for the filed dispute reason. Each quoted passage is checked against its source by code. That quote check does not prove the interpretation; the freelancer still reviews it.”
 
-**Say:** "One click builds the real PayPal calls: evidence with a generated PDF letter and appendix, and a message to the client. We tested this end to end on a real PayPal sandbox dispute, and PayPal accepted the evidence."
+## 2:15–2:40 — PayPal and boundaries
 
-### 2:30–2:45 · Bring your own evidence + close
-**Show:** open another case, click **+ Add evidence**, show the form for two seconds.
+**Show:** The PayPal API request preview and the sandbox outcome record, if available in the current case and stage. End on the desktop case.
 
-**Say:** "Any freelancer can add their own contract, emails or logs, and the agent can cite them immediately. The Freelancer Defender: answer the bank, fix the real problem, keep the money you earned."
+**Say:** “For an authorized PayPal sandbox case, the app reads the live dispute and only offers actions PayPal currently allows. The seeded case simulates submission. We took a separate sandbox dispute through evidence submission; no real bank outcome is claimed. The freelancer decides what to send.”
 
----
+## Recording checks
 
-**If you're over time:** shorten the 0:55–1:40 section first. Keep the "it would actually cost them their logo" line; it's the moment that shows real reasoning.
+- Confirm every spoken fact appears on the recorded screen or in the opened source.
+- Do not say the agent read the contact-form message in the current replay.
+- Do not claim a universal ten-day seller deadline; show the actual deadline for a live PayPal case.
+- Keep the public YouTube video under three minutes and verify its link after upload.

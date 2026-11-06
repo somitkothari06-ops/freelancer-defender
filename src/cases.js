@@ -110,13 +110,13 @@ async function listLive() {
 }
 
 // A visitor's own typed-in cases (ids remembered by their browser), as list rows.
-function customRows(ids = []) {
-  return ids.map((id) => custom.get(id)).filter(Boolean).map((c) =>
+function customRows(ids = [], owner = '') {
+  return ids.map((id) => custom.get(id, owner)).filter(Boolean).map((c) =>
     summary(c.dispute, { source: 'yours', scenario_id: c.id, freelancer: c.freelancer.name, client: c.client.name, title: c.title })
   );
 }
 
-async function listCases({ mine = [] } = {}) {
+async function listCases({ mine = [], owner = '', includeLive = false } = {}) {
   const seeded = scenarios.map((s) =>
     summary(s.dispute, {
       source: 'seeded',
@@ -127,17 +127,17 @@ async function listCases({ mine = [] } = {}) {
       title: s.title,
     })
   );
-  const live = await listLive();
-  return { cases: [...customRows(mine), ...live.items, ...seeded], paypal: { enabled: config.paypal.enabled, env: config.paypal.env, error: live.error } };
+  const live = includeLive ? await listLive() : { items: [], error: null };
+  return { cases: [...customRows(mine, owner), ...live.items, ...seeded], paypal: { enabled: config.paypal.enabled, env: config.paypal.env, error: live.error } };
 }
 
 /**
  * Everything the agent needs for one dispute: the scenario (with the live PayPal dispute
  * swapped in if this is a live case), the payment history, and where each piece came from.
  */
-async function loadCase(disputeId) {
+async function loadCase(disputeId, owner = '') {
   if (custom.isCustom(disputeId)) {
-    const c = custom.get(disputeId);
+    const c = custom.get(disputeId, owner);
     if (!c) throw Object.assign(new Error('We could not find that case (cases you type in are cleared when the server restarts).'), { status: 404 });
     return {
       live: false,

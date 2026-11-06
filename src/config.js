@@ -33,9 +33,6 @@ const config = {
     cardholderFilingDays: 180,
     // "...it may take your buyer's card company up to 75 days to resolve a chargeback" (same page)
     bankDecisionDays: 75,
-    // Seller's window to answer a chargeback notice. PayPal help text quoted as "you'll have 10 days
-    // to answer it"; live disputes use PayPal's real seller_response_due_date instead.
-    sellerResponseDays: 10,
     sources: [
       { label: 'PayPal Help: What is a chargeback?', url: 'https://www.paypal.com/us/cshelp/article/what-is-a-chargeback-and-why-did-i-get-one-help607' },
       { label: 'PayPal Help: Evidence for chargebacks', url: 'https://www.paypal.com/us/cshelp/article/evidence-to-provide-for-chargebacks-a-guide-for-sellers-help1103' },

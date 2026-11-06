@@ -10,7 +10,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DIR = path.join(__dirname, '..', '..', 'data', 'uploads');
+const DIR = path.join(process.env.DATA_DIR || path.join(__dirname, '..', '..', 'data'), 'uploads');
 const KINDS = {
   contract: { label: 'Contract or agreement', prefix: '§' },
   messages: { label: 'Emails or messages', prefix: 'M' },
@@ -18,6 +18,7 @@ const KINDS = {
   other: { label: 'Other document', prefix: 'P' },
 };
 const MAX_TEXT = 200_000;
+const MAX_DOCS = 20;
 const MAX_SECTIONS = 80;
 const MAX_SECTION_CHARS = 1200;
 
@@ -143,6 +144,7 @@ function add(disputeId, { title, kind, text, source }, takenIds = []) {
 
   const sections = splitDocument(text, kind);
   const docs = list(disputeId);
+  if (docs.length >= MAX_DOCS) throw Object.assign(new Error('This case has reached the 20-document limit.'), { status: 400 });
   const doc = {
     id: makeId(title, new Set([...takenIds, ...docs.map((d) => d.id)])),
     title,

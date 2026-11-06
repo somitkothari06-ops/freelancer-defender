@@ -10,21 +10,21 @@ Built for the PayPal AI Hackathon 2026. **Live: https://freelancer-defender.onre
 
 ## The problem
 
-A freelancer finishes approved work and gets paid. Months later the client's bank reverses the charge. The client could file up to **180 days** after paying, and their card company can take up to **75 days** to decide. The freelancer gets about **10 days** to respond ([PayPal Help](https://www.paypal.com/us/cshelp/article/what-is-a-chargeback-and-why-did-i-get-one-help607)), with months-old evidence scattered across email, contracts and file-sharing logs.
+A freelancer finishes approved work and gets paid. Months later the client's bank reverses the charge. In PayPal's US card-chargeback guidance, a cardholder may have up to **180 days** to file and an issuer may take up to **75 days** to decide. The seller's response deadline is **case-specific**; the app reads it from the PayPal dispute record ([PayPal Help](https://www.paypal.com/us/cshelp/article/what-is-a-chargeback-and-why-did-i-get-one-help607)). Meanwhile, evidence is scattered across email, contracts and file-sharing logs.
 
-Dispute-defense tools exist (Chargeflow, Justt), but they're built for merchants with order databases. Nobody builds them for the person who did the work.
+Dispute-defense tools exist (Chargeflow, Justt), but this build focuses on the freelancer's signed scope, delivery trail, and client communication.
 
 ## What makes this different
 
-Most dispute bots fill in a template for the filed reason code. That fails, because **the reason a client files is often not what's actually bothering them**:
+The filed reason code and the client's practical concern may require different evidence. The seeded Halden case illustrates that gap:
 
 > **Filed:** "Not as described. What we received cannot be used by our vendors and is not fit for purpose."
 >
-> **Really wrong:** their sign maker needs vector files to cut the storefront sign. Those files, plus the copyright assignment, were in a second download link the client never opened (0 downloads in the file log). It expired. The client asked about it through a contact form that was silently routing to a dead inbox. And under the contract, if the chargeback succeeds, the client *loses the rights* to the logo already printed on their cups.
+> **Underlying concern in the seeded Halden case:** the sign maker needs vector files to cut the storefront sign. The transfer service recorded **zero downloads** of the second package before its link expired; that record alone cannot establish whether the files reached the client another way. A later contact-form submission reports the sign maker's concern, but the account is not independently verified. The contract also makes ownership conditional on retained payment, so the rights question needs careful review.
 
-No keyword links those. The complaint never says "files", "vector", "sign" or "copyright". The agent has to connect four documents. Then it does two things:
+The complaint does not mention files, vectors, signs or copyright. Reviewing the other records raises those questions. The product helps the freelancer do two things:
 1. **Answers the bank on the filed reason**, because that's what the bank judges.
-2. **Fixes the client's real problem** (re-send the files and the copyright letter), because that's what actually ends disputes.
+2. **Plan a response to the client's concern** (check which files were received, then consider a reissue under the contract).
 
 ### The reasoning trail is visible
 
@@ -66,13 +66,13 @@ PayPal records appear in the evidence locker as citable documents, just like the
 
 ## Bring your own evidence
 
-PayPal holds the dispute and the payment; the proof that the work was agreed and delivered lives with the freelancer. On any dispute, **+ Add evidence** takes a pasted or uploaded text document (contract, email thread, delivery log, chat export). It is split into quotable sections automatically: numbered contract clauses become `§3.2`-style sections, logs become one section per line, everything else one per paragraph. The agent then investigates and cites it exactly like the demo evidence, and the verifier checks every quote against it.
+PayPal holds the dispute and the payment; the proof that the work was agreed and delivered lives with the freelancer. On your own entered case or an authorized sandbox dispute, **+ Add evidence** takes a pasted or uploaded text document (contract, email thread, delivery log, chat export). Shared seeded cases are read-only. The document is split into quotable sections automatically: numbered contract clauses become `§3.2`-style sections, logs become one section per line, everything else one per paragraph. The agent then investigates and cites it exactly like the demo evidence, and the verifier checks every quote against it.
 
 A live PayPal dispute with no evidence yet opens as a fresh case built only from PayPal's records, with a prompt to add documents. Nothing in the agent is specific to the demo disputes; they exist so the demo works without a real freelancer's paperwork.
 
 ## Try your own case
 
-On the dispute list, **+ Try your own case** lets anyone type in a dispute: the client, the work, the amount, the filed reason and the client's own words. It becomes an unlisted case (remembered by that browser) in PayPal's dispute format; add the paperwork with + Add evidence and the agent runs live on it. **Fill in an example** creates a fresh video-editor dispute with its contract and emails, so it can be tried in two clicks. Typed-in cases are never sent to PayPal.
+On the dispute list, **+ Try your own case** lets anyone type in a dispute: the client, the work, the amount, the filed reason and the client's own words. It becomes a case private to that browser's visitor cookie in PayPal's dispute format; add the paperwork with + Add evidence and the agent runs live on it. **Fill in an example** creates a fresh video-editor dispute with its contract and emails, so it can be tried in two clicks. Typed-in cases are never sent to PayPal and have no invented PayPal response deadline. This demo storage is ephemeral on Render; keep your own copy of any important evidence.
 
 ## Stack
 
@@ -112,7 +112,7 @@ See [docs/EVALUATION.md](docs/EVALUATION.md) for the comparison method, quota li
 ## Deploy (Render)
 
 1. Render dashboard → **New +** → **Blueprint** → pick this repo. Render reads `render.yaml`.
-2. When asked, paste `GROQ_API_KEY`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`. Optionally set `FREELANCER_NAME` / `FREELANCER_BUSINESS` / `FREELANCER_EMAIL` (used for live disputes not linked to a demo scenario).
+2. When asked, paste `GROQ_API_KEY`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`. Set `LIVE_ACTION_EMAILS` to the exact PayPal sign-in email(s) allowed to view and act on the merchant's sandbox disputes. Keep it empty for a public demo with seeded cases only. Set a random `SESSION_SECRET`; the Blueprint can generate one. Optionally set `FREELANCER_NAME` / `FREELANCER_BUSINESS` / `FREELANCER_EMAIL` (used for live disputes not linked to a demo scenario).
 3. Deploy. The health check is `/api/status`.
 
 ## Code map

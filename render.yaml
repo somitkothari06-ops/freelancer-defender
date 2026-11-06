@@ -22,3 +22,7 @@ services:
         sync: false
       - key: PAYPAL_ENV
         value: sandbox
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: LIVE_ACTION_EMAILS
+        sync: false

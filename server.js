@@ -16,6 +16,7 @@
 //   POST /api/cases/:id/sandbox/:action   lifecycle helpers for testing: escalate, require-evidence, adjudicate
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const express = require('express');
 const config = require('./src/config');
 const cases = require('./src/cases');
@@ -27,10 +28,25 @@ const login = require('./src/paypal/login');
 const customCases = require('./src/custom-cases');
 const groq = require('./src/ai/groq');
 const P = require('./src/agent/prompts');
+const { buildProofMap } = require('./src/proof-map');
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
-app.set('trust proxy', true); // Render terminates TLS in front of the app
+app.set('trust proxy', 1); // Render terminates TLS in front of the app
+app.use((req, res, next) => {
+  res.set({ 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Frame-Options': 'DENY', 'Permissions-Policy': 'camera=(), microphone=(), geolocation=()' });
+  if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS') {
+    const origin = req.get('origin');
+    if (origin && origin !== `${req.protocol}://${req.get('host')}`) return res.status(403).json({ error: 'Cross-site request refused.' });
+  }
+  let visitor = (req.headers.cookie || '').match(/(?:^|;\s*)fd_visitor=([a-f0-9]{64})(?:;|$)/)?.[1];
+  if (!visitor) {
+    visitor = crypto.randomBytes(32).toString('hex');
+    res.append('Set-Cookie', `fd_visitor=${visitor}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000${req.secure ? '; Secure' : ''}`);
+  }
+  req.visitor = crypto.createHash('sha256').update(visitor).digest('hex');
+  next();
+});
 // studio.js is still actively changing; a stale cached copy silently re-sends old,
 // already-fixed bugs to Groq and is very easy to mistake for a real regression (it cost
 // real debugging time once already). Small file, no real cost to never caching it.
@@ -55,9 +71,28 @@ app.param('id', (req, res, next, id) => (/^[A-Za-z0-9-]{1,64}$/.test(id) ? next(
 function canActLive(req) {
   const user = login.currentUser(req);
   const allowed = (process.env.LIVE_ACTION_EMAILS || '').split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
-  return Boolean(user) && (!allowed.length || allowed.includes(String(user.email).toLowerCase()));
+  return Boolean(user?.email) && allowed.includes(String(user.email).toLowerCase());
 }
-const liveActionRefused = (res) => res.status(403).json({ error: 'Sign in with PayPal to act on a real PayPal dispute.', code: 'LOGIN_REQUIRED' });
+const liveActionRefused = (res) => res.status(403).json({ error: 'This PayPal case requires an authorized account.', code: 'LOGIN_REQUIRED' });
+function canReadCase(req) {
+  const id = req.params.id;
+  if (cases.scenarios.some((s) => s.dispute.dispute_id === id)) return true;
+  if (customCases.isCustom(id)) return Boolean(customCases.get(id, req.visitor));
+  return canActLive(req);
+}
+const caseRefused = (res) => res.status(403).json({ error: 'This case is private to its owner.' });
+const buckets = new Map();
+setInterval(() => { const now = Date.now(); for (const [key, bucket] of buckets) if (bucket.until <= now) buckets.delete(key); }, 10 * 60 * 1000).unref();
+function limit(name, count, windowMs) {
+  return (req, res, next) => {
+    const key = `${name}:${req.ip}`;
+    const now = Date.now();
+    const bucket = buckets.get(key);
+    if (!bucket || bucket.until <= now) buckets.set(key, { used: 1, until: now + windowMs });
+    else if (++bucket.used > count) return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+    next();
+  };
+}
 
 const wrap = (fn) => (req, res) => fn(req, res).catch((err) => {
   console.error(err);
@@ -66,7 +101,7 @@ const wrap = (fn) => (req, res) => fn(req, res).catch((err) => {
 
 app.get('/api/status', wrap(async (req, res) => {
   res.json({
-    paypal: { enabled: config.paypal.enabled, env: config.paypal.env },
+    paypal: { enabled: config.paypal.enabled, env: config.paypal.env, live_access: canActLive(req) },
     groq: { model: config.groq.model },
     timelines: config.timelines,
     liveRunBusy,
@@ -80,10 +115,10 @@ app.get('/api/status', wrap(async (req, res) => {
 // rate-limit pacing and retry handling (src/ai/groq.js) for free. The Studio <->
 // OpenAI-chat-shape translation happens in public/studio.js; this endpoint is a
 // thin, mostly-passthrough forward to Groq.
-app.post('/api/studio/chat', wrap(async (req, res) => {
+app.post('/api/studio/chat', limit('studio', 8, 60 * 60 * 1000), wrap(async (req, res) => {
   const { messages, tools, tool_choice, response_format, max_completion_tokens } = req.body || {};
-  if (!Array.isArray(messages) || !messages.length) return res.status(400).json({ error: 'messages required' });
-  const body = { model: config.groq.studioModel || config.groq.model, messages, max_completion_tokens: max_completion_tokens || 3000 };
+  if (!Array.isArray(messages) || !messages.length || messages.length > 30 || JSON.stringify(messages).length > 30000 || (tools && (!Array.isArray(tools) || tools.length > 20 || JSON.stringify(tools).length > 40000))) return res.status(400).json({ error: 'Invalid or oversized Studio request.' });
+  const body = { model: config.groq.studioModel || config.groq.model, messages, max_completion_tokens: Math.min(3000, Math.max(100, Number(max_completion_tokens) || 3000)) };
   if (Array.isArray(tools) && tools.length) {
     body.tools = tools;
     body.tool_choice = tool_choice || 'auto';
@@ -112,19 +147,20 @@ function replaySummary(id) {
 
 app.get('/api/cases', wrap(async (req, res) => {
   const mine = String(req.query.mine || '').split(',').filter((id) => customCases.isCustom(id) && /^[A-Za-z0-9-]{1,64}$/.test(id)).slice(0, 20);
-  const data = await cases.listCases({ mine });
+  const data = await cases.listCases({ mine, owner: req.visitor, includeLive: canActLive(req) });
   data.cases.forEach((c) => Object.assign(c, { has_replay: hasReplay(c.dispute_id) }, replaySummary(c.dispute_id)));
   data.scenarios = cases.scenarios.map((s) => ({ id: s.id, title: s.title, freelancer: s.freelancer.name }));
   res.json(data);
 }));
 
-app.post('/api/custom-cases', wrap(async (req, res) => {
-  const c = customCases.create(req.body || {});
+app.post('/api/custom-cases', limit('custom', 8, 60 * 60 * 1000), wrap(async (req, res) => {
+  const c = customCases.create(req.body || {}, req.visitor);
   res.json({ ok: true, id: c.id });
 }));
 
 app.get('/api/cases/:id', wrap(async (req, res) => {
-  const c = await cases.loadCase(req.params.id);
+  if (!canReadCase(req)) return caseRefused(res);
+  const c = await cases.loadCase(req.params.id, req.visitor);
   const locker = buildLocker(c.scenario, { transactions: c.transactions, transactionsSource: c.sources.transactions });
   const { dispute, freelancer, client, title } = c.scenario;
   res.json({
@@ -138,6 +174,7 @@ app.get('/api/cases/:id', wrap(async (req, res) => {
     dispute,
     sources: c.sources,
     documents: locker.index(),
+    proof_map: buildProofMap(c, locker),
     has_replay: hasReplay(dispute.dispute_id),
     last_run: lastRun.has(dispute.dispute_id),
   });
@@ -145,7 +182,8 @@ app.get('/api/cases/:id', wrap(async (req, res) => {
 
 // Full text of one document (the dashboard's evidence viewer).
 app.get('/api/cases/:id/documents/:docId', wrap(async (req, res) => {
-  const c = await cases.loadCase(req.params.id);
+  if (!canReadCase(req)) return caseRefused(res);
+  const c = await cases.loadCase(req.params.id, req.visitor);
   const locker = buildLocker(c.scenario, { transactions: c.transactions, transactionsSource: c.sources.transactions });
   const doc = locker.read(req.params.docId);
   if (!doc) return res.status(404).json({ error: 'No such document' });
@@ -154,8 +192,10 @@ app.get('/api/cases/:id/documents/:docId', wrap(async (req, res) => {
 
 // ---- The freelancer's own evidence ------------------------------------------------
 
-app.post('/api/cases/:id/evidence', wrap(async (req, res) => {
-  const c = await cases.loadCase(req.params.id);
+app.post('/api/cases/:id/evidence', limit('evidence', 20, 60 * 60 * 1000), wrap(async (req, res) => {
+  if (!canReadCase(req)) return caseRefused(res);
+  if (cases.scenarios.some((s) => s.dispute.dispute_id === req.params.id)) return res.status(403).json({ error: 'Shared demo files are read-only. Create your own case to add evidence.' });
+  const c = await cases.loadCase(req.params.id, req.visitor);
   const taken = [...buildLocker(c.scenario, { transactions: c.transactions }).docs.keys()];
   const doc = uploads.add(req.params.id, req.body || {}, taken);
   lastRun.delete(req.params.id); // the evidence changed, so an earlier result is stale
@@ -163,6 +203,8 @@ app.post('/api/cases/:id/evidence', wrap(async (req, res) => {
 }));
 
 app.delete('/api/cases/:id/evidence/:docId', wrap(async (req, res) => {
+  if (!canReadCase(req)) return caseRefused(res);
+  if (cases.scenarios.some((s) => s.dispute.dispute_id === req.params.id)) return res.status(403).json({ error: 'Shared demo files are read-only.' });
   if (!uploads.remove(req.params.id, req.params.docId)) return res.status(404).json({ error: 'No such added document' });
   lastRun.delete(req.params.id);
   res.json({ ok: true });
@@ -170,7 +212,8 @@ app.delete('/api/cases/:id/evidence/:docId', wrap(async (req, res) => {
 
 // ---- Run the agent, streaming events with Server-Sent Events --------------------
 
-app.get('/api/cases/:id/run', async (req, res) => {
+app.get('/api/cases/:id/run', limit('run', 8, 24 * 60 * 60 * 1000), async (req, res) => {
+  if (!canReadCase(req)) return caseRefused(res);
   const id = req.params.id;
   const mode = req.query.mode === 'replay' ? 'replay' : 'live';
 
@@ -204,7 +247,7 @@ app.get('/api/cases/:id/run', async (req, res) => {
       liveRunBusy = true;
       try {
         send('mode', { mode: 'live' });
-        const c = await cases.loadCase(id);
+        const c = await cases.loadCase(id, req.visitor);
         const locker = buildLocker(c.scenario, { transactions: c.transactions, transactionsSource: c.sources.transactions });
         // If the viewer leaves, stop at the next step instead of spending the AI quota on
         // a run nobody will see (and holding the one-run-at-a-time lock).
@@ -212,7 +255,7 @@ app.get('/api/cases/:id/run', async (req, res) => {
           if (closed) throw Object.assign(new Error('Run cancelled: the page was closed.'), { code: 'CANCELLED' });
           send(type, payload);
         });
-        lastRun.set(id, result);
+        lastRun.set(id, { ...result, _caseUpdateTime: c.scenario.dispute.update_time });
       } finally {
         liveRunBusy = false;
       }
@@ -235,7 +278,8 @@ app.get('/api/cases/:id/run', async (req, res) => {
 // spending Groq's scarce free-tier budget on duplicates.
 const explainPending = new Map();
 
-app.post('/api/cases/:id/explain', wrap(async (req, res) => {
+app.post('/api/cases/:id/explain', limit('explain', 8, 60 * 60 * 1000), wrap(async (req, res) => {
+  if (!canReadCase(req)) return caseRefused(res);
   const id = req.params.id;
   const run = lastRun.get(id);
   if (!run) return res.status(400).json({ error: 'Run the agent first.' });
@@ -266,6 +310,7 @@ app.post('/api/cases/:id/explain', wrap(async (req, res) => {
 // ---- Generated files --------------------------------------------------------------
 
 app.get('/api/cases/:id/files/:name', (req, res) => {
+  if (!canReadCase(req)) return caseRefused(res);
   const run = lastRun.get(req.params.id);
   const file = run?.package?._files.find((f) => f.name === req.params.name);
   if (!file) return res.status(404).send('Run the agent first.');
@@ -275,19 +320,22 @@ app.get('/api/cases/:id/files/:name', (req, res) => {
 // ---- Submit to PayPal ---------------------------------------------------------------
 
 app.post('/api/cases/:id/submit', wrap(async (req, res) => {
+  if (!canReadCase(req)) return caseRefused(res);
   const id = req.params.id;
   const run = lastRun.get(id);
   if (!run) return res.status(400).json({ error: 'Run the agent first.' });
-  const wanted = new Set(req.body.actions || run.package.actions.map((a) => a.kind));
+  const wanted = new Set(req.body?.actions || run.package.actions.map((a) => a.kind));
   if (run.package.needsEvidence) return res.status(409).json({ error: 'Add the requested evidence and run the investigation again before submitting.', code: 'MORE_EVIDENCE_REQUIRED' });
-  const c = await cases.loadCase(id);
+  const c = await cases.loadCase(id, req.visitor);
   const results = [];
   if (c.live && !canActLive(req)) return liveActionRefused(res);
   if (c.live && run._replay) return res.status(409).json({ error: 'This is a recorded run. Run the agent live before sending anything to a real PayPal dispute.' });
+  if (c.live && req.body?.confirm_live !== true) return res.status(428).json({ error: 'Review the response and explicitly confirm the PayPal sandbox action.' });
 
   // PayPal lists the actions allowed right now as HATEOAS links on the dispute (they change
   // with the dispute's stage), so check those before calling anything.
   const current = c.live ? await disputesApi.getDispute(id) : null;
+  if (c.live && (!run._caseUpdateTime || current.update_time !== run._caseUpdateTime)) return res.status(409).json({ error: 'The PayPal case changed since this investigation. Run it again before sending.' });
   const allowed = c.live ? new Set((current.links || []).map((l) => l.rel)) : null;
   // Evidence types PayPal has asked the seller for (e.g. OTHER, PROOF_OF_REFUND).
   const requested = (current?.evidences || []).filter((e) => e.source === 'REQUESTED_FROM_SELLER').map((e) => e.evidence_type);
@@ -330,6 +378,7 @@ app.post('/api/cases/:id/submit', wrap(async (req, res) => {
       results.push({ kind: action.kind, ok: false, simulated: false, request: preview(action), error: err.message, paypal: err.body });
     }
   }
+  if (c.live && results.some((r) => r.ok && !r.simulated && r.kind !== 'email')) lastRun.delete(id);
   res.json({ live: c.live, results });
 }));
 
@@ -347,6 +396,7 @@ function preview(action) {
 // ---- Live-dispute helpers ---------------------------------------------------------
 
 app.post('/api/cases/:id/link', wrap(async (req, res) => {
+  if (!canActLive(req)) return liveActionRefused(res);
   cases.linkLive(req.params.id, req.body.scenario_id);
   res.json({ ok: true });
 }));

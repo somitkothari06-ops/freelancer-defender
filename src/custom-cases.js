@@ -9,9 +9,8 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const DIR = path.join(__dirname, '..', 'data', 'custom');
+const DIR = path.join(process.env.DATA_DIR || path.join(__dirname, '..', 'data'), 'custom');
 const PREFIX = 'MY-';
-const RESPONSE_DAYS = 10;
 const REASONS = ['MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED', 'MERCHANDISE_OR_SERVICE_NOT_RECEIVED', 'UNAUTHORISED', 'OTHER'];
 
 const isCustom = (id) => String(id).startsWith(PREFIX);
@@ -20,7 +19,7 @@ const file = (id) => path.join(DIR, `${String(id).replace(/[^\w-]/g, '')}.json`)
 const clean = (v, max) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
 const bad = (msg) => Object.assign(new Error(msg), { status: 400 });
 
-function create(input = {}) {
+function create(input = {}, owner = '') {
   const client = clean(input.client, 80);
   const statement = String(input.statement ?? '').trim().slice(0, 2000);
   const work = clean(input.work, 120);
@@ -35,6 +34,7 @@ function create(input = {}) {
   const value = amount.toFixed(2);
   const custom = {
     id,
+    owner,
     freelancer: { name: clean(input.freelancer, 80) || 'You', business: clean(input.freelancer, 80) || 'Your business' },
     client: { name: client, company: client, email: '' },
     title: work || 'Your case',
@@ -47,7 +47,7 @@ function create(input = {}) {
       dispute_amount: { currency_code: 'USD', value },
       dispute_channel: 'EXTERNAL',
       dispute_life_cycle_stage: 'CHARGEBACK',
-      seller_response_due_date: new Date(now.getTime() + RESPONSE_DAYS * 864e5).toISOString(),
+      seller_response_due_date: null, // Entered cases are examples, not PayPal deadlines.
       disputed_transactions: [{
         seller_transaction_id: 'not-from-paypal',
         create_time: '',
@@ -63,10 +63,11 @@ function create(input = {}) {
   return custom;
 }
 
-function get(id) {
+function get(id, owner = '') {
   if (!isCustom(id)) return null;
   try {
-    return JSON.parse(fs.readFileSync(file(id), 'utf8'));
+    const value = JSON.parse(fs.readFileSync(file(id), 'utf8'));
+    return owner && value.owner === owner ? value : null;
   } catch {
     return null;
   }
