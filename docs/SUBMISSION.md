@@ -25,11 +25,11 @@ The problem has documented examples, including a freelancer whose published arti
 
 ## What it does
 
-The Freelancer Defender pulls a dispute from PayPal, reads the freelancer's evidence, and works out three things, shown as three cards:
+The desktop case workspace first puts the signed scope, transfer record, reported client concern, and open question side by side. Each point opens the exact source section. A private follow-up turns the unresolved question into a next step. The agent then reads the case and produces three reviewable stages:
 
 1. **What the client told their bank**, e.g. "Not as described: what we received can't be used by our vendors."
 2. **What the evidence suggests and leaves open**, e.g. the seeded transfer service recorded no download of the second package before its link expired. A later client-submitted message reports the sign maker's print-file concern, but its account is not independently verified. The contract's ownership terms raise another question to review.
-3. **What we'll do about it**: contest the reversal *and* fix the real problem (re-send the files and the copyright letter).
+3. **A proposed response**: contest the reversal while resolving the client's file-access and rights questions if the missing facts support that path.
 
 Then it writes the response to the bank and a friendly message to the client. **Each claim in the response cites a quote from a specific document**, and plain code (not AI) checks that the quoted words appear in the source. Claims whose citations still fail after a repair attempt are removed. Quote matching does not prove that a claim correctly interprets its source; the freelancer can inspect each source before sending. Finally it builds the PayPal API calls (provide evidence with a generated PDF letter and evidence appendix, send message, make offer), which the freelancer reviews and submits.
 
@@ -52,7 +52,7 @@ Freelancers can add evidence to their own entered case or an authorized PayPal s
 ## AI tools used
 
 - **Groq + gpt-oss-120b** inside the product: the agent's reasoning, tool use and drafting.
-- **Claude Code** to help write the code, research PayPal's API behaviour and design the interface. *(Check the rules for any required wording on AI-assisted development.)*
+- **Claude Code, Codex, and OpenCode Go** to help write and review the code, research PayPal's API behaviour, and refine the interface. *(Check the rules for any required wording on AI-assisted development.)*
 
 ## Challenges we ran into
 
