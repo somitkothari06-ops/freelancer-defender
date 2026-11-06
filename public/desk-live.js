@@ -56,7 +56,7 @@
     } catch (err) { state.loadError = err.message; renderApp('files'); toast(err.message); }
   };
   const buttons = () => `<div class="desk-live-actions"><button class="cta" data-real="investigate">Open full investigation ↗</button>${selected()?.has_replay ? `<button class="secondary" data-real="replay">Watch recorded run ▷</button>` : ''}</div>`;
-  const picker = () => `<label class="desk-case-picker">CASE <select id="deskCasePicker" aria-label="Switch case">${list().map(c => `<option value="${esc(c.dispute_id)}" ${c.dispute_id === state.caseId ? 'selected' : ''}>${esc(c.client || c.title || c.dispute_id)}</option>`).join('')}</select></label>`;
+  const picker = () => `<label class="desk-case-picker">CASE <select id="deskCasePicker" aria-label="Switch case">${list().map(c => `<option value="${esc(c.dispute_id)}" ${c.dispute_id === state.caseId ? 'selected' : ''}>${esc(c.client || c.title || c.dispute_id)} · ${c.source === 'live' ? 'Sandbox' : c.source === 'seeded' ? 'Demo' : 'My case'}</option>`).join('')}</select></label>`;
   const limit = (d) => d?.kind === 'paypal_record' ? 'This is a PayPal record. It does not establish what work was delivered outside PayPal.' : d?.added ? 'Added by the freelancer. Verify the original before submitting.' : 'A source excerpt is evidence of its own wording, not proof of every related claim.';
   function filesHTML() {
     const c = selected();
