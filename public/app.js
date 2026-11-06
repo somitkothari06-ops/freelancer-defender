@@ -157,7 +157,7 @@ function openNewCase() {
       <label>Your name (optional)
         <input name="freelancer" maxlength="80" placeholder="e.g. Sam Rivera" />
       </label>
-      <p class="faint" style="font-size:13px;margin:0">Next, add your contract and emails, then let the agent investigate. Your case is private to this browser and isn't sent to PayPal.</p>
+      <p class="faint" style="font-size:13px;margin:0">Next, add your contract and emails. Only this browser can reopen the case; the server stores it temporarily. Nothing is sent to PayPal.</p>
       <div style="display:flex;gap:8px"><button class="btn primary" type="submit">Create my case</button><button class="btn" type="button" id="nc-cancel">Cancel</button></div>
     </form>`;
   const form = $('#nc-form');
@@ -522,7 +522,7 @@ function renderGrid(rows) {
       cellRenderer: (p) => (p.node.rowPinned ? '' : `<span class="tag">${esc(REASONS[p.value] || p.value)}</span>`),
     },
     {
-      headerName: 'Investigation summary',
+      headerName: 'Recorded interpretation',
       field: 'real_summary',
       flex: 1.6,
       minWidth: 220,
@@ -530,7 +530,7 @@ function renderGrid(rows) {
       autoHeight: true,
       cellStyle: { lineHeight: '1.4', paddingTop: '10px', paddingBottom: '10px' },
       cellRenderer: (p) =>
-        p.node.rowPinned ? `<span class="faint">${esc(p.value)}</span>` : p.value ? `<span style="font-size:14px">${esc(clip(p.value, 120))}</span>` : '<span class="faint">Not analyzed yet</span>',
+        p.node.rowPinned ? `<span class="faint">${esc(p.value)}</span>` : p.value ? `<span style="font-size:14px">${esc(clip(p.value, 120))}</span><span class="sub" style="display:block;margin-top:3px">Open case to check the sources</span>` : '<span class="faint">Not analyzed yet</span>',
     },
     {
       headerName: 'Amount',

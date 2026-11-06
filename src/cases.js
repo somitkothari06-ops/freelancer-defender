@@ -138,7 +138,7 @@ async function listCases({ mine = [], owner = '', includeLive = false } = {}) {
 async function loadCase(disputeId, owner = '') {
   if (custom.isCustom(disputeId)) {
     const c = custom.get(disputeId, owner);
-    if (!c) throw Object.assign(new Error('We could not find that case (cases you type in are cleared when the server restarts).'), { status: 404 });
+    if (!c) throw Object.assign(new Error('We could not find that case in this browser’s workspace.'), { status: 404 });
     return {
       live: false,
       yours: true,
