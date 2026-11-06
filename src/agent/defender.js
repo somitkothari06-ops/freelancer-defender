@@ -16,6 +16,7 @@ const { verifyClaims } = require('./citations');
 const { buildPackage } = require('./package');
 const { statementParts } = require('../evidence/locker');
 const { hasFreelancerEvidence, evidenceOnlyResult } = require('./evidence-gaps');
+const { directConcernRefs } = require('./context');
 
 const MAX_INVESTIGATION_TURNS = 8;
 
@@ -229,17 +230,18 @@ async function runDefender({ scenario, locker, sources }, emit) {
 
   // ---- 4. Diagnose ------------------------------------------------------------
   emit('stage', { stage: 'diagnose', status: 'start' });
-  // The dispute itself and the full agreement are always in view for the later stages:
-  // which terms apply is the whole argument, so it can't depend on what got cited earlier.
+  // The dispute, agreement and direct client communications stay in view even
+  // when the tool loop misses them. A report remains a report, not verified fact.
   const disputeRefs = [...locker.docs.values()]
     .filter((d) => d.id === 'DISPUTE' || d.kind === 'contract')
     .flatMap((d) => d.sections.map((s) => ({ doc_id: d.id, anchor: s.anchor })));
+  const concernContext = directConcernRefs(locker);
   const findingRefs = findings.flatMap((f) => f.citations);
   const diagRes = await groq.chatJSON(
     {
       name: 'diagnosis',
       schema: P.diagnoseSchema,
-      messages: [sys, { role: 'user', content: P.diagnosePrompt({ read, findings, citedText: sectionText([...disputeRefs, ...findingRefs]) }) }],
+      messages: [sys, { role: 'user', content: P.diagnosePrompt({ read, findings, citedText: sectionText([...disputeRefs, ...concernContext, ...findingRefs]) }) }],
       maxTokens: 5500,
       reasoningEffort: 'medium',
     },

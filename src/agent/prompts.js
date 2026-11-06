@@ -285,7 +285,7 @@ ${findings.map((f, i) => `${i + 1}. ${f.finding} (why it matters: ${f.significan
 Exact text of every cited section:
 ${citedText}
 
-First list every separate worry the client voiced in their own words (in the dispute, emails, forms or chat), and for each find the agreement term or record that answers it; read the full agreement above, not just the cited parts. Then give 2-4 competing hypotheses (including the literal reading of the complaint), weigh them against the evidence, and state the real complaint so that it accounts for every worry and for any change in who is involved on the client's side. Cite only doc_id/anchor pairs that appear above.`;
+First list every separate worry the client voiced in their own words (in the dispute, emails, forms or chat), and for each find the agreement term or record that answers it; read the full agreement above, not just the cited parts. Treat a client-submitted report as an account to check, not independently verified fact. Then give 2-4 competing hypotheses (including the literal reading of the complaint), weigh them against the evidence, and state the real complaint so that it accounts for every worry and for any change in who is involved on the client's side. Cite only doc_id/anchor pairs that appear above.`;
 }
 
 // ---- Stage: strategy -----------------------------------------------------------
