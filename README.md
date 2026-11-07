@@ -95,7 +95,7 @@ npm install
 npm start                # http://localhost:3000
 ```
 
-Without PayPal credentials the app runs on the 4 seeded demo disputes and simulates submission (clearly labelled). Without a Groq key you can still use **Replay**, which plays back historical AI runs. Those runs predate some current safeguards and their interpretations require human review; they cannot be sent to PayPal.
+Without PayPal credentials the app runs on 4 seeded demo disputes and simulates submission (clearly labelled). Without a Groq key, the source-linked desktop case review still works. The historical AI recordings show the investigation sequence, but their unsupported interpretations and drafts are hidden and cannot be sent to PayPal.
 
 Other commands:
 

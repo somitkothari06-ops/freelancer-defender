@@ -1,6 +1,6 @@
 # Judge demo script (target 2:40; submission limit 3:00)
 
-Record the deployed site. Use the seeded Halden case and the recorded agent run so the video is repeatable. Say “seeded” and “recorded” on screen. The contact-form source is present in the desktop evidence map, but the current Halden agent replay does **not** reliably surface it in its diagnosis; do not narrate that the agent found it. Never describe zero recorded downloads as proof that the client never received the files.
+Record the deployed site. Use the seeded Halden case for the source review. The older AI recordings are archived because their conclusions did not pass semantic evidence review; do not present them as a current recommendation or response. Never describe zero recorded downloads as proof that the client never received the files.
 
 ## 0:00–0:20 — The problem
 
@@ -20,21 +20,21 @@ Record the deployed site. Use the seeded Halden case and the recorded agent run 
 
 **Say:** “The critical question is which files reached the sign maker. A transfer log cannot answer that on its own. One click turns the gap into a follow-up the freelancer can actually pursue.”
 
-## 1:35–2:15 — The AI investigation
+## 1:35–2:15 — What the AI can and cannot establish
 
-**Show:** Return to the case, click **Watch recorded run**. Show the staged reasoning and one source in the response. If needed, edit the replay pacing in the video so this section fits without concealing that it is a recording.
+**Show:** Open the investigation panel. Show the source-linked evidence and the archived recording boundary. A separate live Groq run can be shown only if it was completed and its output was reviewed beforehand.
 
-**Say:** “The recorded Groq agent investigates documents, weighs competing explanations, and prepares a response for the filed dispute reason. Each quoted passage is checked against its source by code. That quote check does not prove the interpretation; the freelancer still reviews it.”
+**Say:** “The Groq agent reads documents and drafts a response. Code checks that its quoted words exist in the cited sections. That check does not prove the conclusion, so old recordings that made unsupported leaps are archived, and a real response requires the freelancer to review each claim.”
 
 ## 2:15–2:40 — PayPal and boundaries
 
-**Show:** The PayPal API request preview and the sandbox outcome record, if available in the current case and stage. End on the desktop case.
+**Show:** The case map and the PayPal sandbox flow already recorded separately, if available. End on the unresolved question and its source.
 
 **Say:** “For an authorized PayPal sandbox case, the app reads the live dispute and only offers actions PayPal currently allows. The seeded case simulates submission. We took a separate sandbox dispute through evidence submission; no real bank outcome is claimed. The freelancer decides what to send.”
 
 ## Recording checks
 
 - Confirm every spoken fact appears on the recorded screen or in the opened source.
-- Do not say the agent read the contact-form message in the current replay.
+- Do not show an archived recording as a ready PayPal response.
 - Do not claim a universal ten-day seller deadline; show the actual deadline for a live PayPal case.
 - Keep the public YouTube video under three minutes and verify its link after upload.
