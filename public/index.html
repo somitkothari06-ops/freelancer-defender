@@ -3,172 +3,87 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#fafaf8">
-  <meta name="description" content="Defend a reversed freelance payment. Bring contracts, messages and delivery records together, trace each claim to its source, and review before anything is sent.">
-  <title>Freelancer Defender</title>
+  <meta name="theme-color" content="#f5f5f3">
+  <meta name="description" content="A workspace for freelancers to examine a reversed payment, trace a response to its sources, and review before sending.">
+  <title>Freelancer Defender — Review the record</title>
   <style>
-    :root {
-      color-scheme: light;
-      --bg: #fafaf8;
-      --surface: #ffffff;
-      --text: #1a1a1a;
-      --muted: #555555;
-      --line: #e3e3df;
-      --accent: #2a4365;
-      --accent-dark: #1d3048;
-      --radius: 6px;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5; }
-    a { color: inherit; }
-    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-    .wrap { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
-
-    header.wrap { min-height: 72px; display: flex; align-items: center; }
-    .brand { text-decoration: none; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
-
-    main { padding-block: 48px 72px; }
-    .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: clamp(40px, 6vw, 80px); align-items: start; padding-block: 24px 64px; }
-    .hero-copy { max-width: 560px; }
-    h1 { margin: 0 0 16px; font-size: clamp(32px, 4vw, 44px); font-weight: 600; line-height: 1.08; letter-spacing: -0.02em; }
-    .lede { margin: 0 0 28px; color: var(--muted); font-size: 17px; line-height: 1.55; max-width: 480px; }
-    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; border-radius: var(--radius); font-size: 15px; font-weight: 600; text-decoration: none; border: 1px solid transparent; transition: background .15s ease, border-color .15s ease, color .15s ease; }
-    .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
-    .btn-primary:hover { background: #000; border-color: #000; }
-    .btn-secondary { background: transparent; color: var(--text); border-color: var(--line); }
-    .btn-secondary:hover { border-color: var(--text); }
-    .disclosure { margin: 0; color: var(--muted); font-size: 13px; }
-
-    .preview { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
-    .preview-label { margin: 0 0 12px; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; }
-    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
-    .tab { appearance: none; background: none; border: 0; padding: 10px 12px; font: inherit; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
-    .tab:hover { color: var(--text); }
-    .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
-    .panel { min-height: 120px; }
-    .panel p { margin: 0 0 10px; font-size: 15px; line-height: 1.55; }
-    .panel p:last-child { margin-bottom: 0; }
-    .panel strong { font-weight: 600; }
-
-    .steps { border-top: 1px solid var(--line); padding-top: 48px; }
-    .steps h2 { margin: 0 0 24px; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
-    .steps-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .steps-list li { padding-top: 12px; border-top: 2px solid var(--text); }
-    .step-num { display: block; margin-bottom: 6px; color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
-    .step-title { display: block; margin-bottom: 4px; font-size: 16px; font-weight: 600; }
-    .step-text { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
-
-    footer { border-top: 1px solid var(--line); }
-    .footer-inner { min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
-    .footer-inner a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
-    .footer-inner a:hover { color: var(--text); }
-
-    @media (max-width: 760px) {
-      .hero { grid-template-columns: 1fr; gap: 32px; padding-block: 16px 48px; }
-      .steps-list { grid-template-columns: 1fr; gap: 20px; }
-      .wrap { width: min(100% - 32px, 560px); }
-      header.wrap { min-height: 64px; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-    }
+    :root{color-scheme:light;--ground:#f5f5f3;--ink:#171717;--muted:#626262;--line:#d8d8d6;--dark:#171717;--dark-line:#555555;--light:#ffffff;--accent:#ffffff}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}
+    body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    button,a{font:inherit}button{cursor:pointer}a{color:inherit}:focus-visible{outline:3px solid #444444;outline-offset:4px}
+    .wrap{width:min(1260px,calc(100% - 80px));margin-inline:auto}
+    header{border-bottom:1px solid var(--line)}.top{min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{font-size:16px;font-weight:750;letter-spacing:-.04em;text-decoration:none}.top nav{display:flex;align-items:center;gap:29px}
+    .top nav a{color:#242424;text-decoration:none;font-size:13px;font-weight:650}.top nav a:hover{text-decoration:underline;text-underline-offset:5px}
+    .top nav .nav-demo{border:1px solid #999999;border-radius:4px;padding:9px 14px}.top nav .nav-demo:hover{background:#ebebea;text-decoration:none}
+    .hero{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(44px,6vw,110px);align-items:center;min-height:610px;padding-block:64px 72px}
+    .copy{max-width:500px}.eyebrow{display:inline-block;margin:0 0 24px;color:#444444;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+    h1{margin:0;font-size:clamp(38px,3.35vw,48px);line-height:1.08;letter-spacing:-.055em;font-weight:680}
+    .lede{max-width:450px;margin:19px 0 27px;color:#555555;font-size:17px;line-height:1.6}.actions{display:flex;flex-wrap:wrap;gap:10px}
+    .button{min-height:47px;display:inline-flex;align-items:center;justify-content:center;padding:0 18px;border:1px solid var(--ink);border-radius:4px;background:var(--ink);color:#fff;text-decoration:none;font-size:13px;font-weight:750;transition:background .18s ease,transform .18s ease}
+    .button:hover{background:#333333;transform:translateY(-2px)}.button.secondary{background:transparent;color:var(--ink);border-color:#888888}.button.secondary:hover{background:#e9e9e8}
+    .disclosure{margin:17px 0 0;font-size:12px;color:#6b6b6b}
+    .reader{min-height:450px;background:var(--dark);border:1px solid #444444;border-radius:8px;color:var(--light);box-shadow:0 26px 54px rgba(32,39,45,.13);overflow:hidden}
+    .reader-head{height:65px;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:0 30px;border-bottom:1px solid var(--dark-line);color:#bdbdbd;font-size:11px;font-weight:750;letter-spacing:.1em;text-transform:uppercase}
+    .reader-head b{color:var(--accent);font-size:11px;font-weight:750}.reader-body{display:grid;grid-template-columns:185px minmax(0,1fr);min-height:340px}
+    .reader-tabs{display:flex;flex-direction:column;padding:24px 0 24px 22px;border-right:1px solid var(--dark-line);gap:3px}
+    .reader-tabs button{width:100%;min-height:57px;display:flex;align-items:center;gap:12px;border:0;border-radius:4px 0 0 4px;padding:0 13px;background:transparent;color:#b5b5b5;text-align:left;font-size:13px;font-weight:650}
+    .reader-tabs button:hover{background:#292929;color:#fff}.reader-tabs button[aria-selected="true"]{background:#333333;color:#fff}
+    .reader-tabs .number{color:#c7c7c7;font-size:11px;font-variant-numeric:tabular-nums}.reader-tabs button[aria-selected="true"] .number{color:var(--accent)}
+    .reader-panel{display:flex;flex-direction:column;justify-content:space-between;padding:34px 36px 26px;min-width:0}
+    .panel-kicker{color:var(--accent);font-size:11px;font-weight:750;letter-spacing:.12em;text-transform:uppercase}.panel-main{margin:auto 0}
+    .panel-main strong{display:block;max-width:400px;font-size:clamp(22px,2.3vw,32px);line-height:1.22;letter-spacing:-.035em;font-weight:600}
+    .panel-main p{max-width:390px;margin:16px 0 0;color:#d0d0d0;font-size:14px;line-height:1.55}
+    .panel-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--dark-line);padding-top:16px;color:#bdbdbd;font-size:11px;font-weight:650}.panel-foot span:last-child{color:var(--accent)}
+    .reader-tail{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:49px;padding:10px 30px;border-top:1px solid var(--dark-line);color:#bdbdbd;font-size:11px}.reader-tail a{color:#ffffff;text-underline-offset:3px}
+    .below{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.below div{padding:24px 25px 27px 0}.below div+div{padding-left:25px;border-left:1px solid var(--line)}
+    .below span{display:block;margin-bottom:7px;color:#626262;font-size:10px;font-weight:800;letter-spacing:.11em}.below strong{font-size:17px;letter-spacing:-.025em}
+    footer .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:75px;color:#626262;font-size:12px}footer a{text-underline-offset:3px}
+    @media(max-width:900px){.wrap{width:min(690px,calc(100% - 40px))}.hero{grid-template-columns:1fr;gap:42px;min-height:0;padding-block:60px}.copy{max-width:640px}.reader{min-height:430px}}
+    @media(max-width:600px){.top nav a:first-child{display:none}.hero{padding-block:45px}h1{font-size:39px}.lede{font-size:16px}.reader-head{padding-inline:18px}.reader-body{grid-template-columns:1fr}.reader-tabs{flex-direction:row;padding:12px 14px;border-right:0;border-bottom:1px solid var(--dark-line)}.reader-tabs button{min-height:43px;justify-content:center;padding:0 5px;font-size:12px}.reader-tabs .number{display:none}.reader-panel{min-height:310px;padding:25px 22px}.reader-tail{padding-inline:18px}.below{grid-template-columns:1fr}.below div,.below div+div{border-left:0;padding:16px 0}.below div+div{border-top:1px solid var(--line)}footer .wrap{align-items:flex-start;flex-direction:column;justify-content:center;padding-block:17px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
   </style>
 </head>
 <body>
-  <header class="wrap">
-    <a class="brand" href="/">Freelancer Defender</a>
-  </header>
-
+  <header><div class="wrap top"><a class="brand" href="/">Freelancer Defender</a><nav aria-label="Main navigation"><a href="/desk">Open workspace</a><a class="nav-demo" href="/app?replay=PP-D-27140-HALDEN#/case/PP-D-27140-HALDEN">Watch demo</a></nav></div></header>
   <main>
     <section class="wrap hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <h1 id="hero-title">Defend a reversed freelance payment.</h1>
-        <p class="lede">Bring contracts, client messages and delivery records together, trace each claim to its source, and review before anything is sent.</p>
-        <div class="actions">
-          <a class="btn btn-primary" href="/app?replay=PP-D-27140-HALDEN#/case/PP-D-27140-HALDEN">Watch recorded review</a>
-          <a class="btn btn-secondary" href="/desk">Open evidence desk</a>
-        </div>
-        <p class="disclosure">Demo uses seeded example data. Submission is simulated.</p>
+      <div class="copy">
+        <p class="eyebrow">Freelance payment disputes</p>
+        <h1 id="hero-title">Defend a reversed payment with your work on record.</h1>
+        <p class="lede">Bring the agreement, messages and delivery history together. Check the response against its sources before sending.</p>
+        <div class="actions"><a class="button" href="/app?replay=PP-D-27140-HALDEN#/case/PP-D-27140-HALDEN">Watch a recorded review</a><a class="button secondary" href="/desk">Open the workspace</a></div>
+        <p class="disclosure">Public demo uses sample cases. No PayPal sign-in required.</p>
       </div>
-
-      <div class="preview" aria-label="Seeded example case">
-        <p class="preview-label">Seeded example, not a live case</p>
-        <div class="tabs" role="tablist" aria-label="Seeded evidence">
-          <button class="tab" role="tab" id="tab-agreement" aria-selected="true" aria-controls="panel-agreement" tabindex="0">Agreement</button>
-          <button class="tab" role="tab" id="tab-delivery" aria-selected="false" aria-controls="panel-delivery" tabindex="-1">Delivery</button>
-          <button class="tab" role="tab" id="tab-question" aria-selected="false" aria-controls="panel-question" tabindex="-1">Open question</button>
+      <div class="reader" aria-label="Interactive preview of a sample evidence review">
+        <div class="reader-head"><span>Inside a dispute</span><b>Sample case · no live action</b></div>
+        <div class="reader-body">
+          <div class="reader-tabs" role="tablist" aria-label="Examine the sample record">
+            <button type="button" role="tab" id="tab-claim" aria-selected="true" aria-controls="record-panel"><span class="number">01</span> Claim</button>
+            <button type="button" role="tab" id="tab-record" aria-selected="false" aria-controls="record-panel" tabindex="-1"><span class="number">02</span> Record</button>
+            <button type="button" role="tab" id="tab-gap" aria-selected="false" aria-controls="record-panel" tabindex="-1"><span class="number">03</span> Missing proof</button>
+          </div>
+          <div class="reader-panel" id="record-panel" role="tabpanel" aria-labelledby="tab-claim" aria-live="polite">
+            <span class="panel-kicker" id="panel-kicker">What the buyer filed</span>
+            <div class="panel-main"><strong id="panel-title">“Not as described”</strong><p id="panel-copy">The bank sees a dispute reason. It does not yet see what the agreement promised or what was delivered.</p></div>
+            <div class="panel-foot"><span id="panel-source">Source · dispute record</span><span id="panel-status">Filed statement</span></div>
+          </div>
         </div>
-        <div class="panel" id="panel-agreement" role="tabpanel" aria-labelledby="tab-agreement">
-          <p><strong>Fact.</strong> Signed agreement §3 lists scope as logo, brand identity, web assets and print-ready files.</p>
-          <p><strong>Limitation.</strong> "Print-ready" is not defined as a vector format; that reading is open.</p>
-        </div>
-        <div class="panel" id="panel-delivery" role="tabpanel" aria-labelledby="tab-delivery" hidden>
-          <p><strong>Fact.</strong> Delivery log shows 0 downloads of the second package before its link expired.</p>
-          <p><strong>Limitation.</strong> The log records downloads only; it cannot show whether files reached the client another way.</p>
-        </div>
-        <div class="panel" id="panel-question" role="tabpanel" aria-labelledby="tab-question" hidden>
-          <p><strong>Fact.</strong> A contact-form message reports the sign maker could not cut the sign from the files received.</p>
-          <p><strong>Limitation.</strong> The sender is not independently verified; treat the claim as unconfirmed.</p>
-        </div>
+        <div class="reader-tail"><span>Choose a tab to inspect the record.</span><a href="/app?replay=PP-D-27140-HALDEN#/case/PP-D-27140-HALDEN">See the full review</a></div>
       </div>
     </section>
-
-    <section class="wrap steps" aria-labelledby="steps-title">
-      <h2 id="steps-title">How it works</h2>
-      <ol class="steps-list">
-        <li>
-          <span class="step-num">01</span>
-          <span class="step-title">Gather records</span>
-          <p class="step-text">Add the agreement, messages and delivery logs that matter.</p>
-        </li>
-        <li>
-          <span class="step-num">02</span>
-          <span class="step-title">Trace claims to sources</span>
-          <p class="step-text">See the exact passages behind a response, and what is still unknown.</p>
-        </li>
-        <li>
-          <span class="step-num">03</span>
-          <span class="step-title">Review before sending</span>
-          <p class="step-text">Check the proposed response and its citations. Nothing is submitted automatically.</p>
-        </li>
-      </ol>
-    </section>
+    <section class="wrap below" aria-label="How the workspace helps"><div><span>01 / GATHER</span><strong>Keep the source documents together.</strong></div><div><span>02 / TRACE</span><strong>See what supports each claim.</strong></div><div><span>03 / REVIEW</span><strong>Leave uncertain points open.</strong></div></section>
   </main>
-
-  <footer>
-    <div class="wrap footer-inner">
-      <span>Freelancer Defender · PayPal AI Hackathon 2026</span>
-      <a href="https://github.com/somitkothari06-ops/freelancer-defender">Source code</a>
-    </div>
-  </footer>
-
+  <footer><div class="wrap"><span>Freelancer Defender · PayPal AI Hackathon 2026</span><a href="https://github.com/somitkothari06-ops/freelancer-defender">Source code</a></div></footer>
   <script>
-    (function () {
-      var tabs = document.querySelectorAll('.tab');
-      var panels = document.querySelectorAll('.panel');
-      function activate(tab) {
-        tabs.forEach(function (t) {
-          var on = t === tab;
-          t.setAttribute('aria-selected', on ? 'true' : 'false');
-          t.tabIndex = on ? 0 : -1;
-        });
-        panels.forEach(function (p) {
-          p.hidden = p.id !== 'panel-' + tab.id.replace('tab-', '');
-        });
-      }
-      tabs.forEach(function (tab) {
-        tab.addEventListener('click', function () { activate(tab); });
-        tab.addEventListener('keydown', function (e) {
-          var idx = Array.prototype.indexOf.call(tabs, tab);
-          var next = null;
-          if (e.key === 'ArrowRight') next = tabs[(idx + 1) % tabs.length];
-          else if (e.key === 'ArrowLeft') next = tabs[(idx - 1 + tabs.length) % tabs.length];
-          if (next) { e.preventDefault(); next.focus(); activate(next); }
-        });
-      });
-    })();
+    const records={
+      claim:{kicker:'What the buyer filed',title:'“Not as described”',copy:'The bank sees a dispute reason. It does not yet see what the agreement promised or what was delivered.',source:'Source · dispute record',status:'Filed statement'},
+      record:{kicker:'What the records show',title:'Print masters were promised. This transfer service logged no master-package downloads.',copy:'The signed agreement names AI, SVG and EPS files. The download log records zero downloads of the master package before its link expired.',source:'Sources · agreement §3.2, transfer log L5–L6',status:'Source linked'},
+      gap:{kicker:'What still needs an answer',title:'Did the files reach the client another way?',copy:'A missing download event does not rule out another delivery route. Ask before asserting what the client received.',source:'Source · transfer log L5–L6',status:'Open question'}
+    };
+    const tabs=[...document.querySelectorAll('.reader-tabs button')];
+    function selectRecord(tab){const record=records[tab.id.slice(4)];tabs.forEach(item=>{const selected=item===tab;item.setAttribute('aria-selected',String(selected));item.tabIndex=selected?0:-1});document.getElementById('record-panel').setAttribute('aria-labelledby',tab.id);for(const [id,field] of [['panel-kicker','kicker'],['panel-title','title'],['panel-copy','copy'],['panel-source','source'],['panel-status','status']])document.getElementById(id).textContent=record[field]}
+    tabs.forEach((tab,index)=>{tab.addEventListener('click',()=>selectRecord(tab));tab.addEventListener('keydown',event=>{if(event.key!=='ArrowRight'&&event.key!=='ArrowLeft')return;event.preventDefault();const next=tabs[(index+(event.key==='ArrowRight'?1:tabs.length-1))%tabs.length];selectRecord(next);next.focus()})});
   </script>
 </body>
 </html>
