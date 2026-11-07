@@ -522,7 +522,7 @@ function renderGrid(rows) {
       cellRenderer: (p) => (p.node.rowPinned ? '' : `<span class="tag">${esc(REASONS[p.value] || p.value)}</span>`),
     },
     {
-      headerName: 'Recorded interpretation',
+      headerName: 'Recorded review',
       field: 'real_summary',
       flex: 1.6,
       minWidth: 220,
@@ -530,7 +530,7 @@ function renderGrid(rows) {
       autoHeight: true,
       cellStyle: { lineHeight: '1.4', paddingTop: '10px', paddingBottom: '10px' },
       cellRenderer: (p) =>
-        p.node.rowPinned ? `<span class="faint">${esc(p.value)}</span>` : p.value ? `<span style="font-size:14px">${esc(clip(p.value, 120))}</span><span class="sub" style="display:block;margin-top:3px">Open case to check the sources</span>` : '<span class="faint">Not analyzed yet</span>',
+        p.node.rowPinned ? `<span class="faint">${esc(p.value)}</span>` : p.value ? '<span style="font-size:14px">AI hypothesis available</span><span class="sub" style="display:block;margin-top:3px">Open case to inspect the sources</span>' : '<span class="faint">Not analyzed yet</span>',
     },
     {
       headerName: 'Amount',
@@ -541,7 +541,7 @@ function renderGrid(rows) {
       cellStyle: { justifyContent: 'flex-end' },
     },
     {
-      headerName: 'Plan',
+      headerName: 'Proposed plan',
       field: 'decision',
       width: 120,
       valueFormatter: (p) => DECISIONS[p.value]?.short || 'Analyze',
