@@ -317,7 +317,7 @@ async function openQueue() {
   $('#queue-stats').innerHTML = `
     <div class="stat navy"><span class="label">${currencies.length > 1 ? 'Open disputes' : 'Open disputed amount'}</span><span class="value">${currencies.length > 1 ? open.length : fmtMoney(atRisk, currencies[0])}</span><span class="sub">${currencies.length > 1 ? 'Multiple currencies · see case amounts' : `${open.length} open case${open.length === 1 ? '' : 's'}${includesDemo ? ' · includes demo data' : ''}`}</span></div>
     <div class="stat red"><span class="label">Next response deadline</span><span class="value">${next ? esc(timeLeft(next.due).short) : '—'}</span><span class="sub">${next ? esc(next.client.split(',').pop().trim()) : 'No response deadlines'}</span></div>
-    <div class="stat"><span class="label">Recorded investigations</span><span class="value">${ready}<span class="stat-unit"> available</span></span><span class="sub">Explore the reasoning, step by step</span></div>`;
+    <div class="stat"><span class="label">Archived recordings</span><span class="value">${ready}<span class="stat-unit"> available</span></span><span class="sub">See earlier AI runs and their evidence gaps</span></div>`;
 
   const pp = data.paypal;
   $('#paypal-banner').innerHTML = pp.error
@@ -914,7 +914,7 @@ function markDoc(docId, cls) {
 function renderControls(c) {
   const ctl = $('#controls');
   ctl.innerHTML = c.has_replay ? `
-    <button class="btn primary" id="run-replay">Play the recorded review</button>
+    <button class="btn primary" id="run-replay">Inspect archived review</button>
     <button class="btn" id="run-live">Run a live AI investigation</button>
     <span class="hint">Historical AI output, about one minute. Its conclusions may overreach the sources; review every claim. It cannot be sent to PayPal.<br>Live AI uses a limited daily budget.</span>` : `
     <button class="btn primary" id="run-live">Investigate with AI</button>
