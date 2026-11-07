@@ -720,7 +720,7 @@ function renderHero(c) {
     </div>
     <span class="kicker amount-label">Amount disputed</span>
     <h1 class="amount num">${fmtMoney(Number(d.dispute_amount?.value || 0), d.dispute_amount?.currency_code)}</h1>
-    <p class="lede">Review the claim, inspect the source records, then decide what to send.</p>
+    <p class="lede">Review the claim and the records behind it before choosing a next step.</p>
     <span class="who">${esc(c.freelancer.business)} · ${esc(c.title)}</span>`;
 }
 
@@ -803,7 +803,7 @@ function renderThree(c) {
 }
 
 function renderLocker(c) {
-  $('#locker-count').textContent = `${c.documents.length} documents`;
+  $('#locker-count').textContent = `${c.documents.length} ${c.documents.length === 1 ? 'document' : 'documents'}`;
   const box = $('#locker');
   box.innerHTML = '';
   const own = c.documents.filter((d) => d.kind !== 'paypal_record');
