@@ -662,7 +662,7 @@ async function openCase(id) {
 // Four short tips the first time someone opens a dispute. Remembered per browser.
 const TOUR = [
   ['#clock', 'Your deadline', 'It counts down live. This is how long you have to answer.'],
-  ['#three > div:first-child', 'What they told the bank', "The client's complaint, straight from PayPal."],
+  ['#three > div:first-child', 'What they told the bank', "The complaint recorded for this case, with its source shown."],
   ['#controls', 'Let the agent work', 'It reads your contract, emails and logs. The recording plays in about a minute.'],
   ['#card-real', "What's actually going on", 'The real problem shows up here, with proof from your own records.'],
 ];
@@ -950,7 +950,7 @@ function renderControls(c) {
 // ---------- the agent's steps ----------------------------------------------------
 
 const STAGES = [
-  ['intake', 'Pull the dispute from PayPal'],
+  ['intake', 'Read the dispute record'],
   ['read', 'Read what your client said'],
   ['investigate', 'Go through your evidence'],
   ['diagnose', "Work out what's really wrong"],
@@ -961,14 +961,14 @@ const STAGES = [
 ];
 
 const STAGE_EXPLANATIONS = {
-  intake: "Pulling the real dispute record from PayPal's sandbox API: the complaint, the amount, and the deadline.",
-  read: "Reading exactly what the client told the bank, word for word, straight from PayPal's own record.",
+  intake: 'Reading the complaint, disputed amount, and any deadline present in this case record.',
+  read: 'Reading the complaint as recorded in this case. Its source is shown alongside the record.',
   investigate: "Searching the freelancer's own evidence — contracts, emails, and delivery logs — for anything relevant to this dispute.",
   diagnose: "The key step: working out what's actually going on, which can differ from the client's claim, and explaining how confident it is.",
   strategy: 'Deciding how to respond — refund, fight, or something in between — based on what the evidence shows.',
   draft: 'Writing the response letter, citing a specific piece of evidence for every claim it makes.',
   verify: 'Checking every quote in the draft against its cited source, word for word. This checks the quoted words, not whether the claim follows from them.',
-  package: 'Packaging the verified response, ready to send back through PayPal.',
+  package: 'Packaging the reviewed response and its cited evidence.',
 };
 
 // Separate from the first-visit tour: automatic, repeatable, and never blocks clicks.
