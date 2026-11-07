@@ -52,7 +52,7 @@ Freelancers can add evidence to their own entered case or an authorized PayPal s
 ## AI tools used
 
 - **Groq + gpt-oss-120b** inside the product: the agent's reasoning, tool use and drafting.
-- **Claude Code, Codex, and OpenCode Go** to help write and review the code, research PayPal's API behaviour, and refine the interface. *(Check the rules for any required wording on AI-assisted development.)*
+- **Claude Code, Codex, OpenCode Go, and a local Qwen coding model** to help write and review the code, research PayPal's API behaviour, and refine the interface. The local model was used for a bounded proof-map review; its suggestions were checked against the actual source records. *(Check the rules for any required wording on AI-assisted development.)*
 
 ## Challenges we ran into
 
