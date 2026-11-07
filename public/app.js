@@ -914,10 +914,13 @@ function markDoc(docId, cls) {
 
 function renderControls(c) {
   const ctl = $('#controls');
-  ctl.innerHTML = `
-    <button class="btn primary" id="run-live">Investigate this case <span aria-hidden="true">→</span></button>
-    <button class="btn" id="run-replay" ${c.has_replay ? '' : 'disabled title="No recorded run yet"'}>Watch a recorded run</button>
-    <span class="hint">Live investigation: a few minutes.<br>Recorded example: about one minute.</span>`;
+  ctl.innerHTML = c.has_replay ? `
+    <button class="btn primary" id="run-replay">Play the recorded review</button>
+    <button class="btn" id="run-live">Run a live AI investigation</button>
+    <span class="hint">Recorded review: about one minute.<br>Live AI uses a limited daily budget.</span>` : `
+    <button class="btn primary" id="run-live">Investigate with AI</button>
+    <button class="btn" id="run-replay" disabled title="No recorded run yet">Recorded review unavailable</button>
+    <span class="hint">Live investigation takes a few minutes and uses a limited daily budget.</span>`;
   $('#run-live').onclick = () => startRun('live');
   $('#run-replay').onclick = () => startRun('replay');
 

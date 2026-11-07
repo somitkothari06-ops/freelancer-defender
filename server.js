@@ -61,6 +61,18 @@ const hasReplay = (id) => fs.existsSync(replayPath(id));
 const lastRun = new Map();
 // Only one live AI run at a time: Groq's free tier allows ~8k tokens/minute in total.
 let liveRunBusy = false;
+// A shared Groq quota can be exhausted long before any per-visitor limit fires.
+// Keep some of the daily budget available for the hosted demo.
+let liveBudgetDay = '';
+let liveRunsUsed = 0;
+function reserveLiveRun() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today !== liveBudgetDay) { liveBudgetDay = today; liveRunsUsed = 0; }
+  const cap = Math.max(1, Number.parseInt(process.env.LIVE_RUNS_PER_DAY || '2', 10) || 2);
+  if (liveRunsUsed >= cap) return false;
+  liveRunsUsed += 1;
+  return true;
+}
 
 // Dispute ids are short letters/digits/dashes (PP-D-27140-HALDEN, PP-R-LFT-10193672). Reject
 // anything else before it can reach a PayPal URL (e.g. "../" sneaking into the path).
@@ -212,13 +224,28 @@ app.delete('/api/cases/:id/evidence/:docId', wrap(async (req, res) => {
 
 // ---- Run the agent, streaming events with Server-Sent Events --------------------
 
-app.get('/api/cases/:id/run', limit('run', 8, 24 * 60 * 60 * 1000), async (req, res) => {
+app.get('/api/cases/:id/run', limit('run', 60, 24 * 60 * 60 * 1000), async (req, res) => {
   if (!canReadCase(req)) return caseRefused(res);
   const id = req.params.id;
-  const mode = req.query.mode === 'replay' ? 'replay' : 'live';
+  const mode = req.query.mode === 'live' ? 'live' : 'replay';
+  if (mode === 'live') {
+    const fetchSite = req.get('sec-fetch-site');
+    const origin = req.get('origin');
+    if (fetchSite === 'cross-site' || (origin && origin !== `${req.protocol}://${req.get('host')}`)) {
+      return res.status(403).json({ error: 'Cross-site live runs are refused.' });
+    }
+  }
 
   res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
   const send = (type, payload) => res.write(`event: ${type}\ndata: ${JSON.stringify(payload ?? {})}\n\n`);
+  if (mode === 'live' && liveRunBusy) {
+    send('fatal', { message: 'Another live run is in progress. Play the recorded review or try again later.' });
+    return res.end();
+  }
+  if (mode === 'live' && !reserveLiveRun()) {
+    send('fatal', { message: 'The daily live AI budget is used. The recorded review is still available.' });
+    return res.end();
+  }
   const keepAlive = setInterval(() => res.write(': keep-alive\n\n'), 15000);
   let closed = false;
   res.on('close', () => {
@@ -243,7 +270,6 @@ app.get('/api/cases/:id/run', limit('run', 8, 24 * 60 * 60 * 1000), async (req, 
         send(ev.type, ev.payload);
       }
     } else {
-      if (liveRunBusy) throw new Error('Another live run is in progress (the free AI tier allows one at a time). Try replay mode, or wait a minute.');
       liveRunBusy = true;
       try {
         send('mode', { mode: 'live' });
