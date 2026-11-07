@@ -1151,7 +1151,7 @@ function startRun(mode) {
     setStage(p.stage, p.status);
     if (p.status === 'done') renderStageDone(p.stage, p.data || {}, p.thinking);
   });
-  on('thinking', (p) => addRawNotes(p.stage, p.text));
+  on('thinking', (p) => { if (state.reviewMode !== 'replay') addRawNotes(p.stage, p.text); });
   on('tool', (p) => {
     const body = stageBody('investigate');
     if (p.name === 'read_document') {
@@ -1166,6 +1166,10 @@ function startRun(mode) {
   on('finding', (p) => {
     found++;
     p.citations.forEach((c) => markDoc(c.doc_id, 'cited'));
+    if (state.reviewMode === 'replay') {
+      stageSum('investigate', `${opened} documents opened, ${found} archived findings hidden`);
+      return;
+    }
     const card = h(`<div class="finding"><div class="f-text">${say(p.finding)}</div><div class="f-why">${say(p.significance)}</div></div>`);
     card.appendChild(chips(p.citations));
     stageBody('investigate').appendChild(card);
@@ -1177,6 +1181,7 @@ function startRun(mode) {
     setTimeout(() => el.remove(), p.ms);
   });
   on('verify_issue', (p) => {
+    if (state.reviewMode === 'replay') return;
     const card = h(`<div class="panel"><h4>${p.failed.length} sentence(s) didn't match their source exactly, so the agent is fixing them</h4></div>`);
     const list = h('<div class="raw"></div>');
     list.textContent = p.failed.map((f) => `✗ "${f.text}"\n   ${f.problems.join('; ') || 'no source given'}`).join('\n');
@@ -1326,6 +1331,11 @@ function renderStageDone(stage, data, thinking) {
   }
 
   if (stage === 'diagnose') {
+    if (state.reviewMode === 'replay') {
+      stageSum('diagnose', 'Archived interpretation');
+      body.appendChild(h('<div class="banner warn"><b>Archived interpretation withheld.</b> This recording treated some inferences as facts. Review the original evidence in the desktop case map instead.</div>'));
+      return;
+    }
     stageSum('diagnose', 'Hypothesis to verify');
     // Fill card 2 at the top of the page.
     const real = $('#card-real');
@@ -1384,6 +1394,14 @@ function renderStageDone(stage, data, thinking) {
   }
 
   if (stage === 'strategy') {
+    if (state.reviewMode === 'replay') {
+      stageSum('strategy', 'No current recommendation');
+      const plan = $('#card-plan');
+      plan.className = '';
+      plan.innerHTML = '<span class="kicker">3 · Next step</span><p class="big">Check the records and resolve the open questions before choosing a response.</p>';
+      body.appendChild(h('<div class="banner warn">This archived strategy is hidden because its rationale goes beyond what the cited records establish.</div>'));
+      return;
+    }
     const d = DECISIONS[data.decision] || { short: data.decision, long: '' };
     stageSum('strategy', d.short);
     const plan = $('#card-plan');
@@ -1457,6 +1475,16 @@ function renderResult(r) {
     $('#card-real').innerHTML = '<span class="kicker">2 · What we can establish</span><p class="big">We need more evidence to determine what happened.</p>';
     $('#card-plan').innerHTML = '<span class="kicker">3 · What we’ll do next</span><p class="big">Gather the missing records, then investigate again.</p>';
     card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  if (state.reviewMode === 'replay') {
+    stageSum('package', 'Archived');
+    setStage('package', 'done');
+    const out = $('#result');
+    out.classList.remove('hidden');
+    out.innerHTML = '';
+    const card = h('<div class="card evidence-gaps"><span class="kicker">Historical AI recording</span><h2>Its conclusions did not pass evidence review.</h2><p>This recording is preserved as an example of the workflow. Its response draft and proposed decision are hidden. Matching a quote proves the wording exists in a source; it does not prove the conclusion follows from it.</p><p>Open the case map to compare the agreement, delivery record, client report, and unresolved questions yourself.</p><a class="btn primary" href="/desk">Open the case map</a></div>');
+    out.appendChild(card);
     return;
   }
   stageSum('package', state.reviewMode === 'replay' ? 'Archived draft' : 'Ready');
