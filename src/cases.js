@@ -43,7 +43,7 @@ const scenarios = fs
 
 const scenarioById = new Map(scenarios.map((s) => [s.id, s]));
 
-// Live dispute id -> scenario id (set automatically by invoice number, or by hand in the UI).
+// Live dispute id -> explicitly linked demo scenario id (sandbox demo only).
 const links = new Map();
 
 function summary(dispute, extra) {
@@ -64,23 +64,6 @@ function summary(dispute, extra) {
   };
 }
 
-// Guess which scenario a live sandbox dispute belongs to. scripts/paypal-seed.js creates the
-// sandbox invoice with the scenario's exact line items and amount, and PayPal copies the item
-// names into the dispute, so we match on those. (PayPal puts its own invoice ID in
-// invoice_number, not ours, so that can't be used.)
-function autoLink(dispute) {
-  const tx = dispute.disputed_transactions?.[0] || {};
-  const itemNames = new Set((tx.items || []).map((i) => i.item_name));
-  const amount = Number(dispute.dispute_amount?.value || tx.gross_amount?.value || 0);
-  const match = scenarios.find((s) => {
-    const row = s.paypal_transactions.find((t) => t.transaction_info.invoice_id === s.dispute.disputed_transactions[0].invoice_number);
-    const names = (row?.cart_info?.item_details || []).map((i) => i.item_name);
-    const sameAmount = Number(s.dispute.dispute_amount.value) === amount;
-    return sameAmount && (names.length === 0 || names.some((n) => itemNames.has(n)));
-  });
-  return match?.id || null;
-}
-
 async function listLive() {
   if (!config.paypal.enabled) return { items: [], error: null };
   try {
@@ -89,10 +72,6 @@ async function listLive() {
     const detailed = await Promise.all(items.slice(0, 10).map((d) => disputesApi.getDispute(d.dispute_id)));
     return {
       items: detailed.map((d) => {
-        if (!links.has(d.dispute_id)) {
-          const guess = autoLink(d);
-          if (guess) links.set(d.dispute_id, guess);
-        }
         const sc = scenarioById.get(links.get(d.dispute_id)) || freshScenario(d);
         return summary(d, {
           source: 'live',
@@ -163,7 +142,7 @@ async function loadCase(disputeId, owner = '') {
 
   // Live sandbox dispute.
   const dispute = await disputesApi.getDispute(disputeId);
-  const scenarioId = links.get(disputeId) || autoLink(dispute);
+  const scenarioId = links.get(disputeId);
   const base = scenarioById.get(scenarioId) || freshScenario(dispute);
   const scenario = withUploads({ ...base, dispute }, disputeId);
 
@@ -175,13 +154,7 @@ async function loadCase(disputeId, owner = '') {
     if (!payer) throw new Error('no payer email on the dispute');
     transactions = await transactionsApi.historyForPayer(payer);
   } catch (err) {
-    txSource = `Transaction Search failed (${err.message}); using seeded records`;
-  }
-  if (transactions.length === 0 && base.paypal_transactions.length) {
-    transactions = base.paypal_transactions;
-    if (!txSource.startsWith('Transaction Search failed')) {
-      txSource = 'Seeded records (Transaction Search returned no rows yet; sandbox can lag by hours)';
-    }
+    txSource = `Transaction Search unavailable (${err.message})`;
   }
   return {
     live: true,

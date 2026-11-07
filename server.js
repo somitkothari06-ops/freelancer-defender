@@ -29,6 +29,7 @@ const customCases = require('./src/custom-cases');
 const groq = require('./src/ai/groq');
 const P = require('./src/agent/prompts');
 const { buildProofMap } = require('./src/proof-map');
+const handoffs = require('./src/handoff-register');
 const { allClaimsReviewed } = require('./src/claim-review');
 
 const app = express();
@@ -153,7 +154,8 @@ function replaySummary(id) {
   try {
     const { events } = JSON.parse(fs.readFileSync(replayPath(rid), 'utf8'));
     const r = events.find((e) => e.type === 'result')?.payload;
-    return r ? { real_summary: r.diagnosis.real_complaint.summary, decision: r.strategy.decision, refund: r.strategy.refund_amount } : {};
+    // A replay is historical AI output, not a verified decision for today's case.
+    return r ? { has_recorded_review: true } : {};
   } catch {
     return {};
   }
@@ -204,6 +206,45 @@ app.get('/api/cases/:id/documents/:docId', wrap(async (req, res) => {
   res.json(doc);
 }));
 
+// User-maintained, source-linked deliverable history. Event labels are assertions
+// to review against the cited source, not automatic proof of receipt or acceptance.
+app.get('/api/cases/:id/handoff', wrap(async (req, res) => {
+  if (!canReadCase(req)) return caseRefused(res);
+  res.json(handoffs.list(req.params.id, req.visitor));
+}));
+
+app.post('/api/cases/:id/handoff', limit('handoff', 30, 60 * 60 * 1000), wrap(async (req, res) => {
+  if (!canReadCase(req)) return caseRefused(res);
+  if (cases.scenarios.some((s) => s.dispute.dispute_id === req.params.id)) return res.status(403).json({ error: 'Shared demo files are read-only.' });
+  const c = await cases.loadCase(req.params.id, req.visitor);
+  const locker = buildLocker(c.scenario, { transactions: c.transactions, transactionsSource: c.sources.transactions });
+  res.status(201).json(handoffs.add(req.params.id, req.visitor, req.body, locker));
+}));
+
+app.post('/api/cases/:id/handoff/:itemId/events', limit('handoff', 30, 60 * 60 * 1000), wrap(async (req, res) => {
+  if (!canReadCase(req)) return caseRefused(res);
+  if (cases.scenarios.some((s) => s.dispute.dispute_id === req.params.id)) return res.status(403).json({ error: 'Shared demo files are read-only.' });
+  const c = await cases.loadCase(req.params.id, req.visitor);
+  const locker = buildLocker(c.scenario, { transactions: c.transactions, transactionsSource: c.sources.transactions });
+  const item = handoffs.addEvent(req.params.id, req.visitor, req.params.itemId, req.body, locker);
+  if (!item) return res.status(404).json({ error: 'No such deliverable.' });
+  res.json(item);
+}));
+
+app.delete('/api/cases/:id/handoff/:itemId', wrap(async (req, res) => {
+  if (!canReadCase(req)) return caseRefused(res);
+  if (cases.scenarios.some((s) => s.dispute.dispute_id === req.params.id)) return res.status(403).json({ error: 'Shared demo files are read-only.' });
+  if (!handoffs.remove(req.params.id, req.visitor, req.params.itemId)) return res.status(404).json({ error: 'No such deliverable.' });
+  res.json({ ok: true });
+}));
+
+app.delete('/api/cases/:id/handoff/:itemId/events/:eventId', wrap(async (req, res) => {
+  if (!canReadCase(req)) return caseRefused(res);
+  if (cases.scenarios.some((s) => s.dispute.dispute_id === req.params.id)) return res.status(403).json({ error: 'Shared demo files are read-only.' });
+  if (!handoffs.removeEvent(req.params.id, req.visitor, req.params.itemId, req.params.eventId)) return res.status(404).json({ error: 'No such event.' });
+  res.json({ ok: true });
+}));
+
 // ---- The freelancer's own evidence ------------------------------------------------
 
 app.post('/api/cases/:id/evidence', limit('evidence', 20, 60 * 60 * 1000), wrap(async (req, res) => {
@@ -219,6 +260,8 @@ app.post('/api/cases/:id/evidence', limit('evidence', 20, 60 * 60 * 1000), wrap(
 app.delete('/api/cases/:id/evidence/:docId', wrap(async (req, res) => {
   if (!canReadCase(req)) return caseRefused(res);
   if (cases.scenarios.some((s) => s.dispute.dispute_id === req.params.id)) return res.status(403).json({ error: 'Shared demo files are read-only.' });
+  const used = handoffs.list(req.params.id, req.visitor).items.some((item) => item.events.some((event) => event.source.docId === req.params.docId));
+  if (used) return res.status(409).json({ error: 'This record is linked to a deliverable event. Remove that deliverable history before deleting the record.' });
   if (!uploads.remove(req.params.id, req.params.docId)) return res.status(404).json({ error: 'No such added document' });
   lastRun.delete(req.params.id);
   res.json({ ok: true });

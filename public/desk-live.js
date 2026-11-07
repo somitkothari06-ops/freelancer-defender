@@ -4,9 +4,11 @@
   const core = window.liveDeskCore;
   const { state, apps, svg, escapeHtml: esc, openApp, renderApp, renderDesktop, refreshDock, bindApp, toast } = core;
   const local = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
-  const mine = local('fd-my-cases', []).filter(id => /^[A-Za-z0-9-]{1,64}$/.test(id)).slice(0, 20);
+  const savedMine = local('fd-my-cases', []);
+  const mine = (Array.isArray(savedMine) ? savedMine : []).filter(id => /^[A-Za-z0-9-]{1,64}$/.test(id)).slice(0, 20);
   const q = (id) => encodeURIComponent(id);
   const api = async (path) => { const response = await fetch(path); if (!response.ok) throw new Error(`Could not load ${path} (${response.status})`); return response.json(); };
+  const send = async (path, method, body) => { const response = await fetch(path, { method, headers: { 'content-type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) }); const data = await response.json(); if (!response.ok) throw new Error(data.error || 'Could not save'); return data; };
   const money = (row) => `${new Intl.NumberFormat('en-US', { style: 'currency', currency: row?.currency || 'USD', maximumFractionDigits: 2 }).format(row?.amount || 0)}`;
   const reason = (code) => ({ MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED: 'Not as described', MERCHANDISE_OR_SERVICE_NOT_RECEIVED: 'Service not received', UNAUTHORISED: 'Unauthorized', CREDIT_NOT_PROCESSED: 'Credit not processed' })[code] || String(code || 'Reason unavailable').replaceAll('_', ' ').toLowerCase();
   const caseKey = (suffix) => `fd-desk-${state.caseId}-${suffix}`;
@@ -29,6 +31,10 @@
     state.sourceDoc = null;
     state.sourceAnchor = null;
     state.sourceFull = null;
+    state.handoffs = null;
+    state.handoffDoc = null;
+    state.handoffSections = [];
+    state.handoffItem = null;
     state.tasks = local(caseKey('tasks'), []);
     state.note = local(caseKey('note'), { title: 'Case notes', body: '' });
     renderApp('case');
@@ -36,8 +42,16 @@
       const detail = await api(`/api/cases/${q(id)}`);
       if (seq !== selectionSeq) return;
       state.caseDetail = detail;
+      const handoffs = await api(`/api/cases/${q(id)}/handoff`).catch(() => ({ items: [] }));
+      if (seq !== selectionSeq) return;
+      state.handoffs = handoffs;
     }
-    catch (err) { state.detailError = err.message; toast(err.message); }
+    catch (err) {
+      if (seq !== selectionSeq) return;
+      state.detailError = err.message;
+      toast(err.message);
+    }
+    if (seq !== selectionSeq) return;
     state.detailLoading = false;
     state.sourceDoc = state.caseDetail?.documents?.[0]?.doc_id || null;
     if (state.sourceDoc) {
@@ -57,8 +71,19 @@
       const saved = local('fd-desk-selected', '');
       const id = list().some(c => c.dispute_id === saved) ? saved : (list().find(c => c.hero) || list()[0])?.dispute_id;
       if (id) await choose(id);
-      else { state.loadError = 'No cases available'; for (const app of ['files', 'case']) renderApp(app); }
-    } catch (err) { state.loadError = err.message; for (const id of ['files', 'case']) renderApp(id); toast(err.message); }
+      else {
+        state.loadError = 'No cases available';
+        for (const app of ['files', 'case']) renderApp(app);
+        renderDesktop();
+        updateWidget();
+      }
+    } catch (err) {
+      state.loadError = err.message;
+      for (const id of ['files', 'case']) renderApp(id);
+      renderDesktop();
+      updateWidget();
+      toast(err.message);
+    }
   };
   const buttons = () => `<div class="desk-live-actions"><button class="cta" data-real="investigate">Investigate case</button>${selected()?.has_replay ? `<button class="secondary" data-real="replay">Play recorded review</button>` : ''}<button class="secondary" data-real="create">Create a case</button></div>`;
   const picker = () => `<label class="desk-case-picker">CASE <select id="deskCasePicker" aria-label="Switch case">${list().map(c => `<option value="${esc(c.dispute_id)}" ${c.dispute_id === state.caseId ? 'selected' : ''}>${esc(c.client || c.title || c.dispute_id)} · ${c.source === 'live' ? 'Sandbox' : c.source === 'seeded' ? 'Demo' : 'My case'}</option>`).join('')}</select></label>`;
@@ -76,13 +101,16 @@
       const stateName = { supported: 'In the record', reported: 'Client reports', unknown: 'Not established' }[row.state] || row.state;
       return `<details class="proof-item ${esc(row.state)}"><summary><span class="proof-indicator" aria-hidden="true"></span><strong>${esc(row.title)}</strong><span class="proof-state">${esc(stateName)}</span><span class="proof-expand" aria-hidden="true">+</span></summary><div class="proof-detail"><p>${esc(row.finding)}</p><button type="button" class="record-link" data-proof-doc="${esc(row.source.docId)}" data-proof-anchor="${esc(row.source.anchor)}">Read ${esc(sourceName(row.source.docId))}, ${esc(anchorName(row.source.anchor))}</button></div></details>`;
     }).join('');
-    const thread = [
-      ['The promise', 'Print masters agreed', map.rows[0]],
-      ['The handoff', 'A link was sent', map.rows[1]],
-      ['The gap', 'Access unproven', map.rows[2]],
-      ['The report', 'Sign-maker concern', map.rows[3]],
-    ].map(([label, title, row], index) => `<button class="thread-node ${row.state === 'unknown' ? 'gap' : ''}" data-proof-doc="${esc(row.source.docId)}" data-proof-anchor="${esc(row.source.anchor)}" aria-label="${esc(label)}: ${esc(title)}. Open source"><span class="thread-mark">${index + 1}</span><span class="thread-label">${esc(label)}</span><strong>${esc(title)}</strong></button>`).join('');
+    const thread = map.rows.slice(0, 4).map((row, index) => `<button class="thread-node ${row.state === 'unknown' ? 'gap' : ''}" data-proof-doc="${esc(row.source.docId)}" data-proof-anchor="${esc(row.source.anchor)}" aria-label="${esc(row.title)}. Open source"><span class="thread-mark">${index + 1}</span><span class="thread-label">${esc(row.track)}</span><strong>${esc(row.title)}</strong></button>`).join('');
     return `<section class="case-focus"><span class="focus-label">Your next move</span><h3>${esc(map.challenge.question)}</h3><p>${esc(map.challenge.reason)}</p><div class="focus-actions"><button class="cta" data-real="investigate">Investigate case</button>${selected()?.has_replay ? '<button class="secondary" data-real="replay">Play recorded review</button>' : ''}<button class="secondary" data-real="add-challenge">Save follow-up</button></div></section><nav class="case-thread" aria-label="Case thread">${thread}</nav><div class="case-records-heading"><h3>What the record shows</h3><span>${map.rows.length} source points</span></div><div class="proof-tracks"><section><h4>Bank response</h4>${rows('Bank response')}</section><section><h4>Client conversation</h4>${rows('Client concern')}</section></div><p class="proof-footnote">Each line opens its source. A client report is shown as a report, not an established fact.</p>`;
+  }
+  function handoffHTML() {
+    if (isSeeded()) return '';
+    const items = state.handoffs?.items || [];
+    const docs = state.caseDetail?.documents || [];
+    const active = items.find(item => item.id === state.handoffItem);
+    const eventLabels = { promised: 'Promised', sent: 'Sent', access_recorded: 'Access recorded', client_reported: 'Client reported issue', reissued: 'Reissued', accepted: 'Acceptance recorded' };
+    return `<section class="handoff-panel"><div class="handoff-heading"><div><small>DELIVERABLE HISTORY</small><h3>What happened to each file?</h3></div><span>${items.length} item${items.length === 1 ? '' : 's'}</span></div><p class="handoff-intro">Add a deliverable, then attach each milestone to its source. Sending a link does not establish receipt.</p><div class="handoff-items">${items.map(item => `<div class="handoff-item"><div class="handoff-item-top"><strong>${esc(item.deliverable)}${item.version ? ` <small>${esc(item.version)}</small>` : ''}</strong><button type="button" data-handoff-remove="${esc(item.id)}" aria-label="Remove ${esc(item.deliverable)}">Remove</button></div><div class="handoff-events">${item.events.length ? item.events.map(ev => `<span class="handoff-event"><button type="button" data-proof-doc="${esc(ev.source.docId)}" data-proof-anchor="${esc(ev.source.anchor)}"><span>${esc(eventLabels[ev.type] || ev.type)}</span><small>${esc(ev.date)} · ${esc(ev.source.docId)} ${esc(anchorName(ev.source.anchor))}</small></button><button type="button" class="handoff-event-remove" data-handoff-remove-event="${esc(item.id)}:${esc(ev.id)}" aria-label="Remove ${esc(eventLabels[ev.type] || ev.type)} event">×</button></span>`).join('') : '<span class="handoff-empty">No sourced events yet</span>'}</div><button type="button" class="handoff-add-event" data-handoff-item="${esc(item.id)}">Add sourced event</button></div>`).join('')}</div><form id="handoffItemForm" class="handoff-form"><label>Deliverable<input name="deliverable" maxlength="120" placeholder="e.g. logo source files" required></label><label>Version <span>(optional)</span><input name="version" maxlength="60" placeholder="e.g. final v2"></label><button class="secondary" type="submit">Add deliverable</button></form>${active ? `<form id="handoffEventForm" class="handoff-form handoff-event-form"><h4>Add a source to ${esc(active.deliverable)}</h4><label>What happened?<select name="type">${Object.entries(eventLabels).map(([value,label]) => `<option value="${value}">${esc(label)}</option>`).join('')}</select></label><label>Date<input name="date" type="date" required></label><label>Record<select name="docId" id="handoffDoc"><option value="">Choose a record</option>${docs.map(doc => `<option value="${esc(doc.doc_id)}" ${doc.doc_id === state.handoffDoc ? 'selected' : ''}>${esc(doc.title)}</option>`).join('')}</select></label><label>Exact source<select name="anchor" required><option value="">Choose a section</option>${(state.handoffSections || []).map(section => `<option value="${esc(section.anchor)}">${esc(anchorName(section.anchor))} · ${esc(section.heading)}</option>`).join('')}</select></label><label class="handoff-note">Note <span>(optional)</span><input name="note" maxlength="500" placeholder="What does this record say?"></label><div class="handoff-form-actions"><button class="cta" type="submit">Save event</button><button class="secondary" type="button" id="handoffCancel">Cancel</button></div></form>` : ''}<p class="handoff-caution">Event labels are your classifications. Open each source before using it in a dispute response.</p></section>`;
   }
   function caseHTML() {
     const c = selected(), detail = state.caseDetail;
@@ -109,7 +137,7 @@
       ['What remains unverified?', 'Separate the client statement from independently checked facts.', null]
     ];
     const questions = prompts.map(([title, detail, pattern]) => ({ title, detail, ready: !!pattern && records.some(d => d.kind !== 'paypal_record' && pattern.test(`${d.title} ${d.kind}`)) }));
-    return `<div class="app-main"><div class="app-kicker">${esc(sourceLabel())} · ${esc(reason(c.reason))}</div><div class="desk-headline"><div><h2 class="app-heading">${esc(displayClient)}</h2><p class="app-sub">${esc(c.title || c.dispute_id)}</p></div><div class="amount"><small>Disputed</small>${esc(money(c))}</div></div>${picker()}<div class="app-rule"></div><details class="desk-claim"><summary><span>Filed reason</span><strong>${esc(reason(c.reason))}</strong><span class="claim-expand">Read statement</span></summary>${complaint ? `<p>${esc(complaint)}</p>` : '<p>No client statement in this case record.</p>'}</details>${detail?.proof_map ? proofMapHTML(detail.proof_map) : `<div class="desk-section-head"><span>Evidence review</span><small>${records.length} records · ${nonPayPal.length} outside PayPal</small></div><div class="desk-gap-list">${questions.map((item, i) => `<button class="desk-gap" data-real="sources"><span class="desk-gap-index">0${i + 1}</span><span><strong>${esc(item.title)}</strong><small>${esc(item.detail)}</small></span><em>${item.ready ? 'SOURCE TO REVIEW' : 'OPEN QUESTION'}</em></button>`).join('')}</div><p class="desk-limit">These are review prompts, not AI conclusions. The full investigation reads the record and produces a sourced strategy.</p>`}${detail?.proof_map ? '<div class="desk-live-actions"><button class="secondary" data-real="create">Create a case</button></div>' : buttons()}</div>`;
+    return `<div class="app-main"><div class="app-kicker">${esc(sourceLabel())} · ${esc(reason(c.reason))}</div><div class="desk-headline"><div><h2 class="app-heading">${esc(displayClient)}</h2><p class="app-sub">${esc(c.title || c.dispute_id)}</p></div><div class="amount"><small>Disputed</small>${esc(money(c))}</div></div>${picker()}<div class="app-rule"></div><details class="desk-claim"><summary><span>Filed reason</span><strong>${esc(reason(c.reason))}</strong><span class="claim-expand">Read statement</span></summary>${complaint ? `<p>${esc(complaint)}</p>` : '<p>No client statement in this case record.</p>'}</details>${detail?.proof_map ? proofMapHTML(detail.proof_map) : `<div class="desk-section-head"><span>Evidence review</span><small>${records.length} records · ${nonPayPal.length} outside PayPal</small></div><div class="desk-gap-list">${questions.map((item, i) => `<button class="desk-gap" data-real="sources"><span class="desk-gap-index">0${i + 1}</span><span><strong>${esc(item.title)}</strong><small>${esc(item.detail)}</small></span><em>${item.ready ? 'SOURCE TO REVIEW' : 'OPEN QUESTION'}</em></button>`).join('')}</div><p class="desk-limit">These are review prompts, not AI conclusions. The full investigation reads the record and produces a sourced strategy.</p>`}${detail?.proof_map ? '<div class="desk-live-actions"><button class="secondary" data-real="create">Create a case</button></div>' : buttons()}${handoffHTML()}</div>`;
   }
   function sourcesHTML() {
     const records = state.caseDetail?.documents || [], d = doc(), full = state.sourceFull;
@@ -119,14 +147,19 @@
   function tasksHTML() { return `<div class="app-main"><div class="app-kicker">PRIVATE FOLLOW-UPS · ${esc(selected()?.client || 'CASE')}</div><h2 class="app-heading">Next steps</h2><p class="app-sub">A personal checklist for this case. No deadline is inferred.</p><form class="task-add" id="taskForm"><input class="task-input" id="taskInput" placeholder="Add a follow-up…" aria-label="New follow-up" required maxlength="180"><button class="cta">Add</button></form><div>${state.tasks.length ? state.tasks.map((t,i) => `<div class="task-row ${t.done ? 'done' : ''}"><input type="checkbox" data-task-check="${i}" ${t.done ? 'checked' : ''} aria-label="Complete ${esc(t.text)}"><span>${esc(t.text)}</span><button data-task-delete="${i}" title="Delete follow-up" aria-label="Delete ${esc(t.text)}">×</button></div>`).join('') : '<div class="task-empty">Nothing due from you yet. Add the next question above.</div>'}</div><p class="app-sub" style="margin-top:22px">Saved only in this browser.</p></div>`; }
   function updateWidget() {
     const metric = document.querySelector('.widget-metrics button:first-child strong');
-    if (metric) metric.innerHTML = `${list().length} <i></i>`;
-    document.querySelector('.widget-metrics button:first-child span').textContent = 'Cases available';
-    document.querySelector('.demo-indicator').innerHTML = `<i></i> ${isSeeded() ? 'SEEDED DEMO' : selected()?.source === 'live' ? 'PAYPAL SANDBOX' : 'YOUR CASE'}`;
+    if (metric) metric.textContent = String(list().length);
     const board = document.getElementById('homeSignal');
     const current = selected();
     const map = state.caseDetail?.proof_map;
+    if (!current) {
+      const message = state.loadError ? 'Cases could not be loaded.' : state.cases ? 'No cases are available in this workspace.' : 'Connecting to your case records…';
+      board.innerHTML = `<div class="signal-top"><span>CASE OVERVIEW</span><span>${state.loadError ? 'OFFLINE' : 'PERSONAL DESK'}</span></div><div class="signal-intro"><small>Case records</small><h2>${state.loadError ? 'Cases unavailable' : 'Your cases'}</h2><p>${esc(message)}</p></div><button class="signal-open" id="signalOpenCase">${state.loadError ? 'Try again' : 'Open case files'}</button>`;
+      board.querySelector('#signalOpenCase').onclick = () => state.loadError ? refresh() : openApp('files');
+      return;
+    }
     const name = (current?.client || current?.title || 'Your case').split(',').pop().trim();
-    board.innerHTML = `<div class="signal-top"><span>CASE SIGNAL</span><span>${esc(isSeeded() ? 'DEMO 01' : 'CURRENT CASE')}</span></div><div class="signal-intro"><small>${esc(reason(current?.reason))}</small><h2>${esc(name)}</h2><p>${esc(current?.title || 'Open the case to inspect its records.')}</p></div>${map ? `<div class="signal-prompt"><span>QUESTION TO RESOLVE</span><strong>${esc(map.challenge.question)}</strong></div><div class="signal-steps">${map.rows.slice(0,4).map((row,i) => `<button class="signal-step ${row.state === 'unknown' ? 'signal-gap' : ''}" data-home-doc="${esc(row.source.docId)}" data-home-anchor="${esc(row.source.anchor)}"><em>0${i+1}</em><span><small>${esc(['Promise','Handoff','Gap','Report'][i])}</small><strong>${esc(row.title)}</strong></span><b>Open</b></button>`).join('')}</div>` : '<p class="signal-empty">Open the case to review what is known and what still needs a source.</p>'}<button class="signal-open" id="signalOpenCase">Open case</button>`;
+    const detailStatus = state.detailLoading ? 'Loading source records…' : state.detailError ? 'Source records could not be loaded.' : 'Open the case to review what is known and what still needs a source.';
+    board.innerHTML = `<div class="signal-top"><span>CASE OVERVIEW</span><span>${esc(sourceLabel())}</span></div><div class="signal-intro"><small>${esc(reason(current?.reason))}</small><h2>${esc(name)}</h2><p>${esc(current?.title || 'Open the case to inspect its records.')}</p></div>${map ? `<div class="signal-prompt"><span>QUESTION TO RESOLVE</span><strong>${esc(map.challenge.question)}</strong></div><div class="signal-steps">${map.rows.slice(0,4).map((row,i) => `<button class="signal-step ${row.state === 'unknown' ? 'signal-gap' : ''}" data-home-doc="${esc(row.source.docId)}" data-home-anchor="${esc(row.source.anchor)}"><em>0${i+1}</em><span><small>${esc(row.track || `Source ${i + 1}`)}</small><strong>${esc(row.title)}</strong></span><b>Open source</b></button>`).join('')}</div>` : `<p class="signal-empty">${esc(detailStatus)}</p>`}<button class="signal-open" id="signalOpenCase">Open case</button>`;
     board.querySelector('#signalOpenCase').onclick = () => openApp('case');
     board.querySelectorAll('[data-home-doc]').forEach(button => button.onclick = async () => {
       state.sourceDoc = button.dataset.homeDoc;
@@ -147,9 +180,17 @@
     windowElement.querySelectorAll('[data-case]').forEach(b => b.onclick = () => { localStorage.setItem('fd-desk-selected', JSON.stringify(b.dataset.case)); choose(b.dataset.case); openApp('case'); });
     windowElement.querySelectorAll('[data-doc]').forEach(b => b.onclick = async () => { state.sourceDoc = b.dataset.doc; state.sourceAnchor = null; state.sourceFull = null; renderApp('sources'); try { state.sourceFull = await api(`/api/cases/${q(state.caseId)}/documents/${q(state.sourceDoc)}`); renderApp('sources'); } catch (err) { toast(err.message); } });
     windowElement.querySelectorAll('[data-proof-doc]').forEach(b => b.onclick = async () => { state.sourceDoc = b.dataset.proofDoc; state.sourceAnchor = b.dataset.proofAnchor; state.sourceFull = null; openApp('sources'); renderApp('sources'); try { state.sourceFull = await api(`/api/cases/${q(state.caseId)}/documents/${q(state.sourceDoc)}`); renderApp('sources'); } catch (err) { toast(err.message); } });
+    windowElement.querySelector('#handoffItemForm')?.addEventListener('submit', async e => { e.preventDefault(); const form = e.currentTarget; const values = Object.fromEntries(new FormData(form)); try { const item = await send(`/api/cases/${q(state.caseId)}/handoff`, 'POST', { deliverable: values.deliverable, version: values.version }); state.handoffs = await api(`/api/cases/${q(state.caseId)}/handoff`); state.handoffItem = item.id; renderApp('case'); toast('Deliverable added'); } catch (err) { toast(err.message); } });
+    windowElement.querySelectorAll('[data-handoff-item]').forEach(b => b.onclick = () => { state.handoffItem = b.dataset.handoffItem; renderApp('case'); });
+    windowElement.querySelectorAll('[data-handoff-remove]').forEach(b => b.onclick = async () => { if (!window.confirm('Remove this deliverable history?')) return; try { await send(`/api/cases/${q(state.caseId)}/handoff/${q(b.dataset.handoffRemove)}`, 'DELETE'); state.handoffs = await api(`/api/cases/${q(state.caseId)}/handoff`); if (state.handoffItem === b.dataset.handoffRemove) state.handoffItem = null; renderApp('case'); toast('Deliverable removed'); } catch (err) { toast(err.message); } });
+    windowElement.querySelectorAll('[data-handoff-remove-event]').forEach(b => b.onclick = async () => { const [itemId, eventId] = b.dataset.handoffRemoveEvent.split(':'); if (!window.confirm('Remove this event?')) return; try { await send(`/api/cases/${q(state.caseId)}/handoff/${q(itemId)}/events/${q(eventId)}`, 'DELETE'); state.handoffs = await api(`/api/cases/${q(state.caseId)}/handoff`); renderApp('case'); toast('Event removed'); } catch (err) { toast(err.message); } });
+    windowElement.querySelector('#handoffDoc')?.addEventListener('change', async e => { const id = e.target.value; state.handoffDoc = id; state.handoffSections = []; const select = windowElement.querySelector('#handoffEventForm [name="anchor"]'); select.innerHTML = '<option value="">Choose a section</option>'; if (!id) return; try { const full = await api(`/api/cases/${q(state.caseId)}/documents/${q(id)}`); if (state.handoffDoc !== id) return; state.handoffSections = full.sections || []; select.innerHTML += state.handoffSections.map(section => `<option value="${esc(section.anchor)}">${esc(anchorName(section.anchor))} · ${esc(section.heading)}</option>`).join(''); } catch (err) { toast(err.message); } });
+    windowElement.querySelector('#handoffCancel')?.addEventListener('click', () => { state.handoffItem = null; renderApp('case'); });
+    windowElement.querySelector('#handoffEventForm')?.addEventListener('submit', async e => { e.preventDefault(); const values = Object.fromEntries(new FormData(e.currentTarget)); if (!values.docId || !values.anchor) { toast('Choose the exact source section'); return; } try { await send(`/api/cases/${q(state.caseId)}/handoff/${q(state.handoffItem)}/events`, 'POST', { type: values.type, date: values.date, note: values.note, source: { docId: values.docId, anchor: values.anchor } }); state.handoffs = await api(`/api/cases/${q(state.caseId)}/handoff`); state.handoffItem = null; renderApp('case'); toast('Sourced event saved'); } catch (err) { toast(err.message); } });
     windowElement.querySelectorAll('[data-real]').forEach(b => b.onclick = () => { const action = b.dataset.real; if (action === 'investigate') openLink(link()); else if (action === 'replay') openLink(reviewLink()); else if (action === 'create') openLink('/app?new=1'); else if (action === 'add-challenge') { const value = state.caseDetail?.proof_map?.challenge?.next; if (value && !state.tasks.some(t => t.text === value)) { state.tasks.push({ text: value, done: false }); core.persist(); } openApp('tasks'); renderApp('tasks'); toast('Saved privately in this browser'); } else if (action === 'retry') { state.loadError = null; state.cases = null; renderApp('case'); renderApp('files'); refresh(); } else if (action === 'retry-detail') choose(state.caseId); else openApp(action); });
     return true;
   } };
+  updateWidget();
   openApp(window.requestedDeskApp || 'files');
   refresh();
 })();

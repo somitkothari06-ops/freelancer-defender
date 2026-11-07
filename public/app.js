@@ -916,7 +916,7 @@ function renderControls(c) {
   ctl.innerHTML = c.has_replay ? `
     <button class="btn primary" id="run-replay">Play the recorded review</button>
     <button class="btn" id="run-live">Run a live AI investigation</button>
-    <span class="hint">Recorded review: about one minute.<br>Live AI uses a limited daily budget.</span>` : `
+    <span class="hint">Historical AI output, about one minute. Its conclusions may overreach the sources; review every claim. It cannot be sent to PayPal.<br>Live AI uses a limited daily budget.</span>` : `
     <button class="btn primary" id="run-live">Investigate with AI</button>
     <button class="btn" id="run-replay" disabled title="No recorded run yet">Recorded review unavailable</button>
     <span class="hint">Live investigation takes a few minutes and uses a limited daily budget.</span>`;
@@ -1143,7 +1143,7 @@ function startRun(mode) {
 
   on('mode', (p) => {
     $('#trail-note').textContent =
-      p.mode === 'replay' ? `Recording of a real run from ${new Date(p.recorded_at).toLocaleDateString()}, sped up` : 'Running live';
+      p.mode === 'replay' ? `Historical AI run from ${new Date(p.recorded_at).toLocaleDateString()}, sped up. Claims need your review; this cannot be submitted.` : 'Running live';
   });
   on('stage', (p) => {
     currentStage = p.stage;

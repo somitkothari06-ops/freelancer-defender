@@ -29,7 +29,7 @@ function create(input = {}, owner = '') {
   if (!statement) throw bad('Paste what the client told their bank or PayPal.');
   if (!(amount > 0 && amount < 1e7)) throw bad('Enter the amount they are disputing, e.g. 1200.');
 
-  const id = `${PREFIX}${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+  const id = `${PREFIX}${crypto.randomBytes(16).toString('hex').toUpperCase()}`;
   const now = new Date();
   const value = amount.toFixed(2);
   const custom = {
@@ -59,7 +59,7 @@ function create(input = {}, owner = '') {
     },
   };
   fs.mkdirSync(DIR, { recursive: true });
-  fs.writeFileSync(file(id), JSON.stringify(custom, null, 1));
+  fs.writeFileSync(file(id), JSON.stringify(custom, null, 1), { flag: 'wx' });
   return custom;
 }
 

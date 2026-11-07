@@ -1,6 +1,6 @@
 # The Freelancer Defender
 
-**An AI agent that fights on a freelancer's side when a client's bank reverses a payment they already earned.**
+**A source-linked workspace for freelancers handling disputed payments.**
 
 Built for the PayPal AI Hackathon 2026. **Live: https://freelancer-defender.onrender.com** (landing page) · **https://freelancer-defender.onrender.com/desk** (personal desktop) · **https://freelancer-defender.onrender.com/app** (full investigation workbench)
 
@@ -69,6 +69,8 @@ PayPal records appear in the evidence locker as citable documents, just like the
 PayPal holds the dispute and the payment; the proof that the work was agreed and delivered lives with the freelancer. On your own entered case or an authorized sandbox dispute, **+ Add evidence** takes a pasted or uploaded text document (contract, email thread, delivery log, chat export). Shared seeded cases are read-only. The document is split into quotable sections automatically: numbered contract clauses become `§3.2`-style sections, logs become one section per line, everything else one per paragraph. The agent then investigates and cites it exactly like the demo evidence, and the verifier checks every quote against it.
 
 A live PayPal dispute with no evidence yet opens as a fresh case built only from PayPal's records, with a prompt to add documents. Nothing in the agent is specific to the demo disputes; they exist so the demo works without a real freelancer's paperwork.
+
+The desktop also shows a **source-linked deliverable history** for private and live cases. A freelancer can name each file or version and record a dated promise, send, access event, client report, reissue, or acceptance with a link to an exact source section. The labels are user classifications; a sent link or access log does not by itself prove receipt, use, or acceptance. Shared demo cases remain read-only.
 
 ## Try your own case
 
