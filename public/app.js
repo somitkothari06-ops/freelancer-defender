@@ -1106,6 +1106,7 @@ function stopGuidedReplay() {
 }
 
 function startRun(mode) {
+  state.reviewMode = mode;
   claimReview = new Map();
   stopGuidedReplay();
   const guided = mode === 'replay' && state.keepStagesOpen;
@@ -1466,6 +1467,10 @@ function renderResult(r) {
   const out = $('#result');
   out.classList.remove('hidden');
   out.innerHTML = '';
+
+  if (state.reviewMode === 'replay') {
+    out.appendChild(h('<div class="banner warn"><b>Historical AI output.</b> This recording predates the current evidence safeguards. Matching a quote does not establish that the conclusion follows. Inspect the sources and do not use this draft as a PayPal response.</div>'));
+  }
 
   const top = h('<div class="result"></div>');
 
