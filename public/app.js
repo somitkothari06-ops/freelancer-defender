@@ -1459,7 +1459,7 @@ function renderResult(r) {
     card.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;
   }
-  stageSum('package', 'Ready');
+  stageSum('package', state.reviewMode === 'replay' ? 'Archived draft' : 'Ready');
   setStage('package', 'done');
 
   const key = (x) => `${x.doc_id} ${x.anchor}`;
@@ -1477,7 +1477,7 @@ function renderResult(r) {
   // The letter to the bank, with numbered sources.
   const letter = h(`<div class="card letter">
       <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
-        <span class="kicker">Your response to the bank</span>
+        <span class="kicker">${state.reviewMode === 'replay' ? 'Historical AI draft' : 'Your response to the bank'}</span>
         <span class="tag green">${r.draft.claims.length} of ${r.draft.claims.length + (r.removed || []).length} statements have matching quotes</span>
       </div>
       <h3>${esc(r.draft.response_title)}</h3>
@@ -1566,7 +1566,7 @@ function renderResult(r) {
     actions.appendChild(
       h(`<div class="action" data-kind="${esc(a.kind)}">
           <div><div class="a-label">${esc(a.label)}</div><div class="a-note">${a.kind === 'email' ? esc(a.note) : 'Through the PayPal Disputes API'}</div></div>
-          <div class="a-state a-note">${a.kind === 'email' ? 'You send this one' : 'Ready'}</div>
+          <div class="a-state a-note">${state.reviewMode === 'replay' ? 'Archived' : a.kind === 'email' ? 'You send this one' : 'Ready'}</div>
         </div>`)
     );
   });
@@ -1577,10 +1577,10 @@ function renderResult(r) {
 
   // The big send bar.
   const cta = h(`<div class="cta">
-      <div><div class="t">Review the response before sending.</div><div class="s">${c.live ? 'Check every claim against its source before sending to PayPal sandbox.' : "This is a demo dispute. The button previews what would go to PayPal."}</div></div>
+      <div><div class="t">${state.reviewMode === 'replay' ? 'Inspect this historical draft.' : 'Review the response before sending.'}</div><div class="s">${state.reviewMode === 'replay' ? 'This older AI output is for inspection only. Its conclusions are not verified.' : c.live ? 'Check every claim against its source before sending to PayPal sandbox.' : "This is a demo dispute. The button previews what would go to PayPal."}</div></div>
       <div class="btns">
         <button class="btn ghost-dark" id="to-top">Review the steps</button>
-        <button class="btn white" id="send">${c.live ? 'Send to PayPal sandbox' : 'Preview PayPal request'}</button>
+        <button class="btn white" id="send">${state.reviewMode === 'replay' ? 'Inspect archived request' : c.live ? 'Send to PayPal sandbox' : 'Preview PayPal request'}</button>
       </div>
     </div>`);
   out.appendChild(cta);
