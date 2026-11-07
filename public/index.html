@@ -1,14 +1,174 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Freelancer Defender — See the whole case</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
-:root{--ink:#192322;--paper:#ebece7;--orange:#eb6448;--deep:#ab3b2a;--soft:#bcc9bf}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',Arial,sans-serif;-webkit-font-smoothing:antialiased}a,button{font:inherit}button{cursor:pointer}a:focus-visible,button:focus-visible,[role=slider]:focus-visible{outline:3px solid #fff;outline-offset:4px}.hero{min-height:max(760px,100svh);position:relative;overflow:hidden;background:var(--orange)}.brandbar{height:75px;position:relative;z-index:8;display:flex;justify-content:space-between;align-items:center;padding:0 4.2%;border-bottom:1px solid #f2e7dc9c;color:#fff}.brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font:600 15px 'Space Grotesk',sans-serif;letter-spacing:-.035em}.brand-icon{width:27px;height:27px;border:2px solid #fff;border-radius:50%;display:grid;place-items:center;font-size:12px}.brandbar small{font-size:10px;letter-spacing:.13em;color:#fff9}.brandbar a:last-child{color:#fff;font-size:12px;font-weight:700;text-decoration:none;border-bottom:1px solid;padding:5px 0}.brandbar a:last-child:hover{color:var(--ink);border-color:var(--ink)}
-.stage{height:calc(max(760px,100svh) - 75px);position:relative;overflow:hidden;--split:39%;user-select:none;touch-action:none;cursor:ew-resize}.claim,.record{position:absolute;inset:0;overflow:hidden}.claim{background:var(--orange);color:#fff}.claim:before{content:"";position:absolute;inset:0;opacity:.19;background:repeating-linear-gradient(110deg,transparent 0,transparent 80px,#fff 81px,#fff 82px)}.claim-inner{position:absolute;inset:0;padding:6.7% 6% 6.5%;display:flex;flex-direction:column;justify-content:space-between}.serial{font-size:11px;letter-spacing:.16em;font-weight:700;text-transform:uppercase}.claim-copy{max-width:750px;margin-left:auto;text-align:right}.claim-copy h1{font:700 clamp(62px,8.5vw,153px)/.82 'Space Grotesk',sans-serif;letter-spacing:-.09em;margin:0;text-transform:uppercase}.claim-copy h1 span{display:block}.claim-copy .amount{font:600 clamp(27px,3.5vw,60px) 'Space Grotesk',sans-serif;letter-spacing:-.065em;margin:22px 0 0}.claim-foot{display:flex;justify-content:space-between;align-items:end;gap:25px}.claim-foot span{max-width:260px;font-size:15px;line-height:1.35}.claim-foot b{font-size:11px;letter-spacing:.12em}
-.record{background:var(--paper);color:var(--ink);clip-path:inset(0 calc(100% - var(--split)) 0 0)}.record:before{content:"";position:absolute;inset:0;opacity:.45;background:repeating-linear-gradient(0deg,transparent 0,transparent 72px,#c9d2c8 73px,#c9d2c8 74px)}.record-inner{position:absolute;inset:0;padding:6.7% 6% 6.5%;display:flex;flex-direction:column;justify-content:space-between}.record .serial{color:#62736b}.record-copy{width:55%;max-width:720px}.record-copy h2{font:600 clamp(48px,6.7vw,120px)/.87 'Space Grotesk',sans-serif;letter-spacing:-.085em;margin:0}.record-copy h2 span{color:var(--deep)}.record-evidence{display:flex;gap:26px;align-items:flex-end}.record-evidence strong{font:600 clamp(74px,10vw,190px)/.75 'Space Grotesk',sans-serif;letter-spacing:-.11em}.record-evidence div{padding-bottom:3px;font:600 17px/1.15 'Space Grotesk',sans-serif;letter-spacing:-.05em;max-width:150px}.record-evidence small{display:block;font:400 11px/1.45 'DM Sans',sans-serif;letter-spacing:0;color:#586d61;margin-top:9px}.record-evidence.unseen{color:var(--deep)}.record-evidence.unseen small{color:#956759}.record-facts{display:flex;gap:28px;align-items:end}.record-footnote{font-size:11px;max-width:390px;color:#52665b;line-height:1.45}.record-footnote b{display:block;color:var(--deep);font-size:12px;margin-bottom:3px}.record-status{font:600 10px 'DM Sans',sans-serif;letter-spacing:.1em;color:var(--deep);white-space:nowrap}
-.seam{position:absolute;z-index:5;left:var(--split);top:0;bottom:0;width:2px;background:var(--ink);pointer-events:none;transition:left .05s linear}.seam:before{content:"";position:absolute;top:50%;left:50%;width:62px;height:62px;border-radius:50%;background:var(--ink);border:3px solid var(--paper);transform:translate(-50%,-50%);box-shadow:0 9px 35px #19232254}.seam:after{content:"‹  ›";position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);font:700 25px 'Space Grotesk',sans-serif;white-space:pre;color:#fff;letter-spacing:.15em}.seam-caption{position:absolute;z-index:6;left:calc(var(--split) + 19px);top:calc(50% + 43px);font-size:10px;color:#fff;font-weight:700;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 2px 8px #0004;pointer-events:none}.handle{position:absolute;z-index:7;left:calc(var(--split) - 34px);top:calc(50% - 34px);width:68px;height:68px;opacity:0;cursor:ew-resize}
-.stage-actions{position:absolute;z-index:9;right:5%;bottom:6.5%;display:flex;gap:10px}.stage-actions a,.stage-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 20px;font-size:13px;font-weight:700;text-decoration:none;border:1px solid #fff;color:#fff;background:transparent}.stage-actions .primary{background:#fff;color:var(--ink)}.stage-actions .primary:hover{background:var(--ink);border-color:var(--ink);color:#fff}.stage-actions .secondary:hover{background:#fff2}.stage-actions button{padding:0 14px}.stage-actions button:hover{background:#fff2}.stage-actions.record-side a,.stage-actions.record-side button{border-color:var(--ink);color:var(--ink)}.stage-actions.record-side .primary{background:var(--ink);color:#fff}.stage-actions.record-side .primary:hover{background:var(--deep);border-color:var(--deep)}.stage-actions.record-side .secondary:hover,.stage-actions.record-side button:hover{background:#d2d9d1}
-.explain{background:var(--ink);color:#f3f1ea;padding:84px 5% 72px}.explain-head{display:flex;justify-content:space-between;align-items:flex-end;gap:45px;border-bottom:1px solid #64766c;padding-bottom:28px}.explain h2{font:600 clamp(42px,5vw,80px)/.94 'Space Grotesk',sans-serif;letter-spacing:-.075em;max-width:760px;margin:0}.explain-head p{font-size:14px;line-height:1.5;color:#c7d0c6;max-width:325px}.explain-steps{display:grid;grid-template-columns:repeat(3,1fr)}.explain-steps article{padding:27px 28px 35px 0;border-right:1px solid #64766c}.explain-steps article+article{padding-left:28px}.explain-steps article:last-child{border:0}.explain-steps small{color:#ed9378;font-size:10px;letter-spacing:.1em;font-weight:700}.explain-steps h3{font:600 24px 'Space Grotesk',sans-serif;letter-spacing:-.05em;margin:22px 0 9px}.explain-steps p{font-size:13px;color:#c7d0c6;line-height:1.45;max-width:330px;margin:0}.explain-foot{border-top:1px solid #64766c;padding-top:22px;display:flex;justify-content:space-between;gap:20px;font-size:11px;color:#c7d0c6}.explain-foot a{color:#fff;font-size:12px;font-weight:700}footer{background:var(--ink);border-top:1px solid #64766c;color:#afbbb1;padding:19px 5%;display:flex;justify-content:space-between;font-size:11px}footer a{color:inherit}@media(max-width:900px){.brandbar small{display:none}.claim-copy h1{font-size:60px}.record-copy h2{font-size:51px}.record-facts{display:block}.record-evidence{margin-bottom:14px}.record-evidence strong{font-size:70px}.stage-actions{bottom:4%;left:5%;right:5%}.stage-actions a{min-height:45px}.explain-head{display:block}.explain-head p{margin-top:20px}.explain-steps{display:block}.explain-steps article,.explain-steps article+article{border-right:0;border-bottom:1px solid #64766c;padding:24px 0}}
-</style></head><body><section class="hero"><nav class="brandbar"><a class="brand" href="/"><span class="brand-icon">F</span>Freelancer Defender</a><small>THE DISPUTE DEFENSE DESK</small><a href="/desk">Enter the desk</a></nav><div class="stage" id="stage" role="group" aria-label="Compare the client's dispute with the available evidence">
-<div class="claim"><div class="claim-inner"><div class="serial">The client's filed reason · Halden Coffee Roasters</div><div class="claim-copy"><h1><span>Not as</span><span>described.</span></h1><div class="amount">$2,400 in dispute</div></div><div class="claim-foot"><span>A claim starts the case.<br>It does not settle the facts.</span><b>01 / THE DISPUTE</b></div></div></div>
-<div class="record"><div class="record-inner"><div class="serial">Source view · exact records · seeded demo</div><div class="record-copy"><h2>The record<br>shows <span>more.</span></h2><div class="record-facts"><div class="record-evidence"><strong>2</strong><div>web pack downloads<small>Recorded in this transfer service</small></div></div><div class="record-evidence unseen"><strong>0</strong><div>master ZIP downloads<small>Recorded before link expiry</small></div></div></div></div><div class="record-footnote"><b>Still an open question</b>Which exact files reached the sign maker? Another delivery route may exist.</div><div class="record-status">§3.2 AGREEMENT · L3–L6 TRANSFER EXPORT</div></div></div>
-<div class="seam" aria-hidden="true"></div><div class="seam-caption" aria-hidden="true">Drag to examine</div><div class="handle" id="handle" role="slider" tabindex="0" aria-label="Reveal the source record" aria-valuemin="5" aria-valuemax="95" aria-valuenow="39"></div><div class="stage-actions" id="actions"><a class="primary" href="/desk">Explore the case</a><a class="secondary" href="/app?replay=PP-D-27140-HALDEN#/case/PP-D-27140-HALDEN">Watch the review</a><button id="replayMotion" type="button" aria-label="Replay visual reveal">↻</button></div>
-</div></section><main><section class="explain"><div class="explain-head"><h2>From the claim to what can be proved.</h2><p>Defender links the dispute to the agreement, delivery record, and client account. It leaves unsupported conclusions open.</p></div><div class="explain-steps"><article><small>01 / READ</small><h3>The filed dispute</h3><p>Start with the stated reason and exact case record.</p></article><article><small>02 / TRACE</small><h3>Every source</h3><p>Inspect what the agreement and transfer log actually show.</p></article><article><small>03 / REVIEW</small><h3>A careful response</h3><p>Check citations and ask for missing proof before sending.</p></article></div><div class="explain-foot"><span>Seeded demo · No PayPal sign-in needed · No automatic submission</span><a href="/desk">Open the evidence desk</a></div></section></main><footer><span>Freelancer Defender · PayPal AI Hackathon 2026</span><a href="https://github.com/somitkothari06-ops/freelancer-defender">Source code</a></footer><script>
-const stage=document.getElementById('stage'),handle=document.getElementById('handle'),actions=document.getElementById('actions');let split=0,dragging=false,raf=0;function setSplit(v){split=Math.max(5,Math.min(95,v));stage.style.setProperty('--split',split+'%');handle.setAttribute('aria-valuenow',Math.round(split));actions.classList.toggle('record-side',split>77)}function animateTo(target,duration){cancelAnimationFrame(raf);const from=split,start=performance.now();function tick(now){const p=Math.min(1,(now-start)/duration),e=1-Math.pow(1-p,3);setSplit(from+(target-from)*e);if(p<1)raf=requestAnimationFrame(tick)}raf=requestAnimationFrame(tick)}function position(e){const r=stage.getBoundingClientRect();setSplit((e.clientX-r.left)/r.width*100)}stage.addEventListener('pointerdown',e=>{if(e.target.closest('a,button'))return;dragging=true;cancelAnimationFrame(raf);stage.setPointerCapture(e.pointerId);position(e)});stage.addEventListener('pointermove',e=>{if(dragging)position(e)});stage.addEventListener('pointerup',()=>dragging=false);stage.addEventListener('pointercancel',()=>dragging=false);handle.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();setSplit(split+(e.key==='ArrowRight'?5:-5))}if(e.key==='Home'){e.preventDefault();setSplit(5)}if(e.key==='End'){e.preventDefault();setSplit(95)}});document.getElementById('replayMotion').onclick=()=>{setSplit(5);animateTo(67,1700)};setSplit(5);if(!matchMedia('(prefers-reduced-motion: reduce)').matches)setTimeout(()=>animateTo(67,1700),350);else setSplit(67);
-</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fafaf8">
+  <meta name="description" content="Defend a reversed freelance payment. Bring contracts, messages and delivery records together, trace each claim to its source, and review before anything is sent.">
+  <title>Freelancer Defender</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #fafaf8;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --muted: #555555;
+      --line: #e3e3df;
+      --accent: #2a4365;
+      --accent-dark: #1d3048;
+      --radius: 6px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5; }
+    a { color: inherit; }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .wrap { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
+
+    header.wrap { min-height: 72px; display: flex; align-items: center; }
+    .brand { text-decoration: none; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+
+    main { padding-block: 48px 72px; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: clamp(40px, 6vw, 80px); align-items: start; padding-block: 24px 64px; }
+    .hero-copy { max-width: 560px; }
+    h1 { margin: 0 0 16px; font-size: clamp(32px, 4vw, 44px); font-weight: 600; line-height: 1.08; letter-spacing: -0.02em; }
+    .lede { margin: 0 0 28px; color: var(--muted); font-size: 17px; line-height: 1.55; max-width: 480px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; border-radius: var(--radius); font-size: 15px; font-weight: 600; text-decoration: none; border: 1px solid transparent; transition: background .15s ease, border-color .15s ease, color .15s ease; }
+    .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .btn-primary:hover { background: #000; border-color: #000; }
+    .btn-secondary { background: transparent; color: var(--text); border-color: var(--line); }
+    .btn-secondary:hover { border-color: var(--text); }
+    .disclosure { margin: 0; color: var(--muted); font-size: 13px; }
+
+    .preview { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+    .preview-label { margin: 0 0 12px; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; }
+    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+    .tab { appearance: none; background: none; border: 0; padding: 10px 12px; font: inherit; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .tab:hover { color: var(--text); }
+    .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+    .panel { min-height: 120px; }
+    .panel p { margin: 0 0 10px; font-size: 15px; line-height: 1.55; }
+    .panel p:last-child { margin-bottom: 0; }
+    .panel strong { font-weight: 600; }
+
+    .steps { border-top: 1px solid var(--line); padding-top: 48px; }
+    .steps h2 { margin: 0 0 24px; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+    .steps-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .steps-list li { padding-top: 12px; border-top: 2px solid var(--text); }
+    .step-num { display: block; margin-bottom: 6px; color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
+    .step-title { display: block; margin-bottom: 4px; font-size: 16px; font-weight: 600; }
+    .step-text { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+    footer { border-top: 1px solid var(--line); }
+    .footer-inner { min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
+    .footer-inner a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+    .footer-inner a:hover { color: var(--text); }
+
+    @media (max-width: 760px) {
+      .hero { grid-template-columns: 1fr; gap: 32px; padding-block: 16px 48px; }
+      .steps-list { grid-template-columns: 1fr; gap: 20px; }
+      .wrap { width: min(100% - 32px, 560px); }
+      header.wrap { min-height: 64px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <a class="brand" href="/">Freelancer Defender</a>
+  </header>
+
+  <main>
+    <section class="wrap hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <h1 id="hero-title">Defend a reversed freelance payment.</h1>
+        <p class="lede">Bring contracts, client messages and delivery records together, trace each claim to its source, and review before anything is sent.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="/app?replay=PP-D-27140-HALDEN#/case/PP-D-27140-HALDEN">Watch recorded review</a>
+          <a class="btn btn-secondary" href="/desk">Open evidence desk</a>
+        </div>
+        <p class="disclosure">Demo uses seeded example data. Submission is simulated.</p>
+      </div>
+
+      <div class="preview" aria-label="Seeded example case">
+        <p class="preview-label">Seeded example, not a live case</p>
+        <div class="tabs" role="tablist" aria-label="Seeded evidence">
+          <button class="tab" role="tab" id="tab-agreement" aria-selected="true" aria-controls="panel-agreement" tabindex="0">Agreement</button>
+          <button class="tab" role="tab" id="tab-delivery" aria-selected="false" aria-controls="panel-delivery" tabindex="-1">Delivery</button>
+          <button class="tab" role="tab" id="tab-question" aria-selected="false" aria-controls="panel-question" tabindex="-1">Open question</button>
+        </div>
+        <div class="panel" id="panel-agreement" role="tabpanel" aria-labelledby="tab-agreement">
+          <p><strong>Fact.</strong> Signed agreement §3 lists scope as logo, brand identity, web assets and print-ready files.</p>
+          <p><strong>Limitation.</strong> "Print-ready" is not defined as a vector format; that reading is open.</p>
+        </div>
+        <div class="panel" id="panel-delivery" role="tabpanel" aria-labelledby="tab-delivery" hidden>
+          <p><strong>Fact.</strong> Delivery log shows 0 downloads of the second package before its link expired.</p>
+          <p><strong>Limitation.</strong> The log records downloads only; it cannot show whether files reached the client another way.</p>
+        </div>
+        <div class="panel" id="panel-question" role="tabpanel" aria-labelledby="tab-question" hidden>
+          <p><strong>Fact.</strong> A contact-form message reports the sign maker could not cut the sign from the files received.</p>
+          <p><strong>Limitation.</strong> The sender is not independently verified; treat the claim as unconfirmed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap steps" aria-labelledby="steps-title">
+      <h2 id="steps-title">How it works</h2>
+      <ol class="steps-list">
+        <li>
+          <span class="step-num">01</span>
+          <span class="step-title">Gather records</span>
+          <p class="step-text">Add the agreement, messages and delivery logs that matter.</p>
+        </li>
+        <li>
+          <span class="step-num">02</span>
+          <span class="step-title">Trace claims to sources</span>
+          <p class="step-text">See the exact passages behind a response, and what is still unknown.</p>
+        </li>
+        <li>
+          <span class="step-num">03</span>
+          <span class="step-title">Review before sending</span>
+          <p class="step-text">Check the proposed response and its citations. Nothing is submitted automatically.</p>
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>Freelancer Defender · PayPal AI Hackathon 2026</span>
+      <a href="https://github.com/somitkothari06-ops/freelancer-defender">Source code</a>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll('.tab');
+      var panels = document.querySelectorAll('.panel');
+      function activate(tab) {
+        tabs.forEach(function (t) {
+          var on = t === tab;
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+          t.tabIndex = on ? 0 : -1;
+        });
+        panels.forEach(function (p) {
+          p.hidden = p.id !== 'panel-' + tab.id.replace('tab-', '');
+        });
+      }
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () { activate(tab); });
+        tab.addEventListener('keydown', function (e) {
+          var idx = Array.prototype.indexOf.call(tabs, tab);
+          var next = null;
+          if (e.key === 'ArrowRight') next = tabs[(idx + 1) % tabs.length];
+          else if (e.key === 'ArrowLeft') next = tabs[(idx - 1 + tabs.length) % tabs.length];
+          if (next) { e.preventDefault(); next.focus(); activate(next); }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
