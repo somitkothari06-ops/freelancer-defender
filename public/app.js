@@ -712,7 +712,6 @@ function runTour(i) {
 
 function renderHero(c) {
   const d = c.dispute;
-  const first = c.freelancer.name.split(' ')[0];
   $('#case-head').innerHTML = `
     <div class="tags">
       <span class="tag red">${d.dispute_channel === 'EXTERNAL' ? 'Bank chargeback' : 'PayPal dispute'}</span>
@@ -721,7 +720,7 @@ function renderHero(c) {
     </div>
     <span class="kicker amount-label">Amount disputed</span>
     <h1 class="amount num">${fmtMoney(Number(d.dispute_amount?.value || 0), d.dispute_amount?.currency_code)}</h1>
-    <p class="lede">${c.fresh || c.yours ? 'Add your contract, emails and delivery records, and we\'ll' : `${esc(first)}, let's protect what you earned. We'll`} go through your evidence and build your response with you, step by step.</p>
+    <p class="lede">Review the claim, inspect the source records, then decide what to send.</p>
     <span class="who">${esc(c.freelancer.business)} · ${esc(c.title)}</span>`;
 }
 
@@ -1099,6 +1098,7 @@ function chips(list, kind) {
 }
 
 let guidedReplay = null;
+let claimReview = new Map();
 function stopGuidedReplay() {
   clearTimeout(guidedReplay?.timer);
   guidedReplay = null;
@@ -1106,6 +1106,7 @@ function stopGuidedReplay() {
 }
 
 function startRun(mode) {
+  claimReview = new Map();
   stopGuidedReplay();
   const guided = mode === 'replay' && state.keepStagesOpen;
   endStageNarration();
@@ -1324,7 +1325,7 @@ function renderStageDone(stage, data, thinking) {
   }
 
   if (stage === 'diagnose') {
-    stageSum('diagnose', `${data.real_complaint.confidence}% model estimate`);
+    stageSum('diagnose', 'Hypothesis to verify');
     // Fill card 2 at the top of the page.
     const real = $('#card-real');
     // The "aha" moment: the card pops, rings gold once, and the finding appears word by word.
@@ -1334,7 +1335,7 @@ function renderStageDone(stage, data, thinking) {
     real.innerHTML = `
       <span class="kicker">2 · What the evidence suggests</span>
       <p class="big">${words}</p>
-      <div class="meter"><span class="track"><i></i></span>${data.real_complaint.confidence}% model estimate</div>
+      <div class="meter">AI hypothesis · check the cited records</div>
       <span class="note">What they need: ${say(data.real_complaint.what_the_client_actually_needs)}</span>
       ${expandable ? '<button class="summary-more" aria-expanded="false">Read full finding</button>' : ''}`;
     const more = $('.summary-more', real);
@@ -1343,7 +1344,6 @@ function renderStageDone(stage, data, thinking) {
       more.setAttribute('aria-expanded', String(expanded));
       more.textContent = expanded ? 'Show less' : 'Read full finding';
     };
-    requestAnimationFrame(() => ($('.meter i', real).style.width = `${data.real_complaint.confidence}%`));
 
     // Older recordings predate this field.
     if (data.client_concerns?.length) {
@@ -1479,17 +1479,14 @@ function renderResult(r) {
       <div class="lmeta">From ${esc(c.freelancer.name)}. Review each claim against its linked source before sending.</div>
     </div>`);
 
-  // "Explain this to me": an on-demand, plain-English rewrite of the same (already
-  // verified) points, for the freelancer reading their own letter, not the bank. A
-  // recorded run can ship with this baked in (r.plainExplanation) so it shows at once,
-  // already open, with no click and no live Groq call needed.
+  // A plain-language rewrite is optional and still needs human review.
   const baked = r.plainExplanation;
-  const SHOW_TXT = '💬 Explain this to me in plain English';
-  const HIDE_TXT = '💬 Hide the plain-English version';
-  const explainBox = h(`<div class="panel explain${baked ? '' : ' hidden'}"></div>`);
-  const explainBtn = h(`<button class="btn explain-toggle">${baked ? HIDE_TXT : SHOW_TXT}</button>`);
+  const SHOW_TXT = 'Read plain-language summary';
+  const HIDE_TXT = 'Hide plain-language summary';
+  const explainBox = h('<div class="panel explain hidden"></div>');
+  const explainBtn = h(`<button class="btn explain-toggle">${SHOW_TXT}</button>`);
   if (baked) {
-    explainBox.innerHTML = baked.map((p) => `<p>${esc(p)}</p>`).join('');
+    explainBox.innerHTML = `<p class="faint">AI-generated summary. Check each statement against the source.</p>${baked.map((p) => `<p>${esc(p)}</p>`).join('')}`;
     explainBox.dataset.loaded = '1';
   }
   explainBtn.onclick = async () => {
@@ -1520,7 +1517,10 @@ function renderResult(r) {
   // Short by default: the first few points, the rest behind "Read the full letter".
   const SHOW = 3;
   const rest = h('<div class="hidden"></div>');
+  const reviewSummary = h('<p class="review-summary" aria-live="polite"></p>');
+  letter.appendChild(reviewSummary);
   r.draft.claims.forEach((cl, i) => {
+    const item = h('<div class="claim-item"></div>');
     const p = h(`<p>${esc(cl.text)}</p>`);
     // One chip per document, even when a sentence quotes it several times.
     const seen = new Set();
@@ -1531,7 +1531,12 @@ function renderResult(r) {
       b.onclick = () => openDrawer(x.doc_id, x.anchor, x.quote);
       p.appendChild(b);
     });
-    (i < SHOW ? letter : rest).appendChild(p);
+    item.appendChild(p);
+    const controls = h(`<div class="claim-controls"><span class="claim-status">Not reviewed</span><button type="button" class="claim-approve">Source supports this</button><button type="button" class="claim-flag">Needs correction</button></div>`);
+    controls.querySelector('.claim-approve').onclick = () => { claimReview.set(i, 'approved'); updateClaimReview(); };
+    controls.querySelector('.claim-flag').onclick = () => { claimReview.set(i, 'flagged'); updateClaimReview(); };
+    item.appendChild(controls);
+    (i < SHOW ? letter : rest).appendChild(item);
   });
   (r.removed || []).forEach((cl) => rest.appendChild(h(`<p class="removed" title="Removed: no source supported it">${esc(cl.text)}</p>`)));
   if (rest.children.length) {
@@ -1567,13 +1572,31 @@ function renderResult(r) {
 
   // The big send bar.
   const cta = h(`<div class="cta">
-      <div><div class="t">Your response is ready to send.</div><div class="s">${c.live ? 'This sends it to PayPal (sandbox).' : "This is a demo dispute, so sending shows exactly what would go to PayPal."}</div></div>
+      <div><div class="t">Review the response before sending.</div><div class="s">${c.live ? 'Check every claim against its source before sending to PayPal sandbox.' : "This is a demo dispute. The button previews what would go to PayPal."}</div></div>
       <div class="btns">
         <button class="btn ghost-dark" id="to-top">Review the steps</button>
-        <button class="btn white" id="send">Send response →</button>
+        <button class="btn white" id="send">${c.live ? 'Send to PayPal sandbox' : 'Preview PayPal request'}</button>
       </div>
     </div>`);
   out.appendChild(cta);
+  function updateClaimReview() {
+    const approved = [...claimReview.values()].filter((value) => value === 'approved').length;
+    const flagged = [...claimReview.values()].filter((value) => value === 'flagged').length;
+    reviewSummary.textContent = `${approved} of ${r.draft.claims.length} claims approved${flagged ? ` · ${flagged} needs correction` : ''}. A matching quote alone does not prove a claim.`;
+    letter.querySelectorAll('.claim-item').forEach((item, i) => {
+      const state = claimReview.get(i);
+      item.dataset.review = state || 'pending';
+      item.querySelector('.claim-status').textContent = state === 'approved' ? 'Approved by you' : state === 'flagged' ? 'Needs correction' : 'Not reviewed';
+      item.querySelector('.claim-approve').setAttribute('aria-pressed', state === 'approved' ? 'true' : 'false');
+      item.querySelector('.claim-flag').setAttribute('aria-pressed', state === 'flagged' ? 'true' : 'false');
+    });
+    if (c.live) {
+      const ready = approved === r.draft.claims.length && flagged === 0;
+      $('#send', cta).disabled = !ready;
+      $('.t', cta).textContent = ready ? 'Claims reviewed. Ready for your confirmation.' : flagged ? 'Resolve flagged claims, then run the review again.' : 'Review every claim before sending.';
+    }
+  }
+  updateClaimReview();
   $('#to-top', cta).onclick = () => $('#trail').scrollIntoView({ behavior: 'smooth' });
   $('#send', cta).onclick = () => doSubmit(cta, actions);
   out.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1731,7 +1754,8 @@ function submitOutcome(res) {
   if (failed.length) return { t: "Something didn't go through", s: "One or more actions hit an error — see \"Show the exact API request\" on each one below.", cls: 'bad' };
   if (!real.length) return { t: 'Nothing for PayPal here', s: 'This response had nothing for PayPal to receive — just the message below, which you send yourself.', cls: 'warn' };
   if (!res.live) return { t: 'Simulated: nothing was actually sent', s: "This demo dispute doesn't exist inside PayPal, so there was nothing real to send it to. Each item below shows the exact request that would have gone out — click \"Show the exact API request\" to see it.", cls: 'ok' };
-  if (skipped.length) return { t: sent.length ? 'Partially sent to PayPal' : 'Not sent yet', s: "PayPal isn't ready for one or more of these actions at this dispute's current stage — see below for which, and why.", cls: 'warn' };
+  if (skipped.length) return { t: sent.length ? 'Partially sent to PayPal' : 'Not sent yet', s: 'One or more actions were skipped. Check the reason beside each action below.', cls: 'warn' };
+  if (real.every((r) => r.already_sent)) return { t: 'Already sent to PayPal', s: 'The earlier successful actions were not sent again.', cls: 'ok' };
   return { t: 'Sent to PayPal', s: "Your response was submitted for real, through PayPal's own Disputes API.", cls: 'ok' };
 }
 
@@ -1744,7 +1768,10 @@ async function doSubmit(cta, actionsCard) {
     const res = await api(`/api/cases/${encodeURIComponent(state.current.id)}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ confirm_live: Boolean(state.current.live) }),
+      body: JSON.stringify({
+        confirm_live: Boolean(state.current.live),
+        reviewed_claims: [...claimReview.entries()].filter(([, value]) => value === 'approved').map(([index]) => index),
+      }),
     });
     for (const r of res.results) {
       const row = $(`.action[data-kind="${CSS.escape(r.kind)}"]`, actionsCard);
@@ -1752,7 +1779,7 @@ async function doSubmit(cta, actionsCard) {
       $('.a-state', row).innerHTML = r.skipped
         ? `<span class="a-note">${esc(r.error)}</span>`
         : r.ok
-          ? `<span class="ok">✓ ${r.simulated ? 'Simulated' : 'Sent to PayPal'}</span>`
+          ? `<span class="ok">${r.simulated ? 'Simulated' : r.already_sent ? 'Already sent' : 'Sent to PayPal'}</span>`
           : `<span class="bad">✗ ${esc(r.error)}</span>`;
       if (r.request) {
         const pre = h('<pre class="req hidden"></pre>');

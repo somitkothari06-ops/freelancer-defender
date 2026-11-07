@@ -41,7 +41,7 @@ function buildPackage({ scenario, locker, draft, strategy }) {
       size: 10,
       gap: 4,
     },
-    { text: `Submitted by ${freelancer.name}, ${freelancer.business} (${freelancer.email})`, size: 10 },
+    { text: `Prepared by ${freelancer.name}, ${freelancer.business} (${freelancer.email})`, size: 10 },
     ...paragraphs.map((p) => ({ text: p, size: 11, gap: 8 })),
     { text: 'Sources', size: 12, bold: true, gap: 16 },
     ...footnotes.map((f, i) => {

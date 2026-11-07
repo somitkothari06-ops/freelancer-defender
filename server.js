@@ -29,6 +29,7 @@ const customCases = require('./src/custom-cases');
 const groq = require('./src/ai/groq');
 const P = require('./src/agent/prompts');
 const { buildProofMap } = require('./src/proof-map');
+const { allClaimsReviewed } = require('./src/claim-review');
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
@@ -59,6 +60,7 @@ const hasReplay = (id) => fs.existsSync(replayPath(id));
 
 // Latest finished run per dispute (kept in memory; used by submit + file downloads).
 const lastRun = new Map();
+const submissionsInFlight = new Set();
 // Only one live AI run at a time: Groq's free tier allows ~8k tokens/minute in total.
 let liveRunBusy = false;
 // A shared Groq quota can be exhausted long before any per-visitor limit fires.
@@ -357,16 +359,38 @@ app.post('/api/cases/:id/submit', wrap(async (req, res) => {
   if (c.live && !canActLive(req)) return liveActionRefused(res);
   if (c.live && run._replay) return res.status(409).json({ error: 'This is a recorded run. Run the agent live before sending anything to a real PayPal dispute.' });
   if (c.live && req.body?.confirm_live !== true) return res.status(428).json({ error: 'Review the response and explicitly confirm the PayPal sandbox action.' });
+  if (c.live) {
+    if (!allClaimsReviewed(run.draft?.claims, req.body?.reviewed_claims)) {
+      return res.status(428).json({ error: 'Review every drafted claim against its source before sending to PayPal.', code: 'CLAIM_REVIEW_REQUIRED' });
+    }
+  }
+  if (submissionsInFlight.has(id)) return res.status(409).json({ error: 'A submission for this case is already in progress.' });
+  submissionsInFlight.add(id);
+  try {
 
   // PayPal lists the actions allowed right now as HATEOAS links on the dispute (they change
   // with the dispute's stage), so check those before calling anything.
   const current = c.live ? await disputesApi.getDispute(id) : null;
-  if (c.live && (!run._caseUpdateTime || current.update_time !== run._caseUpdateTime)) return res.status(409).json({ error: 'The PayPal case changed since this investigation. Run it again before sending.' });
+  if (c.live && (!run._caseUpdateTime || current.update_time !== run._caseUpdateTime)) {
+    const completed = Object.values(run._completedActions || {});
+    if (completed.length) {
+      const pending = run.package.actions.filter((a) => wanted.has(a.kind) && !run._completedActions[a.kind]);
+      return res.json({ live: true, results: [
+        ...completed.map((r) => ({ ...r, already_sent: true })),
+        ...pending.map((a) => ({ kind: a.kind, ok: false, skipped: true, error: 'The PayPal case changed after an earlier action. Investigate the current case before sending anything else.' })),
+      ] });
+    }
+    return res.status(409).json({ error: 'The PayPal case changed since this investigation. Run it again before sending.' });
+  }
   const allowed = c.live ? new Set((current.links || []).map((l) => l.rel)) : null;
   // Evidence types PayPal has asked the seller for (e.g. OTHER, PROOF_OF_REFUND).
   const requested = (current?.evidences || []).filter((e) => e.source === 'REQUESTED_FROM_SELLER').map((e) => e.evidence_type);
 
   for (const action of run.package.actions.filter((a) => wanted.has(a.kind))) {
+    if (c.live && run._completedActions?.[action.kind]) {
+      results.push({ ...run._completedActions[action.kind], already_sent: true });
+      continue;
+    }
     if (action.kind === 'email') {
       results.push({ kind: action.kind, ok: true, simulated: true, note: 'Email is sent by the freelancer from their own inbox; the text is ready to copy.' });
       continue;
@@ -399,13 +423,17 @@ app.post('/api/cases/:id/submit', wrap(async (req, res) => {
       if (action.kind === 'send_message') r = await disputesApi.sendMessage(id, action.body.message);
       if (action.kind === 'make_offer') r = await disputesApi.makeOffer(id, action.body);
       if (action.kind === 'accept_claim') r = await disputesApi.acceptClaim(id, action.body);
-      results.push({ kind: action.kind, ok: true, simulated: false, request: preview(action), response: r.data, debug_id: r.debugId });
+      const success = { kind: action.kind, ok: true, simulated: false, request: preview(action), response: r.data, debug_id: r.debugId };
+      results.push(success);
+      (run._completedActions ||= {})[action.kind] = success;
     } catch (err) {
       results.push({ kind: action.kind, ok: false, simulated: false, request: preview(action), error: err.message, paypal: err.body });
     }
   }
-  if (c.live && results.some((r) => r.ok && !r.simulated && r.kind !== 'email')) lastRun.delete(id);
   res.json({ live: c.live, results });
+  } finally {
+    submissionsInFlight.delete(id);
+  }
 }));
 
 // What the HTTP request to PayPal looks like (file bytes replaced by name and size).
