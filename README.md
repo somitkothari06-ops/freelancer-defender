@@ -46,7 +46,7 @@ A complaint and payment record alone cannot establish what happened. If there ar
 
 ### It's honest
 
-The agent lists the freelancer's own weak points, and it will recommend a partial refund when part of the money is genuinely owed. One of the demo disputes is exactly that case.
+The agent lists potential weak points and can propose a partial refund for the freelancer to review. A seeded case illustrates that path; the model's proposal is not a finding that money is legally owed.
 
 ## How PayPal is used
 
@@ -59,7 +59,7 @@ PayPal is the money flow, not a logo:
 | **Disputes API**: `make-offer`, `accept-claim` | Partial refunds / conceding when the agent concludes part of the money is owed |
 | **Disputes API**: `send-message` | Sending the "fix the real problem" message to the client (inquiry stage) |
 | **Disputes API** sandbox: `require-evidence`, `adjudicate` | Driving a sandbox dispute through its full lifecycle |
-| **Transaction Search API** | The client's payment history as evidence (e.g. three earlier undisputed payments from the same account defeat an "unauthorized" claim) |
+| **Transaction Search API** | Payment history for context. Earlier payments do not by themselves resolve an unauthorized-transaction claim. |
 | **Invoicing API** | Seeding real sandbox invoices that a sandbox buyer pays and then disputes |
 
 PayPal records appear in the evidence locker as citable documents, just like the contract and emails.
@@ -95,7 +95,7 @@ npm install
 npm start                # http://localhost:3000
 ```
 
-Without PayPal credentials the app runs on the 4 seeded demo disputes and simulates submission (clearly labelled). Without a Groq key you can still use **Replay**, which plays back recorded real runs.
+Without PayPal credentials the app runs on the 4 seeded demo disputes and simulates submission (clearly labelled). Without a Groq key you can still use **Replay**, which plays back historical AI runs. Those runs predate some current safeguards and their interpretations require human review; they cannot be sent to PayPal.
 
 Other commands:
 
