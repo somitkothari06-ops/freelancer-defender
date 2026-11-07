@@ -196,6 +196,19 @@ app.get('/api/cases/:id', wrap(async (req, res) => {
   });
 }));
 
+// Portable copy of a visitor-owned case while free hosting has temporary storage.
+app.get('/api/cases/:id/export', wrap(async (req, res) => {
+  if (!customCases.isCustom(req.params.id) || !canReadCase(req)) return caseRefused(res);
+  const c = customCases.get(req.params.id, req.visitor);
+  if (!c) return caseRefused(res);
+  const { owner, ...portableCase } = c;
+  res.set('Cache-Control', 'no-store');
+  res.json({ format: 'freelancer-defender-case', version: 1,
+    exported_at: new Date().toISOString(), case: portableCase,
+    documents: uploads.list(req.params.id),
+    handoff: handoffs.list(req.params.id, req.visitor) });
+}));
+
 // Full text of one document (the dashboard's evidence viewer).
 app.get('/api/cases/:id/documents/:docId', wrap(async (req, res) => {
   if (!canReadCase(req)) return caseRefused(res);
