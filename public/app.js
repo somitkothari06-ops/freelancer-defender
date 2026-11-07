@@ -750,7 +750,7 @@ function renderClock(c) {
   }
   const windowDays = Math.round((new Date(d.seller_response_due_date) - new Date(d.create_time)) / 864e5);
   $('#clock').innerHTML = `
-    <span class="label">Time left to respond</span>
+    <span class="label">${c.live ? 'PayPal response deadline' : 'Sample response clock · demo only'}</span>
     <div class="boxes">
       <div class="box"><b id="c-d">0</b><span>days</span></div>
       <div class="box"><b id="c-h">00</b><span>hours</span></div>
@@ -758,9 +758,9 @@ function renderClock(c) {
       <div class="box"><b id="c-s">00</b><span>sec</span></div>
     </div>
     <div class="lines">
-      <div class="line"><div class="row"><span>Your client could dispute for</span><b>${tl.cardholderFilingDays} days</b></div><div class="bar"><i style="width:100%"></i></div></div>
+      <div class="line"><div class="row"><span>Cardholder filing window (PayPal US)</span><b>${tl.cardholderFilingDays} days</b></div><div class="bar"><i style="width:100%"></i></div></div>
       <div class="line"><div class="row"><span>Their bank can take up to</span><b>${tl.bankDecisionDays} days</b></div><div class="bar"><i style="width:${(tl.bankDecisionDays / tl.cardholderFilingDays) * 100}%"></i></div></div>
-      <div class="line you"><div class="row"><span>You have left</span><b id="c-left"></b></div><div class="bar"><i id="c-bar"></i></div></div>
+      <div class="line you"><div class="row"><span>${c.live ? 'You have left' : 'Sample time left'}</span><b id="c-left"></b></div><div class="bar"><i id="c-bar"></i></div></div>
     </div>
     ${sources}`;
   const tick = () => {
