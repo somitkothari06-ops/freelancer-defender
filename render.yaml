@@ -5,11 +5,17 @@ services:
   - type: web
     name: freelancer-defender
     runtime: node
-    plan: free
+    plan: 0.5c-512mb
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /api/status
+    disk:
+      name: app-data
+      mountPath: /var/data
+      sizeGB: 1
     envVars:
+      - key: DATA_DIR
+        value: /var/data
       - key: NODE_VERSION
         value: "22"
       - key: GROQ_API_KEY

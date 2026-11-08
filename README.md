@@ -74,7 +74,7 @@ The desktop also shows a **source-linked deliverable history** for private and l
 
 ## Try your own case
 
-On the dispute list, **Try your own case** lets anyone enter the client, work, amount, filed reason and client's words. The case is private to that browser's visitor cookie; added evidence can be analyzed live. **Fill in an example** provides a sample case to explore. Typed-in cases are never sent to PayPal and have no invented PayPal response deadline. In the desktop case view, **Download case copy** saves the case, source documents, deliverable history, notes and follow-ups as JSON. Render's free storage is ephemeral, so download copies of important cases. The file is an archive, not an automatic restore mechanism.
+On the dispute list, **Try your own case** lets anyone enter the client, work, amount, filed reason and client's words. The case is private to that browser's visitor cookie; added evidence can be analyzed live. **Fill in an example** provides a sample case to explore. Typed-in cases are never sent to PayPal and have no invented PayPal response deadline. In the desktop case view, **Download case copy** saves the case, source documents, deliverable history, notes and follow-ups as JSON. The hosted service stores entered cases, uploads, and handoff records on a persistent disk. Download copies of important cases as an independent backup; the file is an archive, not an automatic restore mechanism.
 
 ## Stack
 
