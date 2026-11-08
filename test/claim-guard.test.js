@@ -12,6 +12,7 @@ test('receipt guard distinguishes service activity from recipient receipt', () =
     ['The client reports they never received the files.', false],
     ['The client said they did not receive the package.', false],
     ['The transfer log reports zero events; the client never received the files.', true],
+    ['The client never received the files, and the transfer log reports zero events.', true],
     ['Another delivery route remains possible.', false],
   ];
   for (const [sentence, expected] of examples) assert.equal(unsupportedNonreceipt(sentence), expected, sentence);

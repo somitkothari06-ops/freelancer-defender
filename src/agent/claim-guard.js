@@ -6,7 +6,7 @@ const NONRECEIPT = [
   /\b(?:files?|packages?|deliverables?|assets?|documents?)\b.{0,35}\b(?:never|were not|weren't|was not|wasn't|not)\b.{0,25}\b(?:received|delivered|obtained|accessed|downloaded|retrieved)\b/i,
   /\b(?:no|zero)\b.{0,25}\b(?:files?|packages?|deliverables?|assets?)\b.{0,25}\b(?:reached|arrived at)\b/i,
 ];
-const ATTRIBUTED = /\b(?:client|buyer|customer|recipient|sender)\b.{0,45}\b(?:reports?|reported|claims?|claimed|says?|said|states?|stated|alleges?|alleged|told us)\b|\baccording to (?:the )?(?:client|buyer|customer|recipient|sender)\b/i;
+const ATTRIBUTED = /\b(?:client|buyer|customer|recipient|sender)\b.{0,30}\b(?:reports?|reported|claims?|claimed|says?|said|states?|stated|alleges?|alleged|told us)\b.{0,100}\b(?:never|did not|didn't|has not|hasn't|had not|hadn't|was not|wasn't)\b|\baccording to (?:the )?(?:client|buyer|customer|recipient|sender)\b.{0,100}\b(?:never|did not|didn't|has not|hasn't|had not|hadn't|was not|wasn't)\b/i;
 const SAFE_LOG_FACT = /\b(?:no|zero)\b.{0,40}\b(?:download|access|delivery)\s*(?:events?|entries|records?)\b.{0,50}\b(?:recorded|logged|shown|found)\b|\b(?:recorded|logged|shows?|found)\b.{0,45}\b(?:no|zero)\b.{0,25}\b(?:download|access|delivery)\s*(?:events?|entries|records?)\b/i;
 
 function unsupportedNonreceipt(text) {
