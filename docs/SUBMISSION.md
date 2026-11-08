@@ -1,6 +1,6 @@
 # Devpost submission draft
 
-Copy each section into the matching Devpost field. Edit freely: it should sound like you.
+Copy each section into the matching Devpost field. Check the live URLs and video rights before submitting.
 
 **Project name:** The Freelancer Defender
 
@@ -9,7 +9,7 @@ Copy each section into the matching Devpost field. Edit freely: it should sound 
 **Links**
 - Live demo: https://freelancer-defender.onrender.com (Render Starter service with persistent storage)
 - Code: https://github.com/somitkothari06-ops/freelancer-defender
-- Video: *(your YouTube link)*
+- Video: **add the public YouTube URL for the selected 2:49 cut**
 
 **Sponsor prize to enter:** Best Use of AG Grid. (A project can win only one sponsor prize; Render also hosts the app and Bryntum draws the deadline timeline.)
 
@@ -17,7 +17,7 @@ Copy each section into the matching Devpost field. Edit freely: it should sound 
 
 ## Inspiration
 
-A freelancer finishes the work, the client approves it, the client pays. Months later the client's bank reverses the payment. PayPal's US card-chargeback guidance says a cardholder may have up to 180 days to file and an issuer may take up to 75 days to decide. The seller's response deadline is case-specific. Meanwhile, evidence is scattered across email, contracts and file-sharing logs.
+A freelancer finishes the work and gets paid. Later, the client's bank may reverse the payment. PayPal's US card-chargeback guidance says a cardholder may have up to 180 days to file and an issuer may take up to 75 days to decide. The seller's response deadline is case-specific. Meanwhile, evidence is scattered across email, contracts and file-sharing logs.
 
 Dispute tools exist, but this one focuses on the freelancer's scope, delivery trail and client communication. The filed reason and the underlying client concern can require different evidence.
 
@@ -25,17 +25,17 @@ The problem has documented examples, including a freelancer whose published arti
 
 ## What it does
 
-The desktop case workspace puts the filed reason, available records, and open questions together. Each source-linked point opens the exact document section. For a private or authorized sandbox case, the freelancer can also track each deliverable and its dated, sourced handoff events without treating a sent link as proof of receipt. A private follow-up turns an unresolved question into a next step. When live AI is available, the agent reads the case and produces three reviewable stages:
+The desktop case workspace puts the filed reason, available records, and open questions together. Each source-linked point opens the exact document section. For a private or authorized sandbox case, the freelancer can also track each deliverable and its dated, sourced handoff events without treating a sent link as proof of receipt. A follow-up turns an unresolved question into a next step. When live AI is available and there is enough evidence, the agent reads the case and produces reviewable stages:
 
 1. **What the client told their bank**, e.g. "Not as described: what we received can't be used by our vendors."
 2. **What the evidence suggests and leaves open**, e.g. the seeded transfer service recorded no download of the second package before its link expired. A later client-submitted message reports the sign maker's print-file concern, but its account is not independently verified. The contract's ownership terms raise another question to review.
 3. **A proposed response**: choose a path only after checking the missing facts, including file access and the contract's rights terms.
 
-Then it drafts a response to the bank and a message to the client. **Each claim in the draft cites a quote from a specific document**, and plain code (not AI) checks that the quoted words appear in the source. Claims whose citations still fail after a repair attempt are removed. Quote matching does not prove that a claim correctly interprets its source; the freelancer reviews each claim before any live PayPal submission. Finally it builds the relevant PayPal API calls and files for review.
+When the evidence supports drafting, it proposes a response to the bank and a message to the client. **Each claim in the draft cites a quote from a specific document**, and plain code (not AI) checks that the quoted words appear in the source. Claims whose citations still fail after a repair attempt are removed. Quote matching does not prove that a claim correctly interprets its source; the freelancer reviews each claim before any live PayPal submission. The app builds the relevant PayPal API calls and files for review.
 
 If supporting documents are absent, it asks for evidence before making any AI calls. The agent can also pause an investigation to ask targeted questions when essential facts remain unknown. A paused case cannot submit a response or refund.
 
-The agent lists possible weaknesses and, in one seeded case, proposes a partial refund for human review because a contracted item appears absent from the provided records.
+The agent lists possible weaknesses and can propose a partial refund for human review. This is a proposal, not a finding that a refund is owed. Older seeded-case recommendations with unsupported interpretations are archived and cannot be submitted.
 
 Freelancers can add evidence to their own entered case or an authorized PayPal sandbox dispute (paste or upload a contract, an email thread, a delivery log), and it becomes citable immediately. Shared seeded demo cases are read-only. Anyone can also **try their own case**: type in what the client told their bank, add the paperwork, and watch the agent work on a story it has never seen.
 
@@ -45,6 +45,7 @@ Freelancers can add evidence to their own entered case or an authorized PayPal s
 - **AI:** Groq running `openai/gpt-oss-120b`. The agent works in stages: read the complaint, investigate with tools (open documents, search, record findings), weigh competing hypotheses, choose a strategy, then draft. Structured JSON makes stage outputs inspectable; it does not eliminate incorrect inferences.
 - **Citation verifier:** deterministic code that checks every quote against its source section, with one AI repair pass for failures.
 - **AG Grid:** the dispute list (sortable by deadline, live countdown cells) and the evidence ledger (one row per citation: claim, source, section, exact quote, quote-check result), which lets anyone audit what the response rests on.
+- **AG Studio:** an embedded question-and-chart panel over dispute records. The public example presets the tool path but calculates its answer from current case data; a separate free-form mode uses Groq and may be limited by quota.
 - **Bryntum Scheduler:** the deadline timeline, one bar per dispute from now until its response deadline.
 - **Render:** hosting.
 - Plain Node.js + Express and vanilla JS, no build step.
@@ -53,6 +54,7 @@ Freelancers can add evidence to their own entered case or an authorized PayPal s
 
 - **Groq + gpt-oss-120b** inside the product: the agent's reasoning, tool use and drafting.
 - **Claude Code, Codex, OpenCode Go, and a local Qwen coding model** to help write and review the code, research PayPal's API behaviour, and refine the interface. The local model was used for a bounded proof-map review; its suggestions were checked against the actual source records. *(Check the rules for any required wording on AI-assisted development.)*
+- **ElevenLabs:** voice narration for the demo film. Confirm the selected voice's publication license and include any required attribution before uploading it.
 
 ## Challenges we ran into
 

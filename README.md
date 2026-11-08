@@ -4,7 +4,7 @@
 
 Built for the PayPal AI Hackathon 2026. **Live: https://freelancer-defender.onrender.com** (landing page) · **https://freelancer-defender.onrender.com/desk** (personal desktop) · **https://freelancer-defender.onrender.com/app** (full investigation workbench)
 
-**Start here:** [NOTES.md](NOTES.md) (what's built, what's real vs. demo, to-do list) · [docs/SUBMISSION.md](docs/SUBMISSION.md) (Devpost text) · [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) (video script) · [docs/RESEARCH.md](docs/RESEARCH.md) (real freelancer stories and numbers)
+**Start here:** [NOTES.md](NOTES.md) (current release and submission status) · [docs/SUBMISSION.md](docs/SUBMISSION.md) (Devpost text) · [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) (selected video) · [docs/RESEARCH.md](docs/RESEARCH.md) (source research)
 
 **An AI coding agent picking this up fresh should read [AGENTS.md](AGENTS.md) first.**
 
@@ -23,7 +23,7 @@ The filed reason code and the client's practical concern may require different e
 > **Underlying concern in the seeded Halden case:** the sign maker needs vector files to cut the storefront sign. The transfer service recorded **zero downloads** of the second package before its link expired; that record alone cannot establish whether the files reached the client another way. A later contact-form submission reports the sign maker's concern, but the account is not independently verified. The contract also makes ownership conditional on retained payment, so the rights question needs careful review.
 
 The complaint does not mention files, vectors, signs or copyright. Reviewing the other records raises those questions. The product helps the freelancer do two things:
-1. **Answers the bank on the filed reason**, because that's what the bank judges.
+1. **Address the bank's filed reason**, because that is what the bank evaluates.
 2. **Plan a response to the client's concern** (check which files were received, then consider a reissue under the contract).
 
 ### The reasoning trail is visible
@@ -32,8 +32,8 @@ The dashboard streams every step as it happens:
 
 ```
 Pull dispute from PayPal → Read the complaint → Investigate (agent opens documents, records findings)
-→ Find the real complaint (competing hypotheses, weighed) → Choose strategy (proof plan)
-→ Draft response → Verify every citation → Send through PayPal
+→ Compare the filed reason with other possible concerns → Choose a strategy or ask for evidence
+→ Draft when supported → Verify every citation → Human review → Optional sandbox submission
 ```
 
 ### Source quotations are machine-checked

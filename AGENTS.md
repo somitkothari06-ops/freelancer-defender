@@ -23,11 +23,8 @@ by two people for the **PayPal AI Hackathon 2026** on Devpost.
 1. **[README.md](README.md)** — the architecture, the code map, the stack,
    how to run it locally, how PayPal is used. This is also what judges read.
    Accurate and current; nothing here contradicts it.
-2. **[NOTES.md](NOTES.md)** — what's real vs. mocked, the hero demo scenario,
-   open to-dos before submission, hackathon rules as read from Devpost. This
-   is the "working notes" doc the two humans use day to day. **Has a dated
-   section for each day's work** — read the most recent one first for the
-   latest state.
+2. **[NOTES.md](NOTES.md)** — current release status, demo boundaries, and
+   confirmed work remaining before submission.
 3. **[docs/AG_STUDIO_TECHNICAL_NOTES.md](docs/AG_STUDIO_TECHNICAL_NOTES.md)**
    — deep, hard-won technical detail about the AG Studio integration (one
    feature of this app): several real bugs, their root causes, and how they
@@ -174,10 +171,8 @@ to do focused implementation work), the pattern that worked well:
   system-prompt forwarding, a guaranteed scripted fallback button) but not
   eliminated for genuinely free-form questions. That's expected, not a
   regression to chase.
-- Groq's free tier cap (~200,000 tokens/day for the main model) limits live
-  agent runs to roughly 4 per day; replays exist specifically so demos don't
-  depend on quota. See NOTES.md "Open items" for the numbers and the
-  upgrade option.
+- Groq's free tier limits live agent runs; replays exist specifically so
+  demos do not depend on quota. Check current limits in the Groq account.
 - Render now runs on Starter with a 1 GB persistent disk. The old free-tier
-  sleep note in NOTES.md is historical; verify the current service and disk
-  before relying on them during judging.
+  sleep issue is historical; verify the current service and disk before
+  relying on them during judging.

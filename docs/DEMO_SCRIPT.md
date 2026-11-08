@@ -1,40 +1,63 @@
-# Judge demo script (target 2:40; submission limit 3:00)
+# Selected judge film — 2:49
 
-Record the deployed site. Use the seeded Halden case for the source review. The older AI recordings are archived because their conclusions did not pass semantic evidence review; do not present them as a current recommendation or response. Never describe zero recorded downloads as proof that the client never received the files.
+Selected file: `/Users/somitkothari/Desktop/paypal hackathon/video-production/out/Freelancer-Defender-emotional-cut.mp4`.
+Captions: `/Users/somitkothari/Desktop/paypal hackathon/video-production/out/Freelancer-Defender-emotional-cut.srt`.
 
-## 0:00–0:20 — The problem
+This is the second, more emotional cut. It uses actual site footage, an original instrumental score, and an ElevenLabs Liam narration. Confirm the voice license and any required attribution before public upload. The public video must be on YouTube and under three minutes.
 
-**Show:** Landing page contrast, then **Open the desktop**.
+## Narration and shots
 
-**Say:** “A freelancer can have the contract, delivery email, and payment record and still face a chargeback. The bank sees a reason code. The client may have a more specific problem. Freelancer Defender connects both to the evidence and shows what remains unknown.”
+### 0:00 — landing
 
-## 0:20–1:15 — The proof map
+You did the work. Then a PayPal payment is disputed, and suddenly you have to prove what happened. Freelancer Defender brings the agreement, messages, and delivery records you add into one source-linked case, so you can see what the record supports.
 
-**Show:** Open Halden’s **Case** window. Point to the two tracks. Click **Master package access is unproven**, then show `DELIVERY-LOG L5`. Return to the case. Click **The client reports a sign-maker problem**, then show `CONTACT-FORM F1`.
+### 0:17 — desktop
 
-**Say:** “This is a seeded demo case. The agreement includes print-ready masters. The email records two links being sent. The transfer service recorded no download of the master package before expiry. A later contact-form entry reports a sign-maker problem, but that account has not been independently verified. Each point opens the exact source.”
+This is your personal dispute desk: cases, sources, notes, and next steps together. The case you are about to see is a seeded example, so anyone can try it.
 
-## 1:15–1:35 — The review question
+### 0:31 — desktop
 
-**Show:** The **Review question**. Click **Add to my follow-ups** and show it in **Follow-ups**.
+The bank says the work was not as described. The agreement promised print-ready files. An email records two links being sent. But the transfer log shows zero downloads of the master package before its link expired.
 
-**Say:** “The critical question is which files reached the sign maker. A transfer log cannot answer that on its own. One click turns the gap into a follow-up the freelancer can actually pursue.”
+### 0:45 — desktop
 
-## 1:35–2:15 — What the AI can and cannot establish
+That missing download matters, but it is not proof on its own. The files could have arrived another way. A later contact-form message reports a sign-maker problem, but nobody has verified who sent it.
 
-**Show:** Open the investigation panel. Show the source-linked evidence and the archived recording boundary. A separate live Groq run can be shown only if it was completed and its output was reviewed beforehand.
+### 1:01 — desktop
 
-**Say:** “The Groq agent reads documents and drafts a response. Code checks that its quoted words exist in the cited sections. That check does not prove the conclusion, so old recordings that made unsupported leaps are archived, and a real response requires the freelancer to review each claim.”
+Here is the twist. The bank is judging one reason. The client may be worried about something else. So answer the bank on what it filed, and ask the client: which files reached the sign maker?
 
-## 2:15–2:40 — PayPal and boundaries
+### 1:14 — personal
 
-**Show:** The case map and the PayPal sandbox flow already recorded separately, if available. End on the unresolved question and its source.
+Keep a note with the case, so your next conversation begins with what you actually know.
 
-**Say:** “For an authorized PayPal sandbox case, the app reads the live dispute and only offers actions PayPal currently allows. The seeded case simulates submission. We took a separate sandbox dispute through evidence submission; no real bank outcome is claimed. The freelancer decides what to send.”
+### 1:22 — personal
 
-## Recording checks
+Make the desk yours. Change the theme without changing the evidence.
 
-- Confirm every spoken fact appears on the recorded screen or in the opened source.
-- Do not show an archived recording as a ready PayPal response.
-- Do not claim a universal ten-day seller deadline; show the actual deadline for a live PayPal case.
-- Keep the public YouTube video under three minutes and verify its link after upload.
+### 1:31 — queue
+
+Across the demo cases, A G Grid lets you sort by time left. A Bryntum timeline shows when each response is due.
+
+### 1:45 — queue
+
+Ask about the cases in plain language. In this demo, the question is preset and the answer is calculated from the case records. You can inspect the result.
+
+### 1:59 — own-case
+
+You can also start your own case and add documents as citable sources. Creating a case does not send anything to PayPal. Running live AI analysis sends those documents to Groq.
+
+### 2:11 — archive-evidence
+
+The AI agent investigates and drafts. Ordinary server code then checks that each quoted line really appears in its source. A matching quote does not prove the conclusion is sound. That is why old unsupported drafts are archived, and you review the result before anything can be sent.
+
+### 2:30 — archive
+
+For authorized sandbox cases, the app reads disputes and submits reviewed evidence through PayPal’s API. This public example is sample data; it takes no live PayPal action. Show the work you did, and say only what the record supports.
+
+## Before upload
+
+- Watch the exported video from start to end, with sound, at 1080p. Check source text is readable and each voice line matches the screen.
+- Confirm the ElevenLabs license for this public hackathon use; include attribution if using free-plan output.
+- Upload the selected file to YouTube as public. Add its URL to `docs/SUBMISSION.md` and the Devpost submission.
+- Keep the hosted site and sandbox credentials working through judging.
