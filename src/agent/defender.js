@@ -17,6 +17,7 @@ const { buildPackage } = require('./package');
 const { statementParts } = require('../evidence/locker');
 const { hasFreelancerEvidence, evidenceOnlyResult } = require('./evidence-gaps');
 const { directConcernRefs } = require('./context');
+const { unsupportedNonreceipt, safeDiagnosis, safeDraft } = require('./claim-guard');
 
 const MAX_INVESTIGATION_TURNS = 8;
 
@@ -248,7 +249,8 @@ async function runDefender({ scenario, locker, sources }, emit) {
     opts
   );
   track(diagRes.usage);
-  const diagnosis = diagRes.data;
+  const guardedDiagnosis = safeDiagnosis(diagRes.data);
+  const diagnosis = guardedDiagnosis.diagnosis;
   diagnosis.hypotheses = diagnosis.hypotheses
     .map((h) => ({ ...h, supporting: realRefs(h.supporting), contradicting: realRefs(h.contradicting) }))
     .sort((a, b) => b.likelihood - a.likelihood);
@@ -275,6 +277,19 @@ async function runDefender({ scenario, locker, sources }, emit) {
   );
   track(stratRes.usage);
   const strategy = stratRes.data;
+  if (guardedDiagnosis.blocked || unsupportedNonreceipt(strategy.rationale) ||
+      strategy.proof_plan.some((p) => unsupportedNonreceipt(p.point))) {
+    strategy.decision = 'REQUEST_MORE_EVIDENCE';
+    strategy.rationale = 'The available records do not establish whether the client received the files. Confirm the delivery route before choosing a response.';
+    strategy.proof_plan = [];
+    strategy.resolution_action = 'Confirm receipt or another delivery route, then review the case again.';
+    strategy.refund_amount = '0.00';
+    strategy.evidence_requests = [{
+      question: 'Which exact files reached the client, and by which route?',
+      why_it_matters: 'A missing event in one transfer service does not establish nonreceipt through every route.',
+      documents_needed: ['Delivery confirmation, recipient access record, or follow-up from the client'],
+    }];
+  }
   if (strategy.decision === 'REQUEST_MORE_EVIDENCE') strategy.refund_amount = '0.00';
   strategy.proof_plan = strategy.proof_plan.map((p) => ({ ...p, evidence: realRefs(p.evidence) }));
   emit('stage', { stage: 'strategy', status: 'done', data: strategy, thinking: clip(stratRes.reasoning, 600) });
@@ -302,7 +317,8 @@ async function runDefender({ scenario, locker, sources }, emit) {
     opts
   );
   track(draftRes.usage);
-  const draft = draftRes.data;
+  const guardedDraft = safeDraft(draftRes.data);
+  const draft = guardedDraft.draft;
   emit('stage', { stage: 'draft', status: 'done', data: { response_title: draft.response_title, claims: draft.claims.length } });
 
   // ---- 7. Verify every citation ---------------------------------------------------
@@ -332,16 +348,21 @@ async function runDefender({ scenario, locker, sources }, emit) {
     check = verifyClaims(locker, draft.claims);
   }
   // Anything still ungrounded is removed from the response, and shown as removed in the UI.
-  const removed = check.results.filter((r) => !r.grounded);
-  const claims = check.results.filter((r) => r.grounded);
+  const removed = [...check.results.filter((r) => !r.grounded), ...guardedDraft.removed];
+  const claims = check.results.filter((r) => {
+    if (!r.grounded) return false;
+    if (!unsupportedNonreceipt(r.text)) return true;
+    removed.push({ text: r.text, problems: ['Receipt is not established by the available records.'] });
+    return false;
+  });
   emit('stage', {
     stage: 'verify',
     status: 'done',
     data: {
       grounded: claims.length,
-      total: check.total,
+      total: check.total + guardedDraft.removed.length,
       repaired,
-      removed: removed.map((r) => ({ text: r.text, problems: r.citations.filter((c) => !c.ok).map((c) => c.problem) })),
+      removed: removed.map((r) => ({ text: r.text, problems: r.problems || r.citations.filter((c) => !c.ok).map((c) => c.problem) })),
       citations: check.passedCitations,
     },
   });

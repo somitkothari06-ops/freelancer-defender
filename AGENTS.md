@@ -178,6 +178,6 @@ to do focused implementation work), the pattern that worked well:
   agent runs to roughly 4 per day; replays exist specifically so demos don't
   depend on quota. See NOTES.md "Open items" for the numbers and the
   upgrade option.
-- Render's free plan sleeps after ~15 min idle (first load after sleep:
-  ~30–50s). Known, documented in NOTES.md, with a suggested paid-tier fix
-  before judging starts.
+- Render now runs on Starter with a 1 GB persistent disk. The old free-tier
+  sleep note in NOTES.md is historical; verify the current service and disk
+  before relying on them during judging.

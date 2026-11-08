@@ -7,7 +7,7 @@ Copy each section into the matching Devpost field. Edit freely: it should sound 
 **Tagline (short description):** An evidence workbench for freelancers facing payment disputes: answer the filed reason and investigate the client's underlying concern.
 
 **Links**
-- Live demo: https://freelancer-defender.onrender.com (free hosting: the first load can take ~40 seconds to wake up)
+- Live demo: https://freelancer-defender.onrender.com (Render Starter service with persistent storage)
 - Code: https://github.com/somitkothari06-ops/freelancer-defender
 - Video: *(your YouTube link)*
 

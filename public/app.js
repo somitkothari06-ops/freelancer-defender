@@ -1347,7 +1347,7 @@ function renderStageDone(stage, data, thinking) {
       <span class="kicker">2 · What the evidence suggests</span>
       <p class="big">${words}</p>
       <div class="meter">AI hypothesis · check the cited records</div>
-      <span class="note">What they need: ${say(data.real_complaint.what_the_client_actually_needs)}</span>
+      <span class="note">Possible need to verify: ${say(data.real_complaint.what_the_client_actually_needs)}</span>
       ${expandable ? '<button class="summary-more" aria-expanded="false">Read full finding</button>' : ''}`;
     const more = $('.summary-more', real);
     if (more) more.onclick = () => {
@@ -1429,7 +1429,7 @@ function renderStageDone(stage, data, thinking) {
     body.appendChild(
       h(`<div class="panel" style="flex-direction:row;align-items:center;gap:14px;flex-wrap:wrap">
           <span class="verify-big">${data.grounded}/${data.total}</span>
-          <span>statements have matching source quotes. This checks the quoted words, not whether the claim correctly interprets them${data.repaired ? `; ${data.repaired} fixed along the way` : ''}${data.removed.length ? `; <b style="color:var(--danger)">${data.removed.length} removed</b> because their citations did not pass` : ''}.</span>
+          <span>statements have matching source quotes. This checks the quoted words, not whether the claim correctly interprets them${data.repaired ? `; ${data.repaired} fixed along the way` : ''}${data.removed.length ? `; <b style="color:var(--danger)">${data.removed.length} removed</b> after citation or receipt checks` : ''}.</span>
         </div>`)
     );
   }
@@ -1571,7 +1571,7 @@ function renderResult(r) {
     item.appendChild(controls);
     (i < SHOW ? letter : rest).appendChild(item);
   });
-  (r.removed || []).forEach((cl) => rest.appendChild(h(`<p class="removed" title="Removed: no source supported it">${esc(cl.text)}</p>`)));
+  (r.removed || []).forEach((cl) => rest.appendChild(h(`<p class="removed" title="Removed after citation or receipt review">${esc(cl.text)}</p>`)));
   if (rest.children.length) {
     const more = h(`<button class="linkbtn">Read the full letter (${r.draft.claims.length} points)</button>`);
     more.onclick = () => {
