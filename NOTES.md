@@ -35,7 +35,11 @@ freelancer evidence, the app asks for it and produces no submission package.
 - Selected demo film: the 2:49 emotional cut at
   `../video-production/out/Freelancer-Defender-emotional-cut.mp4`. The original
   approved cut is separately preserved. The selected video still needs a
-  rights check, a public YouTube upload, and its URL in Devpost.
+  rights check, a public YouTube upload, and its URL in Devpost. ElevenLabs
+  generated the narration on a free plan; its current terms limit that audio
+  to non-commercial use and require attribution on publication. Use a cleared
+  voice recording or obtain appropriate permission if this contest use could
+  be considered commercial ([ElevenLabs terms](https://elevenlabs.io/terms-of-use)).
 - Devpost entry and team membership: **not confirmed submitted**. Use
   [docs/SUBMISSION.md](docs/SUBMISSION.md) and verify the final entry in the
   account before the official deadline.
