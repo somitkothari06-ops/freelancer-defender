@@ -78,3 +78,15 @@ test('legacy successful replay strategies still generate the same action kinds',
     assert.deepEqual(pkg.actions.map((a) => a.kind), old.package.actions.map((a) => a.kind));
   }
 });
+
+test('PayPal action prose does not inherit unverified model text', () => {
+  const { scenarios } = require('../src/cases');
+  const scenario = structuredClone(scenarios[0]);
+  scenario.dispute.dispute_life_cycle_stage = 'INQUIRY';
+  const locker = buildLocker(scenario, { transactions: scenario.paypal_transactions, transactionsSource: 'test' });
+  const draft = { response_title: 'Review', claims: [], evidence_package: [], client_message: 'UNVERIFIED CLIENT CLAIM' };
+  const strategy = { decision: 'PARTIAL_REFUND_AND_CONTEST', refund_amount: '1.00', resolution_action: 'UNVERIFIED OFFER CLAIM', rationale: 'UNVERIFIED REFUND CLAIM' };
+  const pkg = buildPackage({ scenario, locker, draft, strategy });
+  for (const action of pkg.actions) assert.doesNotMatch(JSON.stringify(action), /UNVERIFIED/);
+  assert.equal(pkg.clientMessage, draft.client_message); // Private draft stays visible for human review.
+});

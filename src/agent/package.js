@@ -111,7 +111,7 @@ function buildPackage({ scenario, locker, draft, strategy }) {
       path: `/v1/customer/disputes/${dispute.dispute_id}/make-offer`,
       contentType: 'application/json',
       body: {
-        note: strategy.resolution_action.slice(0, 2000),
+        note: 'We offer a partial refund for this disputed transaction. Please review the offer amount.',
         offer_amount: { currency_code: currency, value: refund.toFixed(2) },
         offer_type: 'REFUND',
       },
@@ -124,7 +124,7 @@ function buildPackage({ scenario, locker, draft, strategy }) {
       method: 'POST',
       path: `/v1/customer/disputes/${dispute.dispute_id}/accept-claim`,
       contentType: 'application/json',
-      body: { note: strategy.rationale.slice(0, 2000) },
+      body: { note: 'We accept this claim.' },
     });
   }
 
@@ -133,11 +133,11 @@ function buildPackage({ scenario, locker, draft, strategy }) {
   if (dispute.dispute_life_cycle_stage === 'INQUIRY') {
     actions.push({
       kind: 'send_message',
-      label: `Message ${client.name} through PayPal`,
+      label: `Acknowledge the dispute to ${client.name} through PayPal`,
       method: 'POST',
       path: `/v1/customer/disputes/${dispute.dispute_id}/send-message`,
       contentType: 'application/json',
-      body: { message: draft.client_message.slice(0, 2000) },
+      body: { message: 'We received your dispute and are reviewing the case records. We will respond through the available dispute process.' },
     });
   } else {
     actions.push({
