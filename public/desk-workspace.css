@@ -144,7 +144,9 @@ summary:focus-visible {outline:2px solid var(--signal);outline-offset:3px}
 .focus-label {font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;opacity:.72}
 .case-focus h3 {grid-column:1;margin:7px 0 5px;font-size:24px;font-weight:580;line-height:1.25;letter-spacing:-.025em}
 .case-focus p {grid-column:1;margin:0;font-size:13px;line-height:1.45;opacity:.74;max-width:650px}
-.focus-actions {grid-column:2;grid-row:1/4;display:flex;flex-direction:column;gap:8px;min-width:160px}
+.case-focus .focus-next {margin-top:12px;opacity:1;color:var(--surface)}
+.focus-next strong {font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.focus-actions {grid-column:2;grid-row:1/5;display:flex;flex-direction:column;gap:8px;min-width:160px}
 .case-focus .cta,.case-focus .secondary {height:39px;background:var(--surface);color:var(--text);border:1px solid var(--surface);font-size:12px;font-weight:650}
 .case-focus .secondary {background:transparent;color:var(--surface);border-color:color-mix(in srgb,var(--surface) 45%,transparent)}
 .case-focus .cta:hover {background:var(--surface-2);filter:none;transform:none}

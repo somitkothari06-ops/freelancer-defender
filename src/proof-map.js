@@ -153,10 +153,18 @@ function buildGenericProofMap(caseData, locker) {
     challengeAnchor = first ? first.anchor : null;
   }
 
+  const reasonCode = caseData?.scenario?.dispute?.reason;
+  const reviewerQuestion = reasonCode === 'UNAUTHORISED'
+    ? ['Who authorized the engagement and payment?', 'A payment record alone does not establish who approved the work.', 'Request the signed agreement and approval messages from the person who commissioned the work.']
+    : reasonCode === 'MERCHANDISE_OR_SERVICE_NOT_RECEIVED'
+      ? ['What record shows the client could access the finished work?', 'A sent link and a received deliverable are different events.', 'Request the delivery message, access record, and any client acknowledgment.']
+      : reasonCode === 'CREDIT_NOT_PROCESSED'
+        ? ['Was a refund promised, and was it processed?', 'A refund request is different from a completed credit.', 'Request the written refund terms and the payment or refund record.']
+        : ['What was promised, and what reached the client?', 'Compare the agreement with the handoff record; neither alone establishes receipt.', 'Request the signed agreement, delivery record, and the client’s account of what was missing.'];
   const challenge = {
-    question: 'Which records establish the agreed scope and the actual handoff?',
-    reason: 'Check what each record actually establishes about scope, handoff, receipt, and the client concern.',
-    next: 'Provide the signed agreement and the delivery or handoff record, then compare both with the client statement.',
+    question: reviewerQuestion[0],
+    reason: reviewerQuestion[1],
+    next: reviewerQuestion[2],
     source: { docId: challengeDocId, anchor: challengeAnchor },
   };
 
