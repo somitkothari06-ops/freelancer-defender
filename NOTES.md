@@ -32,9 +32,9 @@ freelancer evidence, the app asks for it and produces no submission package.
 - Hosted Render service: live on `main`; Starter instance with a 1 GB disk.
 - Automated tests: 54 passing; `npm audit --omit=dev` reported no known
   vulnerabilities on November 8.
-- Selected demo film: the 2:49 emotional cut at
-  `../video-production/out/Freelancer-Defender-emotional-cut.mp4`. The original
-  approved cut is separately preserved. The selected video still needs a
+- Selected demo film: the 2:49 emotional cut, kept outside this source repo
+  until publication. The original approved cut is separately preserved. The
+  selected video still needs a
   rights check, a public YouTube upload, and its URL in Devpost. ElevenLabs
   generated the narration on a free plan; its current terms limit that audio
   to non-commercial use and require attribution on publication. Use a cleared

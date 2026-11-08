@@ -1,7 +1,7 @@
 # Selected judge film — 2:49
 
-Selected file: `/Users/somitkothari/Desktop/paypal hackathon/video-production/out/Freelancer-Defender-emotional-cut.mp4`.
-Captions: `/Users/somitkothari/Desktop/paypal hackathon/video-production/out/Freelancer-Defender-emotional-cut.srt`.
+Selected export: `Freelancer-Defender-emotional-cut.mp4` (kept outside the source repository until the YouTube upload).
+Captions: `Freelancer-Defender-emotional-cut.srt`.
 
 This is the second, more emotional cut. It uses actual site footage, an original instrumental score, and an ElevenLabs Liam narration. The narration was generated on a free plan: [ElevenLabs currently permits only non-commercial use](https://elevenlabs.io/terms-of-use) and requires attribution when publishing it. Obtain appropriate rights or replace the narration if this contest use could be commercial. The public video must be on YouTube and under three minutes.
 
